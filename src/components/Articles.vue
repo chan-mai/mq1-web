@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import OgImage from './mq/OgImage.vue';
-
 const props = defineProps({
     limit: {
         type: String,

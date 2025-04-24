@@ -26,7 +26,24 @@ const { data: articlesData } = await useAsyncData('articles', async () => {
 const tags = computed(() => tagsData.value || []);
 const articles = computed(() => articlesData.value || []);
 
+const config = useWebConfig();
+const pageTitle = config.value.siteName;
+const pageDescription = config.value.siteDescription;
+const pageUrl = config.value.siteUrl;
 
+useHead({
+  title: pageTitle,
+  meta: [
+    { property: 'og:title', content: pageTitle },
+    { property: 'og:description', content: pageDescription },
+    { property: 'og:image', content: `${config.value.baseOgpUrl}` },
+    { property: 'og:type', content: 'website' },
+    { property: 'og:url', content: pageUrl },
+    { property: 'og:site_name', content: config.value.siteName },
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'description', content: pageDescription },
+  ],
+});
 
 </script>
 <template>

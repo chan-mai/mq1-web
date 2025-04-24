@@ -1,6 +1,7 @@
 export const useWebConfig = () => {
   return computed(() => ({
-    siteUrl: "https://example.com",
+    siteUrl: "https://mq1.dev/",
+    baseOgpUrl: "https://mq1.dev/ogp.png",
     siteName: "まいの雑記帳",
     siteDescription: "ちっちゃなうぇぶさいと",
     headerMenu: [

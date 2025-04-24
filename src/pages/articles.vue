@@ -11,6 +11,26 @@ const { data: articlesData } = await useAsyncData('articles', async () => {
 });
 
 const articles = computed(() => articlesData.value || []);
+
+const config = useWebConfig();
+const pageTitle = `記事一覧 - ${config.value.siteName}`;
+const pageDescription = config.value.siteDescription;
+const ogImageUrl = useOgGenerator('記事一覧');
+const pageUrl = `${config.value.siteUrl}/articles`;
+
+useHead({
+  title: pageTitle,
+  meta: [
+    { property: 'og:title', content: pageTitle },
+    { property: 'og:description', content: pageDescription },
+    { property: 'og:image', content: ogImageUrl },
+    { property: 'og:type', content: 'website' },
+    { property: 'og:url', content: pageUrl },
+    { property: 'og:site_name', content: config.value.siteName },
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'description', content: pageDescription },
+  ],
+});
 </script>
 <template>
     <main

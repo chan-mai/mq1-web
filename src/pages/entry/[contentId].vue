@@ -138,6 +138,75 @@ const tableOfContents = computed<{ id: string; text: string; level: number }[]>(
 const isUpdate = computed(() => {
     return article.value && (article.value.createdAt || article.value.publishedAt) !== article.value.updatedAt;
 });
+
+// --- OGP Setup ---
+const config = useWebConfig();
+
+
+watchEffect(() => {
+  if (article.value) {
+    const pageTitle = `${article.value.title} - ${config.value.siteName}`;
+    const pageDescription = article.value.summary || config.value.siteDescription;
+    const ogImageUrl = useOgGenerator(article.value.title);
+    const pageUrl = `${config.value.siteUrl}/entry/${contentId}`;
+    const publishedTime = article.value.publishedAt || article.value.createdAt;
+    const modifiedTime = article.value.updatedAt;
+
+    const metaTags = [
+      { property: 'og:title', content: pageTitle },
+      { property: 'og:description', content: pageDescription },
+      { property: 'og:image', content: article.value.eyecatch?.url || ogImageUrl }, // Prefer eyecatch if available
+      { property: 'og:type', content: 'article' },
+      { property: 'og:url', content: pageUrl },
+      { property: 'og:site_name', content: config.value.siteName },
+      { name: 'twitter:card', content: 'summary_large_image' },
+      { name: 'description', content: pageDescription },
+    ];
+
+    if (publishedTime) {
+        metaTags.push({ property: 'article:published_time', content: new Date(publishedTime).toISOString() });
+    }
+    if (modifiedTime) {
+        metaTags.push({ property: 'article:modified_time', content: new Date(modifiedTime).toISOString() });
+    }
+    if (article.value.tags && Array.isArray(article.value.tags)) {
+        article.value.tags.forEach((tag: Tag) => { 
+            if (tag.name) { 
+              metaTags.push({ property: 'article:tag', content: tag.name });
+            }
+        });
+    } else if (article.value.tags && typeof article.value.tags === 'object' && 'name' in article.value.tags) { // Handle single tag object case more safely
+        metaTags.push({ property: 'article:tag', content: article.value.tags.name });
+    }
+
+
+    useHead({
+      title: pageTitle,
+      meta: metaTags,
+    });
+  } else {
+    // Fallback OGP for error or not found cases
+    const pageTitle = `記事が見つかりません - ${config.value.siteName}`;
+    const pageDescription = config.value.siteDescription;
+    const ogImageUrl = useOgGenerator(config.value.siteName);
+    const pageUrl = `${config.value.siteUrl}/entry/${contentId}`;
+
+     useHead({
+      title: pageTitle,
+      meta: [
+        { property: 'og:title', content: pageTitle },
+        { property: 'og:description', content: pageDescription },
+        { property: 'og:image', content: ogImageUrl },
+        { property: 'og:type', content: 'website' },
+        { property: 'og:url', content: pageUrl },
+        { property: 'og:site_name', content: config.value.siteName },
+        { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'description', content: pageDescription },
+      ],
+    });
+  }
+});
+
 </script>
 <template>
     <main

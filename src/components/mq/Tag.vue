@@ -9,7 +9,6 @@ const props = withDefaults(defineProps<{
         name: '未分類',
     }),
 });
-console.log('Tag:', props.tag);
 </script>
 <template>
     <a v-if="tag" :href="`/tag/${tag.id}`" class="inline-flex items-center px-3 py-1.5 rounded-full text-sm 

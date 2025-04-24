@@ -31,7 +31,7 @@ useHead(() => ({
   <div class="bg-white text-slate-600 dark:bg-slate-900 dark:text-slate-100">
     <NuxtLoadingIndicator :height="2" :color="config.themeColor" />
     <SiteHeader />
-    <main class="main mt-12 max-w-5xl gap-8 md:mt-20 md:gap-16">
+    <main class="relative z-0 mx-auto box-content flex min-h-[calc(100vh-30rem)] flex-col px-6 mt-12 max-w-5xl gap-8 md:mt-20 md:gap-16">
       <PageHeader :title="title">
         <div class="flex gap-2 text-xs">
           <span class="shrink-0 py-1">現在のURL：</span>

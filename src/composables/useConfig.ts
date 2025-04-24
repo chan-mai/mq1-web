@@ -1,9 +1,11 @@
 export const useWebConfig = () => {
+  const runtimeConfig = useRuntimeConfig();
   return computed(() => ({
-    siteUrl: "https://mq1.dev/",
-    baseOgpUrl: "https://mq1.dev/ogp.png",
-    siteName: "まいの雑記帳",
-    siteDescription: "ちっちゃなうぇぶさいと",
+    siteUrl: runtimeConfig.public.siteUrl as string,
+    baseOgpUrl: runtimeConfig.public.siteOgpUrl as string,
+    siteName: runtimeConfig.public.siteName as string,
+    siteDescription: runtimeConfig.public.siteDescription as string,
+
     headerMenu: [
       { title: "トップ", url: "/" },
       { title: "運営者情報", url: "https://chan-mai.dev/" },

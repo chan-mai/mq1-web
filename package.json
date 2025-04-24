@@ -4,13 +4,23 @@
   "type": "module",
   "scripts": {
     "build": "nuxt build",
-    "dev": "nuxt dev",
+    "dev": "cross-env NUXT_HOST=0.0.0.0 NUXT_PORT=3000 nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@nuxt/icon": "1.12.0",
+    "@nuxtjs/tailwindcss": "6.13.2",
+    "@types/highlight.js": "^10.1.0",
+    "@vueuse/core": "^13.1.0",
+    "@vueuse/nuxt": "13.1.0",
+    "cheerio": "^1.0.0",
+    "cross-env": "^7.0.3",
+    "highlight.js": "^11.11.1",
+    "microcms-js-sdk": "^3.2.0",
     "nuxt": "^3.16.2",
+    "nuxt-microcms-module": "^3.0.2",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0"
   },

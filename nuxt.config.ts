@@ -1,5 +1,40 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: '2024-11-01',
-  devtools: { enabled: true }
-})
+  compatibilityDate: "2024-11-01",
+  ssr: true,
+  srcDir: "src/",
+
+  devtools: {
+    enabled: true,
+  },
+
+  modules: [
+    "@nuxtjs/tailwindcss",
+    "@vueuse/nuxt",
+    "@nuxt/icon",
+    [
+      "nuxt-microcms-module",
+      {
+        serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN,
+        apiKey: process.env.MICROCMS_API_KEY,
+      },
+    ],
+  ],
+  tailwindcss: {
+    config: {
+      theme: {
+        extend: {
+          colors: {
+            primary: "#fc9fa8",
+            accent: "#f57aa5",
+            back: "#f5f3f3",
+          },
+        },
+      },
+    },
+  },
+
+  experimental: {
+    viewTransition: true,
+  },
+});

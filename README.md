@@ -1,75 +1,40 @@
-# Nuxt Minimal Starter
+# mq1-web
+## 🎀 はじめに
+これは[Nuxt](https://nuxt.com/)でつくった、ブログっぽいことをしたくてはじめたプロジェクトです。  
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+開発環境は`Node.js v23.11.0`、`pnpm v10.9.0`を使用しています。  
 
-## Setup
 
-Make sure to install dependencies:
-
+## 📦 セットアップ
 ```bash
-# npm
-npm install
-
 # pnpm
 pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
 ```
 
-## Development Server
-
-Start the development server on `http://localhost:3000`:
+## 🚀 開発サーバー
+`http://localhost:3000`で開発サーバーを起動します：
 
 ```bash
-# npm
-npm run dev
-
 # pnpm
 pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
-## Production
+## 🏗️ 本番ビルド
 
-Build the application for production:
+アプリケーションを本番環境用にビルドします:  
 
 ```bash
-# npm
-npm run build
-
 # pnpm
 pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
 ```
 
-Locally preview production build:
+## 👀 プレビュー
+
+ローカルで本番ビルドをプレビューします:  
 
 ```bash
-# npm
-npm run preview
-
 # pnpm
 pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
 ```
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+デプロイについての詳細は[公式ドキュメント](https://nuxt.com/docs/getting-started/deployment)をご確認ください。

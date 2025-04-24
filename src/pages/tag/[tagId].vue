@@ -80,7 +80,11 @@ useHead({
                 </h2>
             </div>
             <div class="flex flex-col gap-8">
-                <Articles :articles />
+                <Articles v-if="articles.length>0" :articles />
+                <div v-else class="flex flex-col items-center justify-center gap-4">
+                    <p class="text-lg font-bold text-accent">記事が見つかりませんでした。</p>
+                    <p class="text-sm text-slate-500">他のタグを試してみてください。</p>
+                </div>
             </div>
         </section>
     </main>

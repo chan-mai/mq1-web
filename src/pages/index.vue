@@ -6,10 +6,7 @@ const { data: tagsData } = await useAsyncData('tags', async () => {
             orders: '-publishedAt',
         },
     });
-    return [
-        ...(data.value?.contents || []),
-        { name: '未分類', id: 'uncategorized' },
-    ];
+    return data.value?.contents;
 });
 
 const { data: articlesData } = await useAsyncData('articles', async () => {

@@ -1,11 +1,15 @@
 <script setup lang="ts">
-defineProps({
-    tag: {
-        type: Object as () => Tag,
-        required: false,
-    },
-});
 
+// デフォルト値を指定
+const props = withDefaults(defineProps<{
+    tag?: Tag;
+}>(), {
+    tag: () => ({
+        id: 'uncategorized',
+        name: '未分類',
+    }),
+});
+console.log('Tag:', props.tag);
 </script>
 <template>
     <a v-if="tag" :href="`/tag/${tag.id}`" class="inline-flex items-center px-3 py-1.5 rounded-full text-sm 

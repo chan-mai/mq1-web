@@ -6,6 +6,8 @@ export const useWebConfig = () => {
     siteName: runtimeConfig.public.siteName as string,
     siteDescription: runtimeConfig.public.siteDescription as string,
 
+    themeColor: "#fc9fa8",
+
     headerMenu: [
       { title: "トップ", url: "/" },
       { title: "運営者情報", url: "https://chan-mai.dev/" },

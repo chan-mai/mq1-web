@@ -9,7 +9,10 @@ export default defineNuxtConfig({
   devtools: {
     enabled: true,
   },
-  css: ['~/assets/css/fonts.css'],
+  css: [
+    '~/assets/css/fonts.css',
+    '~/assets/css/view-transitions.css'
+  ],
   app: {
     head: {
       link: [

@@ -2,6 +2,8 @@
 const route = useRoute();
 const { tagId } = route.params as { tagId: string };
 
+const isLoaded: Ref<boolean> = ref(false);
+
 const { data: articlesData } = await useAsyncData('articles', async () => {
     const { data } = await useMicroCMSGetList<Article[]>({
         endpoint: 'articles',
@@ -13,21 +15,33 @@ const { data: articlesData } = await useAsyncData('articles', async () => {
     });
     return data.value?.contents;
 });
+const { data: tagsData } = await useAsyncData('tags', async () => {
+    const { data } = await useMicroCMSGetList<Tag[]>({
+        endpoint: 'tags',
+        queries: {
+            limit: 1,
+            filters: `id[contains]${tagId}`,
+            orders: '-publishedAt',
+        },
+    });
+    return data.value?.contents;
+});
 
 const articles = computed(() => articlesData.value || []);
 const tagName = computed(() => {
-    if (!articlesData.value) return '未分類';
-
-    // すべての記事から探索
-    for (const article of articlesData.value as any[]) {
-        // 各記事のtagsの中からidが一致するタグを探す
-        const foundTag = article.tags.find((tag: { id: string; }) => tag.id === tagId);
-        if (foundTag) {
-            return foundTag.name;
-        }
+    // tagsDataには、tagIdに一致するタグが1つだけ存在することを前提としています。
+    const tag = tagsData.value?.[0];
+    if (tag) {
+        isLoaded.value = true;
+        return (tag as Tag).name;
+    } else {
+        showError({
+            statusCode: 404,
+            message: 'Tag not found',
+            fatal: true,
+        });
     }
 
-    return '未分類';
 });
 
 const config = useWebConfig();
@@ -37,17 +51,17 @@ const ogImageUrl = useOgGenerator(`#${tagName}`);
 const pageUrl = `${config.value.siteUrl}/articles`;
 
 useHead({
-  title: pageTitle,
-  meta: [
-    { property: 'og:title', content: pageTitle },
-    { property: 'og:description', content: pageDescription },
-    { property: 'og:image', content: ogImageUrl },
-    { property: 'og:type', content: 'website' },
-    { property: 'og:url', content: pageUrl },
-    { property: 'og:site_name', content: config.value.siteName },
-    { name: 'twitter:card', content: 'summary_large_image' },
-    { name: 'description', content: pageDescription },
-  ],
+    title: pageTitle,
+    meta: [
+        { property: 'og:title', content: pageTitle },
+        { property: 'og:description', content: pageDescription },
+        { property: 'og:image', content: ogImageUrl },
+        { property: 'og:type', content: 'website' },
+        { property: 'og:url', content: pageUrl },
+        { property: 'og:site_name', content: config.value.siteName },
+        { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'description', content: pageDescription },
+    ],
 });
 </script>
 <template>

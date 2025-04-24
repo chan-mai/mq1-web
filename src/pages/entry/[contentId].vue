@@ -3,6 +3,7 @@ import * as cheerio from 'cheerio';
 import hljs from 'highlight.js'
 import 'highlight.js/styles/atom-one-light.css';
 
+const isLoaded: Ref<boolean> = ref(false);
 const route = useRoute();
 const { contentId } = route.params as { contentId: string };
 
@@ -18,19 +19,18 @@ const { data: articleData } = await useAsyncData(`article-${contentId}`, async (
         });
 
         const data = response.data.value;
-        if (!data.contents || data.contents.length === 0) {
-            return null;
+        console.log('Fetched article data:', data);
+        if (!data || !data.contents || data.contents.length === 0) {
+            throw showError({
+                statusCode: 404,
+                fatal: true,
+            });
+        } else {
+            isLoaded.value = true;
         }
 
         let article = data.contents[0];
 
-        // タグが存在しない場合は未分類扱い
-        if (!article.tags) {
-            article.tags = {
-                name: '未分類',
-                slug: 'uncategorized',
-            };
-        }
 
         // コードハイライト
         if (article && article.content) {
@@ -116,7 +116,7 @@ const calculateReadingTime = (htmlContent: string): {charCount: number, minutes:
 };
 
 const readingTime = computed(() => {
-    if (article.value) {
+    if ( isLoaded.value && article.value ) {
         const { charCount, minutes } = calculateReadingTime(article.value.content);
         return {
             charCount,
@@ -155,7 +155,7 @@ watchEffect(() => {
     const metaTags = [
       { property: 'og:title', content: pageTitle },
       { property: 'og:description', content: pageDescription },
-      { property: 'og:image', content: article.value.eyecatch?.url || ogImageUrl }, // Prefer eyecatch if available
+      { property: 'og:image', content: (typeof article.value.eyecatch !== 'undefined' && article.value.eyecatch?.url ) ? article.value.eyecatch?.url : ogImageUrl }, // Prefer eyecatch if available
       { property: 'og:type', content: 'article' },
       { property: 'og:url', content: pageUrl },
       { property: 'og:site_name', content: config.value.siteName },
@@ -210,9 +210,10 @@ watchEffect(() => {
 </script>
 <template>
     <main
+        v-if="isLoaded"
         class="max-w-none text-[0.925rem] leading-loose tracking-wide text-inherit [&>div>*:first-child]:mt-0 max-w-7xl gap-16 md:gap-20">
 
-        <MqHero :url="article.eyecatch?.url" :title="article.title" text-hidden article-page :style="`view-transition-name: article-${contentId};`"/>
+        <MqHero :url="article.eyecatch ? article.eyecatch.url : ''" :title="article.title" text-hidden article-page :style="`view-transition-name: article-${contentId};`"/>
 
         <article class="mt-16 mx-auto flex w-full max-w-6xl flex-col px-2 md:px-6 mb-16">
             <ArticlePageHead :title="article?.title" :published="article?.publishedAt ?? article?.createdAt ?? ''"
@@ -226,7 +227,7 @@ watchEffect(() => {
         </article>
     </main>
 
-    <ArticlePageFooter :current-article="article" />
+    <ArticlePageFooter v-if="isLoaded" :current-article="article" />
 </template>
 <style lang="css">
 .micro-cms {

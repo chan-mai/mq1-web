@@ -11,7 +11,7 @@ const props = defineProps({
 });
 const ogUrl = computed(() => {
     if ( !props.url || typeof props.url !== 'string' || props.url.length === 0 ) {
-        return useOgGenerator(props.title);
+        return useOgGenerator(props.title!);
     } else {
         return props.url;
     }

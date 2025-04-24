@@ -72,15 +72,26 @@ useHead({
         <!-- 直近記事 -->
         <section class="mx-auto flex w-full max-w-6xl flex-col gap-10 px-2 md:px-6">
             <div class="flex items-center justify-between">
-                <h2 class="font-accent text-3xl font-bold text-slate-800 md:text-4xl">
-                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-indigo-400">
-                        #{{ tagName }}
-                    </span>
-                    の記事一覧
-                </h2>
+                <div>
+                    <Button class="inline-flex items-center gap-x-1 text-sm text-gray-800 hover:text-primary mb-3"
+                        @click="$router.back()">
+                        <svg class="flex-shrink-0 w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m15 18-6-6 6-6" />
+                        </svg>
+                        前のページへ戻る
+                    </Button>
+                    <h2 class="font-accent text-3xl font-bold text-slate-800 md:text-4xl">
+                        <span class="bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-indigo-400">
+                            #{{ tagName }}
+                        </span>
+                        の記事一覧
+                    </h2>
+                </div>
             </div>
             <div class="flex flex-col gap-8">
-                <Articles v-if="articles.length>0" :articles />
+                <Articles v-if="articles.length > 0" :articles />
                 <div v-else class="flex flex-col items-center justify-center gap-4">
                     <p class="text-lg font-bold text-accent">記事が見つかりませんでした。</p>
                     <p class="text-sm text-slate-500">他のタグを試してみてください。</p>

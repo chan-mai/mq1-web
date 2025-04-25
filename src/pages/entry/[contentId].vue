@@ -217,7 +217,7 @@ watchEffect(() => {
 
         <article class="mt-16 mx-auto flex w-full max-w-6xl flex-col px-2 md:px-6 mb-16">
             <ArticlePageHead :title="article?.title" :published="article?.publishedAt ?? article?.createdAt ?? ''"
-                :updated="isUpdate && article?.updatedAt ? article.updatedAt : ''" :tags="article?.tags" :readingTime/>
+                :updated="isUpdate && article?.updatedAt ? article.updatedAt : ''" :tags="article?.tags" :readingTime :style="`view-transition-name: article-title-${article?.id};`"/>
             
             <MqCollapsibleToc :items="tableOfContents" :title="`${article.title}の目次`" class="mt-5"/>
             

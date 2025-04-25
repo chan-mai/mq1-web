@@ -68,7 +68,7 @@ function navigateToTag(tag: any) {
                                     <!-- テキストコンテンツ -->
                                     <div class="md:w-2/3 w-full flex flex-col justify-between h-full">
                                         <div>
-                                            <h3 class="text-lg font-medium text-gray-800 mb-2">{{ article.title }}</h3>
+                                            <h3 class="text-lg font-medium text-gray-800 mb-2" :style="`view-transition-name: article-title-${article.id};`">{{ article.title }}</h3>
                                             <p class="text-gray-600 text-sm mb-2">{{ article.summary }}</p>
 
                                             <div class="flex flex-wrap gap-2 mt-4">

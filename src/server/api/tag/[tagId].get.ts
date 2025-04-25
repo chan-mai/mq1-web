@@ -20,6 +20,7 @@ export default defineEventHandler(async (event) => {
     queries: queries,
   });
   if (res.contents.length === 0) {
+    setResponseStatus(event, 404);
     return {
       statusCode: 404,
       body: "Not Found",

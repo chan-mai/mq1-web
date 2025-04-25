@@ -2,36 +2,36 @@
 
 type PageHeaderProps = {
     title?: string
-    published?: Date | string
-    updated?: Date | string
+    published?: string | null
+    updated?: string | null
     author?: {
         name: string
         icon: string
-    },
+    } | null,
     tags?: Tag[],
     readingTime?: { charCount: number, minutes: number }
 }
 
 const props = withDefaults(defineProps<PageHeaderProps>(), {
     title: '',
-    published: undefined,
-    updated: undefined,
-    author: () => ({ name: '', icon: '' }),
+    published: null,
+    updated: null,
+    author: null,
     tags: () => [],
 })
 
-const publishedDate = computed(() => new Date(props.published!).toLocaleString('ja-JP', {
+const publishedDate = computed(() => props.published ? new Date(props.published!).toLocaleString('ja-JP', {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
     timeZone: 'Asia/Tokyo',
-}));
-const updatedDate = computed(() => new Date(props.updated!).toLocaleString('ja-JP', {
+}) : null);
+const updatedDate = computed(() => (props.updated && props.updated !== props.published) ? new Date(props.updated!).toLocaleString('ja-JP', {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
     timeZone: 'Asia/Tokyo',
-}));
+}) : null);
 </script>
 
 <template>
@@ -62,7 +62,7 @@ const updatedDate = computed(() => new Date(props.updated!).toLocaleString('ja-J
                         <span class="text-lg">{{ publishedDate }}</span>
                     </dd>
                 </div>
-                <div v-if="updated" class="flex flex-col gap-1 rounded-lg bg-white px-4 py-2.5">
+                <div v-if="updatedDate" class="flex flex-col gap-1 rounded-lg bg-white px-4 py-2.5">
                     <dt class="text-accent font-bold">更新した日</dt>
                     <dd class="flex items-center gap-1 font-bold">
                         <Icon name="fluent:arrow-clockwise-24-filled" class="mt-0.5 size-5" />
@@ -70,7 +70,7 @@ const updatedDate = computed(() => new Date(props.updated!).toLocaleString('ja-J
                         <span class="text-lg">{{ updatedDate }}</span>
                     </dd>
                 </div>
-                <div v-if="author.name" class="flex flex-col gap-1 rounded-lg bg-white px-4 py-2.5">
+                <div v-if="author" class="flex flex-col gap-1 rounded-lg bg-white px-4 py-2.5">
                     <dt class="text-accent font-bold">書いたひと</dt>
                     <dd class="flex items-center gap-1 font-bold">
                         <div class="size-6 overflow-hidden rounded-full">

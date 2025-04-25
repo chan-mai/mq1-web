@@ -61,11 +61,11 @@ const { data: articleData } = await useAsyncData(`article-${contentId}`, async (
         // コードハイライトとリンクアイコンの追加
         if (article && article.content) {
             const $ = cheerio.load(article.content);
-            
+
             // コードハイライト
             $('pre code').each((_, elem) => {
                 const className = $(elem).attr('class');
-                
+
                 // 言語部分を正確に抽出するように改善
                 let language = null;
                 if (className) {
@@ -87,7 +87,7 @@ const { data: articleData } = await useAsyncData(`article-${contentId}`, async (
                 $(elem).html(result.value);
                 $(elem).addClass('hljs');
             });
-            
+
             // リンクにアイコンを追加
             $('a').each((_, elem) => {
                 const $link = $(elem);
@@ -97,15 +97,68 @@ const { data: articleData } = await useAsyncData(`article-${contentId}`, async (
                     $link.append('<span class="link-icon">&#128279;</span>');
                 }
             });
-            
+
             article = {
                 ...article,
                 content: $.html()
             };
         }
 
+
+        // --- OGP Setup ---
+        const config = useWebConfig();
+
+        if (article.value) {
+            const pageTitle = `${article.value.title} - ${config.value.siteName}`;
+            const pageDescription = article.value.summary || config.value.siteDescription;
+            const ogImageUrl = useOgGenerator(article.value.title);
+            const pageUrl = `${config.value.siteUrl}/entry/${contentId}`;
+            const publishedTime = article.value.publishedAt || article.value.createdAt;
+            const modifiedTime = article.value.updatedAt;
+
+            const metaTags = [
+                { property: 'og:title', content: pageTitle },
+                { property: 'og:description', content: pageDescription },
+                { property: 'og:image', content: (typeof article.value.eyecatch !== 'undefined' && article.value.eyecatch?.url) ? article.value.eyecatch?.url : ogImageUrl }, // Prefer eyecatch if available
+                { property: 'og:type', content: 'article' },
+                { property: 'og:url', content: pageUrl },
+                { property: 'og:site_name', content: config.value.siteName },
+                { name: 'twitter:card', content: 'summary_large_image' },
+                { name: 'description', content: pageDescription },
+            ];
+
+            if (publishedTime) {
+                metaTags.push({ property: 'article:published_time', content: new Date(publishedTime).toISOString() });
+            }
+            if (modifiedTime) {
+                metaTags.push({ property: 'article:modified_time', content: new Date(modifiedTime).toISOString() });
+            }
+            if (article.value.tags && Array.isArray(article.value.tags)) {
+                article.value.tags.forEach((tag: Tag) => {
+                    if (tag.name) {
+                        metaTags.push({ property: 'article:tag', content: tag.name });
+                    }
+                });
+            } else if (article.value.tags && typeof article.value.tags === 'object' && 'name' in article.value.tags) { // Handle single tag object case more safely
+                metaTags.push({ property: 'article:tag', content: article.value.tags.name });
+            }
+
+
+            useHead({
+                title: pageTitle,
+                meta: metaTags,
+            });
+        }
+
         return article;
-    } catch (error) {
+    } catch (error: any) {
+        // 404
+        if (error.statusCode === 404) {
+            return showError({
+                statusCode: 404,
+                fatal: true,
+            });
+        }
         console.error('Error fetching article:', error);
         return null;
     }
@@ -114,55 +167,55 @@ const { data: articleData } = await useAsyncData(`article-${contentId}`, async (
 
 // 目次を生成する関数
 const generateTableOfContents = (content: string) => {
-  const $ = cheerio.load(content);
-  const headings = $('h1, h2, h3, h4').toArray();
-  const toc: { id: string; text: string; level: number }[] = [];
-  
-  // 各見出しに一意のIDを付与し、目次データを構築
-  headings.forEach((heading, index) => {
-    const $heading = $(heading);
-    const text = $heading.text().trim();
-    const level = parseInt(heading.tagName.substring(1)); // h1 -> 1, h2 -> 2, ...
-    
-    // IDを設定（なければ生成）
-    let id = $heading.attr('id');
-    if (!id) {
-      id = `heading-${index}`;
-      $heading.attr('id', id);
+    const $ = cheerio.load(content);
+    const headings = $('h1, h2, h3, h4').toArray();
+    const toc: { id: string; text: string; level: number }[] = [];
+
+    // 各見出しに一意のIDを付与し、目次データを構築
+    headings.forEach((heading, index) => {
+        const $heading = $(heading);
+        const text = $heading.text().trim();
+        const level = parseInt(heading.tagName.substring(1)); // h1 -> 1, h2 -> 2, ...
+
+        // IDを設定（なければ生成）
+        let id = $heading.attr('id');
+        if (!id) {
+            id = `heading-${index}`;
+            $heading.attr('id', id);
+        }
+
+        toc.push({ id, text, level });
+    });
+
+    // 記事のコンテンツをIDが付与された状態で更新
+    if (articleData.value) {
+        articleData.value = {
+            ...articleData.value,
+            content: $.html()
+        };
     }
-    
-    toc.push({ id, text, level });
-  });
-  
-  // 記事のコンテンツをIDが付与された状態で更新
-  if (articleData.value) {
-    articleData.value = {
-      ...articleData.value,
-      content: $.html()
-    };
-  }
-  
-  return toc;
+
+    return toc;
 };
 
 
-const calculateReadingTime = (htmlContent: string): {charCount: number, minutes: number} => {
-  if (!htmlContent) return { charCount: 0, minutes: 0 };
-  
-  // テキストを抽出
-  const $ = cheerio.load(htmlContent);
-  const textContent: string = $.text().trim();
-  
-  const charCount: number = textContent.length;
-  
-  // 読了時間を計算 600文字/分
-  const minutes: number = Math.ceil(charCount / 600);
-  
-  return { charCount: charCount, minutes: minutes, };
+const calculateReadingTime = (htmlContent: string): { charCount: number, minutes: number } => {
+    if (!htmlContent) return { charCount: 0, minutes: 0 };
+
+    // テキストを抽出
+    const $ = cheerio.load(htmlContent);
+    const textContent: string = $.text().trim();
+
+    const charCount: number = textContent.length;
+
+    // 読了時間を計算 600文字/分
+    const minutes: number = Math.ceil(charCount / 600);
+
+    return { charCount: charCount, minutes: minutes, };
 };
 
 const readingTime = computed(() => {
-    if ( isLoaded.value && article.value ) {
+    if (isLoaded.value && article.value) {
         const { charCount, minutes } = calculateReadingTime(article.value.content);
         return {
             charCount,
@@ -185,88 +238,22 @@ const isUpdate = computed(() => {
     return article.value && (article.value.createdAt || article.value.publishedAt) !== article.value.updatedAt;
 });
 
-// --- OGP Setup ---
-const config = useWebConfig();
-
-
-watchEffect(() => {
-  if (article.value) {
-    const pageTitle = `${article.value.title} - ${config.value.siteName}`;
-    const pageDescription = article.value.summary || config.value.siteDescription;
-    const ogImageUrl = useOgGenerator(article.value.title);
-    const pageUrl = `${config.value.siteUrl}/entry/${contentId}`;
-    const publishedTime = article.value.publishedAt || article.value.createdAt;
-    const modifiedTime = article.value.updatedAt;
-
-    const metaTags = [
-      { property: 'og:title', content: pageTitle },
-      { property: 'og:description', content: pageDescription },
-      { property: 'og:image', content: (typeof article.value.eyecatch !== 'undefined' && article.value.eyecatch?.url ) ? article.value.eyecatch?.url : ogImageUrl }, // Prefer eyecatch if available
-      { property: 'og:type', content: 'article' },
-      { property: 'og:url', content: pageUrl },
-      { property: 'og:site_name', content: config.value.siteName },
-      { name: 'twitter:card', content: 'summary_large_image' },
-      { name: 'description', content: pageDescription },
-    ];
-
-    if (publishedTime) {
-        metaTags.push({ property: 'article:published_time', content: new Date(publishedTime).toISOString() });
-    }
-    if (modifiedTime) {
-        metaTags.push({ property: 'article:modified_time', content: new Date(modifiedTime).toISOString() });
-    }
-    if (article.value.tags && Array.isArray(article.value.tags)) {
-        article.value.tags.forEach((tag: Tag) => { 
-            if (tag.name) { 
-              metaTags.push({ property: 'article:tag', content: tag.name });
-            }
-        });
-    } else if (article.value.tags && typeof article.value.tags === 'object' && 'name' in article.value.tags) { // Handle single tag object case more safely
-        metaTags.push({ property: 'article:tag', content: article.value.tags.name });
-    }
-
-
-    useHead({
-      title: pageTitle,
-      meta: metaTags,
-    });
-  } else {
-    // Fallback OGP for error or not found cases
-    const pageTitle = `記事が見つかりません - ${config.value.siteName}`;
-    const pageDescription = config.value.siteDescription;
-    const ogImageUrl = useOgGenerator(config.value.siteName);
-    const pageUrl = `${config.value.siteUrl}/entry/${contentId}`;
-
-     useHead({
-      title: pageTitle,
-      meta: [
-        { property: 'og:title', content: pageTitle },
-        { property: 'og:description', content: pageDescription },
-        { property: 'og:image', content: ogImageUrl },
-        { property: 'og:type', content: 'website' },
-        { property: 'og:url', content: pageUrl },
-        { property: 'og:site_name', content: config.value.siteName },
-        { name: 'twitter:card', content: 'summary_large_image' },
-        { name: 'description', content: pageDescription },
-      ],
-    });
-  }
-});
 
 </script>
 <template>
-    <main
-        v-if="isLoaded"
+    <main v-if="isLoaded"
         class="max-w-none text-[0.925rem] leading-loose tracking-wide text-inherit [&>div>*:first-child]:mt-0 max-w-7xl gap-16 md:gap-20">
 
-        <MqHero :url="article.eyecatch ? article.eyecatch.url : ''" :title="article.title" text-hidden article-page :style="`view-transition-name: article-${contentId};`"/>
+        <MqHero :url="article.eyecatch ? article.eyecatch.url : ''" :title="article.title" text-hidden article-page
+            :style="`view-transition-name: article-${contentId};`" />
 
         <article class="mt-16 mx-auto flex w-full max-w-6xl flex-col px-2 md:px-6 mb-16">
             <ArticlePageHead :title="article?.title" :published="article?.publishedAt ?? article?.createdAt ?? ''"
-                :updated="isUpdate && article?.updatedAt ? article.updatedAt : ''" :tags="article?.tags" :readingTime :style="`view-transition-name: article-title-${article?.id};`"/>
-            
-            <MqCollapsibleToc :items="tableOfContents" :title="`${article.title}の目次`" class="mt-5"/>
-            
+                :updated="isUpdate && article?.updatedAt ? article.updatedAt : ''" :tags="article?.tags" :readingTime
+                :style="`view-transition-name: article-title-${article?.id};`" />
+
+            <MqCollapsibleToc :items="tableOfContents" :title="`${article.title}の目次`" class="mt-5" />
+
             <div class="content prose">
                 <div v-if="article?.content" v-html="article?.content" class="micro-cms mt-6 md:mt-10"></div>
             </div>

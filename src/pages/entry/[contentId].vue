@@ -32,32 +32,6 @@ const { data: articleData } = await useAsyncData(`article-${contentId}`, async (
         let article = data.contents[0];
 
 
-        // コードハイライト
-        if (article && article.content) {
-            const $ = cheerio.load(article.content);
-            $('pre code').each((_, elem) => {
-                const className = $(elem).attr('class');
-                const language = className?.replace('language-', '');
-
-                let result;
-                if (language) {
-                    try {
-                        result = hljs.highlight($(elem).text(), { language });
-                    } catch (error) {
-                        result = hljs.highlightAuto($(elem).text());
-                    }
-                } else {
-                    result = hljs.highlightAuto($(elem).text());
-                }
-                $(elem).html(result.value);
-                $(elem).addClass('hljs');
-            });
-            article = {
-                ...article,
-                content: $.html()
-            };
-        }
-
         // コードハイライトとリンクアイコンの追加
         if (article && article.content) {
             const $ = cheerio.load(article.content);

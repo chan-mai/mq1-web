@@ -62,7 +62,7 @@ const articleHtml = computed(() => {
     <div v-html="articleHtml" />
 </template>
 
-<style lang="css" module>
+<style lang="css">
 .micro-cms {
     overflow-x: auto;
 }

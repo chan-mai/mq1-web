@@ -58,6 +58,45 @@ const { data: articleData } = await useAsyncData(`article-${contentId}`, async (
             };
         }
 
+        // コードハイライトとリンクアイコンの追加
+        if (article && article.content) {
+            const $ = cheerio.load(article.content);
+            
+            // コードハイライト
+            $('pre code').each((_, elem) => {
+                const className = $(elem).attr('class');
+                const language = className?.replace('language-', '');
+
+                let result;
+                if (language) {
+                    try {
+                        result = hljs.highlight($(elem).text(), { language });
+                    } catch (error) {
+                        result = hljs.highlightAuto($(elem).text());
+                    }
+                } else {
+                    result = hljs.highlightAuto($(elem).text());
+                }
+                $(elem).html(result.value);
+                $(elem).addClass('hljs');
+            });
+            
+            // リンクにアイコンを追加
+            $('a').each((_, elem) => {
+                const $link = $(elem);
+                // リンクが既にアイコンを持っていないか、imgタグを含んでいない場合のみ追加
+                if (!$link.find('.link-icon').length && !$link.find('img').length) {
+                    $link.addClass('link-with-icon');
+                    $link.append('<span class="link-icon">&#128279;</span>');
+                }
+            });
+            
+            article = {
+                ...article,
+                content: $.html()
+            };
+        }
+
         return article;
     } catch (error) {
         console.error('Error fetching article:', error);
@@ -278,7 +317,22 @@ watchEffect(() => {
 }
 
 .micro-cms a {
-    @apply text-accent no-underline;
+    @apply text-accent no-underline relative;
+}
+
+.micro-cms a .link-icon {
+    @apply ml-0.5 inline-block text-xs relative;
+    vertical-align: baseline;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.micro-cms a[href^="http"] .link-icon {
+    @apply inline-block;
+}
+
+.micro-cms a:hover .link-icon {
+    opacity: 1;
 }
 
 .micro-cms a:hover {

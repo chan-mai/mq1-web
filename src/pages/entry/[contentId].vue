@@ -104,22 +104,21 @@ const { data: articleData } = await useAsyncData(`article-${contentId}`, async (
             };
         }
 
-
         // --- OGP Setup ---
         const config = useWebConfig();
 
-        if (article.value) {
-            const pageTitle = `${article.value.title} - ${config.value.siteName}`;
-            const pageDescription = article.value.summary || config.value.siteDescription;
-            const ogImageUrl = useOgGenerator(article.value.title);
+        if (article.content) {
+            const pageTitle = `${article.title} - ${config.value.siteName}`;
+            const pageDescription = article.summary || config.value.siteDescription;
+            const ogImageUrl = useOgGenerator(article.title);
             const pageUrl = `${config.value.siteUrl}/entry/${contentId}`;
-            const publishedTime = article.value.publishedAt || article.value.createdAt;
-            const modifiedTime = article.value.updatedAt;
+            const publishedTime = article.publishedAt || article.createdAt;
+            const modifiedTime = article.updatedAt;
 
             const metaTags = [
                 { property: 'og:title', content: pageTitle },
                 { property: 'og:description', content: pageDescription },
-                { property: 'og:image', content: (typeof article.value.eyecatch !== 'undefined' && article.value.eyecatch?.url) ? article.value.eyecatch?.url : ogImageUrl }, // Prefer eyecatch if available
+                { property: 'og:image', content: article.eyecatch?.url || ogImageUrl },
                 { property: 'og:type', content: 'article' },
                 { property: 'og:url', content: pageUrl },
                 { property: 'og:site_name', content: config.value.siteName },
@@ -133,14 +132,14 @@ const { data: articleData } = await useAsyncData(`article-${contentId}`, async (
             if (modifiedTime) {
                 metaTags.push({ property: 'article:modified_time', content: new Date(modifiedTime).toISOString() });
             }
-            if (article.value.tags && Array.isArray(article.value.tags)) {
-                article.value.tags.forEach((tag: Tag) => {
+            if (article.tags && Array.isArray(article.tags)) {
+                article.tags.forEach((tag: Tag) => {
                     if (tag.name) {
                         metaTags.push({ property: 'article:tag', content: tag.name });
                     }
                 });
-            } else if (article.value.tags && typeof article.value.tags === 'object' && 'name' in article.value.tags) { // Handle single tag object case more safely
-                metaTags.push({ property: 'article:tag', content: article.value.tags.name });
+            } else if (article.tags && typeof article.tags === 'object' && 'name' in article.tags) { // Handle single tag object case more safely
+                metaTags.push({ property: 'article:tag', content: article.tags.name });
             }
 
 
@@ -149,6 +148,7 @@ const { data: articleData } = await useAsyncData(`article-${contentId}`, async (
                 meta: metaTags,
             });
         }
+
 
         return article;
     } catch (error: any) {

@@ -31,13 +31,6 @@ export default defineNuxtConfig({
     "@nuxtjs/tailwindcss",
     "@vueuse/nuxt",
     "@nuxt/icon",
-    [
-      "nuxt-microcms-module",
-      {
-        serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN,
-        apiKey: process.env.MICROCMS_API_KEY,
-      },
-    ],
   ],
   tailwindcss: {
     config: {

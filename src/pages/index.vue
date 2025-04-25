@@ -1,27 +1,34 @@
 <script setup lang="ts">
-const { data: tagsData } = await useAsyncData('tags', async () => {
-    const { data } = await useMicroCMSGetList<Tag[]>({
-        endpoint: 'tags',
-        queries: {
-            orders: '-publishedAt',
-        },
-    });
-    return data.value?.contents;
-});
+const tags: Ref<Tag[]> = ref([]);
+const articles: Ref<Article[]> = ref([]);
 
-const { data: articlesData } = await useAsyncData('articles', async () => {
-    const { data } = await useMicroCMSGetList<Article[]>({
-        endpoint: 'articles',
-        queries: {
-            limit: 5,
-            orders: '-publishedAt',
-        },
-    });
-    return data.value?.contents;
-});
 
-const tags = computed(() => tagsData.value || []);
-const articles = computed(() => articlesData.value || []);
+// すべてのタグを取得
+try {
+    const data = await fetch(`/api/tag/all`, { method: 'GET' }
+    ).then((res) => res.json()).catch((err) => {
+        console.error('Error fetching tag:', err);
+    });
+
+    if ( data.statusCode === 200 ) {
+        tags.value = data.body;
+    }
+} catch (error) {
+    console.error('Error fetching tag:', error);
+}
+// 直近5件の記事を取得
+try {
+    const data = await fetch(`/api/articles?limit=5`, { method: 'GET' }
+    ).then((res) => res.json()).catch((err) => {
+        console.error('Error fetching articles:', err);
+    });
+
+    if ( data.statusCode === 200 ) {
+        articles.value = data.body;
+    }
+} catch (error) {
+    console.error('Error fetching articles:', error);
+}
 
 const config = useWebConfig();
 const pageTitle = config.value.siteName;

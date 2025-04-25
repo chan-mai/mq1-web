@@ -6,40 +6,49 @@ const props = defineProps({
     },
 });
 
-const { data: prevArticleData } = await useAsyncData(`prev-article-${props.currentArticle.id}`, async () => {
-    const response = await useMicroCMSGetList<Article>({
-        endpoint: 'articles',
-        queries: {
-            limit: 1,
-            orders: '-publishedAt',
-            filters: `publishedAt[less_than]${props.currentArticle?.publishedAt}`,
-        },
-    });
-    return response.data.value?.contents[0];
-});
-const { data: nextArticleData } = await useAsyncData(`next-article-${props.currentArticle.id}`, async () => {
-    const response = await useMicroCMSGetList<Article>({
-        endpoint: 'articles',
-        queries: {
-            limit: 1,
-            orders: 'publishedAt',
-            filters: `publishedAt[greater_than]${props.currentArticle?.publishedAt}`,
-        },
-    });
-    return response.data.value?.contents[0];
-});
+const isLoaded: Ref<boolean> = ref(false);
 
+const prevArticle: Ref<Article | null> = ref(null);
+const nextArticle: Ref<Article | null> = ref(null);
 
-const prevArticle = computed(() => prevArticleData.value);
-const nextArticle = computed(() => nextArticleData.value);
+// ひとつ前の記事を取得
+try {
+    const data = await fetch(`/api/article/${props.currentArticle.id}?prev=true`, { method: 'GET' }
+    ).then((res) => res.json()).catch((err) => {
+        console.error('Error fetching article:', err);
+    });
+
+    if (data.statusCode === 200) {
+        prevArticle.value = data.body;
+    }
+} catch (error) {
+    console.error('Error fetching article:', error);
+}
+
+// 次の記事を取得
+try {
+    const data = await fetch(`/api/article/${props.currentArticle.id}?next=true`, { method: 'GET' }
+    ).then((res) => res.json()).catch((err) => {
+        console.error('Error fetching article:', err);
+    });
+
+    if (data.statusCode === 200) {
+        nextArticle.value = data.body;
+    }
+} catch (error) {
+    console.error('Error fetching article:', error);
+}
+
+isLoaded.value = true;
 </script>
 <template>
     <!-- 前後の記事ナビゲーション -->
-    <div class="max-w-6xl mx-auto px-4 mb-16 border-t border-gray-200 pt-8">
+    <div v-if="isLoaded" class="max-w-6xl mx-auto px-4 mb-16 border-t border-gray-200 pt-8">
         <div class="flex flex-col md:flex-row justify-between gap-6">
             <!-- 前の記事へのリンク -->
             <NuxtLink v-if="prevArticle" :to="`/entry/${prevArticle.id}`" class="slide-hover flex-1">
-                <div class="group p-4 border border-gray-200 rounded-lg hover:border-primary transition-all duration-300 h-full">
+                <div
+                    class="group p-4 border border-gray-200 rounded-lg hover:border-primary transition-all duration-300 h-full">
                     <div class="flex items-center text-gray-500 mb-2">
                         <Icon name="material-symbols:arrow-back" class="mr-1 w-4 h-4 group-hover:text-primary" />
                         <span class="text-sm group-hover:text-primary">前の記事</span>
@@ -47,7 +56,8 @@ const nextArticle = computed(() => nextArticleData.value);
                     <h4 class="text-gray-800 font-medium line-clamp-">{{ prevArticle.title }}</h4>
                     <div class="mt-2 flex items-center">
                         <div class="w-64 aspect-video max-h-16 mr-3 overflow-hidden rounded">
-                            <MqOgImage :url="prevArticle.eyecatch?.url" :title="prevArticle.title" class="w-full h-full object-cover"/>
+                            <MqOgImage :url="prevArticle.eyecatch?.url" :title="prevArticle.title"
+                                class="w-full h-full object-cover" />
                         </div>
                         <p class="text-sm text-gray-600 line-clamp-2">{{ prevArticle.summary || '' }}</p>
                     </div>
@@ -65,7 +75,8 @@ const nextArticle = computed(() => nextArticleData.value);
 
             <!-- 次の記事へのリンク -->
             <NuxtLink v-if="nextArticle" :to="`/entry/${nextArticle.id}`" class="slide-hover flex-1">
-                <div class="group p-4 border border-gray-200 rounded-lg hover:border-primary transition-all duration-300 h-full">
+                <div
+                    class="group p-4 border border-gray-200 rounded-lg hover:border-primary transition-all duration-300 h-full">
                     <div class="flex items-center justify-end text-gray-500 mb-2">
                         <span class="text-sm group-hover:text-primary">次の記事</span>
                         <Icon name="material-symbols:arrow-forward" class="ml-1 w-4 h-4 group-hover:text-primary" />
@@ -74,7 +85,8 @@ const nextArticle = computed(() => nextArticleData.value);
                     <div class="mt-2 flex items-center">
                         <p class="text-sm text-gray-600 line-clamp-2">{{ nextArticle.summary || '' }}</p>
                         <div class="w-64 aspect-video max-h-16 ml-3 overflow-hidden rounded">
-                            <MqOgImage :url="nextArticle.eyecatch?.url" :title="nextArticle.title" class="w-full h-full object-cover"/>
+                            <MqOgImage :url="nextArticle.eyecatch?.url" :title="nextArticle.title"
+                                class="w-full h-full object-cover" />
                         </div>
                     </div>
                 </div>

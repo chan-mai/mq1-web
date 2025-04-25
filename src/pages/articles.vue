@@ -1,16 +1,20 @@
 <script setup lang="ts">
-const { data: articlesData } = await useAsyncData('articles', async () => {
-    const { data } = await useMicroCMSGetList<Article[]>({
-        endpoint: 'articles',
-        queries: {
-            limit: 5,
-            orders: '-publishedAt',
-        },
-    });
-    return data.value?.contents;
-});
+const articles: Ref<Article[]> = ref([]);
 
-const articles = computed(() => articlesData.value || []);
+// とりあえず直近100件の記事を取得
+// TODO: ページネーションとかつくる
+try {
+    const data = await fetch(`/api/articles?limit=100`, { method: 'GET' }
+    ).then((res) => res.json()).catch((err) => {
+        console.error('Error fetching articles:', err);
+    });
+
+    if ( data.statusCode === 200 ) {
+        articles.value = data.body;
+    }
+} catch (error) {
+    console.error('Error fetching articles:', error);
+}
 
 const config = useWebConfig();
 const pageTitle = `記事一覧 - ${config.value.siteName}`;

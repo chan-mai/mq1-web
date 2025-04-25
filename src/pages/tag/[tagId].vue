@@ -4,50 +4,51 @@ const { tagId } = route.params as { tagId: string };
 
 const isLoaded: Ref<boolean> = ref(false);
 
-const { data: articlesData } = await useAsyncData('articles', async () => {
-    const { data } = await useMicroCMSGetList<Article[]>({
-        endpoint: 'articles',
-        queries: {
-            limit: 5,
-            filters: `tags[contains]${tagId}`,
-            orders: '-publishedAt',
-        },
-    });
-    return data.value?.contents;
-});
-const { data: tagsData } = await useAsyncData('tags', async () => {
-    const { data } = await useMicroCMSGetList<Tag[]>({
-        endpoint: 'tags',
-        queries: {
-            limit: 1,
-            filters: `id[contains]${tagId}`,
-            orders: '-publishedAt',
-        },
-    });
-    return data.value?.contents;
-});
+const articles: Ref<Article[]|null> = ref(null);
+const tag: Ref<Tag|null> = ref(null);
 
-const articles = computed(() => articlesData.value || []);
-const tagName = computed(() => {
-    // tagsDataには、tagIdに一致するタグが1つだけ存在することを前提としています。
-    const tag = tagsData.value?.[0];
-    if (tag) {
-        isLoaded.value = true;
-        return (tag as Tag).name;
+// とりあえずタグをソースに直近100件の記事を取得
+// TODO: ページネーションとかつくる
+try {
+    const data = await fetch(`/api/articles?limit=100&tag_id=${tagId}`, { method: 'GET' }
+    ).then((res) => res.json()).catch((err) => {
+        console.error('Error fetching articles:', err);
+    });
+
+    if ( data.statusCode === 200 ) {
+        articles.value = data.body;
+    }
+} catch (error) {
+    console.error('Error fetching articles:', error);
+}
+
+// tagIdからtagを取得
+try {
+    const data = await fetch(`/api/tag/${tagId}`, { method: 'GET' }
+    ).then((res) => res.json()).catch((err) => {
+        console.error('Error fetching tag:', err);
+    });
+
+    if ( data.statusCode === 200 ) {
+        tag.value = data.body;
     } else {
+        // タグがなければ
         showError({
             statusCode: 404,
             message: 'Tag not found',
             fatal: true,
         });
     }
+} catch (error) {
+    console.error('Error fetching tag:', error);
+}
 
-});
+isLoaded.value = true;
 
 const config = useWebConfig();
-const pageTitle = `#${tagName.value} - ${config.value.siteName}`;
+const pageTitle = `#${tag.value?.name} - ${config.value.siteName}`;
 const pageDescription = config.value.siteDescription;
-const ogImageUrl = useOgGenerator(`#${tagName.value}`);
+const ogImageUrl = useOgGenerator(`#${tag.value?.name}`);
 const pageUrl = `${config.value.siteUrl}/articles`;
 
 useHead({
@@ -70,7 +71,7 @@ useHead({
         <MqHero />
 
         <!-- 直近記事 -->
-        <section class="mx-auto flex w-full max-w-6xl flex-col gap-10 px-2 md:px-6">
+        <section v-if="isLoaded" class="mx-auto flex w-full max-w-6xl flex-col gap-10 px-2 md:px-6">
             <div class="flex items-center justify-between">
                 <div>
                     <Button class="inline-flex items-center gap-x-1 text-sm text-gray-800 hover:text-primary mb-3"
@@ -84,14 +85,14 @@ useHead({
                     </Button>
                     <h2 class="font-accent text-3xl font-bold text-slate-800 md:text-4xl">
                         <span class="bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-indigo-400">
-                            #{{ tagName }}
+                            #{{ tag?.name }}
                         </span>
                         の記事一覧
                     </h2>
                 </div>
             </div>
             <div class="flex flex-col gap-8">
-                <Articles v-if="articles.length > 0" :articles />
+                <Articles v-if="articles" :articles />
                 <div v-else class="flex flex-col items-center justify-center gap-4">
                     <p class="text-lg font-bold text-accent">記事が見つかりませんでした。</p>
                     <p class="text-sm text-slate-500">他のタグを試してみてください。</p>

@@ -6,145 +6,128 @@ import 'highlight.js/styles/atom-one-light.css';
 const isLoaded: Ref<boolean> = ref(false);
 const route = useRoute();
 const { contentId } = route.params as { contentId: string };
+ 
+let article: Ref<Article | null> = ref(null);
 
-const { data: articleData } = await useAsyncData(`article-${contentId}`, async () => {
-    try {
-        const response = await useMicroCMSGetObject<Article>({
-            endpoint: 'articles',
-            queries: {
-                limit: 1,
-                orders: '-publishedAt',
-                filters: `id[equals]${contentId}`,
-            },
+// /api/get-article/:contentIdから取得
+try {
+    const data = await fetch(`/api/article/${contentId}`, { method: 'GET' }
+    ).then((res) => res.json()).catch((err) => {
+        console.error('Error fetching article:', err);
+    });
+
+    if ( data.statusCode === 200 ) {
+        isLoaded.value = true;
+        article.value = data.body;
+    } else {
+        showError({
+            statusCode: 404,
+            message: 'Article not found',
+            fatal: true,
         });
-
-        const data = response.data.value;
-        console.log('Fetched article data:', data);
-        if (!data || !data.contents || data.contents.length === 0) {
-            throw showError({
-                statusCode: 404,
-                fatal: true,
-            });
-        } else {
-            isLoaded.value = true;
-        }
-
-        let article = data.contents[0];
-
-
-        // コードハイライトとリンクアイコンの追加
-        if (article && article.content) {
-            const $ = cheerio.load(article.content);
-
-            // コードハイライト
-            $('pre code').each((_, elem) => {
-                const className = $(elem).attr('class');
-
-                // 言語部分を正確に抽出するように改善
-                let language = null;
-                if (className) {
-                    const match = className.match(/language-(\w+)/);
-                    language = match ? match[1] : null;
-                }
-
-                let result;
-                if (language) {
-                    try {
-                        result = hljs.highlight($(elem).text(), { language });
-                    } catch (error) {
-                        console.warn(`言語'${language}'のハイライトに失敗しました:`, error);
-                        result = hljs.highlightAuto($(elem).text());
-                    }
-                } else {
-                    result = hljs.highlightAuto($(elem).text());
-                }
-                $(elem).html(result.value);
-                $(elem).addClass('hljs');
-            });
-
-            // リンクにアイコンを追加
-            $('a').each((_, elem) => {
-                const $link = $(elem);
-                // リンクが既にアイコンを持っていないか、imgタグを含んでいない場合のみ追加
-                if (!$link.find('.link-icon').length && !$link.find('img').length) {
-                    $link.addClass('link-with-icon');
-                    $link.append('<span class="link-icon">&#128279;</span>');
-                }
-            });
-
-            article = {
-                ...article,
-                content: $.html()
-            };
-        }
-
-        // --- OGP Setup ---
-        const config = useWebConfig();
-
-        if (article && article.content) {
-            const pageTitle = `${article?.title || ''} - ${config.value.siteName}`;
-            const pageDescription = article?.summary || config.value.siteDescription;
-            const ogImageUrl = useOgGenerator(article?.title || '');
-            const pageUrl = `${config.value.siteUrl}/entry/${contentId}`;
-            const publishedTime = article?.publishedAt || article?.createdAt;
-            const modifiedTime = article?.updatedAt;
-
-            const metaTags = [
-                { property: 'og:title', content: pageTitle },
-                { property: 'og:description', content: pageDescription },
-                { property: 'og:image', content: article?.eyecatch?.url || ogImageUrl },
-                { property: 'og:type', content: 'article' },
-                { property: 'og:url', content: pageUrl },
-                { property: 'og:site_name', content: config.value.siteName },
-                { name: 'twitter:card', content: 'summary_large_image' },
-                { name: 'description', content: pageDescription },
-            ];
-
-            if (publishedTime) {
-                metaTags.push({ property: 'article:published_time', content: new Date(publishedTime).toISOString() });
-            }
-            if (modifiedTime) {
-                metaTags.push({ property: 'article:modified_time', content: new Date(modifiedTime).toISOString() });
-            }
-            if (article.tags && Array.isArray(article.tags)) {
-                article.tags.forEach((tag: Tag) => {
-                    if (tag && typeof tag === 'object' && tag.name) {
-                        metaTags.push({ property: 'article:tag', content: tag.name });
-                    }
-                });
-            } else if (article.tags && typeof article.tags === 'object' && article.tags !== null) {
-                const tagObj = article.tags as { name?: string };
-                if (tagObj.name) {
-                    metaTags.push({ property: 'article:tag', content: tagObj.name });
-                }
-            }
-
-            useHead({
-                title: pageTitle,
-                meta: metaTags,
-            });
-        }
-
-
-        return article;
-    } catch (error: any) {
-        // 404
-        if (error.statusCode === 404) {
-            return showError({
-                statusCode: 404,
-                fatal: true,
-            });
-        }
-        console.error('Error fetching article:', error);
-        return null;
     }
-});
+} catch (error) {
+    console.error('Error fetching article:', error);
+}
+
+// コードハイライトとリンクアイコンの追加
+if (article.value && article.value.content) {
+    const $ = cheerio.load(article.value.content);
+
+    // コードハイライト
+    $('pre code').each((_, elem) => {
+        const className = $(elem).attr('class');
+
+        // 言語部分を正確に抽出するように改善
+        let language = null;
+        if (className) {
+            const match = className.match(/language-(\w+)/);
+            language = match ? match[1] : null;
+        }
+
+        let result;
+        if (language) {
+            try {
+                result = hljs.highlight($(elem).text(), { language });
+            } catch (error) {
+                console.warn(`言語'${language}'のハイライトに失敗しました:`, error);
+                result = hljs.highlightAuto($(elem).text());
+            }
+        } else {
+            result = hljs.highlightAuto($(elem).text());
+        }
+        $(elem).html(result.value);
+        $(elem).addClass('hljs');
+    });
+
+    // リンクにアイコンを追加
+    $('a').each((_, elem) => {
+        const $link = $(elem);
+        // リンクが既にアイコンを持っていないか、imgタグを含んでいない場合のみ追加
+        if (!$link.find('.link-icon').length && !$link.find('img').length) {
+            $link.addClass('link-with-icon');
+            $link.append('<span class="link-icon">&#128279;</span>');
+        }
+    });
+
+    article.value = {
+        ...article.value,
+        content: $.html()
+    };
+}
+
+// --- OGP Setup ---
+const config = useWebConfig();
+
+if (article.value && article.value.content) {
+    const pageTitle = `${article.value?.title || ''} - ${config.value.siteName}`;
+    const pageDescription = article.value?.summary || config.value.siteDescription;
+    const ogImageUrl = useOgGenerator(article.value?.title || '');
+    const pageUrl = `${config.value.siteUrl}/entry/${contentId}`;
+    const publishedTime = article.value?.publishedAt || article.value?.createdAt;
+    const modifiedTime = article.value?.updatedAt;
+
+    const metaTags = [
+        { property: 'og:title', content: pageTitle },
+        { property: 'og:description', content: pageDescription },
+        { property: 'og:image', content: article.value?.eyecatch?.url || ogImageUrl },
+        { property: 'og:type', content: 'article' },
+        { property: 'og:url', content: pageUrl },
+        { property: 'og:site_name', content: config.value.siteName },
+        { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'description', content: pageDescription },
+    ];
+
+    if (publishedTime) {
+        metaTags.push({ property: 'article:published_time', content: new Date(publishedTime).toISOString() });
+    }
+    if (modifiedTime) {
+        metaTags.push({ property: 'article:modified_time', content: new Date(modifiedTime).toISOString() });
+    }
+    if (article.value && article.value.tags && Array.isArray(article.value.tags)) {
+        article.value.tags.forEach((tag: Tag) => {
+            if (tag && typeof tag === 'object' && tag.name) {
+                metaTags.push({ property: 'article:tag', content: tag.name });
+            }
+        });
+    } else if (article.value && article.value.tags && typeof article.value.tags === 'object' && article.value.tags !== null) {
+        const tagObj = article.value.tags as { name?: string };
+        if (tagObj.name) {
+            metaTags.push({ property: 'article:tag', content: tagObj.name });
+        }
+    }
+
+    useHead({
+        title: pageTitle,
+        meta: metaTags,
+    });
+}
 
 
 // 目次を生成する関数
 const generateTableOfContents = (content: string) => {
     if (!content) return [];
-    
+
     const $ = cheerio.load(content);
     const headings = $('h1, h2, h3, h4').toArray();
     const toc: { id: string; text: string; level: number }[] = [];
@@ -152,13 +135,13 @@ const generateTableOfContents = (content: string) => {
     // 各見出しに一意のIDを付与し、目次データを構築
     headings.forEach((heading, index) => {
         if (!heading) return;
-        
+
         const $heading = $(heading);
         const text = $heading.text().trim();
-        
+
         // headingとnodeNameの安全性確認を強化
         if (!heading || !heading.name) return;
-        
+
         const level = parseInt(heading.name.substring(1)); // h1 -> 1, h2 -> 2, ...
 
         // IDを設定（なければ生成）
@@ -172,9 +155,9 @@ const generateTableOfContents = (content: string) => {
     });
 
     // 記事のコンテンツをIDが付与された状態で更新
-    if (articleData.value) {
-        articleData.value = {
-            ...articleData.value,
+    if (article.value) {
+        article.value = {
+            ...article.value,
             content: $.html()
         };
     }
@@ -199,8 +182,8 @@ const calculateReadingTime = (htmlContent: string): { charCount: number, minutes
 };
 
 const readingTime = computed(() => {
-    if (isLoaded.value && article.value) {
-        const { charCount, minutes } = calculateReadingTime(article.value.content);
+    if (isLoaded.value && article.value && article.value.content) {
+        const { charCount, minutes } = calculateReadingTime(article.value?.content!);
         return {
             charCount,
             minutes,
@@ -212,9 +195,8 @@ const readingTime = computed(() => {
     };
 });
 
-const article = computed(() => articleData.value);
 const tableOfContents = computed<{ id: string; text: string; level: number }[]>(() => {
-    return articleData.value ? generateTableOfContents(articleData.value.content) : [];
+    return article.value ? generateTableOfContents(article.value?.content!) : [];
 });
 
 
@@ -233,10 +215,11 @@ const isUpdate = computed(() => {
 
         <article class="mt-16 mx-auto flex w-full max-w-6xl flex-col px-2 md:px-6 mb-16">
             <ArticlePageHead :title="article?.title ?? ''" :published="article?.publishedAt ?? article?.createdAt ?? ''"
-    :updated="isUpdate && article?.updatedAt ? article?.updatedAt : ''" :tags="article?.tags || []" :readingTime
-    :style="`view-transition-name: article-title-${contentId};`" />
+                :updated="isUpdate && article?.updatedAt ? article?.updatedAt : ''" :tags="article?.tags || []"
+                :readingTime :style="`view-transition-name: article-title-${contentId};`" />
 
-            <MqCollapsibleToc :items="tableOfContents" :title="article?.title ? `${article?.title}の目次` : '目次'" class="mt-5" />
+            <MqCollapsibleToc :items="tableOfContents" :title="article?.title ? `${article?.title}の目次` : '目次'"
+                class="mt-5" />
 
             <div class="content prose">
                 <div v-if="article?.content" v-html="article?.content" class="micro-cms mt-6 md:mt-10"></div>
@@ -244,7 +227,7 @@ const isUpdate = computed(() => {
         </article>
     </main>
 
-    <ArticlePageFooter v-if="isLoaded" :current-article="article" />
+    <ArticlePageFooter v-if="isLoaded" :current-article="article!" />
 </template>
 <style lang="css">
 .micro-cms {

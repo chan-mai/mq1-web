@@ -51,7 +51,7 @@ useHead({
         <!-- About Me -->
         <section class="mx-auto flex w-full max-w-6xl flex-col gap-10 px-2 md:px-6">
             <div class="flex items-center justify-between">
-                <h2 class="font-accent text-4xl font-bold text-slate-800 md:text-5xl">
+                <h2 class="text-head font-accent text-4xl font-bold text-slate-800 md:text-6xl">
                     About Me
                 </h2>
                 <MqAppLink to="https://chan-mai.dev/">
@@ -73,7 +73,7 @@ useHead({
         <!-- 直近記事 -->
         <section class="mx-auto flex w-full max-w-6xl flex-col gap-10 px-2 md:px-6">
             <div class="flex items-center justify-between">
-                <h2 class="font-accent text-4xl font-bold text-slate-800 md:text-5xl">
+                <h2 class="text-head font-accent text-4xl font-bold text-slate-800 md:text-6xl">
                     Blogs
                 </h2>
                 <MqAppLink to="/articles/">

@@ -1,5 +1,10 @@
 * {
-    font-family: "Noto Sans JP", sans-serif;
-    font-optical-sizing: auto;
-    font-style: normal;
+  font-family: "Noto Sans JP", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+.text-head {
+  font-family: "Abril Fatface", serif;
+  font-style: normal;
 }

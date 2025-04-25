@@ -23,6 +23,10 @@ export default defineNuxtConfig({
           rel: "stylesheet",
           href: "https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap",
         },
+        {
+          rel: "stylesheet",
+          href: "https://fonts.googleapis.com/css2?family=Crafty+Girls&display=swap",
+        },
       ],
       htmlAttrs: {
         lang: "ja",

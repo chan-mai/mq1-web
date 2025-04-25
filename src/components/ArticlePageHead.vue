@@ -24,18 +24,12 @@ const publishedDate = computed(() => new Date(props.published!).toLocaleString('
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
     timeZone: 'Asia/Tokyo',
 }));
 const updatedDate = computed(() => new Date(props.updated!).toLocaleString('ja-JP', {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
     timeZone: 'Asia/Tokyo',
 }));
 </script>

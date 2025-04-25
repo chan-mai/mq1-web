@@ -65,13 +65,20 @@ const { data: articleData } = await useAsyncData(`article-${contentId}`, async (
             // コードハイライト
             $('pre code').each((_, elem) => {
                 const className = $(elem).attr('class');
-                const language = className?.replace('language-', '');
+                
+                // 言語部分を正確に抽出するように改善
+                let language = null;
+                if (className) {
+                    const match = className.match(/language-(\w+)/);
+                    language = match ? match[1] : null;
+                }
 
                 let result;
                 if (language) {
                     try {
                         result = hljs.highlight($(elem).text(), { language });
                     } catch (error) {
+                        console.warn(`言語'${language}'のハイライトに失敗しました:`, error);
                         result = hljs.highlightAuto($(elem).text());
                     }
                 } else {

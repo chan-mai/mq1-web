@@ -64,9 +64,13 @@ export default defineNuxtConfig({
     },
   },
   routeRules: {
+    '/': { prerender: true },
+    '/entry/*': { prerender: true },
+    '/tag/*': { prerender: true },
     '/feed.xml': {
       headers: { 'content-type': 'application/rss+xml; charset=UTF-8' },
-    }
+      prerender: true,
+    },
   },
   experimental: {
     viewTransition: true,

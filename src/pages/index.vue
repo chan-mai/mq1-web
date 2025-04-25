@@ -2,35 +2,55 @@
 const tags: Ref<Tag[]> = ref([]);
 const articles: Ref<Article[]> = ref([]);
 
+const articlesLoading: Ref<boolean> = ref(true);
+const tagsLoading: Ref<boolean> = ref(true);
 
 // すべてのタグを取得
-try {
-    const { data, status, error } = await useFetch(() => `/api/tag/all`);
+async function fetchTags() {
 
-    if (error.value) {
-        console.error('Error fetching tag:', error.value);
-    }
+    try {
+        const { data, status, error } = await useFetch(() => `/api/tag/all`);
 
-    if (status.value === "success") {
-        tags.value = data.value?.body as unknown[] as Tag[];
+        if (error.value) {
+            console.error('Error fetching tag:', error.value);
+        }
+
+        if (status.value === "success") {
+            tags.value = data.value?.body as unknown[] as Tag[];
+        }
+    } catch (error) {
+        console.error('Error fetching tag:', error);
+    } finally {
+        tagsLoading.value = false;
+
     }
-} catch (error) {
-    console.error('Error fetching tag:', error);
 }
 // 直近5件の記事を取得
-try {
-    const { data, status, error } = await useFetch(() => `/api/articles?limit=5`);
+async function fetchArticles() {
+    try {
+        const { data, status, error } = await useFetch(() => `/api/articles?limit=5`);
 
-    if (error.value) {
-        console.error('Error fetching tag:', error.value);
-    }
+        if (error.value) {
+            console.error('Error fetching tag:', error.value);
+        }
 
-    if (status.value === "success") {
-        articles.value = data.value?.body as unknown[] as Article[];
+        if (status.value === "success") {
+            articles.value = data.value?.body as unknown[] as Article[];
+        }
+    } catch (error) {
+        console.error('Error fetching articles:', error);
+    } finally {
+        articlesLoading.value = false;
     }
-} catch (error) {
-    console.error('Error fetching articles:', error);
 }
+
+// 各読み込み
+Promise.all([
+    fetchTags(),
+    fetchArticles(),
+]).catch(error => {
+    console.error('Error fetching data:', error);
+});
 
 const config = useWebConfig();
 const pageTitle = config.value.siteName;
@@ -93,8 +113,8 @@ useHead({
                 <p class="text-sm leading-relaxed">
                     日常から非日常まで、書きたいことを自由に書いていく雑記帳です。</p>
 
-                <Tags :tags />
-                <Articles limit="5" :articles />
+                <Tags :tags :loading="tagsLoading" />
+                <Articles limit="5" :articles :loading="articlesLoading" transition/>
             </div>
         </section>
     </main>

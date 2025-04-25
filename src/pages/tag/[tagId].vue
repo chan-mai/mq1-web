@@ -2,10 +2,10 @@
 const route = useRoute();
 const { tagId } = route.params as { tagId: string };
 
-const isLoaded: Ref<boolean> = ref(false);
 
 const articles: Ref<Article[] | null> = ref(null);
 const tag: Ref<Tag | null> = ref(null);
+const articlesLoading: Ref<boolean> = ref(true);
 
 // tagIdからtagを取得
 try {
@@ -38,22 +38,26 @@ try {
 
 // とりあえずタグをソースに直近100件の記事を取得
 // TODO: ページネーションとかつくる
-try {
-    const { data, status, error } = await useFetch(() => `/api/articles?limit=100&tag_id=${tagId}`);
+async function fetchArticles() {
+    try {
+        const { data, status, error } = await useFetch(() => `/api/articles?limit=100&tag_id=${tagId}`);
 
-    if (error.value) {
-        console.error('Error fetching article:', error.value);
-    }
+        if (error.value) {
+            console.error('Error fetching article:', error.value);
+        }
 
-    if (status.value === "success") {
-        articles.value = data.value?.body as unknown as Article[];
+        if (status.value === "success") {
+            articles.value = data.value?.body as unknown as Article[];
+        }
+    } catch (error) {
+        console.error('Error fetching articles:', error);
+    } finally {
+        articlesLoading.value = false;
     }
-} catch (error) {
-    console.error('Error fetching articles:', error);
 }
+// 各読み込み
+fetchArticles();
 
-
-isLoaded.value = true;
 
 const config = useWebConfig();
 const pageTitle = `#${tag.value?.name} - ${config.value.siteName}`;
@@ -81,7 +85,7 @@ useHead({
         <MqHero />
 
         <!-- 直近記事 -->
-        <section v-if="isLoaded" class="mx-auto flex w-full max-w-6xl flex-col gap-10 px-2 md:px-6">
+        <section class="mx-auto flex w-full max-w-6xl flex-col gap-10 px-2 md:px-6">
             <div class="flex items-center justify-between">
                 <div>
                     <Button class="inline-flex items-center gap-x-1 text-sm text-gray-800 hover:text-primary mb-3"
@@ -93,7 +97,7 @@ useHead({
                         </svg>
                         前のページへ戻る
                     </Button>
-                    <h2 class="font-accent text-3xl font-bold text-slate-800 md:text-4xl">
+                    <h2 class="font-accent text-3xl font-bold text-slate-800 md:text-4xl" :style="`view-transition-name: tag-${tagId};`">
                         <span class="bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-indigo-400">
                             #{{ tag?.name }}
                         </span>
@@ -102,7 +106,7 @@ useHead({
                 </div>
             </div>
             <div class="flex flex-col gap-8">
-                <Articles v-if="articles" :articles />
+                <Articles v-if="articles" :articles :loading="articlesLoading"/>
                 <div v-else class="flex flex-col items-center justify-center gap-4">
                     <p class="text-lg font-bold text-accent">記事が見つかりませんでした。</p>
                     <p class="text-sm text-slate-500">他のタグを試してみてください。</p>

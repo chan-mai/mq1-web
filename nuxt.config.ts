@@ -1,4 +1,4 @@
-import { createClient } from 'microcms-js-sdk';
+import { createClient } from "microcms-js-sdk";
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -9,32 +9,29 @@ export default defineNuxtConfig({
   devtools: {
     enabled: true,
   },
-  css: [
-    '~/assets/css/fonts.css',
-    '~/assets/css/view-transitions.css'
-  ],
+  css: ["~/assets/css/fonts.css", "~/assets/css/view-transitions.css"],
   app: {
     head: {
       link: [
-        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-        { rel: 'preconnect', href: 'https://fonts.gstatic.com' },
-        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap' },
-        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap' },
+        { rel: "preconnect", href: "https://fonts.googleapis.com" },
+        { rel: "preconnect", href: "https://fonts.gstatic.com" },
+        {
+          rel: "stylesheet",
+          href: "https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap",
+        },
+        {
+          rel: "stylesheet",
+          href: "https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap",
+        },
       ],
       htmlAttrs: {
-        lang: 'ja', 
-        prefix: 'og: https://ogp.me/ns#'
+        lang: "ja",
+        prefix: "og: https://ogp.me/ns#",
       },
     },
   },
-  plugins: [
-    { src: '~/plugins/loading.ts', mode: 'client' },
-  ],
-  modules: [
-    "@nuxtjs/tailwindcss",
-    "@vueuse/nuxt",
-    "@nuxt/icon",
-  ],
+  plugins: [{ src: "~/plugins/loading.ts", mode: "client" }],
+  modules: ["@nuxtjs/tailwindcss", "@vueuse/nuxt", "@nuxt/icon"],
   tailwindcss: {
     config: {
       theme: {
@@ -50,25 +47,25 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      siteName: 'まいの雑記帳',
-      siteDescription: 'ちっちゃなうぇぶさいと',
-      siteUrl: 'https://mq1.dev/',
-      siteOgpUrl: 'https://mq1.dev/ogp.png',
+      siteName: "まいの雑記帳",
+      siteDescription: "ちっちゃなうぇぶさいと",
+      siteUrl: "https://mq1.dev/",
+      siteOgpUrl: "https://mq1.dev/ogp.png",
     },
     serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN,
     apiKey: process.env.MICROCMS_API_KEY,
-},
+  },
   nitro: {
     prerender: {
-      routes: ['/feed.xml'],
+      routes: ["/feed.xml"],
       autoSubfolderIndex: true,
       crawlLinks: true,
       failOnError: false,
     },
   },
   routeRules: {
-    '/feed.xml': {
-      headers: { 'content-type': 'application/rss+xml; charset=UTF-8' },
+    "/feed.xml": {
+      headers: { "content-type": "application/rss+xml; charset=UTF-8" },
     },
   },
   experimental: {

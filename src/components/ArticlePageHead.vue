@@ -51,7 +51,7 @@ const updatedDate = computed(() => new Date(props.updated!).toLocaleString('ja-J
             {{ title }}
         </h1>
         <div class="flex flex-wrap gap-2">
-            <MqTag v-for="tag in tags" :key="tag.id" :tag="tag" />
+            <MqTag v-for="tag in tags" :key="tag.id" :tag="tag" transition />
         </div>
         <slot>
             <dl class="flex flex-row flex-wrap gap-3 text-xs sm:gap-4">

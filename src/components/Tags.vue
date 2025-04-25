@@ -8,6 +8,10 @@ const props = defineProps({
         type: Array as () => Tag[],
         default: () => [],
     },
+    loading: {
+        type: Boolean,
+        default: false
+    }
 });
 const limit = props.limit as unknown as number;
 
@@ -25,9 +29,18 @@ const limitedTags = computed(() => {
                 タグ一覧
             </h3>
 
-            <div class="flex flex-wrap gap-2">
-                <MqTag v-for="tag in limitedTags" :key="tag.id" :tag="tag"/>
-            </div>
+            <template v-if="loading">
+                <div class="flex flex-wrap gap-2">
+                    <div v-for="i in ( limit > 0 ? limit : 3 )" :key="`skeleton-${i}`" class="w-36 h-8 bg-gray-200 rounded animate-pulse"></div>
+                </div>
+            </template>
+            <template v-else>
+                <div class="flex flex-wrap gap-2">
+                    <MqTag v-for="tag in limitedTags" :key="tag.id" :tag="tag" />
+                </div>
+            </template>
+
+
         </div>
     </div>
 </template>

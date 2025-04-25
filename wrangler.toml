@@ -3,7 +3,9 @@ type = "javascript"
 compatibility_date = "2025-04-25"
 account_id = "a8e8211c674c2b00f3a8996b65b56447"
 workers_dev = true
-route = ""
+routes = [
+  {pattern = "mq1.dev", custom_domain = true}
+]
 zone_id = ""
 
 [site]

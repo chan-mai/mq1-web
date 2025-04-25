@@ -47,7 +47,7 @@ const nextArticle = computed(() => nextArticleData.value);
                     <h4 class="text-gray-800 font-medium line-clamp-">{{ prevArticle.title }}</h4>
                     <div class="mt-2 flex items-center">
                         <div class="w-64 aspect-video max-h-16 mr-3 overflow-hidden rounded">
-                            <MqOgImage :url="prevArticle.eyecatch?.url" :title="prevArticle.title" class="w-full h-full object-cover" :style="`view-transition-name: article-${prevArticle.id};`"/>
+                            <MqOgImage :url="prevArticle.eyecatch?.url" :title="prevArticle.title" class="w-full h-full object-cover"/>
                         </div>
                         <p class="text-sm text-gray-600 line-clamp-2">{{ prevArticle.summary || '' }}</p>
                     </div>
@@ -74,7 +74,7 @@ const nextArticle = computed(() => nextArticleData.value);
                     <div class="mt-2 flex items-center">
                         <p class="text-sm text-gray-600 line-clamp-2">{{ nextArticle.summary || '' }}</p>
                         <div class="w-64 aspect-video max-h-16 ml-3 overflow-hidden rounded">
-                            <MqOgImage :url="nextArticle.eyecatch?.url" :title="nextArticle.title" class="w-full h-full object-cover" :style="`view-transition-name: article-${nextArticle.id};`"/>
+                            <MqOgImage :url="nextArticle.eyecatch?.url" :title="nextArticle.title" class="w-full h-full object-cover"/>
                         </div>
                     </div>
                 </div>

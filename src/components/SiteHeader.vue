@@ -33,15 +33,13 @@ whenever(
     <NuxtLink
       :title="`トップページ`"
       to="/"
-      class="flex w-32 items-center justify-center transition-opacity hover:opacity-70"
+      class="flex w-56 items-center justify-center transition-opacity hover:opacity-70"
     >
-      <!--img
+      <img
         :alt="`ロゴ`"
-        src="#"
-        width="162"
-        height="40"
+        src="@/assets/images/web-logo.png""
         class="block"
-      /-->
+      />
     </NuxtLink>
 
     <button

@@ -13,13 +13,20 @@ const nextArticle: Ref<Article | null> = ref(null);
 
 // ひとつ前の記事を取得
 try {
-    const data = await fetch(`/api/article/${props.currentArticle.id}?prev=true`, { method: 'GET' }
-    ).then((res) => res.json()).catch((err) => {
-        console.error('Error fetching article:', err);
-    });
+    const { data, status, error } = await useFetch(() => `/api/article/${props.currentArticle.id}?prev=true`);
 
-    if (data.statusCode === 200) {
-        prevArticle.value = data.body;
+    if (error.value && error.value.statusCode !== 404) {
+        // 前後の投稿は存在しない状態が起こりうるので404をハンドリングしない
+        console.error('Error fetching article:', error.value);
+        showError({
+            statusCode: 500,
+            message: 'Internal Server Error',
+            fatal: true,
+        });
+    }
+
+    if (status.value === "success") {
+        prevArticle.value = data.value?.body as unknown as Article;
     }
 } catch (error) {
     console.error('Error fetching article:', error);
@@ -27,13 +34,20 @@ try {
 
 // 次の記事を取得
 try {
-    const data = await fetch(`/api/article/${props.currentArticle.id}?next=true`, { method: 'GET' }
-    ).then((res) => res.json()).catch((err) => {
-        console.error('Error fetching article:', err);
-    });
+    const { data, status, error } = await useFetch(() => `/api/article/${props.currentArticle.id}?next=true`);
 
-    if (data.statusCode === 200) {
-        nextArticle.value = data.body;
+    if (error.value && error.value.statusCode !== 404) {
+        // 前後の投稿は存在しない状態が起こりうるので404をハンドリングしない
+        console.error('Error fetching article:', error.value);
+        showError({
+            statusCode: 500,
+            message: 'Internal Server Error',
+            fatal: true,
+        });
+    }
+
+    if (status.value === "success") {
+        nextArticle.value = data.value?.body as unknown as Article;
     }
 } catch (error) {
     console.error('Error fetching article:', error);

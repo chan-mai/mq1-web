@@ -5,26 +5,28 @@ const articles: Ref<Article[]> = ref([]);
 
 // すべてのタグを取得
 try {
-    const data = await fetch(`/api/tag/all`, { method: 'GET' }
-    ).then((res) => res.json()).catch((err) => {
-        console.error('Error fetching tag:', err);
-    });
+    const { data, status, error } = await useFetch(() => `/api/tag/all`);
 
-    if ( data.statusCode === 200 ) {
-        tags.value = data.body;
+    if (error.value) {
+        console.error('Error fetching tag:', error.value);
+    }
+
+    if (status.value === "success") {
+        tags.value = data.value?.body as unknown[] as Tag[];
     }
 } catch (error) {
     console.error('Error fetching tag:', error);
 }
 // 直近5件の記事を取得
 try {
-    const data = await fetch(`/api/articles?limit=5`, { method: 'GET' }
-    ).then((res) => res.json()).catch((err) => {
-        console.error('Error fetching articles:', err);
-    });
+    const { data, status, error } = await useFetch(() => `/api/articles?limit=5`);
 
-    if ( data.statusCode === 200 ) {
-        articles.value = data.body;
+    if (error.value) {
+        console.error('Error fetching tag:', error.value);
+    }
+
+    if (status.value === "success") {
+        articles.value = data.value?.body as unknown[] as Article[];
     }
 } catch (error) {
     console.error('Error fetching articles:', error);
@@ -36,17 +38,17 @@ const pageDescription = config.value.siteDescription;
 const pageUrl = config.value.siteUrl;
 
 useHead({
-  title: pageTitle,
-  meta: [
-    { property: 'og:title', content: pageTitle },
-    { property: 'og:description', content: pageDescription },
-    { property: 'og:image', content: `${config.value.baseOgpUrl}` },
-    { property: 'og:type', content: 'website' },
-    { property: 'og:url', content: pageUrl },
-    { property: 'og:site_name', content: config.value.siteName },
-    { name: 'twitter:card', content: 'summary_large_image' },
-    { name: 'description', content: pageDescription },
-  ],
+    title: pageTitle,
+    meta: [
+        { property: 'og:title', content: pageTitle },
+        { property: 'og:description', content: pageDescription },
+        { property: 'og:image', content: `${config.value.baseOgpUrl}` },
+        { property: 'og:type', content: 'website' },
+        { property: 'og:url', content: pageUrl },
+        { property: 'og:site_name', content: config.value.siteName },
+        { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'description', content: pageDescription },
+    ],
 });
 
 </script>

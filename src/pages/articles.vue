@@ -4,16 +4,36 @@ const articles: Ref<Article[]> = ref([]);
 // とりあえず直近100件の記事を取得
 // TODO: ページネーションとかつくる
 try {
-    const data = await fetch(`/api/articles?limit=100`, { method: 'GET' }
-    ).then((res) => res.json()).catch((err) => {
-        console.error('Error fetching articles:', err);
-    });
+    const { data, status, error } = await useFetch(() => `/api/articles?limit=100`);
 
-    if ( data.statusCode === 200 ) {
-        articles.value = data.body;
+    if (error.value) {
+        console.error('Error fetching article:', error.value);
+        // 404
+        if (error.value.statusCode === 404) {
+            showError({
+                statusCode: 404,
+                message: 'Article not found',
+                fatal: true,
+            });
+        } else {
+            showError({
+                statusCode: 500,
+                message: 'Internal Server Error',
+                fatal: true,
+            });
+        }
+    }
+
+    if (status.value === "success") {
+        articles.value = data.value?.body as unknown as Article[];
     }
 } catch (error) {
     console.error('Error fetching articles:', error);
+    showError({
+        statusCode: 500,
+        message: "Internal Server Error",
+        fatal: true,
+    });
 }
 
 const config = useWebConfig();
@@ -23,17 +43,17 @@ const ogImageUrl = useOgGenerator('記事一覧');
 const pageUrl = `${config.value.siteUrl}/articles`;
 
 useHead({
-  title: pageTitle,
-  meta: [
-    { property: 'og:title', content: pageTitle },
-    { property: 'og:description', content: pageDescription },
-    { property: 'og:image', content: ogImageUrl },
-    { property: 'og:type', content: 'website' },
-    { property: 'og:url', content: pageUrl },
-    { property: 'og:site_name', content: config.value.siteName },
-    { name: 'twitter:card', content: 'summary_large_image' },
-    { name: 'description', content: pageDescription },
-  ],
+    title: pageTitle,
+    meta: [
+        { property: 'og:title', content: pageTitle },
+        { property: 'og:description', content: pageDescription },
+        { property: 'og:image', content: ogImageUrl },
+        { property: 'og:type', content: 'website' },
+        { property: 'og:url', content: pageUrl },
+        { property: 'og:site_name', content: config.value.siteName },
+        { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'description', content: pageDescription },
+    ],
 });
 </script>
 <template>

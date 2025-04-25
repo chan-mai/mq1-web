@@ -6,19 +6,34 @@ import 'highlight.js/styles/atom-one-light.css';
 const isLoaded: Ref<boolean> = ref(false);
 const route = useRoute();
 const { contentId } = route.params as { contentId: string };
- 
+
 let article: Ref<Article | null> = ref(null);
 
 // /api/get-article/:contentIdから取得
 try {
-    const data = await fetch(`/api/article/${contentId}`, { method: 'GET' }
-    ).then((res) => res.json()).catch((err) => {
-        console.error('Error fetching article:', err);
-    });
+    const { data, status, error } = await useFetch(() => `/api/article/${contentId}`);
 
-    if ( data.statusCode === 200 ) {
+    if (error.value) {
+        console.error('Error fetching article:', error.value);
+        // 404
+        if (error.value.statusCode === 404) {
+            showError({
+                statusCode: 404,
+                message: 'Article not found',
+                fatal: true,
+            });
+        } else {
+            showError({
+                statusCode: 500,
+                message: 'Internal Server Error',
+                fatal: true,
+            });
+        }
+    }
+
+    if (status.value === "success") {
         isLoaded.value = true;
-        article.value = data.body;
+        article.value = data.value?.body as unknown as Article;
     } else {
         showError({
             statusCode: 404,
@@ -195,14 +210,10 @@ const readingTime = computed(() => {
     };
 });
 
-const tableOfContents = computed<{ id: string; text: string; level: number }[]>(() => {
-    return article.value ? generateTableOfContents(article.value?.content!) : [];
-});
+const tableOfContents: Ref<{ id: string; text: string; level: number }[]> = ref(article.value ? generateTableOfContents(article.value?.content!) : []);
 
-
-const isUpdate = computed(() => {
-    return article.value && (article.value.createdAt || article.value.publishedAt) !== article.value.updatedAt;
-});
+// 過去に更新された記事か
+const isUpdate = ref(article.value && (article.value.createdAt || article.value.publishedAt) !== article.value.updatedAt);
 
 
 </script>

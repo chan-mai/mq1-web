@@ -4,19 +4,20 @@ const { tagId } = route.params as { tagId: string };
 
 const isLoaded: Ref<boolean> = ref(false);
 
-const articles: Ref<Article[]|null> = ref(null);
-const tag: Ref<Tag|null> = ref(null);
+const articles: Ref<Article[] | null> = ref(null);
+const tag: Ref<Tag | null> = ref(null);
 
 // とりあえずタグをソースに直近100件の記事を取得
 // TODO: ページネーションとかつくる
 try {
-    const data = await fetch(`/api/articles?limit=100&tag_id=${tagId}`, { method: 'GET' }
-    ).then((res) => res.json()).catch((err) => {
-        console.error('Error fetching articles:', err);
-    });
+    const { data, status, error } = await useFetch(() => `/api/articles?limit=100`);
 
-    if ( data.statusCode === 200 ) {
-        articles.value = data.body;
+    if (error.value) {
+        console.error('Error fetching article:', error.value);
+    }
+
+    if (status.value === "success") {
+        articles.value = data.value?.body as unknown as Article[];
     }
 } catch (error) {
     console.error('Error fetching articles:', error);
@@ -24,20 +25,28 @@ try {
 
 // tagIdからtagを取得
 try {
-    const data = await fetch(`/api/tag/${tagId}`, { method: 'GET' }
-    ).then((res) => res.json()).catch((err) => {
-        console.error('Error fetching tag:', err);
-    });
+    const { data, status, error } = await useFetch(() => `/api/tag/${tagId}`);
 
-    if ( data.statusCode === 200 ) {
-        tag.value = data.body;
-    } else {
-        // タグがなければ
-        showError({
-            statusCode: 404,
-            message: 'Tag not found',
-            fatal: true,
-        });
+    if (error.value) {
+        console.error('Error fetching article:', error.value);
+        // 404
+        if (error.value.statusCode === 404) {
+            showError({
+                statusCode: 404,
+                message: 'Article not found',
+                fatal: true,
+            });
+        } else {
+            showError({
+                statusCode: 500,
+                message: 'Internal Server Error',
+                fatal: true,
+            });
+        }
+    }
+
+    if (status.value === "success") {
+        tag.value = data.value?.body as unknown as Tag;
     }
 } catch (error) {
     console.error('Error fetching tag:', error);

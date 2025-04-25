@@ -64,38 +64,11 @@ export default defineNuxtConfig({
     },
   },
   routeRules: {
-    '/': { prerender: true },
-    '/entry/*': { prerender: true },
-    '/tag/*': { prerender: true },
     '/feed.xml': {
       headers: { 'content-type': 'application/rss+xml; charset=UTF-8' },
-      prerender: true,
     },
   },
   experimental: {
     viewTransition: true,
-  },
-  hooks: {
-    async "nitro:config"(nitroConfig) {
-      if (nitroConfig.dev) {
-        return;
-      }
-      
-      const client = createClient({
-        serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN!,
-        apiKey: process.env.MICROCMS_API_KEY!,
-      })
-      const res: any = await client.get({
-        endpoint: 'articles',
-      });
-
-      if (nitroConfig.prerender?.routes === undefined) {
-        return;
-      }
-      
-      nitroConfig.prerender.routes = res.contents.map((mount: any) => {
-        return `/entry/${mount.id}`;
-      });
-    },
   },
 });

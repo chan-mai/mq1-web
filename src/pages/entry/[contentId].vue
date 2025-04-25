@@ -3,7 +3,6 @@ import * as cheerio from 'cheerio';
 import hljs from 'highlight.js'
 import 'highlight.js/styles/atom-one-light.css';
 
-const isLoaded: Ref<boolean> = ref(false);
 const route = useRoute();
 const { contentId } = route.params as { contentId: string };
 
@@ -32,7 +31,6 @@ try {
     }
 
     if (status.value === "success") {
-        isLoaded.value = true;
         article.value = data.value?.body as unknown as Article;
     } else {
         showError({
@@ -197,7 +195,7 @@ const calculateReadingTime = (htmlContent: string): { charCount: number, minutes
 };
 
 const readingTime = computed(() => {
-    if (isLoaded.value && article.value && article.value.content) {
+    if (article.value && article.value.content) {
         const { charCount, minutes } = calculateReadingTime(article.value?.content!);
         return {
             charCount,
@@ -218,18 +216,18 @@ const isUpdate = ref(article.value && (article.value.createdAt || article.value.
 
 </script>
 <template>
-    <main v-if="isLoaded"
+    <main
         class="max-w-none text-[0.925rem] leading-loose tracking-wide text-inherit [&>div>*:first-child]:mt-0 max-w-7xl gap-16 md:gap-20">
 
-        <MqHero :url="article?.eyecatch?.url || ''" :title="article?.title ?? ''" text-hidden article-page
+        <MqHero :url="article?.eyecatch?.url" :title="article?.title" text-hidden article-page
             :style="`view-transition-name: article-${contentId};`" />
 
         <article class="mt-16 mx-auto flex w-full max-w-6xl flex-col px-2 md:px-6 mb-16">
-            <ArticlePageHead :title="article?.title ?? ''" :published="article?.publishedAt ?? article?.createdAt ?? ''"
-                :updated="isUpdate && article?.updatedAt ? article?.updatedAt : ''" :tags="article?.tags || []"
+            <ArticlePageHead :title="article?.title" :published="article?.publishedAt ?? article?.createdAt"
+                :updated="article?.updatedAt" :tags="article?.tags"
                 :readingTime :style="`view-transition-name: article-title-${contentId};`" />
 
-            <MqCollapsibleToc :items="tableOfContents" :title="article?.title ? `${article?.title}の目次` : '目次'"
+            <MqCollapsibleToc :items="tableOfContents" :title="article?.title"
                 class="mt-5" />
 
             <div class="content prose">
@@ -238,7 +236,7 @@ const isUpdate = ref(article.value && (article.value.createdAt || article.value.
         </article>
     </main>
 
-    <ArticlePageFooter v-if="isLoaded" :current-article="article!" />
+    <ArticlePageFooter :current-article="article!" />
 </template>
 <style lang="css">
 .micro-cms {

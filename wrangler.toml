@@ -1,0 +1,18 @@
+name = "mq1-web"
+type = "javascript"
+compatibility_date = "2025-04-25"
+account_id = "a8e8211c674c2b00f3a8996b65b56447"
+workers_dev = true
+route = ""
+zone_id = ""
+
+[site]
+bucket = ".output/public"
+entry-point = ".output/server/index.mjs"
+
+[build]
+command = "NITRO_PRESET=cloudflare pnpm nuxt build"
+upload.format = "service-worker"
+
+[observability.logs]
+enabled = true

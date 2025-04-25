@@ -45,9 +45,9 @@ const tagName = computed(() => {
 });
 
 const config = useWebConfig();
-const pageTitle = `#${tagName} - ${config.value.siteName}`;
+const pageTitle = `#${tagName.value} - ${config.value.siteName}`;
 const pageDescription = config.value.siteDescription;
-const ogImageUrl = useOgGenerator(`#${tagName}`);
+const ogImageUrl = useOgGenerator(`#${tagName.value}`);
 const pageUrl = `${config.value.siteUrl}/articles`;
 
 useHead({

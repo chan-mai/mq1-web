@@ -55,7 +55,7 @@ Promise.all([
 });
 </script>
 <template>
-    <div class="min-w-6xl px-4 mb-16 border-t border-gray-200 pt-8">
+    <div class="max-w-6xl mx-auto px-4 mb-16 border-t border-gray-200 pt-8">
         <div class="flex flex-col md:flex-row justify-between gap-6">
             <template v-if="isLoaded">
                 <!-- 前の記事 -->

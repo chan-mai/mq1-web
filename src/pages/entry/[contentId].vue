@@ -107,18 +107,18 @@ const { data: articleData } = await useAsyncData(`article-${contentId}`, async (
         // --- OGP Setup ---
         const config = useWebConfig();
 
-        if (article.content) {
-            const pageTitle = `${article.title} - ${config.value.siteName}`;
-            const pageDescription = article.summary || config.value.siteDescription;
-            const ogImageUrl = useOgGenerator(article.title);
+        if (article && article.content) {
+            const pageTitle = `${article?.title || ''} - ${config.value.siteName}`;
+            const pageDescription = article?.summary || config.value.siteDescription;
+            const ogImageUrl = useOgGenerator(article?.title || '');
             const pageUrl = `${config.value.siteUrl}/entry/${contentId}`;
-            const publishedTime = article.publishedAt || article.createdAt;
-            const modifiedTime = article.updatedAt;
+            const publishedTime = article?.publishedAt || article?.createdAt;
+            const modifiedTime = article?.updatedAt;
 
             const metaTags = [
                 { property: 'og:title', content: pageTitle },
                 { property: 'og:description', content: pageDescription },
-                { property: 'og:image', content: article.eyecatch?.url || ogImageUrl },
+                { property: 'og:image', content: article?.eyecatch?.url || ogImageUrl },
                 { property: 'og:type', content: 'article' },
                 { property: 'og:url', content: pageUrl },
                 { property: 'og:site_name', content: config.value.siteName },
@@ -134,14 +134,16 @@ const { data: articleData } = await useAsyncData(`article-${contentId}`, async (
             }
             if (article.tags && Array.isArray(article.tags)) {
                 article.tags.forEach((tag: Tag) => {
-                    if (tag.name) {
+                    if (tag && typeof tag === 'object' && tag.name) {
                         metaTags.push({ property: 'article:tag', content: tag.name });
                     }
                 });
-            } else if (article.tags && typeof article.tags === 'object' && 'name' in article.tags) { // Handle single tag object case more safely
-                metaTags.push({ property: 'article:tag', content: article.tags.name });
+            } else if (article.tags && typeof article.tags === 'object' && article.tags !== null) {
+                const tagObj = article.tags as { name?: string };
+                if (tagObj.name) {
+                    metaTags.push({ property: 'article:tag', content: tagObj.name });
+                }
             }
-
 
             useHead({
                 title: pageTitle,
@@ -167,15 +169,23 @@ const { data: articleData } = await useAsyncData(`article-${contentId}`, async (
 
 // 目次を生成する関数
 const generateTableOfContents = (content: string) => {
+    if (!content) return [];
+    
     const $ = cheerio.load(content);
     const headings = $('h1, h2, h3, h4').toArray();
     const toc: { id: string; text: string; level: number }[] = [];
 
     // 各見出しに一意のIDを付与し、目次データを構築
     headings.forEach((heading, index) => {
+        if (!heading) return;
+        
         const $heading = $(heading);
         const text = $heading.text().trim();
-        const level = parseInt(heading.tagName.substring(1)); // h1 -> 1, h2 -> 2, ...
+        
+        // headingとnodeNameの安全性確認を強化
+        if (!heading || !heading.name) return;
+        
+        const level = parseInt(heading.name.substring(1)); // h1 -> 1, h2 -> 2, ...
 
         // IDを設定（なければ生成）
         let id = $heading.attr('id');
@@ -244,15 +254,15 @@ const isUpdate = computed(() => {
     <main v-if="isLoaded"
         class="max-w-none text-[0.925rem] leading-loose tracking-wide text-inherit [&>div>*:first-child]:mt-0 max-w-7xl gap-16 md:gap-20">
 
-        <MqHero :url="article.eyecatch ? article.eyecatch.url : ''" :title="article.title" text-hidden article-page
+        <MqHero :url="article?.eyecatch?.url || ''" :title="article?.title ?? ''" text-hidden article-page
             :style="`view-transition-name: article-${contentId};`" />
 
         <article class="mt-16 mx-auto flex w-full max-w-6xl flex-col px-2 md:px-6 mb-16">
-            <ArticlePageHead :title="article?.title" :published="article?.publishedAt ?? article?.createdAt ?? ''"
-                :updated="isUpdate && article?.updatedAt ? article.updatedAt : ''" :tags="article?.tags" :readingTime
-                :style="`view-transition-name: article-title-${article?.id};`" />
+            <ArticlePageHead :title="article?.title ?? ''" :published="article?.publishedAt ?? article?.createdAt ?? ''"
+    :updated="isUpdate && article?.updatedAt ? article?.updatedAt : ''" :tags="article?.tags || []" :readingTime
+    :style="`view-transition-name: article-title-${contentId};`" />
 
-            <MqCollapsibleToc :items="tableOfContents" :title="`${article.title}の目次`" class="mt-5" />
+            <MqCollapsibleToc :items="tableOfContents" :title="article?.title ? `${article?.title}の目次` : '目次'" class="mt-5" />
 
             <div class="content prose">
                 <div v-if="article?.content" v-html="article?.content" class="micro-cms mt-6 md:mt-10"></div>

@@ -7,22 +7,6 @@ const isLoaded: Ref<boolean> = ref(false);
 const articles: Ref<Article[] | null> = ref(null);
 const tag: Ref<Tag | null> = ref(null);
 
-// とりあえずタグをソースに直近100件の記事を取得
-// TODO: ページネーションとかつくる
-try {
-    const { data, status, error } = await useFetch(() => `/api/articles?limit=100`);
-
-    if (error.value) {
-        console.error('Error fetching article:', error.value);
-    }
-
-    if (status.value === "success") {
-        articles.value = data.value?.body as unknown as Article[];
-    }
-} catch (error) {
-    console.error('Error fetching articles:', error);
-}
-
 // tagIdからtagを取得
 try {
     const { data, status, error } = await useFetch(() => `/api/tag/${tagId}`);
@@ -51,6 +35,23 @@ try {
 } catch (error) {
     console.error('Error fetching tag:', error);
 }
+
+// とりあえずタグをソースに直近100件の記事を取得
+// TODO: ページネーションとかつくる
+try {
+    const { data, status, error } = await useFetch(() => `/api/articles?limit=100&tag_id=${tagId}`);
+
+    if (error.value) {
+        console.error('Error fetching article:', error.value);
+    }
+
+    if (status.value === "success") {
+        articles.value = data.value?.body as unknown as Article[];
+    }
+} catch (error) {
+    console.error('Error fetching articles:', error);
+}
+
 
 isLoaded.value = true;
 

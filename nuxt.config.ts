@@ -27,6 +27,9 @@ export default defineNuxtConfig({
       },
     },
   },
+  plugins: [
+    { src: '~/plugins/loading.ts', mode: 'client' },
+  ],
   modules: [
     "@nuxtjs/tailwindcss",
     "@vueuse/nuxt",

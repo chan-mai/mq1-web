@@ -109,9 +109,8 @@ onMounted(() => {
 }
 
 .micro-cms table {
-    @apply w-full border-collapse border-2 border-gray-200;
-    display: block;
-    overflow-x: auto;
+    display: table;
+    width: auto;
     max-width: 100%;
 }
 
@@ -209,7 +208,11 @@ onMounted(() => {
 
 /* テーブル */
 .micro-cms table {
-    @apply text-left border-collapse border border-gray-400;
+    @apply w-full;
+    display: block;
+    width: auto;
+    max-width: 100%;
+    overflow-x: auto;
 }
 
 .micro-cms th {

@@ -33,7 +33,7 @@ whenever(
     <NuxtLink
       :title="`トップページ`"
       to="/"
-      class="flex w-56 items-center justify-center transition-opacity hover:opacity-70"
+      class="flex w-40  md:w-56 items-center justify-center transition-opacity hover:opacity-70"
     >
       <img
         :alt="`ロゴ`"

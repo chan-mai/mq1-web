@@ -68,7 +68,8 @@ Promise.all([
                         </div>
                         <h4 class="text-gray-800 font-medium line-clamp-">{{ prevArticle.title }}</h4>
                         <div class="mt-2 flex items-center">
-                            <div class="w-64 aspect-video max-h-16 mr-3 overflow-hidden rounded">
+                            <div
+                                class="w-full sm:w-32 md:w-40 lg:w-64 aspect-video max-h-16 mb-2 sm:mb-0 sm:mr-3 overflow-hidden rounded">
                                 <MqOgImage :url="prevArticle.eyecatch?.url" :title="prevArticle.title"
                                     class="w-full h-full object-cover" />
                             </div>
@@ -97,7 +98,8 @@ Promise.all([
                         <h4 class="text-gray-800 font-medium line-clamp-2 text-right">{{ nextArticle.title }}</h4>
                         <div class="mt-2 flex items-center">
                             <p class="text-sm text-gray-600 line-clamp-2">{{ nextArticle.summary || '' }}</p>
-                            <div class="w-64 aspect-video max-h-16 ml-3 overflow-hidden rounded">
+                            <div
+                                class="w-full sm:w-32 md:w-40 lg:w-64 aspect-video max-h-16 mb-2 sm:mb-0 sm:ml-3 overflow-hidden rounded">
                                 <MqOgImage :url="nextArticle.eyecatch?.url" :title="nextArticle.title"
                                     class="w-full h-full object-cover" />
                             </div>

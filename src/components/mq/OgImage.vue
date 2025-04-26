@@ -19,5 +19,5 @@ const ogUrl = computed(() => {
 
 </script>
 <template>
-    <img :src="ogUrl" :alt="title" fill class="w-full h-full object-cover object-left"/>
+    <img :src="ogUrl" :alt="title" fill class="w-full h-full object-cover object-left" loading="lazy" decoding="async"/>
 </template>

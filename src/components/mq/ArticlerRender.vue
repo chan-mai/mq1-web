@@ -56,6 +56,47 @@ const articleHtml = computed(() => {
         return '';
     }
 });
+
+// スクロール可能な要素を検出し、インジケーターを追加する
+onMounted(() => {
+    nextTick(() => {
+        const tables = document.querySelectorAll('.micro-cms table');
+        const codeBlocks = document.querySelectorAll('code');
+        
+        // スクロール可能な要素にインジケーターを追加
+        function addScrollIndicator(elements: any) {
+            elements.forEach((element: any) => {
+                if (element.scrollWidth > element.clientWidth) {
+                    // スクロール可能な場合、インジケーターを追加
+                    const indicator = document.createElement('div');
+                    indicator.className = 'scroll-indicator';
+                    indicator.innerHTML = 'スクロール可能です →';
+                    
+                    // 要素をラップする
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'scrollable-wrapper';
+                    element.parentNode.insertBefore(wrapper, element);
+                    wrapper.appendChild(element);
+                    wrapper.appendChild(indicator);
+                    
+                    // スクロールイベントを検知したら点滅を止める
+                    element.addEventListener('scroll', () => {
+                        indicator.classList.remove('blink');
+                        indicator.classList.add('fade-out');
+                        
+                        // 少し時間を置いてから非表示に
+                        setTimeout(() => {
+                            indicator.style.display = 'none';
+                        }, 1000);
+                    });
+                }
+            });
+        }
+        
+        addScrollIndicator(tables);
+        addScrollIndicator(codeBlocks);
+    });
+});
 </script>
 
 <template>
@@ -69,6 +110,9 @@ const articleHtml = computed(() => {
 
 .micro-cms table {
     @apply w-full border-collapse border-2 border-gray-200;
+    display: block;
+    overflow-x: auto;
+    max-width: 100%;
 }
 
 .micro-cms img {
@@ -155,6 +199,8 @@ const articleHtml = computed(() => {
 
 .micro-cms pre {
     @apply p-4 bg-gray-100;
+    overflow-x: auto;
+    max-width: 100%;
 }
 
 .micro-cms li {
@@ -176,5 +222,43 @@ const articleHtml = computed(() => {
 
 .micro-cms pre code {
     @apply rounded-lg;
+}
+
+/* スクロール可能な要素のラッパー */
+.scrollable-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+/* スクロールインジケーター */
+.scroll-indicator {
+    @apply bg-primary;
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    z-index: 10;
+}
+
+/* 点滅アニメーション */
+.scroll-indicator {
+    animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+    0% { opacity: 0.4; }
+    50% { opacity: 1; }
+    100% { opacity: 0.4; }
+}
+
+/* フェードアウトアニメーション */
+.fade-out {
+    animation: none;
+    opacity: 1;
+    transition: opacity 1s ease-out;
+    opacity: 0;
 }
 </style>

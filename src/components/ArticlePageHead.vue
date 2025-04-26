@@ -76,7 +76,7 @@ const updatedDate = computed(() => (props.updated && props.updated !== props.pub
                         <Icon name="lucide:timer" class="mt-0.5 size-5" />
 
                         <span class="text-lg">
-                            {{ readingTime.minutes }}分で読み終われます
+                            {{ readingTime.minutes.toFixed(2) }}分で読み終われます
                             <span v-if="readingTime.charCount" class="text-accent text-sm">({{
                                 readingTime.charCount?.toLocaleString() }}文字)</span>
                         </span>

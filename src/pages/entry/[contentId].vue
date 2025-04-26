@@ -143,7 +143,7 @@ const calculateReadingTime = (htmlContent: string): { charCount: number, minutes
     const charCount: number = textContent.length;
 
     // 読了時間を計算 600文字/分
-    const minutes: number = Math.ceil(charCount / 600);
+    const minutes: number = charCount / 600;
 
     return { charCount: charCount, minutes: minutes, };
 };

@@ -8,7 +8,7 @@ const isVisibleRssFeedCopyTooltip = ref<boolean>(false);
 
 const rssFeedCopy = () => {
   // RSSフィードのURLをクリップボードにコピー
-  navigator.clipboard.writeText(config.value.socials.rss.url).then(() => {
+  navigator.clipboard.writeText(config.value.rss.url).then(() => {
     //alert('RSSフィードのURLをコピーしました');
   }).catch((err) => {
     //console.error('coppy error', err);
@@ -75,12 +75,12 @@ whenever(
         <NuxtLink :title="config.socials.misskey.name" :to="config.socials.misskey.url" aria-label="Misskeyのプロフィールを開く"
           class="relative flex size-8 items-center justify-center rounded before:absolute before:-z-10 before:size-full before:rounded before:bg-slate-200/50 before:opacity-0 before:transition-opacity hover:before:opacity-100"
           target="_blank">
-          <Icon name="simple-icons:misskey" class="size-5" />
+          <Icon :name="config.socials.misskey.icon" class="size-5" />
         </NuxtLink>
-        <button :title="config.socials.rss.name" aria-label="RSSフィードのURLをコピーする"
+        <button :title="config.rss.name" aria-label="RSSフィードのURLをコピーする"
           class="relative flex size-8 items-center justify-center rounded before:absolute before:-z-10 before:size-full before:rounded before:bg-slate-200/50 before:opacity-0 before:transition-opacity hover:before:opacity-100"
           @click="() => rssFeedCopy()">
-          <Icon name="line-md:rss" class="size-5" />
+          <Icon :name="config.rss.icon" class="size-5" />
           <span :class="[isVisibleRssFeedCopyTooltip ? 'opacity-100' : 'opacity-0']"
             class="pointer-events-none absolute -top-5 whitespace-nowrap rounded bg-black/70 px-2 py-1 text-xs text-white transition-opacity">
             URLをコピーしました

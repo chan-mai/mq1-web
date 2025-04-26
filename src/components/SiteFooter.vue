@@ -2,29 +2,30 @@
 const config = useWebConfig()
 const year = useDateFormat(new Date(), 'YYYY')
 
-const name = config.value.siteName
-const socials = config.value.socials
-const menu = config.value.footer.menu
+const name = config.value.siteName;
+const socials = config.value.socials;
+const rss = config.value.rss;
+const menu = config.value.footer.menu;
 
 
 const isVisibleRssFeedCopyTooltip = ref<boolean>(false)
     const rssFeedCopy = () => {
   // RSSフィードのURLをクリップボードにコピー
-  navigator.clipboard.writeText(config.value.socials.rss.url).then(() => {
+  navigator.clipboard.writeText(config.value.rss.url).then(() => {
     //alert('RSSフィードのURLをコピーしました');
   }).catch((err) => {
     //console.error('coppy error', err);
   });
-  isVisibleRssFeedCopyTooltip.value = true
+  isVisibleRssFeedCopyTooltip.value = true;
 };
 
 whenever(
   () => isVisibleRssFeedCopyTooltip.value,
   () =>
     useTimeoutFn(() => {
-      isVisibleRssFeedCopyTooltip.value = false
+      isVisibleRssFeedCopyTooltip.value = false;
     }, 3000),
-)
+);
 </script>
 
 <template>
@@ -46,48 +47,23 @@ whenever(
         </nav>
         <div class="flex items-center gap-2">
           <NuxtLink
-            :title="socials.misskey.name"
-            :to="socials.misskey.url"
-            aria-label="Misskeyでフォローする"
+            v-for="item in socials"
+            :key="item.name"
+            :title="item.name"
+            :to="item.url"
+            :aria-label="`${item.name}でフォローする`"
             class="relative flex size-8 items-center justify-center rounded before:absolute before:size-full before:rounded before:bg-current before:opacity-0 before:transition-opacity hover:before:opacity-20 hover:text-primary"
             target="_blank"
           >
-          <Icon name="simple-icons:misskey" class="size-5"/>
-          </NuxtLink>
-          <NuxtLink
-            :title="socials.github.name"
-            :to="socials.github.url"
-            aria-label="GitHubでフォローする"
-            class="relative flex size-8 items-center justify-center rounded before:absolute before:size-full before:rounded before:bg-current before:opacity-0 before:transition-opacity hover:before:opacity-20 hover:text-primary"
-            target="_blank"
-          >
-          <Icon name="simple-icons:github" class="size-5"/>
-          </NuxtLink>
-          <NuxtLink
-            :title="socials.twitter.name"
-            :to="socials.twitter.url"
-            aria-label="Twitterでフォローする"
-            class="relative flex size-8 items-center justify-center rounded before:absolute before:size-full before:rounded before:bg-current before:opacity-0 before:transition-opacity hover:before:opacity-20 hover:text-primary"
-            target="_blank"
-          >
-          <Icon name="simple-icons:twitter" class="size-5"/>
-          </NuxtLink>
-          <NuxtLink
-            :title="socials.qiita.name"
-            :to="socials.qiita.url"
-            aria-label="Qiitaでフォローする"
-            class="relative flex size-8 items-center justify-center rounded before:absolute before:size-full before:rounded before:bg-current before:opacity-0 before:transition-opacity hover:before:opacity-20 hover:text-primary"
-            target="_blank"
-          >
-          <Icon name="simple-icons:qiita" class="size-5"/>
+          <Icon :name="item.icon" class="size-5"/>
           </NuxtLink>
           <button
-            :title="socials.rss.name"
+            :title="rss.name"
             aria-label="RSSフィードのURLをコピーする"
             class="relative flex size-8 items-center justify-center rounded before:absolute before:size-full before:rounded before:bg-current before:opacity-0 before:transition-opacity hover:before:opacity-20 hover:text-primary"
             @click="() => rssFeedCopy()"
           >
-          <Icon name="line-md:rss" class="size-5"/>
+          <Icon :name="rss.icon" class="size-5"/>
             <span
               :class="[
                 isVisibleRssFeedCopyTooltip ? 'opacity-100' : 'opacity-0',

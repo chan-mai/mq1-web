@@ -69,6 +69,7 @@ useHead({
                             <!-- Socials -->
                             <div class="grid grid-cols-1 space-y-2 mb-8 relative z-30">
                                 <NuxtLink v-for="social in socials" :key="social.name" :to="social.url"
+                                    target="_blank"
                                     class="w-1/3 bg-white text-accent rounded-md px-3 py-2 hover:bg-primary hover:text-white transition-all flex items-center">
                                     <Icon :name="social.icon" class="mr-2 size-5" />
                                     <span class="text-sm">{{ social.name }}</span>

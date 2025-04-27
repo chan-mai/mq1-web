@@ -35,8 +35,11 @@ const limitedTags = computed(() => {
                 </div>
             </template>
             <template v-else>
-                <div class="flex flex-wrap gap-2">
+                <div v-if="tags.length > 0 && limitedTags.length > 0" class="flex flex-wrap gap-2">
                     <MqTag v-for="tag in limitedTags" :key="tag.id" :tag="tag" />
+                </div>
+                <div v-else class="text-center text-gray-500">
+                    <p>タグはありません</p>
                 </div>
             </template>
 

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import * as cheerio from 'cheerio';
 
 const props = defineProps({
     limit: {
@@ -27,13 +26,9 @@ const limitedArticles = computed(() => {
         : props.articles;
 });
 
-// サマリーを生成, contentsからHTMLタグを除去し、先頭から150文字を取得
+// サマリーを生成
 props.articles.map((article: Article) => {
-    const $ = cheerio.load(article.content ?? "");
-    const textContent: string = $.text().trim();
-    article.summary = textContent.length > 500
-        ? textContent.slice(0, 150)
-        : textContent;
+    article.summary = useSummaryTextGenerator(article.content!);
 });
 
 // タグをクリックした時の処理

@@ -27,6 +27,8 @@ Promise.all([
 
         if (status.value === "success") {
             prevArticle.value = data.value?.body as unknown as Article;
+            // サマリーの生成
+            prevArticle.value!.summary = useSummaryTextGenerator(prevArticle.value!.content!);
             // preload
             preloadRouteComponents(`/entry/${prevArticle.value!.id}`)
         }
@@ -48,6 +50,8 @@ Promise.all([
 
         if (status.value === "success") {
             nextArticle.value = data.value?.body as unknown as Article;
+            // サマリーの生成
+            nextArticle.value!.summary = useSummaryTextGenerator(nextArticle.value!.content!);
             // preload
             preloadRouteComponents(`/entry/${nextArticle.value!.id}`)
         }

@@ -14,7 +14,7 @@ function base64urlEncode(source: string){
 }
 
 export default function useOgGenerator(title: string){
-    const baseImageURL: string = 'https://images.microcms-assets.io/assets/3aba23b5bd6f4b79800a0305d0e4f8aa/ceaa35b1d65843d8b63da92b65b069dd/og-image.png/?blend-mode=normal&w=1200&mark-align=center%2Cmiddle&blend64=';
+    const baseImageURL: string = 'https://images.microcms-assets.io/assets/3aba23b5bd6f4b79800a0305d0e4f8aa/e765f37291d84fe7a1417a1825737e73/og-image.png/?blend-mode=normal&w=1200&mark-align=center%2Cmiddle&blend64=';
     let titleImageURL: string = 'https://images.microcms-assets.io/~text?txtsize=48&txt-x=43&txt-y=100&w=1100&h=590&txt-color=FFABBF&txt-align=left,middle&txtfont=Hiragino%20Sans%20W6&txt64='+base64urlEncode(title);
 
     const url = baseImageURL + base64urlEncode(titleImageURL);

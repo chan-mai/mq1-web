@@ -18,6 +18,7 @@ export const useWebConfig = () => {
         { title: "トップ", url: "/" },
         { title: '記事一覧', url: '/articles' },
         { title: '運営者情報', url: '/about' },
+        { title: "プライバシーポリシー", url: "/privacy" },
         { title: 'お問い合わせ', url: 'mailto:chan-mai@mq1.dev' },
       ],
     },

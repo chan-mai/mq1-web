@@ -19,7 +19,7 @@ onUnmounted(() => {
 
 // OGP生成
 useHead({
-    title: `${config.value.siteName} - 私について`,
+    title: `私について - ${config.value.siteName}`,
     meta: [
         { name: 'description', content: config.value.siteDescription },
         { property: 'og:site_name', content: config.value.siteName },

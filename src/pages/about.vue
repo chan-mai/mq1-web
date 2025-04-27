@@ -18,7 +18,6 @@ onUnmounted(() => {
 });
 
 // OGP生成
-const ogImageUrl = useOgGenerator("ABOUT ME");
 useHead({
     title: `${config.value.siteName} - 私について`,
     meta: [

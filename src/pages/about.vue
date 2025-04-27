@@ -26,12 +26,12 @@ useHead({
         { property: 'og:site_name', content: config.value.siteName },
         { property: 'og:title', content: `${config.value.siteName} - 私について` },
         { property: 'og:description', content: config.value.siteDescription },
-        { property: 'og:image', content: ogImageUrl },
+        { property: 'og:image', content: `${config.value.siteUrl}about-ogp.png` },
         { property: 'og:url', content: `${config.value.siteUrl}/about` },
         { property: 'og:type', content: 'website' },
         { name: 'twitter:card', content: 'summary_large_image' },
         { name: 'twitter:card', content: 'summary_large_image' },
-        { name: 'twitter:image', content: ogImageUrl },
+        { name: 'twitter:image', content: `${config.value.siteUrl}about-ogp.png` },
     ],
 });
 </script>
@@ -40,7 +40,7 @@ useHead({
         <div class="bg-accent text-white relative w-full max-w-none overflow-hidden md:overflow-visible">
             <!-- 右側のエッジ文字 -->
             <div class="absolute bottom-0 z-20 w-full h-2/3">
-                <img src="@/assets/images/mai-bg-text.png" alt="Mai Sudachi"
+                <img src="@/assets/images/about/mai-bg-text.webp" alt="Mai Sudachi"
                     class="w-full h-full object-contain object-right" loading="eager" />
             </div>
             <div class="w-full px-8 py-8 max-w-6xl mx-auto">
@@ -83,11 +83,11 @@ useHead({
                             <!-- 顔 -->
                             <div class="flex space-x-4 mb-12">
                                 <div class="bg-white rounded-full p-1 size-15">
-                                    <img src="@/assets/images/mai-crop2.png" alt="Icon 1"
+                                    <img src="@/assets/images/about/mai-crop2.webp" alt="Icon 1"
                                         class="rounded-full size-10" />
                                 </div>
                                 <div class="bg-white rounded-full p-1 size-15">
-                                    <img src="@/assets/images/mai-crop.png" alt="Icon 1" class="rounded-full size-10" />
+                                    <img src="@/assets/images/about/mai-crop.webp" alt="Icon 1" class="rounded-full size-10" />
                                 </div>
                             </div>
                         </div>
@@ -97,7 +97,7 @@ useHead({
             <div class="absolute w-full h-full left-0 pointer-events-none">
                 <!-- 背景画像 -->
                 <div class="absolute top-0 z-20 w-full h-full opacity-40 -translate-y-full">
-                    <img src="@/assets/images/mai-bg.png" alt="doted mai"
+                    <img src="@/assets/images/about/mai-bg.webp" alt="doted mai"
                         class="w-full h-full object-cover object-center" loading="eager" />
                 </div>
 
@@ -105,7 +105,7 @@ useHead({
                 <div class="absolute w-full top-0 z-20 -translate-y-[75%] md:-translate-y-2/3  
          scale-80 md:scale-100 -right-0 md:right-[15%]">
                     <div class="character-glow absolute w-full h-full top-0 right-0 z-40"></div>
-                    <img src="@/assets/images/mai.png" alt="Mai Sudachi"
+                    <img src="@/assets/images/about/mai.webp" alt="Mai Sudachi"
                         class="object-contain max-h-[800px] relative z-[60] ml-auto" loading="eager" decoding="async" />
                 </div>
             </div>

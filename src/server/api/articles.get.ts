@@ -36,6 +36,16 @@ export default defineEventHandler(async (event) => {
   }
   const response: Article[] = res.contents;
 
+  // アイキャッチのURLに?fit=scale&w=250を追加し、画像サイズを制限
+  response.forEach((article) => {
+    if (article.eyecatch) {
+      let uri = new URL(article.eyecatch.url);
+      uri.searchParams.set("fit", "scale");
+      uri.searchParams.set("w", "250");
+      article.eyecatch.url = uri.toString();
+    }
+  });
+
   return {
     statusCode: 200,
     body: response,

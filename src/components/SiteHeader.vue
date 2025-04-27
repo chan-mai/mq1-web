@@ -32,7 +32,7 @@ whenever(
     <NuxtLink :title="`トップページ`" to="/"
       class="flex w-40  md:w-56 items-center justify-center transition-opacity hover:opacity-70">
       <img :alt="`サイトロゴ まいの雑記帳`" src="@/assets/images/web-logo.webp""
-        class="block" width="315" height="91" loading="eager" decoding="async" />
+        class=" block" width="315" height="91" loading="eager" decoding="async" />
     </NuxtLink>
 
     <button
@@ -52,12 +52,13 @@ whenever(
         ? 'pointer-events-auto text-white opacity-100'
         : 'pointer-events-none opacity-0',
     ]"
-      class="fixed inset-0 z-40 bg-white px-8 pt-20 transition-opacity before:absolute before:inset-0 before:bg-slate-900 md:pointer-events-auto md:relative md:inset-auto md:flex md:items-center md:gap-4 md:rounded-[2rem] md:border-2 md:border-primary md:py-0 md:pl-6 md:pr-9 md:text-inherit md:opacity-100 md:shadow-xl md:transition-none md:before:hidden">
+      class="fixed inset-0 z-40 bg-white px-8 pt-20 transition-opacity before:absolute before:inset-0 before:bg-stone-400 md:pointer-events-auto md:relative md:inset-auto md:flex md:items-center md:gap-4 md:rounded-[2rem] md:border-2 md:border-primary md:py-0 md:pl-6 md:pr-9 md:text-inherit md:opacity-100 md:shadow-xl md:transition-none md:before:hidden">
       <nav>
         <ul class="flex flex-col items-start gap-2 md:flex-row md:items-stretch md:gap-0">
           <li v-for="item in config.headerMenu" :key="item.url">
             <!-- 外部リンクの場合は別タブ -->
-            <NuxtLink v-if="item.url" :to="item.url" :target="(item.url.startsWith('/') || item.url.startsWith('#'))? '_self' : '_blank'"
+            <NuxtLink v-if="item.url" :to="item.url"
+              :target="(item.url.startsWith('/') || item.url.startsWith('#')) ? '_self' : '_blank'"
               class="relative flex items-center justify-center px-4 py-2 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:origin-right after:scale-x-0 after:scale-y-100 after:bg-primary after:transition-transform hover:after:origin-left hover:after:scale-x-100"
               @click="() => toggleOverlay(false)">
               <span class="text-sm font-bold md:text-xs">{{ item.title }}</span>

@@ -103,8 +103,8 @@ function isExpanded(itemId) {
                   />
                 </button>
                 <span v-else class="toc-indent"></span>
-                <a 
-                  :href="`#${item.id}`"
+                <NuxtLink 
+                  :to="`#${item.id}`"
                   class="toc-link"
                   :class="{ 'font-medium': item.level === 1 }"
                 >
@@ -112,7 +112,7 @@ function isExpanded(itemId) {
                   <span class="toc-decoration">
                     <span class="toc-number">{{ item.counter }}</span>
                   </span>
-                </a>
+                </NuxtLink>
               </div>
               
               <!-- セクション子項目のアニメーション -->
@@ -125,15 +125,15 @@ function isExpanded(itemId) {
                   >
                     <div class="toc-item-content">
                       <span class="toc-branch"></span>
-                      <a 
-                        :href="`#${child.id}`"
+                      <NuxtLink
+                        :to="`#${child.id}`"
                         class="toc-link"
                       >
                         <span>{{ child.text }}</span>
                         <span class="toc-decoration">
                           <span class="toc-number">{{ child.counter }}</span>
                         </span>
-                      </a>
+                      </NuxtLink>
                     </div>
                     
                     <!-- 孫項目のアニメーション -->
@@ -146,15 +146,15 @@ function isExpanded(itemId) {
                         >
                           <div class="toc-item-content">
                             <span class="toc-leaf"></span>
-                            <a 
-                              :href="`#${grandChild.id}`"
+                            <NuxtLink 
+                              :to="`#${grandChild.id}`"
                               class="toc-link"
                             >
                               <span>{{ grandChild.text }}</span>
                               <span class="toc-decoration">
                                 <span class="toc-number">{{ grandChild.counter }}</span>
                               </span>
-                            </a>
+                            </NuxtLink>
                           </div>
                         </div>
                       </div>

@@ -27,6 +27,8 @@ Promise.all([
 
         if (status.value === "success") {
             prevArticle.value = data.value?.body as unknown as Article;
+            // preload
+            preloadRouteComponents(`/entry/${prevArticle.value!.id}`)
         }
     }).catch(error => {
         console.error('Error fetching previous article:', error);
@@ -46,10 +48,14 @@ Promise.all([
 
         if (status.value === "success") {
             nextArticle.value = data.value?.body as unknown as Article;
+            // preload
+            preloadRouteComponents(`/entry/${nextArticle.value!.id}`)
         }
     }).catch(error => {
         console.error('Error fetching next article:', error);
-    })
+    }),
+
+
 ]).finally(() => {
     isLoaded.value = true;
 });

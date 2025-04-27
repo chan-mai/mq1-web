@@ -32,7 +32,7 @@ whenever(
     <NuxtLink :title="`トップページ`" to="/"
       class="flex w-40  md:w-56 items-center justify-center transition-opacity hover:opacity-70">
       <img :alt="`サイトロゴ まいの雑記帳`" src="@/assets/images/web-logo.webp""
-        class=" block" loading="eager" decoding="async" />
+        class="block" width="315" height="91" loading="eager" decoding="async" />
     </NuxtLink>
 
     <button
@@ -56,18 +56,12 @@ whenever(
       <nav>
         <ul class="flex flex-col items-start gap-2 md:flex-row md:items-stretch md:gap-0">
           <li v-for="item in config.headerMenu" :key="item.url">
-            <!-- 内部リンク -->
-            <NuxtLink v-if="item.url && (item.url.startsWith('/') || item.url.startsWith('#'))" :to="item.url"
+            <!-- 外部リンクの場合は別タブ -->
+            <NuxtLink v-if="item.url" :to="item.url" :target="(item.url.startsWith('/') || item.url.startsWith('#'))? '_self' : '_blank'"
               class="relative flex items-center justify-center px-4 py-2 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:origin-right after:scale-x-0 after:scale-y-100 after:bg-primary after:transition-transform hover:after:origin-left hover:after:scale-x-100"
               @click="() => toggleOverlay(false)">
               <span class="text-sm font-bold md:text-xs">{{ item.title }}</span>
             </NuxtLink>
-            <!-- 外部リンク -->
-            <a v-else :href="item.url" target="_blank"
-              class="relative flex items-center justify-center px-4 py-2 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:origin-right after:scale-x-0 after:scale-y-100 after:bg-primary after:transition-transform hover:after:origin-left hover:after:scale-x-100"
-              @click="() => toggleOverlay(false)">
-              <span class="text-sm font-bold md:text-xs nounderline">{{ item.title }}</span>
-            </a>
           </li>
         </ul>
       </nav>

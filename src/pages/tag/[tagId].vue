@@ -99,7 +99,8 @@ useHead({
             </div>
             <div class="flex flex-col gap-8">
                 <Articles v-if="articles" :articles :loading="articlesLoading"/>
-                <div v-else class="flex flex-col items-center justify-center gap-4">
+                <!--ロード完了までは記事なしを確定しない-->
+                <div v-else-if="!articlesLoading" class="flex flex-col items-center justify-center gap-4">
                     <p class="text-lg font-bold text-accent">記事が見つかりませんでした。</p>
                     <p class="text-sm text-slate-500">他のタグを試してみてください。</p>
                 </div>

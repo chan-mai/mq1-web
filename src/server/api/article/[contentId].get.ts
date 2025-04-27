@@ -67,6 +67,15 @@ export default defineEventHandler(async (event) => {
     response = resBb.contents[0];
   }
 
+  // アイキャッチのURLに?fit=scale&w=1500&fm=webpを追加し、画像サイズを制限, フォーマットの指定
+  if (response.eyecatch && response.eyecatch.url) {
+    let uri = new URL(response.eyecatch.url);
+    uri.searchParams.set("fit", "scale");
+    uri.searchParams.set("w", "1500");
+    uri.searchParams.set("fm", "webp");
+    response.eyecatch.url = uri.toString();
+  }
+
   return {
     statusCode: 200,
     body: response,

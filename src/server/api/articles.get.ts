@@ -34,14 +34,15 @@ export default defineEventHandler(async (event) => {
       body: "Not Found",
     };
   }
-  const response: Article[] = res.contents;
+  let response: Article[] = res.contents;
 
-  // アイキャッチのURLに?fit=scale&w=250を追加し、画像サイズを制限
+  // アイキャッチのURLに?fit=scale&w=250&fm=webpを追加し、画像サイズを制限, フォーマットの指定
   response.forEach((article) => {
-    if (article.eyecatch) {
+    if (article.eyecatch && article.eyecatch.url) {
       let uri = new URL(article.eyecatch.url);
       uri.searchParams.set("fit", "scale");
       uri.searchParams.set("w", "250");
+      uri.searchParams.set("fm", "webp");
       article.eyecatch.url = uri.toString();
     }
   });

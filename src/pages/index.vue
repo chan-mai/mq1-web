@@ -1,4 +1,5 @@
 <script setup lang="ts">
+
 const tags: Ref<Tag[]> = ref([]);
 const articles: Ref<Article[]> = ref([]);
 
@@ -48,6 +49,11 @@ async function fetchArticles() {
 Promise.all([
     fetchTags(),
     fetchArticles(),
+
+    // preload
+    articles.value.forEach((article: Article) => {
+        preloadRouteComponents(`/entry/${article.id}`)
+    })
 ]).catch(error => {
     console.error('Error fetching data:', error);
 });

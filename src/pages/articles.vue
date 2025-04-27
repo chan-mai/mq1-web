@@ -1,40 +1,48 @@
 <script setup lang="ts">
-const articles: Ref<Article[]> = ref([]);
+const articlesLoading: Ref<boolean> = ref(true);
+const articles: Ref<Article[] | null> = ref(null);
 
 // とりあえず直近100件の記事を取得
 // TODO: ページネーションとかつくる
-try {
-    const { data, status, error } = await useFetch(() => `/api/articles?limit=100`);
+async function fetchArticles() {
+    try {
+        const { data, status, error } = await useFetch(() => `/api/articles?limit=100`);
 
-    if (error.value) {
-        console.error('Error fetching article:', error.value);
-        // 404
-        if (error.value.statusCode === 404) {
-            showError({
-                statusCode: 404,
-                message: 'Article not found',
-                fatal: true,
-            });
-        } else {
-            showError({
-                statusCode: 500,
-                message: 'Internal Server Error',
-                fatal: true,
-            });
+        if (error.value) {
+            console.error('Error fetching article:', error.value);
+            // 404
+            if (error.value.statusCode === 404) {
+                showError({
+                    statusCode: 404,
+                    message: 'Article not found',
+                    fatal: true,
+                });
+            } else {
+                showError({
+                    statusCode: 500,
+                    message: 'Internal Server Error',
+                    fatal: true,
+                });
+            }
         }
-    }
 
-    if (status.value === "success") {
-        articles.value = data.value?.body as unknown as Article[];
+        if (status.value === "success") {
+            articles.value = data.value?.body as unknown as Article[];
+        }
+    } catch (error) {
+        console.error('Error fetching articles:', error);
+        showError({
+            statusCode: 500,
+            message: "Internal Server Error",
+            fatal: true,
+        });
+    } finally {
+        articlesLoading.value = false;
     }
-} catch (error) {
-    console.error('Error fetching articles:', error);
-    showError({
-        statusCode: 500,
-        message: "Internal Server Error",
-        fatal: true,
-    });
 }
+
+// 各読み込み
+fetchArticles();
 
 const config = useWebConfig();
 const pageTitle = `記事一覧 - ${config.value.siteName}`;
@@ -69,7 +77,12 @@ useHead({
                 </h2>
             </div>
             <div class="flex flex-col gap-8">
-                <Articles :articles />
+                <Articles v-if="articles" :articles :loading="articlesLoading" />
+                <!--ロード完了までは記事なしを確定しない-->
+                <div v-else-if="!articlesLoading" class="flex flex-col items-center justify-center gap-4">
+                    <p class="text-lg font-bold text-accent">記事が見つかりませんでした。</p>
+                    <p class="text-sm text-slate-500">初めての投稿をお待ちください。</p>
+                </div>
             </div>
         </section>
     </main>

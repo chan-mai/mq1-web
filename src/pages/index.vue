@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
-const tags: Ref<Tag[]> = ref([]);
-const articles: Ref<Article[]> = ref([]);
+const tags: Ref<Tag[] | null> = ref(null);
+const articles: Ref<Article[] | null> = ref(null);
 
 const articlesLoading: Ref<boolean> = ref(true);
 const tagsLoading: Ref<boolean> = ref(true);
@@ -37,6 +37,13 @@ async function fetchArticles() {
 
         if (status.value === "success") {
             articles.value = data.value?.body as unknown[] as Article[];
+
+            // preload
+            if (articles.value) {
+                articles.value.forEach((article: Article) => {
+                    preloadRouteComponents(`/entry/${article.id}`)
+                })
+            }
         }
     } catch (error) {
         console.error('Error fetching articles:', error);
@@ -49,11 +56,6 @@ async function fetchArticles() {
 Promise.all([
     fetchTags(),
     fetchArticles(),
-
-    // preload
-    articles.value.forEach((article: Article) => {
-        preloadRouteComponents(`/entry/${article.id}`)
-    })
 ]).catch(error => {
     console.error('Error fetching data:', error);
 });
@@ -94,7 +96,8 @@ useHead({
                 </MqAppLink>
             </div>
             <div>
-                <h3 class="text-hey mb-4 max-w-2xl text-2xl leading-none font-extrabold md:text-3xl xl:text-4xl text-primary">
+                <h3
+                    class="text-hey mb-4 max-w-2xl text-2xl leading-none font-extrabold md:text-3xl xl:text-4xl text-primary">
                     Hey, I'm
                     <span
                         class="text-hey bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-indigo-400">chan-mai</span>
@@ -119,8 +122,13 @@ useHead({
                 <p class="text-sm leading-relaxed">
                     日常から非日常まで、書きたいことを自由に書いていく雑記帳です。</p>
 
-                <Tags :tags :loading="tagsLoading" />
-                <Articles limit="5" :articles :loading="articlesLoading" transition/>
+                <Tags :tags="tags? tags : []" :loading="tagsLoading" />
+                <Articles v-if="articles" limit="5" :articles :loading="articlesLoading" transition />
+                <!--ロード完了までは記事なしを確定しない-->
+                <div v-else-if="!articlesLoading" class="flex flex-col items-center justify-center gap-4">
+                    <p class="text-lg font-bold text-accent">記事が見つかりませんでした。</p>
+                    <p class="text-sm text-slate-500">初めての投稿をお待ちください。</p>
+                </div>
             </div>
         </section>
     </main>

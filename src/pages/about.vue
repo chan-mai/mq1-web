@@ -38,7 +38,8 @@ useHead({
 <template>
     <div class="min-h-screen rounded-xl overflow-hidden mt-5 md:mt-10">
         <div class="bg-accent text-white relative w-full max-w-none overflow-hidden md:overflow-visible">
-            <div class="absolute top-0 z-20 w-full h-2/3">
+            <!-- 右側のエッジ文字 -->
+            <div class="absolute bottom-0 z-20 w-full h-2/3">
                 <img src="@/assets/images/mai-bg-text.png" alt="Mai Sudachi"
                     class="w-full h-full object-contain object-right" loading="eager" />
             </div>

@@ -4,9 +4,9 @@ const props = defineProps({
     type: Array,
     required: true,
     validator: (value) => {
-      return value.every(item => 
-        typeof item.id === 'string' && 
-        typeof item.text === 'string' && 
+      return value.every(item =>
+        typeof item.id === 'string' &&
+        typeof item.text === 'string' &&
         typeof item.level === 'number'
       );
     }
@@ -29,28 +29,28 @@ const nestedItems = computed(() => {
   props.items.forEach(item => {
     // 現在のレベルのカウンターをインクリメント
     counter[item.level] = (counter[item.level] || 0) + 1;
-    
+
     // より下位のレベルのカウンターをリセット
     for (let i = item.level + 1; i <= 3; i++) {
       counter[i] = 0;
     }
-    
-    const newItem = { 
-      ...item, 
+
+    const newItem = {
+      ...item,
       children: [],
       counter: counter[item.level]
     };
-    
+
     while (stack.length > 0 && stack[stack.length - 1].level >= item.level) {
       stack.pop();
     }
-    
+
     if (stack.length === 0) {
       result.push(newItem);
     } else {
       stack[stack.length - 1].children.push(newItem);
     }
-    
+
     stack.push(newItem);
   });
 
@@ -74,7 +74,8 @@ function isExpanded(itemId) {
 <template>
   <div class="w-full max-w-6xl rounded-lg border bg-card p-4 bg-white toc-container">
     <div class="space-y-2">
-      <div class="flex items-center justify-between bg-gradient-to-r from-pink-50 to-purple-50 w-full border-b border-gray-200 rounded-lg py-2 px-4">
+      <div
+        class="flex items-center justify-between bg-gradient-to-r from-pink-50 to-purple-50 w-full border-b border-gray-200 rounded-lg py-2 px-4">
         <div class="flex items-center gap-2 font-medium">
           <Icon name="lucide:book-open" class="h-4 w-4 text-pink-500" />
           <h2 class="text-gradient">{{ title }}</h2>
@@ -85,71 +86,47 @@ function isExpanded(itemId) {
           <span class="sr-only">{{ isOpen ? "Close table of contents" : "Open table of contents" }}</span>
         </button>
       </div>
-      
+
       <!-- メイン目次のアニメーション -->
-      <Transition name="toc-fade">
+      <Transition v-if="nestedItems.length > 0" name="toc-fade">
         <div v-show="isOpen" class="toc-tree">
           <template v-for="item in nestedItems" :key="item.id">
             <div class="toc-item">
               <div class="toc-item-content">
-                <button 
-                  v-if="item.children.length" 
-                  @click="toggleSection(item.id)"
-                  class="toc-toggle"
-                >
-                  <Icon 
-                    :name="isExpanded(item.id) ? 'lucide:chevron-down' : 'lucide:chevron-right'" 
-                    class="h-3 w-3 transition-transform" 
-                  />
+                <button v-if="item.children.length" @click="toggleSection(item.id)" class="toc-toggle">
+                  <Icon :name="isExpanded(item.id) ? 'lucide:chevron-down' : 'lucide:chevron-right'"
+                    class="h-3 w-3 transition-transform" />
                 </button>
                 <span v-else class="toc-indent"></span>
-                <NuxtLink 
-                  :to="`#${item.id}`"
-                  class="toc-link"
-                  :class="{ 'font-medium': item.level === 1 }"
-                >
+                <NuxtLink :to="`#${item.id}`" class="toc-link" :class="{ 'font-medium': item.level === 1 }">
                   <span>{{ item.text }}</span>
                   <span class="toc-decoration">
                     <span class="toc-number">{{ item.counter }}</span>
                   </span>
                 </NuxtLink>
               </div>
-              
+
               <!-- セクション子項目のアニメーション -->
               <Transition name="toc-expand">
                 <div v-if="item.children.length && isExpanded(item.id)" class="toc-children">
-                  <div 
-                    v-for="child in item.children" 
-                    :key="child.id"
-                    class="toc-item pl-4"
-                  >
+                  <div v-for="child in item.children" :key="child.id" class="toc-item pl-4">
                     <div class="toc-item-content">
                       <span class="toc-branch"></span>
-                      <NuxtLink
-                        :to="`#${child.id}`"
-                        class="toc-link"
-                      >
+                      <NuxtLink :to="`#${child.id}`" class="toc-link">
                         <span>{{ child.text }}</span>
                         <span class="toc-decoration">
                           <span class="toc-number">{{ child.counter }}</span>
                         </span>
                       </NuxtLink>
                     </div>
-                    
+
                     <!-- 孫項目のアニメーション -->
                     <Transition name="toc-expand">
                       <div v-if="child.children.length" class="toc-children pl-4">
-                        <div 
-                          v-for="grandChild in child.children" 
-                          :key="grandChild.id"
-                          class="toc-item"
-                        >
+                        <div v-for="grandChild in child.children" :key="grandChild.id" class="toc-item">
                           <div class="toc-item-content">
                             <span class="toc-leaf"></span>
-                            <NuxtLink 
-                              :to="`#${grandChild.id}`"
-                              class="toc-link"
-                            >
+                            <NuxtLink :to="`#${grandChild.id}`" class="toc-link">
                               <span>{{ grandChild.text }}</span>
                               <span class="toc-decoration">
                                 <span class="toc-number">{{ grandChild.counter }}</span>
@@ -164,6 +141,13 @@ function isExpanded(itemId) {
               </Transition>
             </div>
           </template>
+        </div>
+      </Transition>
+
+      <!-- セクションがない場合 -->
+       <Transition v-else name="toc-fade">
+        <div class="flex items-center justify-center py-4">
+          <p class="text-sm text-gray-500">目次はありません。</p>
         </div>
       </Transition>
     </div>

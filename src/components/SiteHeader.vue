@@ -49,10 +49,10 @@ whenever(
 
     <div :class="[
       isVisibleOverlay
-        ? 'pointer-events-auto text-white opacity-100'
+        ? 'pointer-events-auto text-primary opacity-100'
         : 'pointer-events-none opacity-0',
     ]"
-      class="fixed inset-0 z-40 bg-white px-8 pt-20 transition-opacity before:absolute before:inset-0 before:bg-stone-400 md:pointer-events-auto md:relative md:inset-auto md:flex md:items-center md:gap-4 md:rounded-[2rem] md:border-2 md:border-primary md:py-0 md:pl-6 md:pr-9 md:text-inherit md:opacity-100 md:shadow-xl md:transition-none md:before:hidden">
+      class="fixed inset-0 z-40 bg-white px-8 pt-20 transition-opacity before:absolute before:inset-0 before:bg-white md:pointer-events-auto md:relative md:inset-auto md:flex md:items-center md:gap-4 md:rounded-[2rem] md:border-2 md:border-primary md:py-0 md:pl-6 md:pr-9 md:text-inherit md:opacity-100 md:shadow-xl md:transition-none md:before:hidden">
       <nav>
         <ul class="flex flex-col items-start gap-2 md:flex-row md:items-stretch md:gap-0">
           <li v-for="item in config.headerMenu" :key="item.url">

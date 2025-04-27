@@ -35,7 +35,7 @@ export default defineNuxtConfig({
     },
   },
   plugins: [{ src: "~/plugins/loading.ts", mode: "client" }],
-  modules: ["@nuxtjs/tailwindcss", "@vueuse/nuxt", "@nuxt/icon"],
+  modules: ["@nuxtjs/tailwindcss", "@vueuse/nuxt", "@nuxt/icon", "nuxt-gtag"],
   tailwindcss: {
     config: {
       theme: {
@@ -48,6 +48,9 @@ export default defineNuxtConfig({
         },
       },
     },
+  },
+  gtag: {
+    id: "G-ZHPDFE19FX",
   },
   runtimeConfig: {
     public: {

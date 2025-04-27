@@ -1,4 +1,4 @@
-import { createClient } from "microcms-js-sdk";
+import { createClient, type MicroCMSQueries } from "microcms-js-sdk";
 
 export default defineEventHandler(async (event) => {
   // クエリパラメータを取得
@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
   });
 
   // 検索クエリの生成
-  let queries: any = {
+  let queries: MicroCMSQueries = {
     limit: limit,
     orders: "-publishedAt",
   };

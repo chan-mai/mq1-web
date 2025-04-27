@@ -1,4 +1,4 @@
-import { createClient } from "microcms-js-sdk";
+import { createClient, type MicroCMSQueries } from "microcms-js-sdk";
 
 export default defineEventHandler(async (event) => {
   const tagId = event.context.params?.tagId;
@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
     apiKey: config.apiKey,
   });
 
-  const queries = {
+  const queries: MicroCMSQueries = {
     limit: 1,
     orders: "-publishedAt",
     filters: `id[equals]${tagId}`,

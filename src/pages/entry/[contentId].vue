@@ -3,12 +3,15 @@ import * as cheerio from 'cheerio';
 
 const route = useRoute();
 const { contentId } = route.params as { contentId: string };
+// クエリパラメータにdraft_keyがあれば取得
+const draftKey: string | null = route.query.draft_key as string | null;
 
 let article: Ref<Article | null> = ref(null);
 
 // /api/get-article/:contentIdから取得
 try {
-    const { data, status, error } = await useFetch(() => `/api/article/${contentId}`);
+    const url = draftKey ? `/api/article/${contentId}?draft_key=${draftKey}` : `/api/article/${contentId}`;
+    const { data, status, error } = await useFetch(() => url);
 
     if (error.value) {
         console.error('Error fetching article:', error.value);
@@ -170,6 +173,10 @@ const isUpdate = ref(article.value && (article.value.createdAt || article.value.
 
 </script>
 <template>
+    <div v-if="draftKey" class="fixed top-0 left-0 z-50 bg-sky-200 text-black px-4 py-2 shadow-md flex items-center m-2 rounded-md opacity-70">
+        <Icon name="iconoir:warning-window" class="size-5 mr-2" />
+        <span class="font-bold">下書きを表示しています</span>
+    </div>
     <main
         class="max-w-none text-[0.925rem] leading-loose tracking-wide text-inherit [&>div>*:first-child]:mt-0 max-w-7xl gap-16 md:gap-20">
 

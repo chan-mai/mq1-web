@@ -1,10 +1,13 @@
-import { createClient } from "microcms-js-sdk";
+import { createClient, type MicroCMSQueries } from "microcms-js-sdk";
 
 export default defineEventHandler(async (event) => {
   const contentId = event.context.params?.contentId;
   // クエリパラメータを取得
   const query = getQuery(event);
 
+  const draftKey: string | null = query.draft_key
+    ? (query.draft_key as string)
+    : null;
   const prev = query.prev ? query.prev : null;
   const next = query.next ? query.next : null;
 
@@ -15,11 +18,16 @@ export default defineEventHandler(async (event) => {
   });
 
   // 検索クエリの生成
-  let queries = {
+  let queries: MicroCMSQueries = {
     limit: 1,
     orders: "-publishedAt",
     filters: `id[equals]${contentId}`,
   };
+
+  // 下書きキーが指定されている場合は、下書きキーを追加
+  if (draftKey) {
+    queries.draftKey = draftKey;
+  }
 
   // 前後の記事を取得する場合でも必要になるのでとりあえず取得しておく
   const res: any = await client.get({

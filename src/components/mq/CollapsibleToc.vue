@@ -145,8 +145,8 @@ function isExpanded(itemId) {
       </Transition>
 
       <!-- セクションがない場合 -->
-       <Transition v-else name="toc-fade">
-        <div class="flex items-center justify-center py-4">
+      <Transition v-else name="toc-fade">
+        <div v-show="isOpen" class="flex items-center justify-center py-4">
           <p class="text-sm text-gray-500">目次はありません。</p>
         </div>
       </Transition>

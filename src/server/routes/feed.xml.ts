@@ -35,14 +35,14 @@ export default defineEventHandler(async (event) => {
   });
 
   try {
-    const res = await client.getList({
+    const res = await client.getAllContents({
       endpoint: "articles",
       queries: {
         orders: "-publishedAt",
       },
     });
 
-    res?.contents.forEach((article: any) => {
+    res?.forEach((article: any) => {
       const url = `${siteUrl}entry/${article.id}`;
       const $ = cheerio.load(article.content ?? "");
       const textContent: string = $.text().trim();

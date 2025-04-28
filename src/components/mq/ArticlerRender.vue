@@ -105,6 +105,7 @@ onMounted(() => {
 
 <style lang="css">
 .micro-cms {
+    @apply space-y-4;
     overflow-x: auto;
 }
 
@@ -150,7 +151,7 @@ onMounted(() => {
 }
 
 .micro-cms p {
-    @apply text-lg ml-5 pb-3;
+    @apply ml-5 pb-3;
 }
 
 .micro-cms a {

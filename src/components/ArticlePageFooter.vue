@@ -171,10 +171,6 @@ Promise.all([
             </template>
         </div>
     </div>
-
-    <!-- Chirpy Comment -->
-    <div class="w-full max-w-6xl mx-auto rounded-lg overflow-hidden px-4" data-chirpy-theme="system"
-        data-chirpy-comment="true" id="chirpy-comment" />
 </template>
 <style lang="css" scoped>
 .slide-hover {

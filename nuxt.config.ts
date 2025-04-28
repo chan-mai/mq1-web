@@ -1,3 +1,5 @@
+import { createClient } from "microcms-js-sdk";
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
@@ -30,13 +32,6 @@ export default defineNuxtConfig({
         lang: "ja",
         prefix: "og: https://ogp.me/ns#",
       },
-      script: [
-        {
-          src: 'https://chirpy.dev/bootstrapper.js',
-          defer: true,
-          'data-chirpy-domain': 'mq1.dev',
-        }
-      ]
     },
   },
   plugins: [{ src: "~/plugins/loading.ts", mode: "client" }],

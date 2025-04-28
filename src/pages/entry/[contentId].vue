@@ -51,7 +51,7 @@ const config = useWebConfig();
 
 if (article.value && article.value.content) {
     const pageTitle = `${article.value?.title || ''} - ${config.value.siteName}`;
-    const pageDescription = useSummaryTextGenerator(article.value?.content) || config.value.siteDescription;
+    const pageDescription = useSummaryTextGenerator(article.value?.content ) || config.value.siteDescription;
     const ogImageUrl = useOgGenerator(article.value?.title || '');
     const pageUrl = `${config.value.siteUrl}/entry/${contentId}`;
     const publishedTime = article.value?.publishedAt || article.value?.createdAt;
@@ -173,8 +173,7 @@ const isUpdate = ref(article.value && (article.value.createdAt || article.value.
 
 </script>
 <template>
-    <div v-if="draftKey"
-        class="fixed top-0 left-0 z-50 bg-sky-200 text-black px-4 py-2 shadow-md flex items-center m-2 rounded-md opacity-70">
+    <div v-if="draftKey" class="fixed top-0 left-0 z-50 bg-sky-200 text-black px-4 py-2 shadow-md flex items-center m-2 rounded-md opacity-70">
         <Icon name="iconoir:warning-window" class="size-5 mr-2" />
         <span class="font-bold">下書きを表示しています</span>
     </div>
@@ -186,20 +185,18 @@ const isUpdate = ref(article.value && (article.value.createdAt || article.value.
 
         <article class="mt-5 md:mt-16 mx-auto flex w-full max-w-6xl flex-col px-2 md:px-6 mb-16">
             <ArticlePageHead :title="article?.title" :published="article?.publishedAt ?? article?.createdAt"
-                :updated="article?.updatedAt" :tags="article?.tags" :readingTime
-                :style="`view-transition-name: article-title-${contentId};`" />
+                :updated="article?.updatedAt" :tags="article?.tags"
+                :readingTime :style="`view-transition-name: article-title-${contentId};`" />
 
-            <MqCollapsibleToc :items="tableOfContents" :title="article?.title" class="mt-5" />
+            <MqCollapsibleToc :items="tableOfContents" :title="article?.title"
+                class="mt-5" />
 
             <div class="content prose">
                 <MqArticlerRender :target="article?.content!" class="micro-cms mt-6 md:mt-10" />
             </div>
         </article>
-
-        <ArticlePageFooter :current-article="article!" />
-
     </main>
 
-
-
+    <ArticlePageFooter :current-article="article!" />
 </template>
+

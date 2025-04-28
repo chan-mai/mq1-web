@@ -117,7 +117,7 @@ function navigateToTag(tag: any) {
                                 <div class="slide-hover p-4 rounded-lg flex-grow overflow-hidden">
                                     <div class="flex flex-col md:flex-row gap-4 h-full">
                                         <!-- 画像コンテナ - モバイルでは幅100%、md以上では固定幅 -->
-                                        <div class="md:w-1/3 w-full">
+                                        <div class="md:w-1/3 w-full md:flex-shrink-0 md:min-w-[200px]">
                                             <div
                                                 class="relative w-full overflow-hidden rounded-lg aspect-video max-w-full">
                                                 <MqOgImage :url="article.eyecatch?.url" :title="article.title" fill
@@ -127,12 +127,12 @@ function navigateToTag(tag: any) {
                                         </div>
 
                                         <!-- テキストコンテンツ -->
-                                        <div class="w-full flex flex-col justify-between h-full">
+                                        <div class="w-full flex flex-col justify-between h-full md:flex-1 md:min-w-0">
                                             <div>
-                                                <h3 class="text-lg font-medium text-gray-800 mb-2"
+                                                <h3 class="text-lg font-medium text-gray-800 mb-2 whitespace-nowrap overflow-hidden text-ellipsis"
                                                     :style="`view-transition-name: article-title-${article.id};`">{{
-                                                        article.title }}</h3>
-                                                <p class="text-gray-600 text-sm mb-2">{{ article.summary }}</p>
+                                                    article.title }}</h3>
+                                                <p class="text-gray-600 text-sm mb-2 overflow-hidden line-clamp-3">{{ article.summary }}</p>
 
                                                 <div class="flex flex-wrap gap-2 mt-4">
                                                     <MqTag v-for="tag in article.tags!.slice(0, 5)" :key="tag.id"

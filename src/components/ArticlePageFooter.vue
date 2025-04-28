@@ -65,85 +65,85 @@ Promise.all([
 });
 </script>
 <template>
-    <div class="max-w-6xl mx-auto px-4 mb-16 border-t border-gray-200 pt-8">
-        <div class="flex flex-col md:flex-row justify-between gap-6">
+    <div class="max-w-6xl mx-auto px-4 mb-8 sm:mb-16 border-t border-gray-200 pt-4 sm:pt-8">
+        <div class="flex flex-col md:flex-row justify-between gap-4 sm:gap-6">
             <template v-if="isLoaded">
                 <!-- 前の記事 -->
                 <NuxtLink v-if="prevArticle" :to="`/entry/${prevArticle.id}`" class="slide-hover flex-1">
                     <div
-                        class="group p-4 border border-gray-200 rounded-lg hover:border-primary transition-all duration-300 h-full">
+                        class="group p-3 sm:p-4 border border-gray-200 rounded-lg hover:border-primary transition-all duration-300 h-full">
                         <div class="flex items-center text-gray-500 mb-2">
                             <Icon name="material-symbols:arrow-back" class="mr-1 w-4 h-4 group-hover:text-primary" />
-                            <span class="text-sm group-hover:text-primary">前の記事</span>
+                            <span class="text-xs sm:text-sm group-hover:text-primary">前の記事</span>
                         </div>
-                        <h4 class="text-gray-800 font-medium line-clamp-">{{ prevArticle.title }}</h4>
-                        <div class="mt-2 flex items-center">
+                        <h4 class="text-gray-800 text-sm sm:text-base font-medium line-clamp-1 whitespace-nowrap overflow-hidden text-ellipsis">{{ prevArticle.title }}</h4>
+                        <div class="mt-2 flex flex-col sm:flex-row items-center">
                             <div
-                                class="w-full sm:w-32 md:w-40 lg:w-64 aspect-video max-h-16 mb-2 sm:mb-0 sm:mr-3 overflow-hidden rounded">
+                                class="w-full md:max-w-1/3 aspect-video md:h-20 sm:max-h-16 mb-2 sm:mb-0 sm:mr-3 overflow-hidden rounded">
                                 <MqOgImage :url="prevArticle.eyecatch?.url" :title="prevArticle.title"
-                                    class="w-full h-full object-cover" />
+                                    class="w-full h-full object-contain" />
                             </div>
-                            <p class="text-sm text-gray-600 line-clamp-2">{{ prevArticle.summary || '' }}</p>
+                            <p class="text-xs sm:text-sm text-gray-600 overflow-hidden line-clamp-2 sm:line-clamp-3">{{ prevArticle.summary || '' }}</p>
                         </div>
                     </div>
                 </NuxtLink>
                 <div v-else class="flex-1">
-                    <div class="p-4 h-full">
+                    <div class="p-3 sm:p-4 h-full">
                         <div class="flex items-center text-gray-400 mb-2">
                             <Icon name="material-symbols:arrow-back" class="mr-1 w-4 h-4" />
-                            <span class="text-sm">前の記事</span>
+                            <span class="text-xs sm:text-sm">前の記事</span>
                         </div>
-                        <p class="text-gray-400 font-medium">これが最も古い記事です</p>
+                        <p class="text-gray-400 font-medium text-sm sm:text-base">これが最も古い記事です</p>
                     </div>
                 </div>
 
                 <!-- 次の記事 -->
                 <NuxtLink v-if="nextArticle" :to="`/entry/${nextArticle.id}`" class="slide-hover flex-1">
                     <div
-                        class="group p-4 border border-gray-200 rounded-lg hover:border-primary transition-all duration-300 h-full">
+                        class="group p-3 sm:p-4 border border-gray-200 rounded-lg hover:border-primary transition-all duration-300 h-full">
                         <div class="flex items-center justify-end text-gray-500 mb-2">
-                            <span class="text-sm group-hover:text-primary">次の記事</span>
+                            <span class="text-xs sm:text-sm group-hover:text-primary">次の記事</span>
                             <Icon name="material-symbols:arrow-forward" class="ml-1 w-4 h-4 group-hover:text-primary" />
                         </div>
-                        <h4 class="text-gray-800 font-medium line-clamp-2 text-right">{{ nextArticle.title }}</h4>
-                        <div class="mt-2 flex items-center">
-                            <p class="text-sm text-gray-600 line-clamp-2">{{ nextArticle.summary || '' }}</p>
+                        <h4 class="text-gray-800 text-sm sm:text-base font-medium line-clamp-1 whitespace-nowrap overflow-hidden text-ellipsis text-right">{{ nextArticle.title }}</h4>
+                        <div class="mt-2 flex flex-col-reverse sm:flex-row items-center">
+                            <p class="text-xs sm:text-sm text-gray-600 overflow-hidden line-clamp-2 sm:line-clamp-3 mt-2 sm:mt-0">{{ nextArticle.summary || '' }}</p>
                             <div
-                                class="w-full sm:w-32 md:w-40 lg:w-64 aspect-video max-h-16 mb-2 sm:mb-0 sm:ml-3 overflow-hidden rounded">
+                                class="w-full md:max-w-1/3 aspect-video md:h-20 sm:max-h-16 sm:ml-3 overflow-hidden rounded">
                                 <MqOgImage :url="nextArticle.eyecatch?.url" :title="nextArticle.title"
-                                    class="w-full h-full object-cover" />
+                                    class="w-full h-full object-contain" />
                             </div>
                         </div>
                     </div>
                 </NuxtLink>
                 <div v-else class="flex-1">
-                    <div class="p-4 h-full">
+                    <div class="p-3 sm:p-4 h-full">
                         <div class="flex items-center justify-end text-gray-400 mb-2">
-                            <span class="text-sm">次の記事</span>
+                            <span class="text-xs sm:text-sm">次の記事</span>
                             <Icon name="material-symbols:arrow-forward" class="ml-1 w-4 h-4" />
                         </div>
-                        <p class="text-gray-400 font-medium text-right">これが最新の記事です</p>
+                        <p class="text-gray-400 font-medium text-right text-sm sm:text-base">これが最新の記事です</p>
                     </div>
                 </div>
             </template>
 
-            <!-- スケルトンローディング -->
+            <!-- スケルトンローディング (モバイル対応) -->
             <template v-else>
                 <!-- 前の記事 -->
                 <div class="flex-1">
-                    <div class="group p-4 border border-gray-200 rounded-lg h-full">
+                    <div class="group p-3 sm:p-4 border border-gray-200 rounded-lg h-full">
                         <div class="flex items-center text-gray-500 mb-2">
                             <div class="skeleton w-4 h-4 mr-1"></div>
-                            <div class="skeleton w-16 h-4"></div>
+                            <div class="skeleton w-12 sm:w-16 h-3 sm:h-4"></div>
                         </div>
-                        <div class="skeleton w-full h-6 mb-2"></div>
-                        <div class="mt-2 flex items-center">
-                            <div class="w-64 aspect-video max-h-16 mr-3 overflow-hidden rounded">
+                        <div class="skeleton w-full h-4 sm:h-6 mb-2"></div>
+                        <div class="mt-2 flex flex-col sm:flex-row items-center">
+                            <div class="w-full sm:max-w-1/3 aspect-video h-20 sm:max-h-16 mb-2 sm:mb-0 sm:mr-3 overflow-hidden rounded">
                                 <div class="skeleton w-full h-full"></div>
                             </div>
-                            <div class="flex-1">
-                                <div class="skeleton w-full h-4 mb-1"></div>
-                                <div class="skeleton w-3/4 h-4"></div>
+                            <div class="flex-1 w-full">
+                                <div class="skeleton w-full h-3 sm:h-4 mb-1"></div>
+                                <div class="skeleton w-3/4 h-3 sm:h-4"></div>
                             </div>
                         </div>
                     </div>
@@ -151,18 +151,18 @@ Promise.all([
 
                 <!-- 次の記事 -->
                 <div class="flex-1">
-                    <div class="group p-4 border border-gray-200 rounded-lg h-full">
+                    <div class="group p-3 sm:p-4 border border-gray-200 rounded-lg h-full">
                         <div class="flex items-center justify-end text-gray-500 mb-2">
-                            <div class="skeleton w-16 h-4"></div>
+                            <div class="skeleton w-12 sm:w-16 h-3 sm:h-4"></div>
                             <div class="skeleton w-4 h-4 ml-1"></div>
                         </div>
-                        <div class="skeleton w-full h-6 mb-2 ml-auto"></div>
-                        <div class="mt-2 flex items-center">
-                            <div class="flex-1">
-                                <div class="skeleton w-full h-4 mb-1"></div>
-                                <div class="skeleton w-3/4 h-4 ml-auto"></div>
+                        <div class="skeleton w-full h-4 sm:h-6 mb-2 ml-auto"></div>
+                        <div class="mt-2 flex flex-col-reverse sm:flex-row items-center">
+                            <div class="flex-1 w-full mt-2 sm:mt-0">
+                                <div class="skeleton w-full h-3 sm:h-4 mb-1"></div>
+                                <div class="skeleton w-3/4 h-3 sm:h-4 ml-auto"></div>
                             </div>
-                            <div class="w-64 aspect-video max-h-16 ml-3 overflow-hidden rounded">
+                            <div class="w-full sm:max-w-1/3 aspect-video h-20 sm:max-h-16 sm:ml-3 overflow-hidden rounded">
                                 <div class="skeleton w-full h-full"></div>
                             </div>
                         </div>

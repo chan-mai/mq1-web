@@ -38,11 +38,11 @@ const isHovered = ref(false);
             class="absolute inset-0 bg-gradient-to-br from-pink-100 via-purple-50 to-blue-100 rounded-3xl mx-4 md:mx-8 opacity-80">
         </div>
 
-        <div class="mx-auto -mt-5 box-content grid h-96 max-w-6xl overflow-hidden px-4 md:-mt-7 md:px-6 relative">
+        <div class="mx-auto -mt-5 box-content grid h-auto md:h-96 max-w-6xl overflow-hidden px-4 md:-mt-7 md:px-6 relative">
             <div class="col-span-full row-span-full overflow-hidden rounded-3xl transform transition-transform duration-300 hover:scale-[1.01]"
                 @mouseenter="isHovered = true" @mouseleave="isHovered = false">
                 <picture>
-                    <MqOgImage v-if="articlePage" :url :title/>
+                    <MqOgImage v-if="articlePage" class="block size-full object-cover" :url :title/>
                     <img v-else-if="image" :src="image" alt="Hero Image" class="block size-full object-cover" />
                     <img v-else src="~/assets/images/hero.webp" alt="Hero Image" class="block size-full object-cover" />
                 </picture>

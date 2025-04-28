@@ -183,7 +183,7 @@ const isUpdate = ref(article.value && (article.value.createdAt || article.value.
         <MqHero :url="article?.eyecatch?.url" :title="article?.title" text-hidden article-page
             :style="`view-transition-name: article-${contentId};`" />
 
-        <article class="mt-16 mx-auto flex w-full max-w-6xl flex-col px-2 md:px-6 mb-16">
+        <article class="mt-5 md:mt-16 mx-auto flex w-full max-w-6xl flex-col px-2 md:px-6 mb-16">
             <ArticlePageHead :title="article?.title" :published="article?.publishedAt ?? article?.createdAt"
                 :updated="article?.updatedAt" :tags="article?.tags"
                 :readingTime :style="`view-transition-name: article-title-${contentId};`" />

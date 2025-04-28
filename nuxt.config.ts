@@ -35,7 +35,13 @@ export default defineNuxtConfig({
     },
   },
   plugins: [{ src: "~/plugins/loading.ts", mode: "client" }],
-  modules: ["@nuxtjs/tailwindcss", "@vueuse/nuxt", "@nuxt/icon", "nuxt-gtag"],
+  modules: [
+    "@nuxtjs/tailwindcss",
+    "@vueuse/nuxt",
+    "@nuxt/icon",
+    "nuxt-gtag",
+    "@nuxtjs/sitemap",
+  ],
   tailwindcss: {
     config: {
       theme: {
@@ -77,5 +83,51 @@ export default defineNuxtConfig({
   },
   experimental: {
     viewTransition: true,
+  },
+  site: {
+    url: "https://mq1.dev/",
+    name: "まいの雑記帳",
+    defaultLocale: "ja",
+  },
+  sitemap: {
+    sitemaps: {
+      pages: {
+        includeAppSources: true,
+      },
+      articles: {
+        urls: async () => {
+          const client = createClient({
+            serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN!,
+            apiKey: process.env.MICROCMS_API_KEY!,
+          });
+
+          const contents = await client.getAllContents({
+            endpoint: "articles",
+          });
+
+          return contents.map((post: any) => ({
+            loc: `/entry/${post.id}`,
+            lastmod: post.updatedAt || post.publishedAt,
+          }));
+        },
+      },
+      tag: {
+        urls: async () => {
+          const client = createClient({
+            serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN!,
+            apiKey: process.env.MICROCMS_API_KEY!,
+          });
+
+          const contents = await client.getAllContents({
+            endpoint: "tags",
+          });
+
+          return contents.map((post: any) => ({
+            loc: `/tag/${post.id}`,
+            lastmod: post.updatedAt || post.publishedAt,
+          }));
+        },
+      },
+    },
   },
 });

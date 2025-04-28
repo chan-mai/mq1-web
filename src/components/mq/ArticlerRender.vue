@@ -139,15 +139,15 @@ onMounted(() => {
 }
 
 .micro-cms h1 {
-    @apply mt-5 mb-5 font-bold text-3xl;
+    @apply mt-5 mb-5 text-3xl;
 }
 
 .micro-cms h2 {
-    @apply mt-5 mb-5 font-bold text-2xl;
+    @apply mt-5 mb-5 text-2xl;
 }
 
 .micro-cms h3 {
-    @apply mt-5 mb-5 font-bold text-xl;
+    @apply mt-5 mb-5 text-xl;
 }
 
 .micro-cms p {

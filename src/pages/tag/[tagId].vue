@@ -61,7 +61,7 @@ fetchArticles();
 
 const config = useWebConfig();
 const pageTitle = `#${tag.value?.name} - ${config.value.siteName}`;
-const pageDescription = config.value.siteDescription;
+const pageDescription = `#${tag.value?.name}の記事一覧`;
 const ogImageUrl = useOgGenerator(`#${tag.value?.name}`);
 const pageUrl = `${config.value.siteUrl}/articles`;
 

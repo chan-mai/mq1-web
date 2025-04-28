@@ -69,12 +69,13 @@ export default defineNuxtConfig({
     apiKey: process.env.MICROCMS_API_KEY,
   },
   nitro: {
-    prerender: {
+    // 現状SSRしているので、プリレンダリングしちゃ更新されなくなってよくない
+    /*prerender: {
       routes: ["/feed.xml"],
       autoSubfolderIndex: true,
       crawlLinks: true,
       failOnError: false,
-    },
+    },*/
   },
   routeRules: {
     "/feed.xml": {

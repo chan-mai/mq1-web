@@ -102,30 +102,30 @@ export default defineNuxtConfig({
             apiKey: process.env.MICROCMS_API_KEY!,
           });
 
-          const contents = await client.getAllContents({
+          const articles = await client.getAllContents({
             endpoint: "articles",
           });
 
-          return contents.map((post: any) => ({
-            loc: `/entry/${post.id}`,
-            lastmod: post.updatedAt || post.publishedAt,
+          return articles.map((article: any) => ({
+            loc: `/entry/${article.id}`,
+            lastmod: article.updatedAt || article.publishedAt,
           }));
         },
       },
-      tag: {
+      tags: {
         urls: async () => {
           const client = createClient({
             serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN!,
             apiKey: process.env.MICROCMS_API_KEY!,
           });
 
-          const contents = await client.getAllContents({
+          const tags = await client.getAllContents({
             endpoint: "tags",
           });
 
-          return contents.map((post: any) => ({
-            loc: `/tag/${post.id}`,
-            lastmod: post.updatedAt || post.publishedAt,
+          return tags.map((tag: any) => ({
+            loc: `/tag/${tag.id}`,
+            lastmod: tag.updatedAt || tag.publishedAt,
           }));
         },
       },

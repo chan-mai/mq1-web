@@ -76,7 +76,7 @@ Promise.all([
                             <Icon name="material-symbols:arrow-back" class="mr-1 w-4 h-4 group-hover:text-primary" />
                             <span class="text-xs sm:text-sm group-hover:text-primary">前の記事</span>
                         </div>
-                        <h4 class="text-gray-800 text-sm sm:text-base font-medium line-clamp-1 whitespace-nowrap overflow-hidden text-ellipsis">{{ prevArticle.title }}</h4>
+                        <h4 class="text-gray-800 text-sm sm:text-base font-medium line-clamp-1 overflow-hidden text-ellipsis">{{ prevArticle.title }}</h4>
                         <div class="mt-2 flex flex-col sm:flex-row items-center">
                             <div
                                 class="w-full md:max-w-1/3 aspect-video md:h-20 sm:max-h-16 mb-2 sm:mb-0 sm:mr-3 overflow-hidden rounded">
@@ -105,7 +105,7 @@ Promise.all([
                             <span class="text-xs sm:text-sm group-hover:text-primary">次の記事</span>
                             <Icon name="material-symbols:arrow-forward" class="ml-1 w-4 h-4 group-hover:text-primary" />
                         </div>
-                        <h4 class="text-gray-800 text-sm sm:text-base font-medium line-clamp-1 whitespace-nowrap overflow-hidden text-ellipsis text-right">{{ nextArticle.title }}</h4>
+                        <h4 class="text-gray-800 text-sm sm:text-base font-medium line-clamp-1 overflow-hidden text-ellipsis text-right">{{ nextArticle.title }}</h4>
                         <div class="mt-2 flex flex-col-reverse sm:flex-row items-center">
                             <p class="text-xs sm:text-sm text-gray-600 overflow-hidden line-clamp-2 sm:line-clamp-3 mt-2 sm:mt-0">{{ nextArticle.summary || '' }}</p>
                             <div

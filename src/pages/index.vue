@@ -91,7 +91,7 @@ useHead({
                 <h2 class="text-head font-accent text-4xl font-bold text-slate-800 md:text-6xl">
                     About Me
                 </h2>
-                <MqAppLink to="https://chan-mai.dev/">
+                <MqAppLink to="/about">
                     <span class="text-xs">もっとみる</span>
                 </MqAppLink>
             </div>

@@ -228,6 +228,10 @@ onMounted(() => {
     @apply rounded-lg;
 }
 
+.micro-cms p code {
+    @apply rounded-lg px-2 bg-gray-200;
+}
+
 /* スクロール可能な要素のラッパー */
 .scrollable-wrapper {
     position: relative;

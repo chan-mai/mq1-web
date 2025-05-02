@@ -79,7 +79,7 @@ Promise.all([
                         <h4 class="text-gray-800 text-sm sm:text-base font-medium line-clamp-1 overflow-hidden text-ellipsis">{{ prevArticle.title }}</h4>
                         <div class="mt-2 flex flex-col sm:flex-row items-center">
                             <div
-                                class="w-full md:max-w-1/3 aspect-video md:h-20 sm:max-h-16 mb-2 sm:mb-0 sm:mr-3 overflow-hidden rounded">
+                                class="w-full md:max-w-1/3 md:h-20 sm:max-h-16 mb-2 sm:mb-0 sm:mr-3 overflow-hidden rounded">
                                 <MqOgImage :url="prevArticle.eyecatch?.url" :title="prevArticle.title"
                                     class="w-full h-full object-contain" />
                             </div>
@@ -109,7 +109,7 @@ Promise.all([
                         <div class="mt-2 flex flex-col-reverse sm:flex-row items-center">
                             <p class="text-xs sm:text-sm text-gray-600 overflow-hidden line-clamp-2 sm:line-clamp-3 mt-2 sm:mt-0">{{ nextArticle.summary || '' }}</p>
                             <div
-                                class="w-full md:max-w-1/3 aspect-video md:h-20 sm:max-h-16 sm:ml-3 overflow-hidden rounded">
+                                class="w-full md:max-w-1/3 md:h-20 sm:max-h-16 sm:ml-3 overflow-hidden rounded">
                                 <MqOgImage :url="nextArticle.eyecatch?.url" :title="nextArticle.title"
                                     class="w-full h-full object-contain" />
                             </div>
@@ -138,7 +138,7 @@ Promise.all([
                         </div>
                         <div class="skeleton w-full h-4 sm:h-6 mb-2"></div>
                         <div class="mt-2 flex flex-col sm:flex-row items-center">
-                            <div class="w-full sm:max-w-1/3 aspect-video h-20 sm:max-h-16 mb-2 sm:mb-0 sm:mr-3 overflow-hidden rounded">
+                            <div class="w-full sm:max-w-1/3 h-20 sm:max-h-16 mb-2 sm:mb-0 sm:mr-3 overflow-hidden rounded">
                                 <div class="skeleton w-full h-full"></div>
                             </div>
                             <div class="flex-1 w-full">
@@ -162,7 +162,7 @@ Promise.all([
                                 <div class="skeleton w-full h-3 sm:h-4 mb-1"></div>
                                 <div class="skeleton w-3/4 h-3 sm:h-4 ml-auto"></div>
                             </div>
-                            <div class="w-full sm:max-w-1/3 aspect-video h-20 sm:max-h-16 sm:ml-3 overflow-hidden rounded">
+                            <div class="w-full sm:max-w-1/3 h-20 sm:max-h-16 sm:ml-3 overflow-hidden rounded">
                                 <div class="skeleton w-full h-full"></div>
                             </div>
                         </div>

@@ -64,7 +64,7 @@ function navigateToTag(tag: any) {
                                     <!-- スケルトン画像 -->
                                     <div class="w-full md:w-1/3">
                                         <div
-                                            class="relative h-48 md:h-full w-full rounded-lg aspect-video bg-gray-200 animate-pulse">
+                                            class="relative h-48 md:h-full w-full rounded-lg bg-gray-200 animate-pulse">
                                         </div>
                                     </div>
 
@@ -119,7 +119,7 @@ function navigateToTag(tag: any) {
                                         <!-- 画像コンテナ - モバイルでは幅100%、md以上では固定幅 -->
                                         <div class="md:w-1/3 w-full md:flex-shrink-0 md:min-w-[200px]">
                                             <div
-                                                class="relative w-full overflow-hidden rounded-lg aspect-video max-w-full">
+                                                class="relative w-full overflow-hidden rounded-lg max-w-full">
                                                 <MqOgImage :url="article.eyecatch?.url" :title="article.title" fill
                                                     class="object-cover transition-transform duration-300 hover:scale-105 rounded-lg w-full h-full"
                                                     :style="`view-transition-name: article-${article.id}; max-width: 100%;`" />
@@ -211,13 +211,6 @@ function navigateToTag(tag: any) {
     100% {
         opacity: 0;
         transform: translateX(0);
-    }
-}
-
-@media (max-width: 768px) {
-    .aspect-video {
-        max-width: 100%;
-        height: auto !important;
     }
 }
 

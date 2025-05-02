@@ -116,7 +116,7 @@ onMounted(() => {
 }
 
 .micro-cms img {
-    @apply w-full min-w-[30vw] bg-white pl-0 pr-0 ml-0 mr-0 rounded-lg;
+    @apply w-full min-w-[30vw] bg-white mx-5 pr-0 rounded-lg;
 }
 
 /* タブレット */
@@ -182,11 +182,11 @@ onMounted(() => {
 }
 
 .micro-cms ul {
-    @apply list-disc list-inside;
+    @apply list-disc list-inside mx-5;
 }
 
 .micro-cms ol {
-    @apply list-decimal list-inside;
+    @apply list-decimal list-inside mx-5;
 }
 
 .micro-cms blockquote {

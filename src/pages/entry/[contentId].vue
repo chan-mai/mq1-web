@@ -195,6 +195,7 @@ const isUpdate = ref(article.value && (article.value.createdAt || article.value.
                 <MqArticlerRender :target="article?.content!" class="micro-cms mt-6 md:mt-10" />
             </div>
         </article>
+        <MqRssCta type="inline" />
     </main>
 
     <ArticlePageFooter :current-article="article!" />

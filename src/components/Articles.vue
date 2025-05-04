@@ -158,6 +158,8 @@ function navigateToTag(tag: any) {
                 </template>
             </div>
         </div>
+        
+        <MqRssCta type="inline" />
     </div>
 </template>
 <style lang="css" scoped>

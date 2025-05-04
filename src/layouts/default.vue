@@ -6,4 +6,5 @@
         </div>
         <SiteFooter />
     </main>
+    <MqRssCta type="floating" />
 </template>

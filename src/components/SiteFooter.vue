@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-const config = useWebConfig()
-const year = useDateFormat(new Date(), 'YYYY')
+const config = useWebConfig();
+const year = useDateFormat(new Date(), 'YYYY');
 
 const name = config.value.siteName;
 const socials = config.value.socials;
@@ -8,24 +8,6 @@ const rss = config.value.rss;
 const menu = config.value.footer.menu;
 
 
-const isVisibleRssFeedCopyTooltip = ref<boolean>(false)
-    const rssFeedCopy = () => {
-  // RSSフィードのURLをクリップボードにコピー
-  navigator.clipboard.writeText(config.value.rss.url).then(() => {
-    //alert('RSSフィードのURLをコピーしました');
-  }).catch((err) => {
-    //console.error('coppy error', err);
-  });
-  isVisibleRssFeedCopyTooltip.value = true;
-};
-
-whenever(
-  () => isVisibleRssFeedCopyTooltip.value,
-  () =>
-    useTimeoutFn(() => {
-      isVisibleRssFeedCopyTooltip.value = false;
-    }, 3000),
-);
 </script>
 
 <template>
@@ -57,22 +39,7 @@ whenever(
           >
           <Icon :name="item.icon" class="size-5"/>
           </NuxtLink>
-          <button
-            :title="rss.name"
-            aria-label="RSSフィードのURLをコピーする"
-            class="relative flex size-8 items-center justify-center rounded before:absolute before:size-full before:rounded before:bg-current before:opacity-0 before:transition-opacity hover:before:opacity-20 hover:text-primary"
-            @click="() => rssFeedCopy()"
-          >
-          <Icon :name="rss.icon" class="size-5"/>
-            <span
-              :class="[
-                isVisibleRssFeedCopyTooltip ? 'opacity-100' : 'opacity-0',
-              ]"
-              class="pointer-events-none absolute -top-5 whitespace-nowrap rounded bg-black/70 px-2 py-1 text-xs text-white transition-opacity"
-            >
-              URLをコピーしました
-            </span>
-          </button>
+          <MqPopupRssGuide type="footer" />
         </div>
       </div>
       <div class="text-xs">&copy; 2025-{{ year }} {{ name }}</div>

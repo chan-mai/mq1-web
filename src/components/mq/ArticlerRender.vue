@@ -116,7 +116,11 @@ onMounted(() => {
 }
 
 .micro-cms img {
-    @apply w-full min-w-[30vw] bg-white mx-5 pr-0 rounded-lg;
+    @apply w-full min-w-[30vw] max-w-[75vw] bg-white mx-5 pr-0 rounded-lg;
+}
+
+.micro-cms figure figcaption {
+    @apply max-w-full text-sm text-gray-400 ml-5 mt-0 pt-0;
 }
 
 /* タブレット */

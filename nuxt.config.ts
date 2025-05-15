@@ -57,7 +57,7 @@ export default defineNuxtConfig({
     },
   },
   gtag: {
-    id: "G-ZHPDFE19FX",
+    id: process.env.GA_TRACKING_ID,
   },
   runtimeConfig: {
     public: {

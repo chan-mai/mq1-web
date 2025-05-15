@@ -41,6 +41,7 @@ export default defineNuxtConfig({
     "@nuxt/icon",
     "nuxt-gtag",
     "@nuxtjs/sitemap",
+    "@nuxtjs/turnstile",
   ],
   tailwindcss: {
     config: {

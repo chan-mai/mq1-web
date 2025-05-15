@@ -11,6 +11,7 @@ const formState = reactive({
     subject: "",
     message: "",
     contactType: "etc",
+    token: "",
 })
 
 const handleSubmit = async () => {
@@ -28,6 +29,7 @@ const handleSubmit = async () => {
                 subject: formState.subject,
                 message: formState.message,
                 contactType: formState.contactType,
+                token: formState.token,
             }),
         });
     } catch (error) {
@@ -123,6 +125,7 @@ const handleSubmit = async () => {
                             </div>
 
                             <div class="w-full">
+                                <NuxtTurnstile v-model="formState.token" /> 
                                 <button type="submit"
                                     class="w-full bg-primary hover:bg-primary-dark text-white py-3.5 rounded-md transition-all duration-200 flex items-center justify-center font-medium shadow-sm hover:shadow">
                                     <Icon name="lucide:send" class="mr-2 size-5 opacity-90" />

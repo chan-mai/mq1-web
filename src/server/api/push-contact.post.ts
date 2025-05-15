@@ -2,12 +2,13 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event);
   
   type ContactType = "question" | "work" | "etc";
-  const { name, contact, subject, message, contactType } = body as {
+  const { name, contact, subject, message, contactType, token } = body as {
     name: string;
     contact: string;
     subject: string;
     message: string;
     contactType: ContactType;
+    token: string;
   };
 
   const typeMap: Record<ContactType, string> = {
@@ -17,7 +18,7 @@ export default defineEventHandler(async (event) => {
   };
 
   // validate
-  if (!name || !contact || !subject || !message || !contactType) {
+  if (!name || !contact || !subject || !message || !contactType || !token) {
     setResponseStatus(event, 400);
     return {
       statusCode: 400,
@@ -29,6 +30,13 @@ export default defineEventHandler(async (event) => {
     return {
       statusCode: 400,
       body: "Invalid contact type",
+    };
+  }
+  if ((await verifyTurnstileToken(token || body['cf-turnstile-response'])).success !== true) {
+    setResponseStatus(event, 400);
+    return {
+      statusCode: 400,
+      body: "Invalid token",
     };
   }
 

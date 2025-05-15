@@ -67,6 +67,7 @@ export default defineNuxtConfig({
     },
     serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN,
     apiKey: process.env.MICROCMS_API_KEY,
+    contactFormWebhookUri: process.env.CONTACT_FORM_WEBHOOK_URI,
   },
   nitro: {
     // 現状SSRしているので、プリレンダリングしちゃ更新されなくなってよくない

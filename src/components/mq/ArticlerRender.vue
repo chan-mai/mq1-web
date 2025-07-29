@@ -18,6 +18,8 @@ const articleHtml = computed(() => {
         // コードハイライト
         $('pre code').each((_, elem) => {
             const className = $(elem).attr('class');
+            const $pre = $(elem).parent('pre');
+            const $div = $pre.parent('div');
 
             // 言語部分を正確に抽出するように改善
             let language = null;
@@ -39,6 +41,24 @@ const articleHtml = computed(() => {
             }
             $(elem).html(result.value);
             $(elem).addClass('hljs');
+
+            // data-filename属性がある場合、ファイル名を表示
+            // div要素またはpre要素のどちらかにdata-filename属性があるかをチェック
+            const filename = $div.attr('data-filename') || $pre.attr('data-filename');
+            if (filename) {
+                // ファイル名表示用のヘッダーを作成
+                const header = $(`<div class="code-header"><span class="filename">${filename}</span></div>`);
+                
+                // div要素にdata-filenameがある場合は、div要素の中にヘッダーを挿入
+                if ($div.attr('data-filename')) {
+                    $div.prepend(header);
+                    $div.addClass('has-filename');
+                } else {
+                    // pre要素にdata-filenameがある場合は、pre要素の前にヘッダーを挿入
+                    $pre.before(header);
+                    $pre.addClass('has-filename');
+                }
+            }
         });
 
         // リンクにアイコンを追加
@@ -202,9 +222,11 @@ onMounted(() => {
 }
 
 .micro-cms pre {
-    @apply p-4 bg-gray-100;
+    @apply p-6 bg-gray-50 text-gray-800 rounded-lg;
     overflow-x: auto;
     max-width: 100%;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
 }
 
 .micro-cms li {
@@ -232,8 +254,40 @@ onMounted(() => {
     @apply rounded-lg;
 }
 
+/* コードブロックのファイル名表示 */
+.code-header {
+    @apply bg-gray-100 text-gray-700 px-4 py-3 rounded-t-lg text-sm font-mono mb-0 overflow-hidden;
+    border: 1px solid #e5e7eb;
+    border-top: none;
+    position: relative;
+}
+
+.code-header .filename {
+    @apply text-gray-600 font-medium;
+}
+
+.code-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #caecff, #ef9eff, #ffb1cb);
+    border-radius: 4px 4px 0 0;
+}
+
+.micro-cms pre.has-filename {
+    @apply rounded-t-none border-t-0 mt-0;
+}
+
+.micro-cms div.has-filename pre {
+    @apply rounded-t-none border-t-0 mt-0;
+}
+
 .micro-cms p code {
-    @apply rounded-lg px-2 bg-gray-200;
+    @apply rounded-md px-2 py-1 bg-gray-200 text-gray-800 font-mono text-sm;
+    border: 1px solid #d1d5db;
 }
 
 /* スクロール可能な要素のラッパー */

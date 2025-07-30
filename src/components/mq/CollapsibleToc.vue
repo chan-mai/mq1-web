@@ -20,6 +20,17 @@ const props = defineProps({
 const isOpen = ref(true);
 const expandedSections = ref({});
 
+// 初期化時にすべてのセクションを展開状態にする
+const initializeExpandedSections = () => {
+  const expanded = {};
+  props.items.forEach(item => {
+    if (item.level === 1) {
+      expanded[item.id] = true;
+    }
+  });
+  expandedSections.value = expanded;
+};
+
 // ネストされた構造に変換
 const nestedItems = computed(() => {
   const result = [];
@@ -79,6 +90,11 @@ function toggleSection(itemId) {
 function isExpanded(itemId) {
   return !!expandedSections.value[itemId];
 }
+
+// コンポーネントがマウントされた時に初期化
+onMounted(() => {
+  initializeExpandedSections();
+});
 </script>
 
 <template>

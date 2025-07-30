@@ -126,7 +126,9 @@ onMounted(() => {
 <style lang="css">
 .micro-cms {
     @apply space-y-4;
-    overflow-x: auto;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    overflow-wrap: break-word;
 }
 
 .micro-cms table {

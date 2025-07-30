@@ -35,10 +35,20 @@ const nestedItems = computed(() => {
       counter[i] = 0;
     }
 
+    // 階層的な番号を生成
+    let hierarchicalNumber = '';
+    if (item.level === 1) {
+      hierarchicalNumber = counter[1].toString();
+    } else if (item.level === 2) {
+      hierarchicalNumber = `${counter[1]}-${counter[2]}`;
+    } else if (item.level === 3) {
+      hierarchicalNumber = `${counter[1]}-${counter[2]}-${counter[3]}`;
+    }
+
     const newItem = {
       ...item,
       children: [],
-      counter: counter[item.level]
+      counter: hierarchicalNumber
     };
 
     while (stack.length > 0 && stack[stack.length - 1].level >= item.level) {
@@ -235,12 +245,13 @@ function isExpanded(itemId) {
   font-size: 0.75rem;
   background: linear-gradient(to right, #fda4af, #c4b5fd);
   color: white;
-  width: 20px;
+  min-width: 20px;
   height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
+  border-radius: 10px;
+  padding: 0 6px;
 }
 
 .toc-children {

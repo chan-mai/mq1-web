@@ -24,7 +24,17 @@ const { data: articleResponse } = await useAsyncData<MicroCMSObject<Article>>(`a
 }, {
     server: true,
 });
-if ( articleResponse.value ) article.value = articleResponse.value.contents[0];
+
+// 記事が存在しない場合は404エラーを投げる
+if (!articleResponse.value || articleResponse.value.contents.length === 0) {
+    throw createError({
+        statusCode: 404,
+        statusMessage: `Article not found: ${contentId}`,
+        fatal: true
+    });
+}
+
+article.value = articleResponse.value.contents[0];
 
 // --- OGP Setup ---
 const config = useWebConfig();

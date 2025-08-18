@@ -22,7 +22,17 @@ const { data: tagResponse } = await useAsyncData<MicroCMSObject<Tag>>(`tag-${tag
 }, {
     server: true,
 });
-if ( tagResponse.value ) tag.value = tagResponse.value.contents[0];
+
+// タグが存在しない場合は404エラーを投げる
+if (!tagResponse.value || tagResponse.value.contents.length === 0) {
+    throw createError({
+        statusCode: 404,
+        statusMessage: `Tag not found: ${tagId}`,
+        fatal: true
+    });
+}
+
+tag.value = tagResponse.value.contents[0];
 
 // とりあえずタグをソースに直近100件の記事を取得
 // TODO: ページネーションとかつくる
@@ -37,7 +47,13 @@ const { data: articlesResponse } = await useAsyncData<MicroCMSObject<Article[]>>
 }, {
     server: true,
 });
-if ( articlesResponse.value ) articles.value = articlesResponse.value.contents;
+
+// 記事が存在しない場合は空配列を設定
+if (articlesResponse.value) {
+    articles.value = articlesResponse.value.contents;
+} else {
+    articles.value = [];
+}
 
 const config = useWebConfig();
 const pageTitle = `#${tag.value?.name} - ${config.value.siteName}`;
@@ -78,8 +94,8 @@ useHead({
                 </div>
             </div>
             <div class="flex flex-col gap-8">
-                <Articles v-if="articles" :articles />
-                <div class="flex flex-col items-center justify-center gap-4">
+                <Articles v-if="articles && articles.length > 0" :articles />
+                <div v-else class="flex flex-col items-center justify-center gap-4 py-16">
                     <p class="text-lg font-bold text-accent">記事が見つかりませんでした。</p>
                     <p class="text-sm text-slate-500">他のタグを試してみてください。</p>
                 </div>

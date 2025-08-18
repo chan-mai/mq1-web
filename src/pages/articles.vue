@@ -54,7 +54,7 @@ useHead({
             </div>
             <div class="flex flex-col gap-8">
                 <Articles v-if="articles" :articles />
-                <div class="flex flex-col items-center justify-center gap-4">
+                <div v-else class="flex flex-col items-center justify-center gap-4">
                     <p class="text-lg font-bold text-accent">記事が見つかりませんでした。</p>
                     <p class="text-sm text-slate-500">初めての投稿をお待ちください。</p>
                 </div>

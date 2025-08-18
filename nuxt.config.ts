@@ -41,7 +41,6 @@ export default defineNuxtConfig({
     "@nuxt/icon",
     "nuxt-gtag",
     "@nuxtjs/sitemap",
-    "@nuxtjs/turnstile",
   ],
   tailwindcss: {
     config: {
@@ -70,12 +69,10 @@ export default defineNuxtConfig({
         apiKey: process.env.MICROCMS_API_KEY,
       }
     },
-    contactFormWebhookUri: process.env.CONTACT_FORM_WEBHOOK_URI,
   },
   routeRules: {
     "/": { prerender: true },
     "/about": { prerender: true },
-    "/contact": { prerender: true },
     // "/search/**": { ssr: true, headers: { 'Cache-Control': 'public, max-age=60, immutable' } },
     "/feed.xml": {
       headers: { "content-type": "application/rss+xml; charset=UTF-8" },

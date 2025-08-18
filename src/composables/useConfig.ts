@@ -11,7 +11,6 @@ export const useWebConfig = () => {
     headerMenu: [
       { title: "トップ", url: "/" },
       { title: "運営者情報", url: "/about" },
-      { title: "お問い合わせ", url: "/contact" },
       { title: "記事一覧", url: "/articles" },
     ],
     footer: {
@@ -20,7 +19,6 @@ export const useWebConfig = () => {
         { title: '記事一覧', url: '/articles' },
         { title: '運営者情報', url: '/about' },
         { title: "プライバシーポリシー", url: "/privacy" },
-        { title: 'お問い合わせ', url: '/contact' },
       ],
     },
     socials: {

@@ -30,8 +30,8 @@ export default defineEventHandler(async (event) => {
   feed.addCategory("blog");
 
   const client = createClient({
-    serviceDomain: runtimeConfig.serviceDomain,
-    apiKey: runtimeConfig.apiKey,
+    serviceDomain: runtimeConfig.public.microcms.serviceDomain,
+    apiKey: runtimeConfig.public.microcms.apiKey,
   });
 
   try {

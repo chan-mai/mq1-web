@@ -9,10 +9,6 @@ const props = defineProps({
         type: Array as () => Article[],
         default: () => [],
     },
-    loading: {
-        type: Boolean,
-        default: false
-    },
     transition: {
         type: Boolean,
         default: false
@@ -46,53 +42,6 @@ function navigateToTag(tag: any) {
 
             <!-- Articles -->
             <div class="space-y-8">
-                <!-- スケルトンローダー -->
-                <template v-if="loading">
-                    <div v-for="i in (limit > 0 ? limit : 5)" :key="`skeleton-${i}`" class="relative">
-                        <div class="absolute left-0 top-0 flex items-center justify-center w-7 h-7 rounded-full z-10 
-                            bg-gray-200 animate-pulse">
-                        </div>
-
-                        <div class="flex flex-col md:flex-row md:items-start pl-10 pb-8">
-                            <div
-                                class="text-sm text-gray-600 mb-2 md:mb-0 md:mr-4 md:w-24 md:flex-shrink-0 md:text-right">
-                                <div class="h-5 w-20 bg-gray-200 rounded animate-pulse"></div>
-                            </div>
-
-                            <div class="p-4 rounded-lg flex-grow overflow-hidden">
-                                <div class="flex flex-col md:flex-row gap-4 h-full w-full">
-                                    <!-- スケルトン画像 -->
-                                    <div class="w-full md:w-1/3">
-                                        <div
-                                            class="relative h-48 md:h-full w-full rounded-lg bg-gray-200 animate-pulse">
-                                        </div>
-                                    </div>
-
-                                    <!-- スケルトンテキスト -->
-                                    <div class="w-full flex flex-col justify-between h-full">
-                                        <div>
-                                            <div class="h-7 bg-gray-200 rounded mb-2 w-full animate-pulse"></div>
-                                            <div class="h-4 bg-gray-200 rounded mb-1 w-full animate-pulse"></div>
-                                            <div class="h-4 bg-gray-200 rounded mb-1 w-full animate-pulse"></div>
-
-                                            <div class="flex flex-wrap gap-2 mt-4 w-full">
-                                                <div v-for="i in 3" :key="`tag-${i}`"
-                                                    class="h-6 w-16 bg-gray-200 rounded animate-pulse"></div>
-                                            </div>
-                                        </div>
-
-                                        <div class="w-full flex justify-end pt-4">
-                                            <div class="h-5 w-24 bg-gray-200 rounded animate-pulse"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </template>
-
-                <!-- 実際の記事データ -->
-                <template v-else>
                     <div v-for="(article, index) in limitedArticles" :key="index" class="relative">
                         <div :class="`absolute left-0 top-0 flex items-center justify-center w-7 h-7 rounded-full z-10 
                 ${index === 0 ? 'bg-primary' : 'border-2 border-primary bg-white'}`">

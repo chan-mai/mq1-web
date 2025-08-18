@@ -1,63 +1,43 @@
 <script setup lang="ts">
+import type { MicroCMSQueries } from 'microcms-js-sdk';
+import type { MicroCMSObject } from '~/types/microccms';
+
+const client = useMicroCMSClient();
 const route = useRoute();
 const { tagId } = route.params as { tagId: string };
 
 
 const articles: Ref<Article[] | null> = ref(null);
 const tag: Ref<Tag | null> = ref(null);
-const articlesLoading: Ref<boolean> = ref(true);
 
 // tagIdからtagを取得
-try {
-    const { data, status, error } = await useFetch(() => `/api/tag/${tagId}`);
-
-    if (error.value) {
-        console.error('Error fetching article:', error.value);
-        // 404
-        if (error.value.statusCode === 404) {
-            showError({
-                statusCode: 404,
-                message: 'Article not found',
-                fatal: true,
-            });
-        } else {
-            showError({
-                statusCode: 500,
-                message: 'Internal Server Error',
-                fatal: true,
-            });
-        }
-    }
-
-    if (status.value === "success") {
-        tag.value = data.value?.body as unknown as Tag;
-    }
-} catch (error) {
-    console.error('Error fetching tag:', error);
-}
+const { data: tagResponse } = await useAsyncData<MicroCMSObject<Tag>>(`tag-${tagId}`, async () => {
+    return await client.getList<MicroCMSObject<Tag>>({
+        endpoint: 'tags',
+        queries: {
+            limit: 1,
+            filters: `id[equals]${tagId}`,
+        } satisfies MicroCMSQueries,
+    });
+}, {
+    server: true,
+});
+if ( tagResponse.value ) tag.value = tagResponse.value.contents[0];
 
 // とりあえずタグをソースに直近100件の記事を取得
 // TODO: ページネーションとかつくる
-async function fetchArticles() {
-    try {
-        const { data, status, error } = await useFetch(() => `/api/articles?limit=100&tag_id=${tagId}`);
-
-        if (error.value) {
-            console.error('Error fetching article:', error.value);
-        }
-
-        if (status.value === "success") {
-            articles.value = data.value?.body as unknown as Article[];
-        }
-    } catch (error) {
-        console.error('Error fetching articles:', error);
-    } finally {
-        articlesLoading.value = false;
-    }
-}
-// 各読み込み
-fetchArticles();
-
+const { data: articlesResponse } = await useAsyncData<MicroCMSObject<Article[]>>(`tag-${tagId}-articles`, async () => {
+    return await client.getList<MicroCMSObject<Article[]>>({
+        endpoint: 'articles',
+        queries: {
+            limit: 100,
+            filters: `tags[contains]${tagId}`,
+        } satisfies MicroCMSQueries,
+    });
+}, {
+    server: true,
+});
+if ( articlesResponse.value ) articles.value = articlesResponse.value.contents;
 
 const config = useWebConfig();
 const pageTitle = `#${tag.value?.name} - ${config.value.siteName}`;
@@ -98,9 +78,8 @@ useHead({
                 </div>
             </div>
             <div class="flex flex-col gap-8">
-                <Articles v-if="articles" :articles :loading="articlesLoading"/>
-                <!--ロード完了までは記事なしを確定しない-->
-                <div v-else-if="!articlesLoading" class="flex flex-col items-center justify-center gap-4">
+                <Articles v-if="articles" :articles />
+                <div class="flex flex-col items-center justify-center gap-4">
                     <p class="text-lg font-bold text-accent">記事が見つかりませんでした。</p>
                     <p class="text-sm text-slate-500">他のタグを試してみてください。</p>
                 </div>

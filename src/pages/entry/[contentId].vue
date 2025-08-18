@@ -1,50 +1,30 @@
 <script setup lang="ts">
 import * as cheerio from 'cheerio';
+import type { MicroCMSQueries } from 'microcms-js-sdk';
+import type { MicroCMSObject } from '~/types/microccms';
 
 const route = useRoute();
 const { contentId } = route.params as { contentId: string };
 // クエリパラメータにdraft_keyがあれば取得
-const draftKey: string | null = route.query.draft_key as string | null;
+const draftKeyParam: string | null = route.query.draft_key as string | null;
 
-let article: Ref<Article | null> = ref(null);
+const article: Ref<MicroCMSObject<Article> | null> = ref(null);
 
-// /api/get-article/:contentIdから取得
-try {
-    const url = draftKey ? `/api/article/${contentId}?draft_key=${draftKey}` : `/api/article/${contentId}`;
-    const { data, status, error } = await useFetch(() => url);
-
-    if (error.value) {
-        console.error('Error fetching article:', error.value);
-        // 404
-        if (error.value.statusCode === 404) {
-            showError({
-                statusCode: 404,
-                message: 'Article not found',
-                fatal: true,
-            });
-        } else {
-            showError({
-                statusCode: 500,
-                message: 'Internal Server Error',
-                fatal: true,
-            });
-        }
-    }
-
-    if (status.value === "success") {
-        article.value = data.value?.body as unknown as Article;
-    } else {
-        showError({
-            statusCode: 404,
-            message: 'Article not found',
-            fatal: true,
-        });
-    }
-} catch (error) {
-    console.error('Error fetching article:', error);
-}
-
-
+// 記事を取得
+const client = useMicroCMSClient();
+const { data: articleResponse } = await useAsyncData<MicroCMSObject<Article>>(`article-${contentId}`, async () => {
+    return await client.getList<MicroCMSObject<Article>>({
+        endpoint: 'articles',
+        queries: {
+            limit: 1,
+            filters: `id[equals]${contentId}`,
+            draftKey: draftKeyParam ?? undefined,
+        } satisfies MicroCMSQueries,
+    });
+}, {
+    server: true,
+});
+if ( articleResponse.value ) article.value = articleResponse.value.contents[0];
 
 // --- OGP Setup ---
 const config = useWebConfig();
@@ -166,14 +146,9 @@ const readingTime = computed(() => {
 });
 
 const tableOfContents: Ref<{ id: string; text: string; level: number }[]> = ref(article.value ? generateTableOfContents(article.value?.content!) : []);
-
-// 過去に更新された記事か
-const isUpdate = ref(article.value && (article.value.createdAt || article.value.publishedAt) !== article.value.updatedAt);
-
-
 </script>
 <template>
-    <div v-if="draftKey" class="fixed top-0 left-0 z-50 bg-sky-200 text-black px-4 py-2 shadow-md flex items-center m-2 rounded-md opacity-70">
+    <div v-if="draftKeyParam" class="fixed top-0 left-0 z-50 bg-sky-200 text-black px-4 py-2 shadow-md flex items-center m-2 rounded-md opacity-70">
         <Icon name="iconoir:warning-window" class="size-5 mr-2" />
         <span class="font-bold">下書きを表示しています</span>
     </div>

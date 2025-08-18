@@ -1,64 +1,40 @@
 <script setup lang="ts">
+import type { MicroCMSQueries } from 'microcms-js-sdk';
+import type { MicroCMSObject } from '~/types/microccms';
+
 
 const tags: Ref<Tag[] | null> = ref(null);
 const articles: Ref<Article[] | null> = ref(null);
 
-const articlesLoading: Ref<boolean> = ref(true);
-const tagsLoading: Ref<boolean> = ref(true);
+const client = useMicroCMSClient();
 
-// すべてのタグを取得
-async function fetchTags() {
-
-    try {
-        const { data, status, error } = await useFetch(() => `/api/tag/all`);
-
-        if (error.value) {
-            console.error('Error fetching tag:', error.value);
-        }
-
-        if (status.value === "success") {
-            tags.value = data.value?.body as unknown[] as Tag[];
-        }
-    } catch (error) {
-        console.error('Error fetching tag:', error);
-    } finally {
-        tagsLoading.value = false;
-
-    }
-}
-// 直近5件の記事を取得
-async function fetchArticles() {
-    try {
-        const { data, status, error } = await useFetch(() => `/api/articles?limit=5`);
-
-        if (error.value) {
-            console.error('Error fetching tag:', error.value);
-        }
-
-        if (status.value === "success") {
-            articles.value = data.value?.body as unknown[] as Article[];
-
-            // preload
-            if (articles.value) {
-                articles.value.forEach((article: Article) => {
-                    preloadRouteComponents(`/entry/${article.id}`)
-                })
-            }
-        }
-    } catch (error) {
-        console.error('Error fetching articles:', error);
-    } finally {
-        articlesLoading.value = false;
-    }
-}
-
-// 各読み込み
-Promise.all([
-    fetchTags(),
-    fetchArticles(),
-]).catch(error => {
-    console.error('Error fetching data:', error);
+// 50件のタグを取得
+const { data: tagsResponse } = await useAsyncData<MicroCMSObject<Tag[]>>('index-tags', async () => {
+    return await client.getList<MicroCMSObject<Tag[]>>({
+        endpoint: 'tags',
+        queries: {
+            limit: 50,
+            orders: '-publishedAt',
+        } satisfies MicroCMSQueries,
+    });
+}, {
+    server: true,
 });
+if (tagsResponse.value) tags.value = tagsResponse.value.contents;
+
+// 直近15件の記事を取得
+const { data: articlesResponse } = await useAsyncData<MicroCMSObject<Article[]>>('index-articles', async () => {
+    return await client.getList<MicroCMSObject<Article[]>>({
+        endpoint: 'articles',
+        queries: {
+            limit: 15,
+            orders: '-publishedAt',
+        } satisfies MicroCMSQueries,
+    });
+}, {
+    server: true,
+});
+if (articlesResponse.value) articles.value = articlesResponse.value.contents;
 
 const config = useWebConfig();
 const pageTitle = config.value.siteName;
@@ -122,10 +98,9 @@ useHead({
                 <p class="text-sm leading-relaxed">
                     日常から非日常まで、書きたいことを自由に書いていく雑記帳です。</p>
 
-                <Tags :tags="tags? tags : []" :loading="tagsLoading" />
-                <Articles v-if="articles" limit="5" :articles :loading="articlesLoading" transition />
-                <!--ロード完了までは記事なしを確定しない-->
-                <div v-else-if="!articlesLoading" class="flex flex-col items-center justify-center gap-4">
+                <Tags :tags="tags || []" />
+                <Articles v-if="articles" limit="5" :articles :loading="false" transition />
+                <div class="flex flex-col items-center justify-center gap-4">
                     <p class="text-lg font-bold text-accent">記事が見つかりませんでした。</p>
                     <p class="text-sm text-slate-500">初めての投稿をお待ちください。</p>
                 </div>

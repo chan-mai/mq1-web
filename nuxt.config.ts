@@ -65,25 +65,73 @@ export default defineNuxtConfig({
       siteDescription: "ちっちゃなうぇぶさいと",
       siteUrl: "https://mq1.dev/",
       siteOgpUrl: "https://mq1.dev/ogp.png",
+      microcms: {
+        serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN,
+        apiKey: process.env.MICROCMS_API_KEY,
+      }
     },
-    serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN,
-    apiKey: process.env.MICROCMS_API_KEY,
     contactFormWebhookUri: process.env.CONTACT_FORM_WEBHOOK_URI,
   },
-  nitro: {
-    // 現状SSRしているので、プリレンダリングしちゃ更新されなくなってよくない
-    /*prerender: {
-      routes: ["/feed.xml"],
-      autoSubfolderIndex: true,
-      crawlLinks: true,
-      failOnError: false,
-    },*/
-  },
   routeRules: {
+    "/": { prerender: true },
+    "/about": { prerender: true },
+    "/contact": { prerender: true },
+    // "/search/**": { ssr: true, headers: { 'Cache-Control': 'public, max-age=60, immutable' } },
     "/feed.xml": {
       headers: { "content-type": "application/rss+xml; charset=UTF-8" },
     },
   },
+  nitro: {
+    prerender: {
+      autoSubfolderIndex: true,
+      crawlLinks: false,
+      routes: [],
+      failOnError: false,
+    }
+  },
+  hooks: {
+    async "nitro:config"(nitroConfig) {
+      if (nitroConfig.dev)  return;
+      if (nitroConfig.prerender?.routes === undefined) return;
+      
+      const client = createClient({
+        serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN!,
+        apiKey: process.env.MICROCMS_API_KEY!,
+      });
+
+      // 記事取得API 直近100件のみ
+      const articles: any = await client.get({
+        endpoint: 'articles',
+        queries: {
+          limit: 100,
+          orders: "-publishedAt",
+        },
+      });
+      nitroConfig.prerender.routes = [
+        ...nitroConfig.prerender.routes,
+        ...articles.contents.map((mount: any) => {
+          return `/entry/${mount.id}`;
+        }),
+      ];
+
+      // タグ取得API 直近100件のみ
+      const tags: any = await client.get({
+        endpoint: 'tags',
+        queries: {
+          limit: 100,
+          orders: "-publishedAt",
+        },
+      });
+      nitroConfig.prerender.routes = [
+        ...nitroConfig.prerender.routes,
+        ...tags.contents.map((mount: any) => {
+          return `/tag/${mount.id}`;
+        }),
+      ];
+    },
+  },
+
+
   experimental: {
     viewTransition: true,
   },

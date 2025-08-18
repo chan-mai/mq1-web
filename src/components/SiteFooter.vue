@@ -6,8 +6,6 @@ const name = config.value.siteName;
 const socials = config.value.socials;
 const rss = config.value.rss;
 const menu = config.value.footer.menu;
-
-
 </script>
 
 <template>

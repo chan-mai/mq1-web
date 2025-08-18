@@ -224,10 +224,9 @@ onMounted(() => {
 }
 
 .micro-cms pre {
-    @apply p-6 bg-gray-50 text-gray-800 rounded-lg;
+    @apply px-6;
     overflow-x: auto;
     max-width: 100%;
-    border: 1px solid #e5e7eb;
 }
 
 .micro-cms li {
@@ -257,9 +256,9 @@ onMounted(() => {
 
 /* コードブロックのファイル名表示 */
 .code-header {
-    @apply bg-gray-100 text-gray-700 px-4 py-3 rounded-t-lg text-sm font-mono mb-0 overflow-hidden;
+    @apply bg-gray-100 text-gray-700 px-4 py-3 rounded-t-lg text-sm font-mono mb-0 mx-6 overflow-hidden;
     border: 1px solid #e5e7eb;
-    border-top: none;
+    border-bottom: none;
     position: relative;
 }
 
@@ -280,10 +279,26 @@ onMounted(() => {
 
 .micro-cms pre.has-filename {
     @apply rounded-t-none border-t-0 mt-0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
 }
 
 .micro-cms div.has-filename pre {
     @apply rounded-t-none border-t-0 mt-0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.micro-cms pre.has-filename code {
+    @apply rounded-t-none;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.micro-cms div.has-filename pre code {
+    @apply rounded-t-none;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
 }
 
 .micro-cms p code {

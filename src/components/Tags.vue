@@ -1,17 +1,15 @@
 <script setup lang="ts">
+import type { MicroCMSObject } from '~/types/microccms';
+
 const props = defineProps({
     limit: {
         type: String,
         default: "0",
     },
     tags: {
-        type: Array as () => Tag[],
+        type: Array as () => MicroCMSObject<Tag[]>,
         default: () => [],
     },
-    loading: {
-        type: Boolean,
-        default: false
-    }
 });
 const limit = props.limit as unknown as number;
 
@@ -29,21 +27,12 @@ const limitedTags = computed(() => {
                 タグ一覧
             </h3>
 
-            <template v-if="loading">
-                <div class="flex flex-wrap gap-2">
-                    <div v-for="i in ( limit > 0 ? limit : 3 )" :key="`skeleton-${i}`" class="w-36 h-8 bg-gray-200 rounded animate-pulse"></div>
-                </div>
-            </template>
-            <template v-else>
-                <div v-if="tags.length > 0 && limitedTags.length > 0" class="flex flex-wrap gap-2">
-                    <MqTag v-for="tag in limitedTags" :key="tag.id" :tag="tag" />
-                </div>
-                <div v-else class="text-center text-gray-500">
-                    <p>タグはありません</p>
-                </div>
-            </template>
-
-
+            <div v-if="tags.length > 0 && limitedTags.length > 0" class="flex flex-wrap gap-2">
+                <MqTag v-for="tag in limitedTags" :key="tag.id" :tag="tag" />
+            </div>
+            <div v-else class="text-center text-gray-500">
+                <p>タグはありません</p>
+            </div>
         </div>
     </div>
 </template>

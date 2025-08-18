@@ -4,7 +4,7 @@ on:
     branches:
       - develop
   repository_dispatch:
-    types: [update]
+    types: [microcms-update]
 jobs:
   deploy:
     runs-on: ubuntu-latest

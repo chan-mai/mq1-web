@@ -1,5 +1,6 @@
 import { createClient } from "microcms-js-sdk";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import * as cheerio from 'cheerio';
 
 export default defineEventHandler(async (event) => {
   const contentId = event.context.params?.contentId;
@@ -28,19 +29,23 @@ export default defineEventHandler(async (event) => {
   }
   const article: Article = res.contents[0];
 
+  // HTMLをパースしてテキストを取得
+  const $ = cheerio.load(article.content!);
+  const textContent: string = $.text().trim();
+
   try {
     // Geminiで要約を生成
     const gemini = new GoogleGenerativeAI(config.geminiApiKey);
     const model = gemini.getGenerativeModel({ model: "gemini-2.5-flash" });
 
-    const prompt = `You are a writer. Please summarize the following article in an interesting and concise manner. The summary should be based on the Japanese text, in plain text only, and approximately 150 characters in length.\n\n--\n\n${article.content}`;
+    const prompt = `You are a writer. Please summarize the following article in an interesting and concise manner. The summary should be based on the Japanese text, in plain text only, and approximately 150 characters in length.\n\n--\n\n${textContent}`;
 
     const response = await model.generateContent(prompt);
     let summary = response.response.text();
 
     // 生成できなかった場合
     if (!summary) {
-      summary = article.content!.slice(0, 50);
+      summary = textContent.slice(0, 50);
     } else {
       summary = summary + "(LLMによる要約)";
     }
@@ -53,7 +58,7 @@ export default defineEventHandler(async (event) => {
     console.error(error);
     return {
       statusCode: 500,
-      body: article.content!.slice(0, 50),
+      body: textContent.slice(0, 50),
     };
   }
 });

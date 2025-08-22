@@ -4,4 +4,5 @@ interface Article  {
     content?: string;
     eyecatch?: MicroCMSImage;
     tags?: MicroCMSObject<Tag[]>;
+    is_no_index?: boolean;
 };

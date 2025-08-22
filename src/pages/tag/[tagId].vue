@@ -94,7 +94,13 @@ useHead({
                 </div>
             </div>
             <div class="flex flex-col gap-8">
-                <Articles v-if="articles && articles.length > 0" :articles />
+                <div v-if="articles" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <ArticlesCard 
+                        v-for="article in articles" 
+                        :key="article.id" 
+                        :article="article" 
+                    />
+                </div>
                 <div v-else class="flex flex-col items-center justify-center gap-4 py-16">
                     <p class="text-lg font-bold text-accent">記事が見つかりませんでした。</p>
                     <p class="text-sm text-slate-500">他のタグを試してみてください。</p>

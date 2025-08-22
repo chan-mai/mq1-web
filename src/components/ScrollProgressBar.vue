@@ -8,16 +8,9 @@ const calculateScrollProgress = () => {
   scrollProgress.value = Math.min(progress, 100);
 };
 
-const handleScroll = useThrottleFn(calculateScrollProgress, 16); // だいたい60fps
-
-onMounted(() => {
-  window.addEventListener('scroll', handleScroll);
-  // 初期計算
-  calculateScrollProgress();
-});
-onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll);
-});
+const handleScroll = useThrottleFn(calculateScrollProgress, 16);
+useEventListener(window, 'scroll', handleScroll, { passive: true });
+onMounted(calculateScrollProgress);
 </script>
 
 <template>

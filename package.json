@@ -16,6 +16,8 @@
     "@nuxtjs/sitemap": "7.2.10",
     "@nuxtjs/tailwindcss": "6.13.2",
     "@types/highlight.js": "^10.1.0",
+    "@vercel/analytics": "^1.5.0",
+    "@vercel/speed-insights": "^1.2.0",
     "@vueuse/core": "^13.1.0",
     "@vueuse/nuxt": "13.1.0",
     "cheerio": "^1.0.0",

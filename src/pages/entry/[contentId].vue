@@ -166,6 +166,7 @@ const tableOfContents: Ref<{ id: string; text: string; level: number }[]> = ref(
         <Icon name="iconoir:warning-window" class="size-5 mr-2" />
         <span class="font-bold">下書きを表示しています</span>
     </div>
+    <ScrollProgressBar />
     <main
         class="max-w-none text-[0.925rem] leading-loose tracking-wide text-inherit [&>div>*:first-child]:mt-0 max-w-7xl gap-16 md:gap-20">
 
@@ -189,4 +190,3 @@ const tableOfContents: Ref<{ id: string; text: string; level: number }[]> = ref(
 
     <ArticlePageFooter :current-article="article!" />
 </template>
-

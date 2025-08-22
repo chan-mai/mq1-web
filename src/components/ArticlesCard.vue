@@ -12,14 +12,7 @@ const props = defineProps({
 });
 
 // サマリーを生成
-const summary = computed(async () => {
-    const fullSummary = await useSummaryTextGenerator(props.article.id);
-    // カード用に80文字に制限
-    return fullSummary.length > 50  
-        ? fullSummary.slice(0, 50) + '...' 
-        : fullSummary;
-});
-
+const summary: Ref<string> = ref(await useSummaryTextGenerator(props.article.id));
 // タグをクリックした時の処理
 const router = useRouter();
 function navigateToTag(tag: any) {

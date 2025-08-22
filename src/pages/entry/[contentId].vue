@@ -41,7 +41,7 @@ const config = useWebConfig();
 
 if (article.value && article.value.content) {
     const pageTitle = `${article.value?.title || ''} - ${config.value.siteName}`;
-    const pageDescription = await useSummaryTextGenerator(article.value?.id ) || config.value.siteDescription;
+    const pageDescription = draftKeyParam ? '下書き記事' : await useSummaryTextGenerator(article.value?.id ) || config.value.siteDescription;
     const ogImageUrl = useOgGenerator(article.value?.title || '');
     const pageUrl = `${config.value.siteUrl}/entry/${contentId}`;
     const publishedTime = article.value?.publishedAt || article.value?.createdAt;

@@ -33,3 +33,4 @@ jobs:
           MICROCMS_SERVICE_DOMAIN: ${{ secrets.MICROCMS_SERVICE_DOMAIN || secrets.NUXT_MICROCMS_SERVICE_DOMAIN }}
           MICROCMS_API_KEY: ${{ secrets.MICROCMS_API_KEY || secrets.NUXT_MICROCMS_API_KEY }}
           GA_TRACKING_ID: ${{ secrets.GA_TRACKING_ID || secrets.NUXT_GA_TRACKING_ID }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY || secrets.NUXT_GEMINI_API_KEY }}

@@ -33,7 +33,7 @@ const { data: prevArticleResponse } = await useAsyncData<MicroCMSObject<Article[
 if (prevArticleResponse.value && prevArticleResponse.value.contents && prevArticleResponse.value.contents.length > 0) {
     prevArticle.value = prevArticleResponse.value.contents[0];
     if (prevArticle.value && prevArticle.value.content) {
-        prevArticle.value.summary = useSummaryTextGenerator(prevArticle.value.content);
+        prevArticle.value.summary = await useSummaryTextGenerator(prevArticle.value.id);
     }
 }
 
@@ -55,7 +55,7 @@ const { data: nextArticleResponse } = await useAsyncData<MicroCMSObject<Article>
 if (nextArticleResponse.value && nextArticleResponse.value.contents && nextArticleResponse.value.contents.length > 0) {
     nextArticle.value = nextArticleResponse.value.contents[0];
     if (nextArticle.value && nextArticle.value.content) {
-        nextArticle.value.summary = useSummaryTextGenerator(nextArticle.value.content);
+        nextArticle.value.summary = await useSummaryTextGenerator(nextArticle.value.id);
     }
 }
 

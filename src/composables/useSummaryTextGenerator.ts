@@ -1,5 +1,11 @@
-export default async function useSummaryTextGenerator(contentId: string){
-    // api/summarize-article/[contentId].get.ts を呼び出す
-    const { data: summary } = await useFetch(`/api/summarize-article/${contentId}`);
-    return summary.value.body;
+import * as cheerio from 'cheerio';
+
+export default function useOgGenerator(content: string){
+    // Articles.contentからSummaryを生成
+    // HTMLをパースしてテキストを取得、150字でトリム
+    const $ = cheerio.load(content);
+    const textContent: string = $.text().trim();
+    return textContent.length > 500
+        ? textContent.slice(0, 150)
+        : textContent;
 }

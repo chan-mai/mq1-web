@@ -67,9 +67,8 @@ export default defineNuxtConfig({
       microcms: {
         serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN,
         apiKey: process.env.MICROCMS_API_KEY,
-      },
+      }
     },
-    geminiApiKey: process.env.GEMINI_API_KEY,
   },
   routeRules: {
     "/": { prerender: true },
@@ -97,35 +96,34 @@ export default defineNuxtConfig({
         apiKey: process.env.MICROCMS_API_KEY!,
       });
 
-      const [articles, tags] = await Promise.all([
-        client.get({
-          endpoint: 'articles',
-          queries: {
-            limit: 100,
-            orders: "-publishedAt",
-          },
-        }),
-        client.get({
-          endpoint: 'tags',
-          queries: {
-            limit: 100,
-            orders: "-publishedAt",
-          },
-        }),
-      ]);
-
-      // 記事
-      const articleRoutes = articles.contents.flatMap((mount: any) => [
-        `/entry/${mount.id}`,
-        `/api/summarize-article/${mount.id}`,
-      ]);
-      // タグ
-      const tagRoutes = tags.contents.map((mount: any) => `/tag/${mount.id}`);
-
+      // 記事取得API 直近100件のみ
+      const articles: any = await client.get({
+        endpoint: 'articles',
+        queries: {
+          limit: 100,
+          orders: "-publishedAt",
+        },
+      });
       nitroConfig.prerender.routes = [
         ...nitroConfig.prerender.routes,
-        ...articleRoutes,
-        ...tagRoutes,
+        ...articles.contents.map((mount: any) => {
+          return `/entry/${mount.id}`;
+        }),
+      ];
+
+      // タグ取得API 直近100件のみ
+      const tags: any = await client.get({
+        endpoint: 'tags',
+        queries: {
+          limit: 100,
+          orders: "-publishedAt",
+        },
+      });
+      nitroConfig.prerender.routes = [
+        ...nitroConfig.prerender.routes,
+        ...tags.contents.map((mount: any) => {
+          return `/tag/${mount.id}`;
+        }),
       ];
     },
   },

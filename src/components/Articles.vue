@@ -23,8 +23,8 @@ const limitedArticles = computed(() => {
 });
 
 // サマリーを生成
-props.articles.map(async (article: Article) => {
-    article.summary = await useSummaryTextGenerator(article.id);
+props.articles.map((article: Article) => {
+    article.summary = useSummaryTextGenerator(article.content!);
 });
 
 // タグをクリックした時の処理

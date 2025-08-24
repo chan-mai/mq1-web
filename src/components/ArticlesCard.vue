@@ -12,8 +12,8 @@ const props = defineProps({
 });
 
 // サマリーを生成
-const summary = computed(async () => {
-    const fullSummary = await useSummaryTextGenerator(props.article.id);
+const summary = computed(() => {
+    const fullSummary = useSummaryTextGenerator(props.article.content!);
     // カード用に80文字に制限
     return fullSummary.length > 50  
         ? fullSummary.slice(0, 50) + '...' 

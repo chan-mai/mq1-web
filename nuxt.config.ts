@@ -14,18 +14,26 @@ export default defineNuxtConfig({
     head: {
       link: [
         { rel: "preconnect", href: "https://fonts.googleapis.com" },
-        { rel: "preconnect", href: "https://fonts.gstatic.com" },
+        { rel: "preconnect", href: "https://fonts.gstatic.com", crossorigin: "" },
+        { rel: "dns-prefetch", href: "https://images.microcms-assets.io" },
+        { rel: "preconnect", href: "https://images.microcms-assets.io" },
         {
           rel: "stylesheet",
           href: "https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap",
+          media: "print",
+          onload: "this.media='all'",
         },
         {
           rel: "stylesheet",
           href: "https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap",
+          media: "print",
+          onload: "this.media='all'",
         },
         {
           rel: "stylesheet",
           href: "https://fonts.googleapis.com/css2?family=Crafty+Girls&display=swap",
+          media: "print",
+          onload: "this.media='all'",
         },
       ],
       htmlAttrs: {
@@ -67,6 +75,30 @@ export default defineNuxtConfig({
   routeRules: {
     "/": { prerender: true },
     "/about": { prerender: true },
+    "/entry/**": { 
+      headers: { 
+        'Cache-Control': 'public, max-age=3600, s-maxage=86400',
+        'X-Content-Type-Options': 'nosniff',
+        'X-Frame-Options': 'DENY',
+        'X-XSS-Protection': '1; mode=block'
+      }
+    },
+    "/tag/**": { 
+      headers: { 
+        'Cache-Control': 'public, max-age=3600, s-maxage=86400',
+        'X-Content-Type-Options': 'nosniff',
+        'X-Frame-Options': 'DENY',
+        'X-XSS-Protection': '1; mode=block'
+      }
+    },
+    "/articles": { 
+      headers: { 
+        'Cache-Control': 'public, max-age=1800, s-maxage=3600',
+        'X-Content-Type-Options': 'nosniff',
+        'X-Frame-Options': 'DENY',
+        'X-XSS-Protection': '1; mode=block'
+      }
+    },
     // "/search/**": { ssr: true, headers: { 'Cache-Control': 'public, max-age=60, immutable' } },
     "/feed.xml": {
       headers: { "content-type": "application/rss+xml; charset=UTF-8" },
@@ -78,6 +110,20 @@ export default defineNuxtConfig({
       crawlLinks: false,
       routes: [],
       failOnError: false,
+    },
+    compressPublicAssets: {
+      gzip: true,
+      brotli: true,
+    },
+    routeRules: {
+      '/**': { 
+        headers: {
+          'X-Content-Type-Options': 'nosniff',
+          'X-Frame-Options': 'DENY',
+          'X-XSS-Protection': '1; mode=block',
+          'Referrer-Policy': 'strict-origin-when-cross-origin'
+        }
+      }
     }
   },
   hooks: {
@@ -123,6 +169,10 @@ export default defineNuxtConfig({
 
   experimental: {
     viewTransition: true,
+    payloadExtraction: false,
+    inlineSSRStyles: false,
+    renderJsonPayloads: true,
+    componentIslands: true,
   },
   site: {
     url: "https://mq1.dev/",
@@ -177,5 +227,49 @@ export default defineNuxtConfig({
     ipx: {
       maxAge: 31536000,
     },
+    format: ['webp', 'avif', 'jpeg', 'jpg', 'png'],
+    quality: 80,
+    screens: {
+      xs: 320,
+      sm: 640,
+      md: 768,
+      lg: 1024,
+      xl: 1280,
+      xxl: 1536,
+    },
+    presets: {
+      hero: {
+        modifiers: {
+          format: 'webp',
+          quality: 80,
+          width: 1200,
+          height: 600,
+        }
+      },
+      thumbnail: {
+        modifiers: {
+          format: 'webp',
+          quality: 70,
+          width: 400,
+          height: 300,
+        }
+      }
+    }
+  },
+  vite: {
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            vendor: ['vue', 'vue-router'],
+            microcms: ['microcms-js-sdk'],
+            cheerio: ['cheerio'],
+          }
+        }
+      }
+    },
+    optimizeDeps: {
+      include: ['cheerio', 'microcms-js-sdk']
+    }
   },
 });

@@ -37,6 +37,7 @@ useHead({
 <template>
     <div class="min-h-screen rounded-xl overflow-hidden mt-5 md:mt-10">
         <div class="bg-accent text-white relative w-full max-w-none overflow-hidden md:overflow-visible">
+            <AboutHeadBackground />
             <!-- 右側のエッジ文字 -->
             <div class="absolute bottom-0 z-20 w-full h-2/3">
                 <NuxtImg src="/about/mai-bg-text.png" format="webp" alt="Mai Sudachi" fetchpriority="high"
@@ -86,7 +87,7 @@ useHead({
                                     <NuxtImg src="/about/mai-crop2.png" format="webp" alt="Icon 1"
                                         class="rounded-full size-10" />
                                 </div>
-                                <div class="bg-white rounded-full p-1 size-15">
+                                <div class="bg-white rounded-full p-1 size-15 relative z-10">
                                     <NuxtImg src="/about/mai-crop.png" format="webp" alt="Icon 1" class="rounded-full size-10" />
                                 </div>
                             </div>

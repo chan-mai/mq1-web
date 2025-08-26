@@ -1,9 +1,4 @@
 {
-  "functions": {
-    "src/server/routes/feed.xml.ts": {
-      "maxDuration": 30
-    }
-  },
   "rewrites": [
     {
       "source": "/images/(.*)",

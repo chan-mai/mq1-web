@@ -43,8 +43,8 @@ const isHovered = ref(false);
                 @mouseenter="isHovered = true" @mouseleave="isHovered = false">
                 <picture>
                     <MqOgImage v-if="articlePage" class="block size-full object-cover" :url :title/>
-                    <img v-else-if="image" :src="image" alt="Hero Image" class="block size-full object-cover" />
-                    <img v-else src="~/assets/images/hero.webp" alt="Hero Image" class="block size-full object-cover" />
+                    <img v-else-if="image" :src="image" alt="Hero Image" fetchpriority="high" class="block size-full object-cover" />
+                    <NuxtImg v-else src="hero.png" format="webp" alt="Hero Image" fetchpriority="high" class="block size-full object-cover" />
                 </picture>
             </div>
 

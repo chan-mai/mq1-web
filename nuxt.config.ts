@@ -35,13 +35,7 @@ export default defineNuxtConfig({
     },
   },
   plugins: [{ src: "~/plugins/loading.ts", mode: "client" }],
-  modules: [
-    "@nuxtjs/tailwindcss",
-    "@vueuse/nuxt",
-    "@nuxt/icon",
-    "nuxt-gtag",
-    "@nuxtjs/sitemap",
-  ],
+  modules: ["@nuxtjs/tailwindcss", "@vueuse/nuxt", "@nuxt/icon", "nuxt-gtag", "@nuxtjs/sitemap", "@nuxt/image"],
   tailwindcss: {
     config: {
       theme: {
@@ -63,7 +57,7 @@ export default defineNuxtConfig({
       siteName: "まいの雑記帳",
       siteDescription: "ちっちゃなうぇぶさいと",
       siteUrl: "https://mq1.dev/",
-      siteOgpUrl: "https://mq1.dev/ogp.png",
+      siteOgpUrl: "https://mq1.dev/ogp/ogp.png",
       microcms: {
         serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN,
         apiKey: process.env.MICROCMS_API_KEY,
@@ -175,5 +169,9 @@ export default defineNuxtConfig({
         },
       },
     },
+  },
+  image: {
+    dir: "public/images",
+    domains: ["images.microcms-assets.io"],
   },
 });

@@ -31,7 +31,7 @@ whenever(
     class="relative z-10 mx-auto box-content flex h-11 max-w-7xl justify-between px-4 pt-6 text-primary md:h-14 md:px-6 md:pt-8">
     <NuxtLink :title="`トップページ`" to="/"
       class="flex w-40  md:w-56 items-center justify-center transition-opacity hover:opacity-70">
-      <img :alt="`サイトロゴ まいの雑記帳`" src="@/assets/images/web-logo.webp""
+      <NuxtImg :alt="`サイトロゴ まいの雑記帳`" src="/web-logo.png" format="webp"
         class=" block" width="315" height="91" loading="eager" decoding="async" />
     </NuxtLink>
 

@@ -173,5 +173,9 @@ export default defineNuxtConfig({
   image: {
     dir: "public/images",
     domains: ["images.microcms-assets.io"],
+    provider: "ipx",
+    ipx: {
+      maxAge: 31536000,
+    },
   },
 });

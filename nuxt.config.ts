@@ -4,8 +4,6 @@ import { createClient } from "microcms-js-sdk";
 export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
   ssr: true,
-  srcDir: "src/",
-
   devtools: {
     enabled: true,
   },
@@ -42,7 +40,6 @@ export default defineNuxtConfig({
       },
     },
   },
-  plugins: [{ src: "~/plugins/loading.ts", mode: "client" }],
   modules: ["@nuxtjs/tailwindcss", "@vueuse/nuxt", "@nuxt/icon", "nuxt-gtag", "@nuxtjs/sitemap", "@nuxt/image"],
   tailwindcss: {
     config: {

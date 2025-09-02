@@ -10,28 +10,33 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@nuxt/icon": "1.12.0",
+    "@nuxt/icon": "2.0.0",
     "@nuxt/image": "1.11.0",
-    "@nuxt/scripts": "^0.11.6",
-    "@nuxtjs/sitemap": "7.2.10",
-    "@nuxtjs/tailwindcss": "6.13.2",
+    "@nuxt/scripts": "^0.11.13",
+    "@nuxtjs/sitemap": "7.4.3",
+    "@nuxtjs/tailwindcss": "6.14.0",
     "@types/highlight.js": "^10.1.0",
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
-    "@vueuse/core": "^13.1.0",
-    "@vueuse/nuxt": "13.1.0",
-    "cheerio": "^1.0.0",
-    "cross-env": "^7.0.3",
-    "feed": "^4.2.2",
+    "@vueuse/core": "^13.9.0",
+    "@vueuse/nuxt": "13.9.0",
+    "cheerio": "^1.1.2",
+    "cross-env": "^10.0.0",
+    "feed": "^5.1.0",
     "highlight.js": "^11.11.1",
     "microcms-js-sdk": "^3.2.0",
-    "nuxt": "^3.16.2",
-    "nuxt-gtag": "3.0.2",
-    "vue": "^3.5.13",
-    "vue-router": "^4.5.0"
+    "nuxt": "^4.0.3",
+    "nuxt-gtag": "4.0.0",
+    "vue": "^3.5.21",
+    "vue-router": "^4.5.1"
   },
   "resolutions": {
     "ipx": "^3.0.0"
   },
-  "packageManager": "pnpm@10.9.0+sha512.0486e394640d3c1fb3c9d43d49cf92879ff74f8516959c235308f5a8f62e2e19528a65cdc2a3058f587cde71eba3d5b56327c8c33a97e4c4051ca48a10ca2d5f"
+  "packageManager": "pnpm@10.9.0+sha512.0486e394640d3c1fb3c9d43d49cf92879ff74f8516959c235308f5a8f62e2e19528a65cdc2a3058f587cde71eba3d5b56327c8c33a97e4c4051ca48a10ca2d5f",
+  "devDependencies": {
+    "@iconify-json/line-md": "^1.2.11",
+    "@iconify-json/material-symbols": "^1.2.33",
+    "@iconify-json/simple-icons": "^1.2.50"
+  }
 }

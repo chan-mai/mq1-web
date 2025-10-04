@@ -4,7 +4,16 @@ export default defineEventHandler(async (event) => {
 
   // リクエストボディを取得
   const body = await readBody(event);
-  const { name, comment } = body;
+  const { name, comment, token } = body;
+
+  // Turnstileのバリデーション
+  const isValid = await verifyTurnstileToken(token || body['cf-turnstile-response']);
+  if (isValid.success === false) {
+    return {
+      status: "error",
+      message: "Invalid Turnstile token",
+    }
+  }
 
   // バリデーション
   if (!name || typeof name !== 'string' || name.trim().length === 0) {

@@ -34,6 +34,7 @@ const comment = ref<string>('');
 const isLoadingForm = ref<boolean>(false);
 const formError = ref<string | null>(null);
 const successMessage = ref<string | null>(null);
+const turnstile = ref();
 
 // バリデーション
 const isNameValid = computed(() => name.value.trim().length > 0 && name.value.trim().length <= 50);
@@ -105,6 +106,7 @@ const submitComment = async () => {
       body: {
         name: name.value.trim(),
         comment: comment.value.trim(),
+        token: turnstile.value,
       },
     });
 
@@ -320,6 +322,11 @@ onMounted(() => {
               isLoadingForm ? 'bg-gray-100 cursor-not-allowed' : 'bg-white/70 backdrop-blur-sm'
             ]"
           />
+        </div>
+
+        <!-- Turnstile -->
+        <div>
+          <NuxtTurnstile v-model="turnstile" />
         </div>
 
         <!-- 送信ボタン -->

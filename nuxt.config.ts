@@ -40,7 +40,15 @@ export default defineNuxtConfig({
       },
     },
   },
-  modules: ["@nuxtjs/tailwindcss", "@vueuse/nuxt", "@nuxt/icon", "nuxt-gtag", "@nuxtjs/sitemap", "@nuxt/image"],
+  modules: [
+    "@nuxtjs/tailwindcss",
+    "@vueuse/nuxt",
+    "@nuxt/icon",
+    "nuxt-gtag",
+    "@nuxtjs/sitemap",
+    "@nuxt/image",
+    "@nuxtjs/turnstile",
+  ],
   tailwindcss: {
     config: {
       theme: {
@@ -71,6 +79,12 @@ export default defineNuxtConfig({
         apiKey: process.env.MICROCMS_API_KEY,
       }
     },
+    turnstile: {
+      secretKey: process.env.TURNSTILE_SECRET_KEY,
+    },
+  },
+  turnstile: {
+    siteKey: process.env.TURNSTILE_SITE_KEY,
   },
   routeRules: {
     "/": { prerender: true },

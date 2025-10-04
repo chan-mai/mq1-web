@@ -15,6 +15,7 @@
     "@nuxt/scripts": "^0.11.13",
     "@nuxtjs/sitemap": "7.4.3",
     "@nuxtjs/tailwindcss": "6.14.0",
+    "@prisma/client": "^6.16.3",
     "@types/highlight.js": "^10.1.0",
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
@@ -27,6 +28,7 @@
     "microcms-js-sdk": "^3.2.0",
     "nuxt": "^4.0.3",
     "nuxt-gtag": "4.0.0",
+    "prisma": "^6.16.3",
     "vue": "^3.5.21",
     "vue-router": "^4.5.1"
   },

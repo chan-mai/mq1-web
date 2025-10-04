@@ -185,8 +185,12 @@ const tableOfContents: Ref<{ id: string; text: string; level: number }[]> = ref(
                 <MqArticlerRender :target="article?.content!" class="micro-cms mt-6 md:mt-10" />
             </div>
         </article>
+        <!-- いいねボタン -->
+        <div class="mt-6 mb-4 max-w-6xl mx-auto w-full px-2 md:px-6">
+            <MqFavoriteButton :content-id="contentId" />
+        </div>
         <!-- 共有ボタン -->
-        <div class="mt-6 mb-4 max-w-6xl mx-auto w-full">
+        <div class="mt-6 mb-4 max-w-6xl mx-auto w-full px-2 md:px-6">
             <MqShareButtons 
                 :title="article?.title || ''" 
                 :url="`/entry/${contentId}`"

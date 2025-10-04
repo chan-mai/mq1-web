@@ -48,6 +48,7 @@ export default defineNuxtConfig({
     "@nuxtjs/sitemap",
     "@nuxt/image",
     "@nuxtjs/turnstile",
+    "nuxt-auth-utils",
   ],
   tailwindcss: {
     config: {
@@ -67,8 +68,6 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     // サーバーサイドのみで使用する設定
-    adminUsername: process.env.ADMIN_USERNAME,
-    adminPassword: process.env.ADMIN_PASSWORD,
     public: {
       siteName: "まいの雑記帳",
       siteDescription: "ちっちゃなうぇぶさいと",
@@ -81,6 +80,12 @@ export default defineNuxtConfig({
     },
     turnstile: {
       secretKey: process.env.TURNSTILE_SECRET_KEY,
+    },
+    oauth: {
+      github: {
+        clientId: process.env.GITHUB_CLIENT_ID,
+        clientSecret: process.env.GITHUB_SECRET,
+      },
     },
   },
   turnstile: {

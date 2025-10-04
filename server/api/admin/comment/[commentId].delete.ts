@@ -1,7 +1,7 @@
 // 管理者用：コメントを削除
 export default defineEventHandler(async (event) => {
-  // BASIC認証チェック
-  requireBasicAuth(event);
+  // セッション認証チェック
+  await requireAdminSession(event);
 
   const commentId = getRouterParam(event, "commentId");
 

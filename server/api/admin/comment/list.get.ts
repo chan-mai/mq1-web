@@ -1,7 +1,7 @@
 // 管理者用：全コメント一覧取得（ステータス別）
 export default defineEventHandler(async (event) => {
-  // BASIC認証チェック
-  requireBasicAuth(event);
+  // セッション認証チェック（chan-maiユーザーのみ）
+  await requireAdminSession(event);
 
   const query = getQuery(event);
   const status = query.status as string | undefined;

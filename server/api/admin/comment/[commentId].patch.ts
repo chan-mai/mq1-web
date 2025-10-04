@@ -1,7 +1,7 @@
 // 管理者用：コメントのステータスを更新（承認/拒否）
 export default defineEventHandler(async (event) => {
-  // BASIC認証チェック
-  requireBasicAuth(event);
+  // セッション認証チェック
+  await requireAdminSession(event);
 
   const commentId = getRouterParam(event, "commentId");
   const body = await readBody(event);

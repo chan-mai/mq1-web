@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { Avatar } from '@boringer-avatars/vue3';
 
+definePageMeta({
+  middleware: 'admin',
+  layout: 'admin'
+});
+
 interface Comment {
   id: string;
   contentId: string;
@@ -46,14 +51,6 @@ const successMessage = ref<string | null>(null);
 const selectedStatus = ref<string>('');
 const currentPage = ref<number>(1);
 
-// 認証情報（ブラウザに保存済みのBASIC認証を使用）
-const authHeader = ref<string>('');
-
-// BASIC認証ダイアログを表示するためのヘルパー
-const setAuthHeader = (username: string, password: string) => {
-  authHeader.value = 'Basic ' + btoa(`${username}:${password}`);
-};
-
 // コメント一覧を取得
 const fetchComments = async (page: number = 1) => {
   isLoading.value = true;
@@ -61,12 +58,10 @@ const fetchComments = async (page: number = 1) => {
 
   try {
     const url = selectedStatus.value
-      ? `/api/comment/admin/list?status=${selectedStatus.value}&page=${page}&limit=20`
-      : `/api/comment/admin/list?page=${page}&limit=20`;
+      ? `/api/admin/comment/list?status=${selectedStatus.value}&page=${page}&limit=20`
+      : `/api/admin/comment/list?page=${page}&limit=20`;
 
-    const response = await $fetch(url, {
-      headers: authHeader.value ? { Authorization: authHeader.value } : {}
-    });
+    const response = await $fetch(url);
 
     if (response.status === 'success') {
       comments.value = response.comments;
@@ -79,7 +74,9 @@ const fetchComments = async (page: number = 1) => {
   } catch (err: any) {
     console.error('Failed to fetch comments:', err);
     if (err.statusCode === 401) {
-      error.value = '認証が必要です。ブラウザがBASIC認証を要求します。';
+      error.value = '認証が必要です。再度ログインしてください。';
+      // 認証エラーの場合はログインページにリダイレクト
+      setTimeout(() => navigateTo('/admin/signin'), 2000);
     } else {
       error.value = err?.data?.message || 'コメントの取得に失敗しました';
     }
@@ -91,10 +88,9 @@ const fetchComments = async (page: number = 1) => {
 // コメントのステータスを更新
 const updateCommentStatus = async (commentId: string, status: 'PENDING' | 'APPROVED' | 'REJECTED') => {
   try {
-    const response = await $fetch(`/api/comment/admin/${commentId}`, {
+    const response = await $fetch(`/api/admin/comment/${commentId}`, {
       method: 'PATCH',
-      body: { status },
-      headers: authHeader.value ? { Authorization: authHeader.value } : {}
+      body: { status }
     });
 
     if (response.status === 'success') {
@@ -127,9 +123,8 @@ const deleteComment = async (commentId: string) => {
   }
 
   try {
-    const response = await $fetch(`/api/comment/admin/${commentId}`, {
-      method: 'DELETE',
-      headers: authHeader.value ? { Authorization: authHeader.value } : {}
+    const response = await $fetch(`/api/admin/comment/${commentId}`, {
+      method: 'DELETE'
     });
 
     if (response.status === 'success') {
@@ -216,7 +211,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen py-8">
+  <div class="py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <!-- ヘッダー -->
       <div class="mb-8">

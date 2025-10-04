@@ -1,4 +1,6 @@
 {
+  "buildCommand": "prisma generate && pnpm build",
+  "installCommand": "pnpm install",
   "rewrites": [
     {
       "source": "/images/(.*)",

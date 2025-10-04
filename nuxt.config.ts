@@ -58,6 +58,9 @@ export default defineNuxtConfig({
     id: process.env.GA_TRACKING_ID,
   },
   runtimeConfig: {
+    // サーバーサイドのみで使用する設定
+    adminUsername: process.env.ADMIN_USERNAME,
+    adminPassword: process.env.ADMIN_PASSWORD,
     public: {
       siteName: "まいの雑記帳",
       siteDescription: "ちっちゃなうぇぶさいと",

@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@boringer-avatars/vue3": "^0.2.1",
     "@nuxt/icon": "2.0.0",
     "@nuxt/image": "1.11.0",
     "@nuxt/scripts": "^0.11.13",

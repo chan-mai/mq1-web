@@ -11,6 +11,9 @@ importers:
 
   .:
     dependencies:
+      '@boringer-avatars/vue3':
+        specifier: ^0.2.1
+        version: 0.2.1(vue@3.5.21(typescript@5.8.3))
       '@nuxt/icon':
         specifier: 2.0.0
         version: 2.0.0(magicast@0.3.5)(vite@7.1.4(@types/node@22.14.1)(jiti@2.5.1)(terser@5.43.1)(yaml@2.8.1))(vue@3.5.21(typescript@5.8.3))
@@ -217,6 +220,11 @@ packages:
   '@babel/types@7.28.2':
     resolution: {integrity: sha512-ruv7Ae4J5dUYULmeXw1gmb7rYRz57OWCPM57pHojnLq/3Z1CK2lNSLTCVjxVk1F/TZHwOZZrOWi0ur95BbLxNQ==}
     engines: {node: '>=6.9.0'}
+
+  '@boringer-avatars/vue3@0.2.1':
+    resolution: {integrity: sha512-KzAfh31SDXToTvFL0tBNG5Ur+VzfD1PP4jmY5/GS+eIuObGTIAiUu9eiht0LjuAGI+0xCgnaEgsTrOx8H3vLOQ==}
+    peerDependencies:
+      vue: ^3.0.0
 
   '@cloudflare/kv-asset-handler@0.4.0':
     resolution: {integrity: sha512-+tv3z+SPp+gqTIcImN9o0hqE9xyfQjI1XD9pL6NuKjua9B1y7mNYv0S9cP+QEbA4ppVgGZEmKOvHX5G5Ei1CVA==}
@@ -4222,6 +4230,10 @@ snapshots:
     dependencies:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.27.1
+
+  '@boringer-avatars/vue3@0.2.1(vue@3.5.21(typescript@5.8.3))':
+    dependencies:
+      vue: 3.5.21(typescript@5.8.3)
 
   '@cloudflare/kv-asset-handler@0.4.0':
     dependencies:

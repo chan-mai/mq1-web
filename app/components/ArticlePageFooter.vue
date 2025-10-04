@@ -127,6 +127,7 @@ if (nextArticleResponse.value && nextArticleResponse.value.contents && nextArtic
                 </div>
             </div>
         </div>
+        <MqRssCta type="inline" />
     </div>
 </template>
 <style lang="css" scoped>

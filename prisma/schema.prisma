@@ -26,3 +26,27 @@ model Favorites {
   @@index([userIp])
   @@map("favorites")
 }
+
+// コメントステータス
+enum CommentStatus {
+  PENDING // 承認待ち
+  APPROVED // 承認
+  REJECTED // 拒否
+}
+
+// コメント
+model Comments {
+  id        String        @id @default(uuid(7))
+  contentId String        @map("content_id")
+  name      String
+  comment   String
+  userIp    String        @map("user_ip")
+  status    CommentStatus @default(PENDING)
+  createdAt DateTime      @default(now()) @map("created_at")
+  updatedAt DateTime      @updatedAt @map("updated_at")
+
+  @@index([contentId])
+  @@index([userIp])
+  @@index([status])
+  @@map("comments")
+}

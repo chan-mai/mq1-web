@@ -198,9 +198,9 @@ const filterByContentId = (contentId: string) => {
   fetchFavorites(1);
 };
 
-// 記事情報を取得（リアクティブ）
+// 記事情報を取得
 const getArticle = (contentId: string) => {
-  return computed(() => articlesCache.value.get(contentId) || null);
+  return articlesCache.value.get(contentId) || null;
 };
 
 // 日付フォーマット
@@ -287,18 +287,18 @@ onMounted(() => {
               {{ index + 1 }}
             </span>
             
-            <div v-if="getArticle(item.contentId).value" class="flex-1 min-w-0">
+            <div v-if="getArticle(item.contentId)" class="flex-1 min-w-0">
               <div class="flex items-start gap-3">
                 <div class="w-24 h-14 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
                   <NuxtImg
-                    :src="getArticle(item.contentId).value?.eyecatch?.url || useOgGenerator(getArticle(item.contentId).value?.title || item.contentId)"
-                    :alt="getArticle(item.contentId).value?.title || ''"
+                    :src="getArticle(item.contentId)?.eyecatch?.url || useOgGenerator(getArticle(item.contentId)?.title || item.contentId)"
+                    :alt="getArticle(item.contentId)?.title || ''"
                     class="w-full h-full object-cover"
                   />
                 </div>
                 <div class="flex-1 min-w-0">
                   <p class="text-sm font-medium text-gray-900 line-clamp-2 mb-1">
-                    {{ getArticle(item.contentId).value?.title || item.contentId }}
+                    {{ getArticle(item.contentId)?.title || item.contentId }}
                   </p>
                   <p class="text-xs text-gray-500 truncate">ID: {{ item.contentId }}</p>
                 </div>
@@ -410,22 +410,22 @@ onMounted(() => {
             class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow duration-200"
           >
             <!-- 記事情報がある場合 -->
-            <div v-if="getArticle(favorite.contentId).value" class="mb-4">
+            <div v-if="getArticle(favorite.contentId)" class="mb-4">
               <div class="flex gap-4">
                 <div class="w-32 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
                   <NuxtImg
-                    :src="getArticle(favorite.contentId).value?.eyecatch?.url || useOgGenerator(getArticle(favorite.contentId).value?.title || favorite.contentId)"
-                    :alt="getArticle(favorite.contentId).value?.title || ''"
+                    :src="getArticle(favorite.contentId)?.eyecatch?.url || useOgGenerator(getArticle(favorite.contentId)?.title || favorite.contentId)"
+                    :alt="getArticle(favorite.contentId)?.title || ''"
                     class="w-full h-full object-cover"
                   />
                 </div>
                 <div class="flex-1 min-w-0">
                   <h3 class="text-lg font-bold text-gray-900 mb-2 line-clamp-2">
-                    {{ getArticle(favorite.contentId).value?.title }}
+                    {{ getArticle(favorite.contentId)?.title }}
                   </h3>
-                  <div v-if="getArticle(favorite.contentId).value?.tags" class="flex flex-wrap gap-2 mb-2">
+                  <div v-if="getArticle(favorite.contentId)?.tags" class="flex flex-wrap gap-2 mb-2">
                     <span
-                      v-for="tag in getArticle(favorite.contentId).value?.tags?.contents || []"
+                      v-for="tag in getArticle(favorite.contentId)?.tags?.contents || []"
                       :key="tag.id"
                       class="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-full"
                     >

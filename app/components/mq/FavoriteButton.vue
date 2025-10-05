@@ -48,7 +48,7 @@ const addLike = async () => {
       likeCount.value += 1;
       // ローカルストレージにIDを保存
       localStorage.setItem(`liked-${props.contentId}`, response.favorite.id);
-      successMessage.value = 'いいねしました！';
+      successMessage.value = 'いいね！しました';
       
       // 成功メッセージを3秒後に消す
       setTimeout(() => {
@@ -163,21 +163,28 @@ onMounted(() => {
           isLiked 
             ? 'bg-primary text-white hover:opacity-80 hover:scale-105' 
             : 'text-gray-600 bg-white/70 backdrop-blur-sm border border-gray-200/60 hover:bg-primary hover:text-white hover:shadow-lg hover:scale-105 hover:shadow-pink-200/50 focus:ring-pink-500/20',
-          isLoading && 'opacity-75 cursor-wait'
+          isLoading && 'opacity-75 cursor-wait hover:scale-100'
         ]"
-        :aria-label="isLiked ? 'いいねを解除' : 'いいねする'"
-        :title="isLiked ? 'クリックでいいねを解除' : 'この記事にいいね'"
+        :aria-label="isLiked ? 'いいね！を解除' : 'いいね！する'"
+        :title="isLiked ? 'クリックでいいね！を解除' : 'この記事にいいね！'"
       >
+        <!-- ローディング中はスピナーを表示 -->
         <Icon 
+          v-if="isLoading"
+          name="mdi:loading"
+          class="w-5 h-5 flex-shrink-0 animate-spin"
+        />
+        <!-- 通常時はハートアイコン -->
+        <Icon 
+          v-else
           :name="isLiked ? 'mdi:heart' : 'mdi:heart-outline'" 
           :class="[
             'w-5 h-5 flex-shrink-0 transition-transform',
-            isLoading && 'animate-pulse',
             'group-hover:scale-110'
           ]"
         />
         <span class="whitespace-nowrap font-medium">
-          {{ isLiked ? 'いいね済み' : 'いいね' }}
+          {{ isLoading ? '処理中...' : isLiked ? 'いいね！済み' : 'いいね！する' }}
         </span>
         <span 
           :class="[

@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { Avatar } from '@boringer-avatars/vue3';
+import type { MicroCMSQueries } from 'microcms-js-sdk';
+import type { MicroCMSObject } from '~/types/microccms';
 
 definePageMeta({
   middleware: 'admin',
@@ -47,9 +49,49 @@ const isLoading = ref<boolean>(false);
 const error = ref<string | null>(null);
 const successMessage = ref<string | null>(null);
 
+// 記事情報のキャッシュ
+const articlesCache = ref<Map<string, MicroCMSObject<Article> | null>>(new Map());
+
 // フィルター
 const selectedStatus = ref<string>('');
 const currentPage = ref<number>(1);
+
+const client = useMicroCMSClient();
+
+// 複数の記事を一括取得
+const fetchArticles = async (contentIds: string[]) => {
+  const uniqueIds = [...new Set(contentIds)].filter(id => !articlesCache.value.has(id));
+  
+  if (uniqueIds.length === 0) return;
+
+  try {
+    // microCMSのフィルタで複数IDを指定
+    const filters = uniqueIds.map(id => `id[equals]${id}`).join('[or]');
+    const response = await client.getList<MicroCMSObject<Article>>({
+      endpoint: 'articles',
+      queries: {
+        limit: uniqueIds.length,
+        filters,
+      } satisfies MicroCMSQueries,
+    });
+
+    // キャッシュに保存
+    if (response.contents) {
+      response.contents.forEach(article => {
+        articlesCache.value.set(article.id, article);
+      });
+    }
+
+    // 取得できなかったIDはnullとして保存
+    uniqueIds.forEach(id => {
+      if (!articlesCache.value.has(id)) {
+        articlesCache.value.set(id, null);
+      }
+    });
+  } catch (err) {
+    console.error('Failed to fetch articles:', err);
+  }
+};
 
 // コメント一覧を取得
 const fetchComments = async (page: number = 1) => {
@@ -68,6 +110,10 @@ const fetchComments = async (page: number = 1) => {
       pagination.value = response.pagination;
       statusCounts.value = response.statusCounts;
       currentPage.value = page;
+
+      // 記事情報を一括取得
+      const contentIds = comments.value.map(comment => comment.contentId);
+      await fetchArticles(contentIds);
     } else {
       error.value = 'コメントの取得に失敗しました';
     }
@@ -204,6 +250,11 @@ const getStatusLabel = (status: string): string => {
   }
 };
 
+// 記事情報を取得
+const getArticle = (contentId: string) => {
+  return articlesCache.value.get(contentId) || null;
+};
+
 // 初期化
 onMounted(() => {
   fetchComments(1);
@@ -302,6 +353,25 @@ onMounted(() => {
           :key="comment.id"
           class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow duration-200"
         >
+          <!-- 記事情報 -->
+          <div v-if="getArticle(comment.contentId)" class="mb-4 pb-4 border-b border-gray-200">
+            <div class="flex gap-3">
+              <div class="w-24 h-14 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
+                <NuxtImg
+                  :src="getArticle(comment.contentId)?.eyecatch?.url || useOgGenerator(getArticle(comment.contentId)?.title || comment.contentId)"
+                  :alt="getArticle(comment.contentId)?.title || ''"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-bold text-gray-900 line-clamp-2 mb-1">
+                  {{ getArticle(comment.contentId)?.title }}
+                </p>
+                <p class="text-xs text-gray-500">ID: {{ comment.contentId }}</p>
+              </div>
+            </div>
+          </div>
+
           <!-- コメントヘッダー -->
           <div class="flex items-start justify-between mb-4">
             <div class="flex items-center gap-3">
@@ -329,7 +399,7 @@ onMounted(() => {
 
           <!-- メタ情報 -->
           <div class="flex flex-wrap gap-4 text-xs text-gray-500 mb-4">
-            <div class="flex items-center gap-1">
+            <div v-if="!getArticle(comment.contentId)" class="flex items-center gap-1">
               <Icon name="mdi:file-document-outline" class="w-4 h-4" />
               <span>記事ID: {{ comment.contentId }}</span>
             </div>

@@ -1,13 +1,8 @@
+import { requirePermission, Permission } from '../../../utils/auth';
+
 export default defineEventHandler(async (event) => {
-  // 認証チェック
-  const { user } = await getUserSession(event);
-  if (!user) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: "Unauthorized",
-      message: "認証が必要です",
-    });
-  }
+  // FAVORITE_VIEW権限チェック
+  await requirePermission(event, Permission.FAVORITE_VIEW);
 
   // クエリパラメータを取得
   const query = getQuery(event);

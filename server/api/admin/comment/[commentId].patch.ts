@@ -1,7 +1,9 @@
+import { requirePermission, Permission } from '../../../utils/auth';
+
 // 管理者用：コメントのステータスを更新（承認/拒否）
 export default defineEventHandler(async (event) => {
-  // セッション認証チェック
-  await requireAdminSession(event);
+  // COMMENT_ADMIN権限チェック
+  await requirePermission(event, Permission.COMMENT_ADMIN);
 
   const commentId = getRouterParam(event, "commentId");
   const body = await readBody(event);

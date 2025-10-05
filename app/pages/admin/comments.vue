@@ -2,11 +2,14 @@
 import { Avatar } from '@boringer-avatars/vue3';
 import type { MicroCMSQueries } from 'microcms-js-sdk';
 import type { MicroCMSObject } from '~/types/microccms';
+import type { Permission } from '@prisma/client';
 
 definePageMeta({
   middleware: 'admin',
   layout: 'admin'
 });
+
+const { hasPermission } = useAdminPermissions();
 
 interface Comment {
   id: string;
@@ -255,6 +258,9 @@ const getArticle = (contentId: string) => {
   return articlesCache.value.get(contentId) || null;
 };
 
+// 権限チェック
+const canAdmin = computed(() => hasPermission('COMMENT_ADMIN' as Permission));
+
 // 初期化
 onMounted(() => {
   fetchComments(1);
@@ -414,7 +420,7 @@ onMounted(() => {
           </div>
 
           <!-- アクションボタン -->
-          <div class="flex flex-wrap gap-2">
+          <div v-if="canAdmin" class="flex flex-wrap gap-2">
             <button
               v-if="comment.status !== 'APPROVED'"
               @click="updateCommentStatus(comment.id, 'APPROVED')"

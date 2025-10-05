@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import type { MicroCMSQueries } from 'microcms-js-sdk';
 import type { MicroCMSObject } from '~/types/microccms';
+import type { Permission } from '@prisma/client';
 
 definePageMeta({
   middleware: 'admin',
   layout: 'admin'
 });
+
+const { hasPermission } = useAdminPermissions();
 
 interface Favorite {
   id: string;
@@ -215,6 +218,10 @@ const formatDate = (dateString: string): string => {
     timeZone: 'Asia/Tokyo',
   });
 };
+
+// 権限チェック（将来的な拡張用）
+const canView = computed(() => hasPermission('FAVORITE_VIEW' as Permission));
+const canAdmin = computed(() => hasPermission('FAVORITE_ADMIN' as Permission));
 
 // 初期化
 onMounted(() => {

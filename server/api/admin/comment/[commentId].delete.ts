@@ -1,7 +1,9 @@
+import { requirePermission, Permission } from '../../../utils/auth';
+
 // 管理者用：コメントを削除
 export default defineEventHandler(async (event) => {
-  // セッション認証チェック
-  await requireAdminSession(event);
+  // COMMENT_ADMIN権限チェック
+  await requirePermission(event, Permission.COMMENT_ADMIN);
 
   const commentId = getRouterParam(event, "commentId");
 

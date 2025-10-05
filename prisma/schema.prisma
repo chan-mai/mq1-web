@@ -49,3 +49,46 @@ model Comments {
   @@index([status])
   @@map("comments")
 }
+
+// 権限の種類
+enum Permission {
+  COMMENT_VIEW      // コメント閲覧
+  COMMENT_ADMIN     // コメント管理
+  FAVORITE_VIEW     // お気に入り閲覧
+  FAVORITE_ADMIN    // お気に入り管理
+  ADMIN_USER_VIEW   // 管理者ユーザー閲覧
+  ADMIN_USER_ADMIN  // 管理者ユーザー管理
+}
+
+// 管理者ユーザー
+model AdminUser {
+  id              String            @id @default(uuid(7))
+  githubUsername  String            @unique @map("github_username")
+  githubUserId    BigInt            @map("github_user_id")
+  displayName     String?           @map("display_name")
+  email           String?
+  avatarUrl       String?           @map("avatar_url")
+  isActive        Boolean           @default(true) @map("is_active")
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+  permissions     AdminPermission[]
+
+  @@index([githubUsername])
+  @@index([isActive])
+  @@map("admin_users")
+}
+
+// 管理者権限
+model AdminPermission {
+  id         String     @id @default(uuid(7))
+  adminId    String     @map("admin_id")
+  permission Permission
+  createdAt  DateTime   @default(now()) @map("created_at")
+  updatedAt  DateTime   @updatedAt @map("updated_at")
+  admin      AdminUser  @relation(fields: [adminId], references: [id], onDelete: Cascade)
+
+  @@unique([adminId, permission])
+  @@index([adminId])
+  @@index([permission])
+  @@map("admin_permissions")
+}

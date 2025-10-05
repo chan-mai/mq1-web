@@ -2,28 +2,55 @@
 // Admin Console専用レイアウト
 const route = useRoute();
 const { user } = useUserSession();
+const { permissions, fetchPermissions, hasAnyPermission } = useAdminPermissions();
 
 // サイドバーの開閉状態（モバイル用）
 const sidebarOpen = ref(false);
 
-// ナビゲーションメニュー
-const menuItems = [
-  {
-    name: 'ダッシュボード',
-    path: '/admin/dashboard',
-    icon: 'mdi:view-dashboard',
-  },
-  {
-    name: 'コメント',
-    path: '/admin/comments',
-    icon: 'mdi:comment-text-multiple',
-  },
-  {
-    name: 'いいね',
-    path: '/admin/favorites',
-    icon: 'mdi:heart',
-  },
-];
+// 権限情報を読み込み
+onMounted(async () => {
+  if (user.value) {
+    await fetchPermissions();
+  }
+});
+
+// ナビゲーションメニュー（権限に基づいてフィルタリング）
+const menuItems = computed(() => {
+  const allMenuItems = [
+    {
+      name: 'ダッシュボード',
+      path: '/admin/dashboard',
+      icon: 'mdi:view-dashboard',
+      requiredPermissions: [] as string[], // 権限不要
+    },
+    {
+      name: 'コメント',
+      path: '/admin/comments',
+      icon: 'mdi:comment-text-multiple',
+      requiredPermissions: ['COMMENT_VIEW'] as string[],
+    },
+    {
+      name: 'いいね',
+      path: '/admin/favorites',
+      icon: 'mdi:heart',
+      requiredPermissions: ['FAVORITE_VIEW'] as string[],
+    },
+    {
+      name: '管理者',
+      path: '/admin/users',
+      icon: 'mdi:account-group',
+      requiredPermissions: ['ADMIN_USER_VIEW'] as string[],
+    },
+  ];
+
+  // 権限に基づいてメニューをフィルタリング
+  return allMenuItems.filter((item) => {
+    if (item.requiredPermissions.length === 0) {
+      return true; // 権限不要の場合は常に表示
+    }
+    return hasAnyPermission(item.requiredPermissions as any);
+  });
+});
 
 // ログアウト処理
 const handleLogout = async () => {

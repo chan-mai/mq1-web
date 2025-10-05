@@ -168,9 +168,9 @@ const canAdmin = computed(() => hasPermission('ADMIN_USER_ADMIN' as Permission))
     <div class="mb-6">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 class="text-2xl font-bold text-gray-900">管理者ユーザー管理</h1>
+          <h1 class="text-2xl text-gray-900">管理者</h1>
           <p class="mt-1 text-sm text-gray-600">
-            管理者ユーザーと権限の管理
+            管理者と権限の管理
           </p>
         </div>
         <button

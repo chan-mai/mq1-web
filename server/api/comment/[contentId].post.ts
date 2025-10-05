@@ -58,6 +58,81 @@ export default defineEventHandler(async (event) => {
       },
     });
 
+    // Discord webhook通知を送信（非同期で実行、失敗してもコメント投稿は成功）
+    const config = useRuntimeConfig();
+    if (config.discord?.webhookUrl) {
+      try {
+        const siteUrl = config.public.siteUrl;
+        const webhookPayload = {
+          embeds: [
+            {
+              title: "🆕 新しいコメントが投稿されました",
+              url: `${siteUrl}admin/comments`,
+              color: 0xffa500,
+              fields: [
+                {
+                  name: "記事ID",
+                  value: contentId,
+                  inline: true,
+                },
+                {
+                  name: "投稿者",
+                  value: name.trim(),
+                  inline: true,
+                },
+                {
+                  name: "IPアドレス",
+                  value: userIp,
+                  inline: true,
+                },
+                {
+                  name: "コメント内容",
+                  value: comment.trim().length > 1000 
+                    ? comment.trim().substring(0, 1000) + "..." 
+                    : comment.trim(),
+                  inline: false,
+                },
+              ],
+              footer: {
+                text: "ステータス: 承認待ち",
+              },
+              timestamp: new Date().toISOString(),
+            },
+          ],
+          components: [
+            {
+              type: 1,
+              components: [
+                {
+                  type: 2,
+                  style: 5,
+                  label: "記事を見る",
+                  url: `${siteUrl}entry/${contentId}`,
+                },
+                {
+                  type: 2,
+                  style: 5,
+                  label: "管理画面を開く",
+                  url: `${siteUrl}admin/comments`,
+                },
+              ],
+            },
+          ],
+        };
+
+        await $fetch(config.discord.webhookUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: webhookPayload,
+        });
+      } catch (webhookError) {
+        console.error("Failed to send Discord webhook notification:", webhookError);
+        // webhookの送信失敗はエラーとしない
+      }
+    }
+
     return {
       status: "success",
       message: "Comment submitted successfully. It will be visible after approval.",

@@ -87,6 +87,9 @@ export default defineNuxtConfig({
         clientSecret: process.env.GITHUB_SECRET,
       },
     },
+    discord: {
+      webhookUrl: process.env.DISCORD_WEBHOOK_URL,
+    },
   },
   turnstile: {
     siteKey: process.env.TURNSTILE_SITE_KEY,

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// 管理画面専用レイアウト
+// Admin Console専用レイアウト
 const route = useRoute();
 const { user } = useUserSession();
 
@@ -14,9 +14,14 @@ const menuItems = [
     icon: 'mdi:view-dashboard',
   },
   {
-    name: 'コメント管理',
+    name: 'コメント',
     path: '/admin/comments',
     icon: 'mdi:comment-text-multiple',
+  },
+  {
+    name: 'いいね',
+    path: '/admin/favorites',
+    icon: 'mdi:heart',
   },
 ];
 
@@ -37,7 +42,7 @@ const handleLogout = async () => {
 
 <template>
   <div class="min-h-screen bg-gray-50">
-    <!-- 管理画面ヘッダー -->
+    <!-- Admin Consoleヘッダー -->
     <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
       <div class="px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
@@ -51,7 +56,7 @@ const handleLogout = async () => {
             </button>
             
             <Icon name="mdi:shield-account" class="w-6 h-6 text-primary" />
-            <h1 class="text-xl font-bold text-gray-900">管理画面</h1>
+            <h1 class="text-xl font-bold text-gray-900">Admin Console</h1>
           </div>
           
           <div class="flex items-center gap-4">
@@ -132,5 +137,5 @@ const handleLogout = async () => {
 </template>
 
 <style scoped>
-/* 管理画面専用のスタイル */
+/* Admin Console専用のスタイル */
 </style>

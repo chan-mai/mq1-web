@@ -8,7 +8,7 @@ definePageMeta({
 
 // メタタグ設定
 useHead({
-  title: '管理画面 - ダッシュボード',
+  title: 'Admin Console - ダッシュボード',
   meta: [
     { name: 'robots', content: 'noindex, nofollow' }
   ]
@@ -38,7 +38,7 @@ const { user } = useUserSession();
           />
           <div>
             <h2 class="text-xl font-bold text-gray-900">ようこそ、{{ user.username }}さん</h2>
-            <p class="text-gray-600">管理画面へようこそ。</p>
+            <p class="text-gray-600">Admin Consoleへようこそ。</p>
           </div>
         </div>
       </div>

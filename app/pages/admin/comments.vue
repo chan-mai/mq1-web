@@ -33,7 +33,7 @@ interface StatusCount {
 
 // メタタグ設定
 useHead({
-  title: '管理画面 - コメント管理',
+  title: 'Admin Console - コメント',
   meta: [
     { name: 'robots', content: 'noindex, nofollow' }
   ]
@@ -215,7 +215,7 @@ onMounted(() => {
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <!-- ヘッダー -->
       <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">コメント管理</h1>
+        <h1 class="text-3xl text-gray-900 mb-2">コメント</h1>
         <p class="text-gray-600">投稿されたコメントの承認・拒否・削除を行えます</p>
       </div>
 

@@ -36,6 +36,9 @@ const formError = ref<string | null>(null);
 const successMessage = ref<string | null>(null);
 const turnstile = ref();
 
+// 注意事項の折りたたみ状態
+const isPolicyExpanded = ref<boolean>(false);
+
 // バリデーション
 const isNameValid = computed(() => name.value.trim().length > 0 && name.value.trim().length <= 50);
 const isCommentValid = computed(() => comment.value.trim().length > 0 && comment.value.trim().length <= 1000);
@@ -390,6 +393,48 @@ onMounted(() => {
             <p class="text-sm text-red-700 font-medium">{{ formError }}</p>
           </div>
         </transition>
+
+        <!-- コメントポリシー注意事項 -->
+        <div class="rounded-lg bg-primary/5 border border-primary overflow-hidden">
+          <!-- ヘッダー（クリック可能） -->
+          <button
+            type="button"
+            @click="isPolicyExpanded = !isPolicyExpanded"
+            class="w-full flex items-center justify-between px-4 py-3 hover:bg-primary/10 transition-colors duration-200"
+          >
+            <div class="flex items-center gap-2">
+              <Icon name="mdi:information-outline" class="w-5 h-5 text-primary flex-shrink-0" />
+              <p class="text-sm font-semibold text-primary">注意事項</p>
+            </div>
+            <Icon 
+              :name="isPolicyExpanded ? 'mdi:chevron-up' : 'mdi:chevron-down'" 
+              class="w-5 h-5 text-primary transition-transform duration-200"
+            />
+          </button>
+          
+          <!-- 折りたたみ可能なコンテンツ -->
+          <transition
+            enter-active-class="transition-all duration-300 ease-out"
+            enter-from-class="max-h-0 opacity-0"
+            enter-to-class="max-h-96 opacity-100"
+            leave-active-class="transition-all duration-300 ease-in"
+            leave-from-class="max-h-96 opacity-100"
+            leave-to-class="max-h-0 opacity-0"
+          >
+            <div v-show="isPolicyExpanded" class="overflow-hidden">
+              <div class="px-4 pb-3 pt-1">
+                <div class="text-xs text-gray-500 space-y-2">
+                  <p class="leading-relaxed">
+                    このサイトでは「自分が何者であるかを明確にする」ことに重きを置いています。したがって、基本的にはSNSアカウントなどで利用しているIDを記入することを推奨します。<br />名前だけであなたが何者であるかを明らかにできる場合は、実名の使用も歓迎します。
+                  </p>
+                  <p class="leading-relaxed text-primary">
+                    ⚠️ この機能は、コメントの責任の所在を明らかにする意思を問うものであり、真偽を検証する機能はありません。ただし、明らかに偽りや無効な名前や不適切な内容が含まれる場合、そのコメントは削除される可能性があります。
+                  </p>
+                </div>
+              </div>
+            </div>
+          </transition>
+        </div>
       </form>
     </div>
   </div>

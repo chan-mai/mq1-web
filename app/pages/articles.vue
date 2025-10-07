@@ -48,7 +48,7 @@ useHead({
         <!-- 直近記事 -->
         <section class="mx-auto flex w-full max-w-6xl flex-col gap-10 px-2 md:px-6">
             <div class="flex items-center justify-between">
-                <h2 class="font-accent text-3xl font-bold text-slate-800 md:text-4xl">
+                <h2 class="font-accent text-3xl text-slate-800 md:text-4xl">
                     記事一覧
                 </h2>
             </div>

@@ -28,67 +28,68 @@ function navigateToTag(tag: any) {
 </script>
 
 <template>
-    <div class="group relative rounded-lg transition-all duration-300 overflow-hidden card-border h-full">
+    <div class="article-card group h-full">
         <NuxtLink :to="`/entry/${article.id}`" class="block h-full flex flex-col">
             <!-- 画像エリア -->
-            <div class="relative w-full aspect-[2/1] overflow-hidden">
+            <div class="image-wrapper">
                 <MqOgImage 
                     :url="article.eyecatch?.url" 
                     :title="article.title" 
                     fill
-                    class="object-cover transition-transform duration-300 group-hover:scale-105"
+                    class="article-image"
                     :style="`view-transition-name: article-${article.id};`" 
                 />
-                <!-- オーバーレイ -->
-                <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300"></div>
             </div>
 
             <!-- コンテンツエリア -->
-            <div class="p-4 flex flex-col flex-1">
-                <!-- 日付 -->
-                <div class="text-xs text-gray-500 mb-2">
-                    {{ new Date(article.publishedAt! ?? article.createdAt!).toLocaleString('ja-JP', {
-                        year: 'numeric',
-                        month: '2-digit',
-                        day: '2-digit',
-                        timeZone: 'Asia/Tokyo',
-                    }) }}
+            <div class="card-content">
+                <!-- 日付バッジ -->
+                <div class="date-badge">
+                    <Icon name="mdi:calendar-outline" class="w-3.5 h-3.5" />
+                    <span>
+                        {{ new Date(article.publishedAt! ?? article.createdAt!).toLocaleString('ja-JP', {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit',
+                            timeZone: 'Asia/Tokyo',
+                        }) }}
+                    </span>
                 </div>
 
                 <!-- タイトル -->
                 <h3 
-                    class="text-base font-semibold text-gray-800 mb-2 line-clamp-1 group-hover:text-accent transition-colors duration-200"
+                    class="article-title"
                     :style="`view-transition-name: article-title-${article.id};`"
                 >
                     {{ article.title }}
                 </h3>
 
                 <!-- サマリー -->
-                <p class="text-gray-600 text-sm mb-3 line-clamp-2">
+                <p class="article-summary">
                     {{ summary }}
                 </p>
 
                 <!-- タグ -->
-                <div v-if="article.tags && article.tags.length > 0" class="flex gap-1 mb-3 overflow-hidden">
+                <div v-if="article.tags && article.tags.length > 0" class="tags-wrapper">
                     <MqTag 
                         v-for="tag in article.tags.slice(0, 3)" 
                         :key="tag.id"
                         :tag="tag" 
                         @click.stop.prevent="navigateToTag(tag)"
                         :transition 
-                        class="text-xs px-2 py-1 flex-shrink-0 tag-fixed card-tag"
+                        class="text-xs px-2.5 py-1 flex-shrink-0 tag-fixed card-tag"
                     />
                 </div>
 
                 <!-- 続きを読むリンク -->
-                <div class="mt-auto pt-2">
-                    <div class="text-accent text-sm inline-flex items-center group-hover:translate-x-1 transition-transform duration-200">
+                <div class="read-more">
+                    <span class="read-more-text">
                         続きを読む
                         <Icon 
-                            name="material-symbols:arrow-circle-right-outline"
-                            class="w-4 h-4 ml-1" 
+                            name="mdi:arrow-right-circle"
+                            class="read-more-icon" 
                         />
-                    </div>
+                    </span>
                 </div>
             </div>
         </NuxtLink>
@@ -96,47 +97,103 @@ function navigateToTag(tag: any) {
 </template>
 
 <style scoped>
-.line-clamp-2 {
+/* カード全体 */
+.article-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.article-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* 画像エリア */
+.image-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 2/1;
+    overflow: hidden;
+    background: linear-gradient(135deg, #ffeef0 0%, #fff5f7 100%);
+}
+
+.article-image {
+    object-fit: cover;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.group:hover .article-image {
+    transform: scale(1.05);
+}
+
+/* コンテンツエリア */
+.card-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+/* 日付バッジ */
+.date-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.75rem;
+    background: #fff0f3;
+    color: theme('colors.primary');
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    width: fit-content;
+    margin-bottom: 1rem;
+}
+
+/* タイトル */
+.article-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 0.75rem;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    transition: color 0.2s ease;
+}
+
+.group:hover .article-title {
+    color: theme('colors.primary');
+}
+
+/* サマリー */
+.article-summary {
+    color: #666;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
 
-.line-clamp-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+/* タグエリア */
+.tags-wrapper {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
 }
 
-.card-border {
-    position: relative;
-    background: rgba(255, 255, 255, 0.5);
-    border: 1px solid transparent;
-    border-radius: 0.5rem;
-    backdrop-filter: blur(8px);
-}
-
-.card-border::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    padding: 1px;
-    background: linear-gradient(135deg, #fc9fa8, #f57aa5, #f57aa5, #fc9fa8);
-    border-radius: 0.5rem;
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask-composite: exclude;
-    pointer-events: none;
-}
-
-.card-border:hover {
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(12px);
-}
-
-.card-border:hover::before {
-    background: linear-gradient(135deg, #e91e63, #f57aa5, #fc9fa8, #f57aa5, #e91e63);
+.card-tag {
+    border-radius: 100px;
+    font-weight: 500;
+    transition: all 0.2s ease;
 }
 
 .card-tag :deep(.tag-icon) {
@@ -147,4 +204,33 @@ function navigateToTag(tag: any) {
     color: white !important;
 }
 
+/* 続きを読むリンク */
+.read-more {
+    margin-top: auto;
+    padding-top: 0.5rem;
+}
+
+.read-more-text {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    color: theme('colors.primary');
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: gap 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.group:hover .read-more-text {
+    gap: 0.625rem;
+}
+
+.read-more-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.group:hover .read-more-icon {
+    transform: translateX(2px);
+}
 </style>

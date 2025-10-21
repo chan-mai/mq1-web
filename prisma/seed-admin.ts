@@ -1,20 +1,24 @@
-import { PrismaClient, Permission } from '@prisma/client';
+import { createRequire } from "node:module";
+import { PrismaClient } from "@prisma/client";
+
+const require = createRequire(import.meta.url);
+const { Permission } = require("@prisma/client");
 
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('Start seeding admin users...');
+  console.log("Start seeding admin users...");
 
   // chan-maiユーザーを作成または更新
   const adminUser = await prisma.adminUser.upsert({
     where: {
-      githubUsername: 'chan-mai',
+      githubUsername: "chan-mai",
     },
     update: {
       isActive: true,
     },
     create: {
-      githubUsername: 'chan-mai',
+      githubUsername: "chan-mai",
       githubUserId: BigInt(0), // 初回ログイン時に更新される
       isActive: true,
     },
@@ -42,9 +46,9 @@ async function main() {
   }
 
   console.log(`Granted all permissions to ${adminUser.githubUsername}:`);
-  console.log(allPermissions.join(', '));
+  console.log(allPermissions.join(", "));
 
-  console.log('Seeding finished.');
+  console.log("Seeding finished.");
 }
 
 main()

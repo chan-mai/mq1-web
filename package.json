@@ -1,5 +1,5 @@
 {
-  "name": "nuxt-app",
+  "name": "mq1-web",
   "private": true,
   "type": "module",
   "scripts": {
@@ -39,9 +39,13 @@
     "ipx": "^3.0.0"
   },
   "packageManager": "pnpm@10.9.0+sha512.0486e394640d3c1fb3c9d43d49cf92879ff74f8516959c235308f5a8f62e2e19528a65cdc2a3058f587cde71eba3d5b56327c8c33a97e4c4051ca48a10ca2d5f",
+  "prisma": {
+    "seed": "node --import tsx prisma/seed-admin.ts"
+  },
   "devDependencies": {
     "@iconify-json/line-md": "^1.2.11",
     "@iconify-json/material-symbols": "^1.2.33",
-    "@iconify-json/simple-icons": "^1.2.50"
+    "@iconify-json/simple-icons": "^1.2.50",
+    "tsx": "^4.19.2"
   }
 }

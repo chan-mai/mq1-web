@@ -176,7 +176,7 @@ const tableOfContents: Ref<{ id: string; text: string; level: number }[]> = ref(
         <article class="mt-5 md:mt-16 mx-auto flex w-full max-w-6xl flex-col px-2 md:px-6 mb-16">
             <ArticlePageHead :title="article?.title" :published="article?.publishedAt ?? article?.createdAt"
                 :updated="article?.updatedAt" :tags="article?.tags"
-                :readingTime :style="`view-transition-name: article-title-${contentId};`" />
+                :readingTime :style="`view-transition-name: article-title-${contentId};`" :contentId />
 
             <MqCollapsibleToc :items="tableOfContents" :title="article?.title"
                 class="mt-5" />
@@ -195,7 +195,7 @@ const tableOfContents: Ref<{ id: string; text: string; level: number }[]> = ref(
 
         <!-- いいねボタン -->
         <div class="mt-6 mb-4 max-w-6xl mx-auto w-full px-2 md:px-6">
-            <MqFavoriteButton :content-id="contentId" />
+            <MqFavoriteButton :content-id="contentId" class="px-5 py-3" />
         </div>
         <!-- コメントセクション -->
         <div class="mt-8 mb-8 max-w-6xl mx-auto w-full px-2 md:px-6">

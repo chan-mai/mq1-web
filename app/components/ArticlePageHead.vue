@@ -11,6 +11,7 @@ type PageHeaderProps = {
     } | null,
     tags?: MicroCMSObject<Tag[]>,
     readingTime?: { charCount: number, minutes: number }
+    contentId: string
 }
 
 const props = withDefaults(defineProps<PageHeaderProps>(), {
@@ -19,7 +20,7 @@ const props = withDefaults(defineProps<PageHeaderProps>(), {
     updated: null,
     author: null,
     tags: () => [],
-})
+});
 
 const publishedDate = computed(() => props.published ? new Date(props.published!).toLocaleString('ja-JP', {
     year: 'numeric',
@@ -85,6 +86,10 @@ const updatedDate = computed(() => (props.updated && props.updated !== props.pub
                     </dd>
                 </div>
             </dl>
+
+            <div class="mt-4 flex w-full justify-start">
+                <MqFavoriteButton :content-id="contentId" />
+            </div>
         </slot>
     </div>
 </template>

@@ -4,17 +4,41 @@ const props = defineProps<{
 }>();
 
 // いいね数
-const likeCount = ref<number>(0);
+const likeCount = useState<number>(`favorite:${props.contentId}:count`, () => 0);
 // いいね済みかどうか
-const isLiked = ref<boolean>(false);
+const isLiked = useState<boolean>(`favorite:${props.contentId}:liked`, () => false);
 // いいねID
-const likeId = ref<string | null>(null);
+const likeId = useState<string | null>(`favorite:${props.contentId}:id`, () => null);
 // ローディング状態
-const isLoading = ref<boolean>(false);
+const isLoading = useState<boolean>(`favorite:${props.contentId}:loading`, () => false);
 // エラー状態
 const error = ref<string | null>(null);
-// 成功メッセージ
-const successMessage = ref<string | null>(null);
+
+// 猫preload関連
+const catApiUrl = 'https://cataas.com/cat/says/Thnak%20You?fontSize=100&fontColor=white';
+// 事前取得URL
+const preloadedCatUrl = useState<string | null>(`favorite:${props.contentId}:preloadedCat`, () => null);
+const currentCatImageUrl = ref<string | null>(null);
+const isPreloadingCat = useState<boolean>(`favorite:${props.contentId}:preloadingCat`, () => false);
+
+const preloadCatImage = async () => {
+  if (isPreloadingCat.value) return;
+  isPreloadingCat.value = true;
+  try {
+    const res = await fetch(catApiUrl, { cache: 'no-store' });
+    const blob = await res.blob();
+    const objUrl = URL.createObjectURL(blob);
+    preloadedCatUrl.value = objUrl;
+  } catch (e) {
+    console.error('Failed to preload cat image:', e);
+  } finally {
+    isPreloadingCat.value = false;
+  }
+};
+
+const ensureCatPreloaded = () => {
+  if (!preloadedCatUrl.value && !isPreloadingCat.value) preloadCatImage();
+};
 
 // いいね数を取得
 const fetchLikeCount = async () => {
@@ -34,7 +58,6 @@ const addLike = async () => {
   
   isLoading.value = true;
   error.value = null;
-  successMessage.value = null;
   
   try {
     const response = await $fetch(`/api/favorite/${props.contentId}`, {
@@ -48,12 +71,21 @@ const addLike = async () => {
       likeCount.value += 1;
       // ローカルストレージにIDを保存
       localStorage.setItem(`liked-${props.contentId}`, response.favorite.id);
-      successMessage.value = 'いいね！しました';
-      
-      // 成功メッセージを3秒後に消す
+      // ありがとう表示
+      currentCatImageUrl.value = preloadedCatUrl.value || catApiUrl;
+      preloadedCatUrl.value = null; // 使い切り
+      showLikeCard.value = true;
       setTimeout(() => {
-        successMessage.value = null;
-      }, 3000);
+        showLikeCard.value = false;
+        // 表示に使った blob URL をクリーンアップ
+        if (currentCatImageUrl.value && currentCatImageUrl.value.startsWith('blob:')) {
+          URL.revokeObjectURL(currentCatImageUrl.value);
+        }
+        currentCatImageUrl.value = null;
+      }, 15000);
+      // 次回用に再プリロード
+      preloadCatImage();
+      
     } else if (response.status === 'error') {
       // エラー
       if (response.message === 'Favorite already exists') {
@@ -87,7 +119,6 @@ const removeLike = async () => {
   
   isLoading.value = true;
   error.value = null;
-  successMessage.value = null;
   
   try {
     const response = await $fetch(`/api/favorite/${props.contentId}?id=${likeId.value}`, {
@@ -101,12 +132,6 @@ const removeLike = async () => {
       likeCount.value = Math.max(0, likeCount.value - 1);
       // ローカルストレージから削除
       localStorage.removeItem(`liked-${props.contentId}`);
-      successMessage.value = 'いいねを解除しました';
-      
-      // 成功メッセージを3秒後に消す
-      setTimeout(() => {
-        successMessage.value = null;
-      }, 3000);
     } else if (response.status === 'error') {
       // エラー
       error.value = response.message || 'いいねの解除に失敗しました';
@@ -138,6 +163,20 @@ const toggleLike = () => {
   }
 };
 
+// いいね時のワンショット演出用フラグ
+const justLiked = ref(false);
+watch(isLiked, (val, oldVal) => {
+  if (val && !oldVal) {
+    justLiked.value = true;
+    setTimeout(() => {
+      justLiked.value = false;
+    }, 500);
+  }
+});
+
+// 成功カード表示
+const showLikeCard = ref(false);
+
 // 初期化
 onMounted(() => {
   // ローカルストレージからいいね状態を復元
@@ -149,21 +188,25 @@ onMounted(() => {
   
   // いいね数を取得
   fetchLikeCount();
+  // backgroundで猫をロード
+  preloadCatImage();
 });
 </script>
 
 <template>
-  <div class="flex flex-col gap-3 rounded-xl px-5 py-4">
+  <div class="relative flex flex-col gap-3 rounded-xl">
     <div class="flex flex-wrap gap-2">
       <button
+        @mouseenter="ensureCatPreloaded"
+        @focus="ensureCatPreloaded"
         @click="toggleLike"
         :disabled="isLoading"
         :class="[
-          'group relative flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-xl min-w-[120px]',
-          isLiked 
-            ? 'bg-primary text-white hover:opacity-80 hover:scale-105' 
-            : 'text-gray-600 bg-white/70 backdrop-blur-sm border border-gray-200/60 hover:bg-primary hover:text-white hover:shadow-lg hover:scale-105 hover:shadow-pink-200/50 focus:ring-pink-500/20',
-          isLoading && 'opacity-75 cursor-wait hover:scale-100'
+          'group relative flex items-center justify-center gap-2 px-5 py-3 text-sm font-semibold rounded-2xl min-w-[132px] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2',
+          isLiked
+            ? 'bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-lg shadow-pink-300/40 hover:shadow-pink-400/50 hover:-translate-y-[1px]'
+            : 'text-gray-700 dark:text-gray-200 bg-white/80 dark:bg-white/10 border border-gray-200/60 dark:border-white/10 backdrop-blur-md hover:bg-gradient-to-r hover:from-pink-50 hover:to-rose-50 dark:hover:from-pink-950/30 dark:hover:to-rose-950/30 hover:border-pink-200/60 hover:shadow-lg hover:shadow-pink-200/40 hover:-translate-y-[1px]',
+          isLoading && 'opacity-75 cursor-wait hover:translate-y-0'
         ]"
         :aria-label="isLiked ? 'いいね！を解除' : 'いいね！する'"
         :title="isLiked ? 'クリックでいいね！を解除' : 'この記事にいいね！'"
@@ -175,14 +218,17 @@ onMounted(() => {
           class="w-5 h-5 flex-shrink-0 animate-spin"
         />
         <!-- 通常時はハートアイコン -->
-        <Icon 
-          v-else
-          :name="isLiked ? 'mdi:heart' : 'mdi:heart-outline'" 
-          :class="[
-            'w-5 h-5 flex-shrink-0 transition-transform',
-            'group-hover:scale-110'
-          ]"
-        />
+        <span v-else class="relative inline-flex items-center justify-center">
+          <span v-if="justLiked" class="absolute inline-flex w-6 h-6 rounded-full bg-pink-400/40 opacity-60 animate-ping"></span>
+          <Icon 
+            :name="isLiked ? 'mdi:heart' : 'mdi:heart-outline'" 
+            :class="[
+              'w-5 h-5 flex-shrink-0 transition-transform group-hover:scale-110',
+              isLiked ? 'text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.35)]' : 'text-pink-500',
+              justLiked && 'animate-like-pop'
+            ]"
+          />
+        </span>
         <span class="whitespace-nowrap font-medium">
           {{ isLoading ? '処理中...' : isLiked ? 'いいね！済み' : 'いいね！する' }}
         </span>
@@ -190,8 +236,8 @@ onMounted(() => {
           :class="[
             'ml-1 px-2 py-0.5 rounded-full text-xs font-bold',
             isLiked 
-              ? 'bg-white/30 text-white' 
-              : 'bg-gray-100 text-gray-700 group-hover:bg-white/30 group-hover:text-white'
+              ? 'bg-white/25 text-white' 
+              : 'bg-gray-100 text-gray-700 group-hover:bg-pink-100 group-hover:text-pink-700'
           ]"
         >
           {{ likeCount }}
@@ -199,23 +245,33 @@ onMounted(() => {
       </button>
     </div>
     
-    <!-- 成功メッセージ -->
+    <!-- いいねありがとう -->
     <transition
-      enter-active-class="transition ease-out duration-300"
-      enter-from-class="transform opacity-0 scale-95"
-      enter-to-class="transform opacity-100 scale-100"
-      leave-active-class="transition ease-in duration-200"
-      leave-from-class="transform opacity-100 scale-100"
-      leave-to-class="transform opacity-0 scale-95"
+      enter-active-class="transition duration-300 ease-out"
+      enter-from-class="opacity-0 translate-y-2"
+      enter-to-class="opacity-100 translate-y-0"
+      leave-active-class="transition duration-200 ease-in"
+      leave-from-class="opacity-100 translate-y-0"
+      leave-to-class="opacity-0 translate-y-2"
     >
       <div
-        v-if="successMessage"
-        class="flex items-center gap-2 px-4 py-2 rounded-lg bg-green-50 border border-green-200"
+        v-if="showLikeCard"
+        class="z-50 absolute top-14 left-0 mt-2 w-full max-w-sm bg-white/95 dark:bg-gray-900/95 backdrop-blur rounded-2xl p-4 border border-gray-200/70 dark:border-white/10"
+        role="status" aria-live="polite"
       >
-        <Icon name="mdi:check-circle" class="w-4 h-4 text-green-600 flex-shrink-0" />
-        <p class="text-sm text-green-700 font-medium">{{ successMessage }}</p>
+        <!-- 吹き出しの矢印 -->
+        <div class="pointer-events-none absolute -top-2 left-6 h-4 w-4 rotate-45 bg-white/95 dark:bg-gray-900/95 border-l border-t border-gray-200/70 dark:border-white/10"></div>
+        <div class="overflow-hidden rounded-xl border border-gray-200/70 dark:border-white/10">
+          <img :src="currentCatImageUrl || catApiUrl" alt="Thank you cat" class="w-full object-cover" />
+        </div>
+        <div class="mt-3 flex items-center gap-3">
+          <p class="text-base font-normal text-gray-700">
+            ありがとう‼️
+          </p>
+        </div>
       </div>
     </transition>
+
     
     <!-- エラーメッセージ -->
     <transition
@@ -236,4 +292,15 @@ onMounted(() => {
     </transition>
   </div>
 </template>
+
+<style scoped>
+@keyframes like-pop {
+  0% { transform: scale(0.85); }
+  60% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+.animate-like-pop {
+  animation: like-pop 300ms ease-out;
+}
+</style>
 

@@ -40,8 +40,12 @@ const ensureCatPreloaded = () => {
   if (!preloadedCatUrl.value && !isPreloadingCat.value) preloadCatImage();
 };
 
+// 初回の件数取得中か
+const isInitialLoading = useState<boolean>(`favorite:${props.contentId}:initLoading`, () => true);
+
 // いいね数を取得
 const fetchLikeCount = async () => {
+  isInitialLoading.value = true;
   try {
     const response = await $fetch(`/api/favorite/${props.contentId}`);
     if (response.status === 'success') {
@@ -49,6 +53,8 @@ const fetchLikeCount = async () => {
     }
   } catch (err) {
     console.error('Failed to fetch like count:', err);
+  } finally {
+    isInitialLoading.value = false;
   }
 };
 
@@ -200,20 +206,20 @@ onMounted(() => {
         @mouseenter="ensureCatPreloaded"
         @focus="ensureCatPreloaded"
         @click="toggleLike"
-        :disabled="isLoading"
+        :disabled="isLoading || isInitialLoading"
         :class="[
           'group relative flex items-center justify-center gap-2 px-5 py-3 text-sm font-semibold rounded-2xl min-w-[132px] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2',
           isLiked
             ? 'bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-lg shadow-pink-300/40 hover:shadow-pink-400/50 hover:-translate-y-[1px]'
             : 'text-gray-700 dark:text-gray-200 bg-white/80 dark:bg-white/10 border border-gray-200/60 dark:border-white/10 backdrop-blur-md hover:bg-gradient-to-r hover:from-pink-50 hover:to-rose-50 dark:hover:from-pink-950/30 dark:hover:to-rose-950/30 hover:border-pink-200/60 hover:shadow-lg hover:shadow-pink-200/40 hover:-translate-y-[1px]',
-          isLoading && 'opacity-75 cursor-wait hover:translate-y-0'
+          (isLoading || isInitialLoading) && 'opacity-75 cursor-wait hover:translate-y-0'
         ]"
         :aria-label="isLiked ? 'いいね！を解除' : 'いいね！する'"
         :title="isLiked ? 'クリックでいいね！を解除' : 'この記事にいいね！'"
       >
         <!-- ローディング中はスピナーを表示 -->
         <Icon 
-          v-if="isLoading"
+          v-if="isLoading || isInitialLoading"
           name="mdi:loading"
           class="w-5 h-5 flex-shrink-0 animate-spin"
         />
@@ -230,9 +236,10 @@ onMounted(() => {
           />
         </span>
         <span class="whitespace-nowrap font-medium">
-          {{ isLoading ? '処理中...' : isLiked ? 'いいね！済み' : 'いいね！する' }}
+          {{ isInitialLoading ? '取得中' :  isLoading ? '処理中...' : isLiked ? 'いいね！済み' : 'いいね！する' }}
         </span>
         <span 
+          v-if="!isInitialLoading"
           :class="[
             'ml-1 px-2 py-0.5 rounded-full text-xs font-bold',
             isLiked 

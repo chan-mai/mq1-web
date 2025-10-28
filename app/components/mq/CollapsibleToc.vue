@@ -251,6 +251,7 @@ onMounted(() => {
   margin-left: 12px;
   opacity: 0.8;
   transition: opacity 0.2s ease;
+  flex-shrink: 0;
 }
 
 .toc-link:hover .toc-decoration {
@@ -268,6 +269,9 @@ onMounted(() => {
   justify-content: center;
   border-radius: 10px;
   padding: 0 6px;
+  white-space: nowrap;
+  word-break: keep-all;
+  flex-shrink: 0;
 }
 
 .toc-children {

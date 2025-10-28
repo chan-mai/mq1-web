@@ -71,6 +71,20 @@ const articleHtml = computed(() => {
             }
         });
 
+        // 見出しの先頭にタグレベルに応じた#を追加
+        for (let level = 1; level <= 6; level++) {
+            const selector = `h${level}`;
+            $(selector).each((_, elem) => {
+                const $el = $(elem);
+                const existingText = $el.text().trimStart();
+                // すでに # で始まる見出しは重複追加しない
+                if (/^#{1,6}\s/.test(existingText)) {
+                    return;
+                }
+                $el.prepend(`<span class="heading-level-${level} text-primary/60">${'#'.repeat(level)}</span>&nbsp;`);
+            });
+        }
+
         return $.html();
     } else {
         return '';

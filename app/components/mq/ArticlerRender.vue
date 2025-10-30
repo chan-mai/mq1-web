@@ -106,10 +106,14 @@ const copyHeadingPermalink = (headingId: string) => {
     
     try {
         navigator.clipboard.writeText(url);
-        alert('見出しのパーマリンクをコピーしました！\n' + url);
+        useToast().success({
+            title: 'パーマリンクをコピーしました！',
+        });
     } catch (err) {
         console.error('クリップボードへのコピーに失敗しました:', err);
-        alert('コピーに失敗しました');
+        useToast().error({
+            title: 'コピーに失敗しました',
+        });
     }
 };
 

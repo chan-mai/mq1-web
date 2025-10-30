@@ -5,6 +5,8 @@ const props = defineProps<{
   contentId: string;
 }>();
 
+const toast = useToast();
+
 interface Comment {
   id: string;
   name: string;
@@ -32,8 +34,6 @@ const currentPage = ref<number>(1);
 const name = ref<string>('');
 const comment = ref<string>('');
 const isLoadingForm = ref<boolean>(false);
-const formError = ref<string | null>(null);
-const successMessage = ref<string | null>(null);
 const turnstile = ref();
 
 // 注意事項の折りたたみ状態
@@ -100,8 +100,6 @@ const submitComment = async () => {
   if (!isFormValid.value || isLoadingForm.value) return;
 
   isLoadingForm.value = true;
-  formError.value = null;
-  successMessage.value = null;
 
   try {
     const response = await $fetch(`/api/comment/${props.contentId}`, {
@@ -114,35 +112,27 @@ const submitComment = async () => {
     });
 
     if (response.status === 'success') {
-      successMessage.value = 'コメントを投稿しました。承認されると表示されます。';
+      toast.success({
+        title: 'コメントを投稿しました。',
+        message: '承認されると表示されます。',
+      });
       
       // フォームをクリア
       name.value = '';
       comment.value = '';
 
-      // 成功メッセージを5秒後に消す
-      setTimeout(() => {
-        successMessage.value = null;
-      }, 5000);
-
       // コメント一覧を更新
       await fetchComments(currentPage.value);
     } else if (response.status === 'error') {
-      formError.value = response.message || 'コメントの投稿に失敗しました';
-
-      // エラーメッセージを5秒後に消す
-      setTimeout(() => {
-        formError.value = null;
-      }, 5000);
+      toast.error({
+        title: response.message || 'コメントの投稿に失敗しました',
+      });
     }
   } catch (err: any) {
     console.error('Failed to submit comment:', err);
-    formError.value = err?.data?.message || 'コメントの投稿に失敗しました。もう一度お試しください。';
-
-    // エラーメッセージを5秒後に消す
-    setTimeout(() => {
-      formError.value = null;
-    }, 5000);
+    toast.error({
+      title: err?.data?.message || 'コメントの投稿に失敗しました。もう一度お試しください。',
+    });
   } finally {
     isLoadingForm.value = false;
   }
@@ -357,42 +347,6 @@ onMounted(() => {
             </span>
           </button>
         </div>
-
-        <!-- 成功メッセージ -->
-        <transition
-          enter-active-class="transition ease-out duration-300"
-          enter-from-class="transform opacity-0 scale-95"
-          enter-to-class="transform opacity-100 scale-100"
-          leave-active-class="transition ease-in duration-200"
-          leave-from-class="transform opacity-100 scale-100"
-          leave-to-class="transform opacity-0 scale-95"
-        >
-          <div
-            v-if="successMessage"
-            class="flex items-center gap-2 px-4 py-2 rounded-lg bg-green-50 border border-green-200"
-          >
-            <Icon name="mdi:check-circle" class="w-4 h-4 text-green-600 flex-shrink-0" />
-            <p class="text-sm text-green-700 font-medium">{{ successMessage }}</p>
-          </div>
-        </transition>
-
-        <!-- エラーメッセージ -->
-        <transition
-          enter-active-class="transition ease-out duration-300"
-          enter-from-class="transform opacity-0 scale-95"
-          enter-to-class="transform opacity-100 scale-100"
-          leave-active-class="transition ease-in duration-200"
-          leave-from-class="transform opacity-100 scale-100"
-          leave-to-class="transform opacity-0 scale-95"
-        >
-          <div
-            v-if="formError"
-            class="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-50 border border-red-200"
-          >
-            <Icon name="mdi:alert-circle" class="w-4 h-4 text-red-600 flex-shrink-0" />
-            <p class="text-sm text-red-700 font-medium">{{ formError }}</p>
-          </div>
-        </transition>
 
         <!-- コメントポリシー注意事項 -->
         <div class="rounded-lg bg-primary/5 border border-primary overflow-hidden">

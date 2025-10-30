@@ -10,6 +10,7 @@ definePageMeta({
 });
 
 const { hasPermission } = useAdminPermissions();
+const toast = useToast();
 
 interface Comment {
   id: string;
@@ -49,8 +50,6 @@ const comments = ref<Comment[]>([]);
 const pagination = ref<Pagination | null>(null);
 const statusCounts = ref<StatusCount[]>([]);
 const isLoading = ref<boolean>(false);
-const error = ref<string | null>(null);
-const successMessage = ref<string | null>(null);
 
 // 記事情報のキャッシュ
 const articlesCache = ref<Map<string, MicroCMSObject<Article> | null>>(new Map());
@@ -99,7 +98,6 @@ const fetchArticles = async (contentIds: string[]) => {
 // コメント一覧を取得
 const fetchComments = async (page: number = 1) => {
   isLoading.value = true;
-  error.value = null;
 
   try {
     const url = selectedStatus.value
@@ -118,16 +116,22 @@ const fetchComments = async (page: number = 1) => {
       const contentIds = comments.value.map(comment => comment.contentId);
       await fetchArticles(contentIds);
     } else {
-      error.value = 'コメントの取得に失敗しました';
+      toast.error({
+        title: 'コメントの取得に失敗しました',
+      });
     }
   } catch (err: any) {
     console.error('Failed to fetch comments:', err);
     if (err.statusCode === 401) {
-      error.value = '認証が必要です。再度ログインしてください。';
+      toast.error({
+        title: '認証が必要です。再度ログインしてください。',
+      });
       // 認証エラーの場合はログインページにリダイレクト
       setTimeout(() => navigateTo('/admin/signin'), 2000);
     } else {
-      error.value = err?.data?.message || 'コメントの取得に失敗しました';
+      toast.error({
+        title: err?.data?.message || 'コメントの取得に失敗しました',
+      });
     }
   } finally {
     isLoading.value = false;
@@ -143,25 +147,22 @@ const updateCommentStatus = async (commentId: string, status: 'PENDING' | 'APPRO
     });
 
     if (response.status === 'success') {
-      successMessage.value = `コメントを${status === 'APPROVED' ? '承認' : status === 'REJECTED' ? '拒否' : '保留に'}しました`;
-      setTimeout(() => {
-        successMessage.value = null;
-      }, 3000);
+      toast.success({
+        title: `コメントを${status === 'APPROVED' ? '承認' : status === 'REJECTED' ? '拒否' : '保留に'}しました`,
+      });
       
       // リストを再読み込み
       await fetchComments(currentPage.value);
     } else {
-      error.value = response.message || 'ステータスの更新に失敗しました';
-      setTimeout(() => {
-        error.value = null;
-      }, 5000);
+      toast.error({
+        title: response.message || 'ステータスの更新に失敗しました',
+      });
     }
   } catch (err: any) {
     console.error('Failed to update comment status:', err);
-    error.value = err?.data?.message || 'ステータスの更新に失敗しました';
-    setTimeout(() => {
-      error.value = null;
-    }, 5000);
+    toast.error({
+      title: err?.data?.message || 'ステータスの更新に失敗しました',
+    });
   }
 };
 
@@ -177,25 +178,22 @@ const deleteComment = async (commentId: string) => {
     });
 
     if (response.status === 'success') {
-      successMessage.value = 'コメントを削除しました';
-      setTimeout(() => {
-        successMessage.value = null;
-      }, 3000);
+      toast.success({
+        title: 'コメントを削除しました',
+      });
       
       // リストを再読み込み
       await fetchComments(currentPage.value);
     } else {
-      error.value = response.message || 'コメントの削除に失敗しました';
-      setTimeout(() => {
-        error.value = null;
-      }, 5000);
+      toast.error({
+        title: response.message || 'コメントの削除に失敗しました',
+      });
     }
   } catch (err: any) {
     console.error('Failed to delete comment:', err);
-    error.value = err?.data?.message || 'コメントの削除に失敗しました';
-    setTimeout(() => {
-      error.value = null;
-    }, 5000);
+    toast.error({
+      title: err?.data?.message || 'コメントの削除に失敗しました',
+    });
   }
 };
 
@@ -303,42 +301,6 @@ onMounted(() => {
           </div>
         </button>
       </div>
-
-      <!-- 成功メッセージ -->
-      <transition
-        enter-active-class="transition ease-out duration-300"
-        enter-from-class="transform opacity-0 scale-95"
-        enter-to-class="transform opacity-100 scale-100"
-        leave-active-class="transition ease-in duration-200"
-        leave-from-class="transform opacity-100 scale-100"
-        leave-to-class="transform opacity-0 scale-95"
-      >
-        <div
-          v-if="successMessage"
-          class="mb-4 flex items-center gap-2 px-4 py-3 rounded-lg bg-green-50 border border-green-200"
-        >
-          <Icon name="mdi:check-circle" class="w-5 h-5 text-green-600 flex-shrink-0" />
-          <p class="text-sm text-green-700 font-medium">{{ successMessage }}</p>
-        </div>
-      </transition>
-
-      <!-- エラーメッセージ -->
-      <transition
-        enter-active-class="transition ease-out duration-300"
-        enter-from-class="transform opacity-0 scale-95"
-        enter-to-class="transform opacity-100 scale-100"
-        leave-active-class="transition ease-in duration-200"
-        leave-from-class="transform opacity-100 scale-100"
-        leave-to-class="transform opacity-0 scale-95"
-      >
-        <div
-          v-if="error"
-          class="mb-4 flex items-center gap-2 px-4 py-3 rounded-lg bg-red-50 border border-red-200"
-        >
-          <Icon name="mdi:alert-circle" class="w-5 h-5 text-red-600 flex-shrink-0" />
-          <p class="text-sm text-red-700 font-medium">{{ error }}</p>
-        </div>
-      </transition>
 
       <!-- ローディング -->
       <div v-if="isLoading" class="flex justify-center py-12">

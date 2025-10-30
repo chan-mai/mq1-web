@@ -9,9 +9,13 @@ const isVisibleRssFeedCopyTooltip = ref<boolean>(false);
 const rssFeedCopy = () => {
   // RSSフィードのURLをクリップボードにコピー
   navigator.clipboard.writeText(config.value.rss.url).then(() => {
-    //alert('RSSフィードのURLをコピーしました');
+    useToast().success({
+      title: 'RSSフィードのURLをコピーしました！',
+    });
   }).catch((err) => {
-    //console.error('coppy error', err);
+    useToast().error({
+      title: 'コピーに失敗しました',
+    });
   });
   isVisibleRssFeedCopyTooltip.value = true
 };

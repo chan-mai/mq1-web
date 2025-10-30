@@ -3,6 +3,8 @@ const props = defineProps<{
   contentId: string;
 }>();
 
+const toast = useToast();
+
 // いいね数
 const likeCount = useState<number>(`favorite:${props.contentId}:count`, () => 0);
 // いいね済みかどうか
@@ -11,8 +13,6 @@ const isLiked = useState<boolean>(`favorite:${props.contentId}:liked`, () => fal
 const likeId = useState<string | null>(`favorite:${props.contentId}:id`, () => null);
 // ローディング状態
 const isLoading = useState<boolean>(`favorite:${props.contentId}:loading`, () => false);
-// エラー状態
-const error = ref<string | null>(null);
 
 // 猫preload関連
 const catApiUrl = 'https://cataas.com/cat/says/Thnak%20You?fontSize=100&fontColor=white';
@@ -63,7 +63,6 @@ const addLike = async () => {
   if (isLoading.value) return;
   
   isLoading.value = true;
-  error.value = null;
   
   try {
     const response = await $fetch(`/api/favorite/${props.contentId}`, {
@@ -81,6 +80,9 @@ const addLike = async () => {
       currentCatImageUrl.value = preloadedCatUrl.value || catApiUrl;
       preloadedCatUrl.value = null; // 使い切り
       showLikeCard.value = true;
+      toast.success({
+        title: 'いいね！しました',
+      });
       setTimeout(() => {
         showLikeCard.value = false;
         // 表示に使った blob URL をクリーンアップ
@@ -88,7 +90,7 @@ const addLike = async () => {
           URL.revokeObjectURL(currentCatImageUrl.value);
         }
         currentCatImageUrl.value = null;
-      }, 15000);
+      }, 5000);
       // 次回用に再プリロード
       preloadCatImage();
       
@@ -96,24 +98,20 @@ const addLike = async () => {
       // エラー
       if (response.message === 'Favorite already exists') {
         isLiked.value = true;
-        error.value = 'すでにいいね済みです';
+        toast.error({
+          title: 'すでにいいね済みです',
+        });
       } else {
-        error.value = response.message || 'いいねの追加に失敗しました';
+        toast.error({
+          title: response.message || 'いいねの追加に失敗しました',
+        });
       }
-      
-      // エラーメッセージを5秒後に消す
-      setTimeout(() => {
-        error.value = null;
-      }, 5000);
     }
   } catch (err: any) {
     console.error('Failed to add like:', err);
-    error.value = err?.data?.message || 'いいねの追加に失敗しました。もう一度お試しください。';
-    
-    // エラーメッセージを5秒後に消す
-    setTimeout(() => {
-      error.value = null;
-    }, 5000);
+    toast.error({
+      title: err?.data?.message || 'いいねの追加に失敗しました。もう一度お試しください。',
+    });
   } finally {
     isLoading.value = false;
   }
@@ -124,7 +122,6 @@ const removeLike = async () => {
   if (isLoading.value || !likeId.value) return;
   
   isLoading.value = true;
-  error.value = null;
   
   try {
     const response = await $fetch(`/api/favorite/${props.contentId}?id=${likeId.value}`, {
@@ -138,23 +135,20 @@ const removeLike = async () => {
       likeCount.value = Math.max(0, likeCount.value - 1);
       // ローカルストレージから削除
       localStorage.removeItem(`liked-${props.contentId}`);
+      toast.success({
+        title: 'いいね！を解除しました',
+      });
     } else if (response.status === 'error') {
       // エラー
-      error.value = response.message || 'いいねの解除に失敗しました';
-      
-      // エラーメッセージを5秒後に消す
-      setTimeout(() => {
-        error.value = null;
-      }, 5000);
+      toast.error({
+        title: response.message || 'いいねの解除に失敗しました',
+      });
     }
   } catch (err: any) {
     console.error('Failed to remove like:', err);
-    error.value = err?.data?.message || 'いいねの解除に失敗しました。もう一度お試しください。';
-    
-    // エラーメッセージを5秒後に消す
-    setTimeout(() => {
-      error.value = null;
-    }, 5000);
+    toast.error({
+      title: err?.data?.message || 'いいねの解除に失敗しました。もう一度お試しください。',
+    });
   } finally {
     isLoading.value = false;
   }
@@ -276,25 +270,6 @@ onMounted(() => {
             ありがとう‼️
           </p>
         </div>
-      </div>
-    </transition>
-
-    
-    <!-- エラーメッセージ -->
-    <transition
-      enter-active-class="transition ease-out duration-300"
-      enter-from-class="transform opacity-0 scale-95"
-      enter-to-class="transform opacity-100 scale-100"
-      leave-active-class="transition ease-in duration-200"
-      leave-from-class="transform opacity-100 scale-100"
-      leave-to-class="transform opacity-0 scale-95"
-    >
-      <div
-        v-if="error"
-        class="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-50 border border-red-200"
-      >
-        <Icon name="mdi:alert-circle" class="w-4 h-4 text-red-600 flex-shrink-0" />
-        <p class="text-sm text-red-700 font-medium">{{ error }}</p>
       </div>
     </transition>
   </div>

@@ -79,7 +79,9 @@ const fetchUsers = async () => {
 // 新規ユーザーを作成
 const createUser = async () => {
   if (!newUsername.value.trim()) {
-    alert('GitHubユーザー名を入力してください');
+    useToast().error({
+      title: 'GitHubユーザー名を入力してください',
+    });
     return;
   }
 
@@ -94,13 +96,17 @@ const createUser = async () => {
       },
     });
 
-    alert('管理者ユーザーを作成しました');
+    useToast().success({
+      title: '管理者ユーザーを作成しました',
+    });
     showCreateDialog.value = false;
     newUsername.value = '';
     newPermissions.value = [];
     await fetchUsers();
   } catch (err: any) {
-    alert(err.data?.message || 'ユーザーの作成に失敗しました');
+    useToast().error({
+      title: err.data?.message || 'ユーザーの作成に失敗しました',
+    });
     console.error(err);
   } finally {
     creating.value = false;
@@ -129,11 +135,15 @@ const updateUser = async () => {
       },
     });
 
-    alert('ユーザー情報を更新しました');
+    useToast().success({
+      title: 'ユーザー情報を更新しました',
+    });
     editingUser.value = null;
     await fetchUsers();
   } catch (err: any) {
-    alert(err.data?.message || 'ユーザー情報の更新に失敗しました');
+    useToast().error({
+      title: err.data?.message || 'ユーザー情報の更新に失敗しました',
+    });
     console.error(err);
   } finally {
     updating.value = false;

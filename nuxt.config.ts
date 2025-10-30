@@ -12,7 +12,11 @@ export default defineNuxtConfig({
     head: {
       link: [
         { rel: "preconnect", href: "https://fonts.googleapis.com" },
-        { rel: "preconnect", href: "https://fonts.gstatic.com", crossorigin: "" },
+        {
+          rel: "preconnect",
+          href: "https://fonts.gstatic.com",
+          crossorigin: "",
+        },
         { rel: "dns-prefetch", href: "https://images.microcms-assets.io" },
         { rel: "preconnect", href: "https://images.microcms-assets.io" },
         {
@@ -49,7 +53,14 @@ export default defineNuxtConfig({
     "@nuxt/image",
     "@nuxtjs/turnstile",
     "nuxt-auth-utils",
+    "nuxt-toast",
   ],
+  toast: {
+    settings: {
+      position: "bottomRight",
+      timeout: 5000,
+    },
+  },
   tailwindcss: {
     config: {
       theme: {
@@ -76,7 +87,7 @@ export default defineNuxtConfig({
       microcms: {
         serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN,
         apiKey: process.env.MICROCMS_API_KEY,
-      }
+      },
     },
     turnstile: {
       secretKey: process.env.TURNSTILE_SECRET_KEY,
@@ -97,29 +108,29 @@ export default defineNuxtConfig({
   routeRules: {
     "/": { prerender: true },
     "/about": { prerender: true },
-    "/entry/**": { 
-      headers: { 
-        'Cache-Control': 'public, max-age=3600, s-maxage=86400',
-        'X-Content-Type-Options': 'nosniff',
-        'X-Frame-Options': 'DENY',
-        'X-XSS-Protection': '1; mode=block'
-      }
+    "/entry/**": {
+      headers: {
+        "Cache-Control": "public, max-age=3600, s-maxage=86400",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "DENY",
+        "X-XSS-Protection": "1; mode=block",
+      },
     },
-    "/tag/**": { 
-      headers: { 
-        'Cache-Control': 'public, max-age=3600, s-maxage=86400',
-        'X-Content-Type-Options': 'nosniff',
-        'X-Frame-Options': 'DENY',
-        'X-XSS-Protection': '1; mode=block'
-      }
+    "/tag/**": {
+      headers: {
+        "Cache-Control": "public, max-age=3600, s-maxage=86400",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "DENY",
+        "X-XSS-Protection": "1; mode=block",
+      },
     },
-    "/articles": { 
-      headers: { 
-        'Cache-Control': 'public, max-age=1800, s-maxage=3600',
-        'X-Content-Type-Options': 'nosniff',
-        'X-Frame-Options': 'DENY',
-        'X-XSS-Protection': '1; mode=block'
-      }
+    "/articles": {
+      headers: {
+        "Cache-Control": "public, max-age=1800, s-maxage=3600",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "DENY",
+        "X-XSS-Protection": "1; mode=block",
+      },
     },
     // "/search/**": { ssr: true, headers: { 'Cache-Control': 'public, max-age=60, immutable' } },
     "/feed.xml": {
@@ -138,21 +149,21 @@ export default defineNuxtConfig({
       brotli: true,
     },
     routeRules: {
-      '/**': { 
+      "/**": {
         headers: {
-          'X-Content-Type-Options': 'nosniff',
-          'X-Frame-Options': 'DENY',
-          'X-XSS-Protection': '1; mode=block',
-          'Referrer-Policy': 'strict-origin-when-cross-origin'
-        }
-      }
-    }
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "X-XSS-Protection": "1; mode=block",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+        },
+      },
+    },
   },
   hooks: {
     async "nitro:config"(nitroConfig) {
-      if (nitroConfig.dev)  return;
+      if (nitroConfig.dev) return;
       if (nitroConfig.prerender?.routes === undefined) return;
-      
+
       const client = createClient({
         serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN!,
         apiKey: process.env.MICROCMS_API_KEY!,
@@ -160,25 +171,27 @@ export default defineNuxtConfig({
 
       const [articles, tags] = await Promise.all([
         client.get({
-          endpoint: 'articles',
+          endpoint: "articles",
           queries: {
             limit: 100,
             orders: "-publishedAt",
           },
         }),
         client.get({
-          endpoint: 'tags',
+          endpoint: "tags",
           queries: {
             limit: 100,
             orders: "-publishedAt",
           },
         }),
       ]);
-      
+
       // タグ
       const tagRoutes = tags.contents.map((mount: any) => `/tag/${mount.id}`);
       // 記事
-      const articleRoutes = articles.contents.map((mount: any) => `/entry/${mount.id}`);
+      const articleRoutes = articles.contents.map(
+        (mount: any) => `/entry/${mount.id}`
+      );
 
       nitroConfig.prerender.routes = [
         ...nitroConfig.prerender.routes,
@@ -187,7 +200,6 @@ export default defineNuxtConfig({
       ];
     },
   },
-
 
   experimental: {
     viewTransition: true,
@@ -249,7 +261,7 @@ export default defineNuxtConfig({
     ipx: {
       maxAge: 31536000,
     },
-    format: ['webp', 'avif', 'jpeg', 'jpg', 'png'],
+    format: ["webp", "avif", "jpeg", "jpg", "png"],
     quality: 80,
     screens: {
       xs: 320,
@@ -262,36 +274,36 @@ export default defineNuxtConfig({
     presets: {
       hero: {
         modifiers: {
-          format: 'webp',
+          format: "webp",
           quality: 80,
           width: 1200,
           height: 600,
-        }
+        },
       },
       thumbnail: {
         modifiers: {
-          format: 'webp',
+          format: "webp",
           quality: 70,
           width: 400,
           height: 300,
-        }
-      }
-    }
+        },
+      },
+    },
   },
   vite: {
     build: {
       rollupOptions: {
         output: {
           manualChunks: {
-            vendor: ['vue', 'vue-router'],
-            microcms: ['microcms-js-sdk'],
-            cheerio: ['cheerio'],
-          }
-        }
-      }
+            vendor: ["vue", "vue-router"],
+            microcms: ["microcms-js-sdk"],
+            cheerio: ["cheerio"],
+          },
+        },
+      },
     },
     optimizeDeps: {
-      include: ['cheerio', 'microcms-js-sdk']
-    }
+      include: ["cheerio", "microcms-js-sdk"],
+    },
   },
 });

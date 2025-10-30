@@ -51,11 +51,14 @@ const shareToHatena = () => {
 const copyToClipboard = async () => {
   try {
     await navigator.clipboard.writeText(shareUrl.value);
-    // 簡単なトースト通知（実際のプロジェクトでは適切な通知ライブラリを使用）
-    alert('URLをコピーしました');
+    useToast().success({
+      title: 'URLをコピーしました！',
+    });
   } catch (err) {
     console.error('Failed to copy: ', err);
-    alert('コピーに失敗しました');
+    useToast().error({
+      title: 'コピーに失敗しました',
+    });
   }
 };
 

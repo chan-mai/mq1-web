@@ -10,6 +10,9 @@ const props = defineProps({
     },
 });
 
+const route = useRoute();
+const config = useWebConfig();
+
 const articleHtml = computed(() => {
     // コードハイライトとリンクアイコンの追加
     if (props.target) {
@@ -82,6 +85,11 @@ const articleHtml = computed(() => {
                     return;
                 }
                 $el.prepend(`<span class="heading-level-${level} text-primary/60">${'#'.repeat(level)}</span>&nbsp;`);
+                
+                // クリック可能なクラスを追加
+                $el.addClass('clickable-heading');
+                // linkアイコン追加
+                $el.append('&nbsp;<span class="link-icon text-sm">&#128279;</span>');
             });
         }
 
@@ -90,6 +98,20 @@ const articleHtml = computed(() => {
         return '';
     }
 });
+
+// 見出しをクリックしたときにパーマリンクをコピー
+const copyHeadingPermalink = (headingId: string) => {
+    const baseUrl = `${config.value.siteUrl.endsWith('/') ? config.value.siteUrl.slice(0, -1) : config.value.siteUrl}${route.path}`;
+    const url = `${baseUrl}#${headingId}`;
+    
+    try {
+        navigator.clipboard.writeText(url);
+        alert('見出しのパーマリンクをコピーしました！\n' + url);
+    } catch (err) {
+        console.error('クリップボードへのコピーに失敗しました:', err);
+        alert('コピーに失敗しました');
+    }
+};
 
 // スクロール可能な要素を検出し、インジケーターを追加する
 onMounted(() => {
@@ -129,6 +151,17 @@ onMounted(() => {
         
         addScrollIndicator(tables);
         addScrollIndicator(codeBlocks);
+        
+        // 見出しにクリックイベントを追加
+        const headings = document.querySelectorAll('.micro-cms .clickable-heading');
+        headings.forEach((heading) => {
+            heading.addEventListener('click', () => {
+                const id = heading.getAttribute('id');
+                if (id) {
+                    copyHeadingPermalink(id);
+                }
+            });
+        });
     });
 });
 </script>
@@ -188,6 +221,16 @@ onMounted(() => {
 
 .micro-cms h3 {
     @apply mt-5 mb-5 text-xl;
+}
+
+/* クリック可能な見出し */
+.micro-cms .clickable-heading {
+    @apply cursor-pointer;
+    transition: background-color 0.2s ease;
+}
+
+.micro-cms .clickable-heading:hover {
+    @apply text-primary/70 rounded-md px-2 -mx-2 transition-colors duration-200;
 }
 
 .micro-cms p {

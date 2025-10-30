@@ -6,6 +6,14 @@ definePageMeta({
   middleware: 'admin',
 });
 
+// メタタグ設定
+useHead({
+  title: 'Admin Console - 管理者',
+  meta: [
+    { name: 'robots', content: 'noindex, nofollow' }
+  ]
+});
+
 const { hasPermission } = useAdminPermissions();
 
 // 権限の表示名マップ

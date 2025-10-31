@@ -125,13 +125,13 @@ const submitComment = async () => {
       await fetchComments(currentPage.value);
     } else if (response.status === 'error') {
       toast.error({
-        title: response.message || 'コメントの投稿に失敗しました',
+        title: 'コメントの投稿に失敗しました',
       });
     }
   } catch (err: any) {
     console.error('Failed to submit comment:', err);
     toast.error({
-      title: err?.data?.message || 'コメントの投稿に失敗しました。もう一度お試しください。',
+      title: 'コメントの投稿に失敗しました。もう一度お試しください。',
     });
   } finally {
     isLoadingForm.value = false;

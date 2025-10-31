@@ -103,14 +103,14 @@ const addLike = async () => {
         });
       } else {
         toast.error({
-          title: response.message || 'いいねの追加に失敗しました',
+          title: 'いいねの追加に失敗しました',
         });
       }
     }
   } catch (err: any) {
     console.error('Failed to add like:', err);
     toast.error({
-      title: err?.data?.message || 'いいねの追加に失敗しました。もう一度お試しください。',
+      title: 'いいねの追加に失敗しました。もう一度お試しください。',
     });
   } finally {
     isLoading.value = false;
@@ -141,13 +141,13 @@ const removeLike = async () => {
     } else if (response.status === 'error') {
       // エラー
       toast.error({
-        title: response.message || 'いいねの解除に失敗しました',
+        title: 'いいねの解除に失敗しました',
       });
     }
   } catch (err: any) {
     console.error('Failed to remove like:', err);
     toast.error({
-      title: err?.data?.message || 'いいねの解除に失敗しました。もう一度お試しください。',
+      title: 'いいねの解除に失敗しました。もう一度お試しください。',
     });
   } finally {
     isLoading.value = false;

@@ -203,11 +203,4 @@ const tableOfContents: Ref<{ id: string; text: string; level: number }[]> = ref(
         </div>
     </main>
     <ArticlePageFooter :current-article="article!" />
-    <MqTocSidebar
-        :items="tableOfContents"
-        :article-content="article?.content!"
-        :page-title="article?.title || ''"
-        :updated-at="article?.updatedAt || article?.publishedAt || ''"
-        :char-count="readingTime.charCount"
-    />
 </template>

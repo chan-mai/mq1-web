@@ -53,14 +53,7 @@ export default defineNuxtConfig({
     "@nuxt/image",
     "@nuxtjs/turnstile",
     "nuxt-auth-utils",
-    "nuxt-toast",
   ],
-  toast: {
-    settings: {
-      position: "bottomRight",
-      timeout: 5000,
-    },
-  },
   tailwindcss: {
     config: {
       theme: {

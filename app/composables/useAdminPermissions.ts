@@ -1,12 +1,12 @@
-import type { Permission } from '@prisma/client';
+import type { Permission } from "@prisma/client";
 
 /**
  * 管理者の権限を管理するcomposable
  */
 export const useAdminPermissions = () => {
-  const permissions = useState<Permission[]>('admin-permissions', () => []);
-  const isLoading = useState('admin-permissions-loading', () => false);
-  const error = useState<Error | null>('admin-permissions-error', () => null);
+  const permissions = useState<Permission[]>("admin-permissions", () => []);
+  const isLoading = useState("admin-permissions-loading", () => false);
+  const error = useState<Error | null>("admin-permissions-error", () => null);
 
   /**
    * 権限情報を取得
@@ -16,9 +16,20 @@ export const useAdminPermissions = () => {
     error.value = null;
 
     try {
-      const response = await $fetch<{ permissions: Permission[] }>('/api/admin/permissions');
-      permissions.value = response.permissions;
+      console.log("Fetching permissions from API...");
+      const { data, error: fetchError } = await useFetch<{
+        permissions: Permission[];
+      }>("/api/admin/permissions");
+
+      if (fetchError.value) {
+        throw fetchError.value;
+      }
+
+      console.log("API response:", data.value);
+      permissions.value = data.value?.permissions || [];
+      console.log("Permissions set to:", permissions.value);
     } catch (e) {
+      console.error("Error fetching permissions:", e);
       error.value = e as Error;
       permissions.value = [];
     } finally {
@@ -37,14 +48,14 @@ export const useAdminPermissions = () => {
    * 指定した権限のいずれかを持っているかチェック
    */
   const hasAnyPermission = (requiredPermissions: Permission[]): boolean => {
-    return requiredPermissions.some(p => permissions.value.includes(p));
+    return requiredPermissions.some((p) => permissions.value.includes(p));
   };
 
   /**
    * 指定した権限をすべて持っているかチェック
    */
   const hasAllPermissions = (requiredPermissions: Permission[]): boolean => {
-    return requiredPermissions.every(p => permissions.value.includes(p));
+    return requiredPermissions.every((p) => permissions.value.includes(p));
   };
 
   return {

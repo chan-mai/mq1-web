@@ -14,10 +14,6 @@ onMounted(() => {
         navigateTo(to);
     }
 });
-
-async function handleSignIn() {
-    await navigateTo('/api/admin/auth/callback/github', { external: true });
-}
 </script>
 
 <template>
@@ -28,13 +24,13 @@ async function handleSignIn() {
                 <h2 class="text-center text-3xl font-bold text-gray-900">Admin Consoleログイン</h2>
                 <p class="mt-2 text-center text-sm text-gray-600">GitHubアカウントでログインしてください</p>
             </div>
-            <button 
-                @click="handleSignIn"
+            <NuxtLink
+                to="/api/admin/auth/callback/github"
                 class="w-full flex items-center justify-center gap-2 px-4 py-3 border border-transparent text-base font-medium rounded-md text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors"
             >
                 <Icon name="mdi:github" class="w-5 h-5" />
                 GitHubでログイン
-            </button>
+            </NuxtLink>
         </div>
     </div>
 </template>

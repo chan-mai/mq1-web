@@ -9,29 +9,20 @@ const sidebarOpen = ref(false);
 
 // 権限情報を読み込み
 onMounted(async () => {
-  console.log('onMounted called, user:', user.value);
   if (user.value) {
-    console.log('User exists, fetching permissions...');
     await fetchPermissions();
-    console.log('Permissions loaded:', permissions.value);
-  } else {
-    console.log('User is null/undefined, skipping fetchPermissions');
   }
 });
 
 // ユーザー情報が非同期で読み込まれる場合に対応
 watch(user, async (newUser) => {
-  console.log('User changed:', newUser);
   if (newUser && permissions.value.length === 0) {
-    console.log('User loaded, fetching permissions...');
     await fetchPermissions();
   }
 }, { immediate: true });
 
 // ナビゲーションメニュー（権限に基づいてフィルタリング）
 const menuItems = computed(() => {
-  console.log('Computing menu items, current permissions:', permissions.value);
-  
   const allMenuItems = [
     {
       name: 'ダッシュボード',
@@ -66,17 +57,12 @@ const menuItems = computed(() => {
   ];
 
   // 権限に基づいてメニューをフィルタリング
-  const filtered = allMenuItems.filter((item) => {
+  return allMenuItems.filter((item) => {
     if (item.requiredPermissions.length === 0) {
       return true; // 権限不要の場合は常に表示
     }
-    const hasPermission = hasAnyPermission(item.requiredPermissions as any);
-    console.log(`Checking ${item.name}:`, item.requiredPermissions, '→', hasPermission);
-    return hasPermission;
+    return hasAnyPermission(item.requiredPermissions as any);
   });
-  
-  console.log('Filtered menu items:', filtered.length);
-  return filtered;
 });
 
 // ログアウト処理

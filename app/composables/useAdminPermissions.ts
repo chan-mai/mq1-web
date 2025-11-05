@@ -16,7 +16,6 @@ export const useAdminPermissions = () => {
     error.value = null;
 
     try {
-      console.log("Fetching permissions from API...");
       const { data, error: fetchError } = await useFetch<{
         permissions: Permission[];
       }>("/api/admin/permissions");
@@ -25,11 +24,8 @@ export const useAdminPermissions = () => {
         throw fetchError.value;
       }
 
-      console.log("API response:", data.value);
       permissions.value = data.value?.permissions || [];
-      console.log("Permissions set to:", permissions.value);
     } catch (e) {
-      console.error("Error fetching permissions:", e);
       error.value = e as Error;
       permissions.value = [];
     } finally {

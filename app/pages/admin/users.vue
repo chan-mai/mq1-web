@@ -4,6 +4,7 @@ import type { Permission } from '@prisma/client';
 definePageMeta({
   layout: 'admin',
   middleware: 'admin',
+  ssr: false
 });
 
 // メタタグ設定
@@ -64,10 +65,16 @@ const fetchUsers = async () => {
   error.value = null;
 
   try {
-    const response = await $fetch<{ status: string; users: AdminUser[] }>(
-      '/api/admin/users/list'
+    const { data, error: fetchError } = await useFetch<{ status: string; users: AdminUser[] }>(
+      '/api/admin/users/list',
+      { server: false }
     );
-    users.value = response.users;
+    
+    if (fetchError.value) {
+      throw fetchError.value;
+    }
+    
+    users.value = data.value.users;
   } catch (err: any) {
     error.value = err.data?.message || 'ユーザー一覧の取得に失敗しました';
     console.error(err);

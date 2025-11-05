@@ -6,7 +6,8 @@ import type { Permission } from '@prisma/client';
 
 definePageMeta({
   middleware: 'admin',
-  layout: 'admin'
+  layout: 'admin',
+  ssr: false
 });
 
 const { hasPermission } = useAdminPermissions();
@@ -104,7 +105,13 @@ const fetchComments = async (page: number = 1) => {
       ? `/api/admin/comment/list?status=${selectedStatus.value}&page=${page}&limit=20`
       : `/api/admin/comment/list?page=${page}&limit=20`;
 
-    const response = await $fetch(url);
+    const { data, error: fetchError } = await useFetch(url, { server: false });
+    
+    if (fetchError.value) {
+      throw fetchError.value;
+    }
+    
+    const response = data.value;
 
     if (response.status === 'success') {
       comments.value = response.comments;

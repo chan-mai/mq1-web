@@ -5,7 +5,8 @@ import type { Permission } from '@prisma/client';
 
 definePageMeta({
   middleware: 'admin',
-  layout: 'admin'
+  layout: 'admin',
+  ssr: false
 });
 
 const { hasPermission } = useAdminPermissions();
@@ -141,7 +142,13 @@ const fetchFavorites = async (page: number = 1) => {
       url += `&userIp=${filterUserIp.value}`;
     }
 
-    const response = await $fetch(url);
+    const { data, error: fetchError } = await useFetch(url, { server: false });
+    
+    if (fetchError.value) {
+      throw fetchError.value;
+    }
+    
+    const response = data.value;
 
     if (response.status === 'success') {
       favorites.value = response.favorites;

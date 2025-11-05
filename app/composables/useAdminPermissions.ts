@@ -6,33 +6,16 @@ import type { Permission } from "@prisma/client";
 export const useAdminPermissions = () => {
   const permissions = useState<Permission[]>("admin-permissions", () => []);
   const isLoading = useState("admin-permissions-loading", () => false);
-  const error = useState<Error | null>("admin-permissions-error", () => null);
-  const hasInitialized = useState("admin-permissions-initialized", () => false);
-
-  const resetPermissions = () => {
-    permissions.value = [];
-    hasInitialized.value = false;
-  };
 
   /**
    * 権限情報を取得
    */
-  const fetchPermissions = async ({ force } = { force: false }) => {
-    if (!process.client) {
+  const fetchPermissions = async () => {
+    if (!process.client || isLoading.value) {
       return;
     }
 
-    if (isLoading.value) {
-      return;
-    }
-
-    if (!force && hasInitialized.value && permissions.value.length > 0) {
-      return;
-    }
-
-    console.log("[useAdminPermissions] fetchPermissions called");
     isLoading.value = true;
-    error.value = null;
 
     try {
       const result = await $fetch<{ permissions: Permission[] }>(
@@ -43,20 +26,15 @@ export const useAdminPermissions = () => {
       );
 
       permissions.value = result.permissions ?? [];
-      hasInitialized.value = true;
-      console.log(
-        "[useAdminPermissions] permissions updated to:",
-        permissions.value
-      );
     } catch (e) {
-      console.error("[useAdminPermissions] Error:", e);
-      error.value = e as Error;
-      resetPermissions();
+      console.error("権限の取得に失敗しました:", e);
+      permissions.value = [];
     } finally {
       isLoading.value = false;
     }
   };
 
+  // ログイン状態が変わったら権限を取得
   if (process.client) {
     const { loggedIn } = useUserSession();
 
@@ -64,9 +42,9 @@ export const useAdminPermissions = () => {
       () => loggedIn.value,
       async (isLoggedIn) => {
         if (isLoggedIn) {
-          await fetchPermissions({ force: true });
+          await fetchPermissions();
         } else {
-          resetPermissions();
+          permissions.value = [];
         }
       },
       { immediate: true }
@@ -97,7 +75,6 @@ export const useAdminPermissions = () => {
   return {
     permissions: readonly(permissions),
     isLoading: readonly(isLoading),
-    error: readonly(error),
     fetchPermissions,
     hasPermission,
     hasAnyPermission,

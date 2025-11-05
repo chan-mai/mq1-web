@@ -1,8 +1,11 @@
 import { Feed } from "feed";
 import { createClient } from "microcms-js-sdk";
-import * as cheerio from 'cheerio';
+import * as cheerio from "cheerio";
 
 export default defineEventHandler(async (event) => {
+  // 非同期でアクセスログを記録
+  logFeedAccessAsync(event);
+
   const runtimeConfig = useRuntimeConfig();
   const siteName = runtimeConfig.public.siteName as string;
   const siteDescription = runtimeConfig.public.siteDescription as string;
@@ -46,7 +49,7 @@ export default defineEventHandler(async (event) => {
       const url = `${siteUrl}entry/${article.id}`;
       const $ = cheerio.load(article.content ?? "");
       const textContent: string = $.text().trim();
-      
+
       const data = {
         title: article.title ?? "No Title",
         id: url,
@@ -55,25 +58,25 @@ export default defineEventHandler(async (event) => {
         content: textContent,
         date: new Date(article.publishedAt),
       };
-      
+
       feed.addItem(data);
     });
 
     // レスポンスヘッダーを設定
     setResponseHeaders(event, {
-      "Content-Type": "application/xml; charset=utf-8"
+      "Content-Type": "application/xml; charset=utf-8",
     });
 
     // XMLをそのままストリームとして返す
     const xmlContent = feed.rss2();
     return new Response(xmlContent, {
-      headers: { "Content-Type": "application/xml; charset=utf-8" }
+      headers: { "Content-Type": "application/xml; charset=utf-8" },
     });
   } catch (err) {
     console.error(err);
     throw createError({
       statusCode: 500,
-      statusMessage: 'Failed to generate RSS feed',
+      statusMessage: "Failed to generate RSS feed",
     });
   }
 });

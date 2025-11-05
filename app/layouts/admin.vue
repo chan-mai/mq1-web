@@ -1,75 +1,14 @@
 <script setup lang="ts">
 // Admin Console専用レイアウト
 const route = useRoute();
-const { user, ready: sessionReady, fetch: fetchSession } = useUserSession();
-const { permissions, fetchPermissions, hasAnyPermission } = useAdminPermissions();
+const { user } = useUserSession();
+const { permissions, hasAnyPermission } = useAdminPermissions();
 
 // サイドバーの開閉状態（モバイル用）
 const sidebarOpen = ref(false);
 
-// 権限情報を読み込み（クライアントサイドのみ）
-const ensurePermissions = async ({ force } = { force: false }) => {
-  if (!process.client) {
-    return;
-  }
-
-  if (!sessionReady.value) {
-    console.log('[admin.vue] ensurePermissions - session not ready');
-    return;
-  }
-
-  console.log('[admin.vue] ensurePermissions - user:', user.value);
-  console.log('[admin.vue] ensurePermissions - permissions:', permissions.value);
-
-  if (user.value && permissions.value.length === 0) {
-    console.log('[admin.vue] ensurePermissions - fetching permissions (initial)...');
-    await fetchPermissions({ force });
-    console.log('[admin.vue] ensurePermissions - permissions fetched:', permissions.value);
-    return;
-  }
-
-  if (force) {
-    console.log('[admin.vue] ensurePermissions - force refreshing permissions...');
-    await fetchPermissions({ force: true });
-    console.log('[admin.vue] ensurePermissions - permissions refreshed:', permissions.value);
-  }
-};
-
-
-onMounted(async () => {
-  if (process.client && !sessionReady.value) {
-    console.log('[admin.vue] onMounted - fetching session');
-    await fetchSession();
-  }
-
-  await ensurePermissions({ force: true });
-});
-
-watch(
-  () => sessionReady.value,
-  async (isReady) => {
-    if (!isReady) {
-      return;
-    }
-
-    await ensurePermissions({ force: true });
-  }
-);
-
-watch(
-  () => user.value?.username,
-  async () => {
-    if (!sessionReady.value) {
-      return;
-    }
-
-    await ensurePermissions({ force: true });
-  }
-);
-
 // ナビゲーションメニュー（権限に基づいてフィルタリング）
 const menuItems = computed(() => {
-  console.log('[admin.vue] Computing menuItems - permissions:', permissions.value);
   const allMenuItems = [
     {
       name: 'ダッシュボード',

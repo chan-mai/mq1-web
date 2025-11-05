@@ -1,5 +1,5 @@
 {
-  "buildCommand": "prisma generate && pnpm build",
+  "buildCommand": "prisma generate && pnpm prisma db push && pnpm build",
   "installCommand": "pnpm install",
   "rewrites": [
     {

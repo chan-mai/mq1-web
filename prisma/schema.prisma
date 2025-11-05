@@ -58,6 +58,7 @@ enum Permission {
   FAVORITE_ADMIN    // お気に入り管理
   ADMIN_USER_VIEW   // 管理者ユーザー閲覧
   ADMIN_USER_ADMIN  // 管理者ユーザー管理
+  FEED_STATS_VIEW   // フィード統計閲覧
 }
 
 // 管理者ユーザー
@@ -91,4 +92,19 @@ model AdminPermission {
   @@index([adminId])
   @@index([permission])
   @@map("admin_permissions")
+}
+
+// RSSフィードアクセスログ
+model FeedAccessLog {
+  id           String   @id @default(uuid(7))
+  userAgent    String?  @map("user_agent")
+  readerType   String?  @map("reader_type")
+  ipAddress    String   @map("ip_address")
+  referer      String?
+  accessedAt   DateTime @default(now()) @map("accessed_at")
+
+  @@index([accessedAt])
+  @@index([readerType])
+  @@index([ipAddress, accessedAt])
+  @@map("feed_access_logs")
 }

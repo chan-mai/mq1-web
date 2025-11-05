@@ -23,6 +23,7 @@ const permissionLabels: Record<string, string> = {
   COMMENT_ADMIN: 'コメント管理',
   FAVORITE_VIEW: 'お気に入り閲覧',
   FAVORITE_ADMIN: 'お気に入り管理',
+  FEED_STATS_VIEW: 'フィード統計閲覧',
   ADMIN_USER_VIEW: '管理者ユーザー閲覧',
   ADMIN_USER_ADMIN: '管理者ユーザー管理',
 };

@@ -8,6 +8,11 @@ export const useWebConfig = () => {
 
     themeColor: "#fc9fa8",
 
+    // Author情報
+    author: {
+      name: "chan-mai",
+    },
+
     headerMenu: [
       { title: "トップ", url: "/" },
       { title: "運営者情報", url: "/about" },
@@ -16,8 +21,8 @@ export const useWebConfig = () => {
     footer: {
       menu: [
         { title: "トップ", url: "/" },
-        { title: '記事一覧', url: '/articles' },
-        { title: '運営者情報', url: '/about' },
+        { title: "記事一覧", url: "/articles" },
+        { title: "運営者情報", url: "/about" },
         { title: "プライバシーポリシー", url: "/privacy" },
       ],
     },

@@ -59,7 +59,7 @@ const config = useWebConfig();
 const pageTitle = `#${tag.value?.name} - ${config.value.siteName}`;
 const pageDescription = `#${tag.value?.name}の記事一覧`;
 const ogImageUrl = useOgGenerator(`#${tag.value?.name}`);
-const pageUrl = `${config.value.siteUrl}/articles`;
+const pageUrl = `${config.value.siteUrl}/tag/${tagId}`;
 
 useHead({
     title: pageTitle,
@@ -73,6 +73,32 @@ useHead({
         { name: 'twitter:card', content: 'summary_large_image' },
         { name: 'description', content: pageDescription },
     ],
+});
+
+// 構造化データ (JSON-LD)
+useJsonld({
+    '@context': 'https://schema.org',
+    '@type': 'Blog',
+    name: config.value.siteName,
+    description: pageDescription,
+    url: pageUrl,
+    author: {
+        '@type': 'Person',
+        name: config.value.author.name,
+        url: pageUrl,
+    },
+    blogPost: articles.value?.map((article: Article) => ({
+        '@type': 'BlogPosting',
+        headline: article.title,
+        url: `${config.value.siteUrl}entry/${article.id}`,
+        datePublished: article.publishedAt ? new Date(article.publishedAt).toISOString() : undefined,
+        image: article.eyecatch?.url || config.value.baseOgpUrl,
+        author: {
+            '@type': 'Person',
+            name: config.value.author.name,
+            url: pageUrl,
+        },
+    })) || []
 });
 </script>
 <template>

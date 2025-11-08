@@ -11,6 +11,7 @@ export default defineNuxtConfig({
   app: {
     head: {
       link: [
+        { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
         { rel: "preconnect", href: "https://fonts.googleapis.com" },
         {
           rel: "preconnect",
@@ -53,6 +54,7 @@ export default defineNuxtConfig({
     "@nuxt/image",
     "@nuxtjs/turnstile",
     "nuxt-auth-utils",
+    "nuxt-jsonld",
   ],
   tailwindcss: {
     config: {
@@ -76,7 +78,7 @@ export default defineNuxtConfig({
       siteName: "まいの雑記帳",
       siteDescription: "ちっちゃなうぇぶさいと",
       siteUrl: "https://mq1.dev/",
-      siteOgpUrl: "https://mq1.dev/ogp/ogp.png",
+      siteOgpUrl: "https://mq1.dev/images/ogp/ogp.png",
       microcms: {
         serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN,
         apiKey: process.env.MICROCMS_API_KEY,

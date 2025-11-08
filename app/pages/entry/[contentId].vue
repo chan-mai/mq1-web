@@ -85,6 +85,36 @@ if (article.value && article.value.content) {
         title: pageTitle,
         meta: metaTags,
     });
+
+    // 構造化データ (JSON-LD)
+    useJsonld({
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        headline: article.value?.title || '',
+        description: pageDescription,
+        image: article.value?.eyecatch?.url || ogImageUrl,
+        datePublished: publishedTime ? new Date(publishedTime).toISOString() : undefined,
+        dateModified: modifiedTime ? new Date(modifiedTime).toISOString() : publishedTime ? new Date(publishedTime).toISOString() : undefined,
+        author: {
+            '@type': 'Person',
+            name: config.value.author.name,
+            url: config.value.siteUrl,
+        },
+        publisher: {
+            '@type': 'Organization',
+            name: config.value.siteName,
+            url: config.value.siteUrl,
+            logo: {
+                '@type': 'ImageObject',
+                url: config.value.baseOgpUrl,
+            }
+        },
+        mainEntityOfPage: {
+            '@type': 'WebPage',
+            '@id': pageUrl,
+        },
+        keywords: article.value?.tags?.map((tag: Tag) => tag.name).join(', ') || '',
+    });
 }
 
 

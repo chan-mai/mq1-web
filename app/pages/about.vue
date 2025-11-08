@@ -33,6 +33,22 @@ useHead({
         { name: 'twitter:image', content: `${config.value.siteUrl}ogp/about-ogp.png` },
     ],
 });
+
+// 構造化データ (JSON-LD)
+useJsonld({
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: config.value.author.fullName,
+    alternateName: config.value.author.name,
+    givenName: config.value.author.givenName,
+    familyName: config.value.author.familyName,
+    birthDate: config.value.author.birthDate,
+    jobTitle: config.value.author.jobTitle,
+    description: config.value.author.description,
+    url: config.value.siteUrl,
+    image: `${config.value.siteUrl}about/mai.png`,
+    sameAs: socials.map((social: any) => social.url),
+});
 </script>
 <template>
     <div class="min-h-screen rounded-xl overflow-hidden mt-5 md:mt-10">

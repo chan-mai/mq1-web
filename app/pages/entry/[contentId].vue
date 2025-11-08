@@ -43,7 +43,7 @@ if (article.value && article.value.content) {
     const pageTitle = `${article.value?.title || ''} - ${config.value.siteName}`;
     const pageDescription = useSummaryTextGenerator(article.value?.content ) || config.value.siteDescription;
     const ogImageUrl = useOgGenerator(article.value?.title || '');
-    const pageUrl = `${config.value.siteUrl}/entry/${contentId}`;
+    const pageUrl = `${config.value.siteUrl}entry/${contentId}`;
     const publishedTime = article.value?.publishedAt || article.value?.createdAt;
     const modifiedTime = article.value?.updatedAt;
     const isNoIndex = article.value?.is_no_index || false;

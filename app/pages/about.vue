@@ -26,7 +26,7 @@ useHead({
         { property: 'og:title', content: `${config.value.siteName} - 私について` },
         { property: 'og:description', content: config.value.siteDescription },
         { property: 'og:image', content: `${config.value.siteUrl}ogp/about-ogp.png` },
-        { property: 'og:url', content: `${config.value.siteUrl}/about` },
+        { property: 'og:url', content: `${config.value.siteUrl}about` },
         { property: 'og:type', content: 'website' },
         { name: 'twitter:card', content: 'summary_large_image' },
         { name: 'twitter:card', content: 'summary_large_image' },

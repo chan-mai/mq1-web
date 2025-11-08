@@ -59,7 +59,7 @@ const config = useWebConfig();
 const pageTitle = `#${tag.value?.name} - ${config.value.siteName}`;
 const pageDescription = `#${tag.value?.name}の記事一覧`;
 const ogImageUrl = useOgGenerator(`#${tag.value?.name}`);
-const pageUrl = `${config.value.siteUrl}/tag/${tagId}`;
+const pageUrl = `${config.value.siteUrl}tag/${tagId}`;
 
 useHead({
     title: pageTitle,

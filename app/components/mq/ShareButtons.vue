@@ -14,7 +14,7 @@ const shareText = computed(() => {
 });
 
 const shareUrl = computed(() => {
-  return props.url.startsWith('http') ? props.url : props.url.startsWith('/') ? `${config.value.siteUrl}${props.url.slice(1)}` : `${config.value.siteUrl}/${props.url}`;
+  return props.url.startsWith('http') ? props.url : props.url.startsWith('/') ? `${config.value.siteUrl}${props.url.slice(1)}` : `${config.value.siteUrl}${props.url}`;
 });
 
 // Twitter共有

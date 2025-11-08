@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const config = useWebConfig();
-const socials = config.value.socials;
+const socials = Object.values(config.value.socials);
 
 // いけいけパララックス効果をよしなに
 const scrollY = ref(0);

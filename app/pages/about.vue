@@ -35,7 +35,8 @@ useHead({
 });
 
 // 構造化データ (JSON-LD)
-useJsonld({
+useJsonld([
+    {
     '@context': 'https://schema.org',
     '@type': 'Person',
     name: config.value.author.fullName,
@@ -48,7 +49,20 @@ useJsonld({
     url: config.value.siteUrl,
     image: `${config.value.siteUrl}about/mai.png`,
     sameAs: socials.map((social: any) => social.url),
-});
+    },
+    {
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: config.value.siteName,
+        description: config.value.siteDescription,
+        url: config.value.siteUrl,
+        author: {
+            '@type': 'Person',
+            name: config.value.author.name,
+            url: config.value.siteUrl,
+        },
+    }
+]);
 </script>
 <template>
     <div class="min-h-screen rounded-xl overflow-hidden mt-5 md:mt-10">

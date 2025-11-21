@@ -1,33 +1,44 @@
+import { articleExists } from "../../utils/article";
+
 export default defineEventHandler(async (event) => {
   const contentId = getRouterParam(event, "contentId");
   const userIp = getHeader(event, "x-forwarded-for") || "unknown";
+
+  if (!contentId) {
+    return {
+      status: "error",
+      message: "Content ID is required",
+    };
+  }
 
   // リクエストボディを取得
   const body = await readBody(event);
   const { name, comment, token } = body;
 
   // Turnstileのバリデーション
-  const isValid = await verifyTurnstileToken(token || body['cf-turnstile-response']);
+  const isValid = await verifyTurnstileToken(
+    token || body["cf-turnstile-response"]
+  );
   if (isValid.success === false) {
     return {
       status: "error",
       message: "Invalid Turnstile token",
-    }
+    };
   }
 
   // バリデーション
-  if (!name || typeof name !== 'string' || name.trim().length === 0) {
+  if (!name || typeof name !== "string" || name.trim().length === 0) {
     return {
       status: "error",
       message: "Name is required",
-    }
+    };
   }
 
-  if (!comment || typeof comment !== 'string' || comment.trim().length === 0) {
+  if (!comment || typeof comment !== "string" || comment.trim().length === 0) {
     return {
       status: "error",
       message: "Comment is required",
-    }
+    };
   }
 
   // 名前の長さチェック（最大50文字）
@@ -35,7 +46,7 @@ export default defineEventHandler(async (event) => {
     return {
       status: "error",
       message: "Name must be 50 characters or less",
-    }
+    };
   }
 
   // コメントの長さチェック（最大1000文字）
@@ -43,7 +54,15 @@ export default defineEventHandler(async (event) => {
     return {
       status: "error",
       message: "Comment must be 1000 characters or less",
-    }
+    };
+  }
+
+  const exists = await articleExists(contentId);
+  if (!exists) {
+    return {
+      status: "error",
+      message: "Article not found",
+    };
   }
 
   try {
@@ -87,9 +106,10 @@ export default defineEventHandler(async (event) => {
                 },
                 {
                   name: "コメント内容",
-                  value: comment.trim().length > 1000 
-                    ? comment.trim().substring(0, 1000) + "..." 
-                    : comment.trim(),
+                  value:
+                    comment.trim().length > 1000
+                      ? comment.trim().substring(0, 1000) + "..."
+                      : comment.trim(),
                   inline: false,
                 },
               ],
@@ -128,27 +148,30 @@ export default defineEventHandler(async (event) => {
           body: webhookPayload,
         });
       } catch (webhookError) {
-        console.error("Failed to send Discord webhook notification:", webhookError);
+        console.error(
+          "Failed to send Discord webhook notification:",
+          webhookError
+        );
         // webhookの送信失敗はエラーとしない
       }
     }
 
     return {
       status: "success",
-      message: "Comment submitted successfully. It will be visible after approval.",
+      message:
+        "Comment submitted successfully. It will be visible after approval.",
       comment: {
         id: newComment.id,
         name: newComment.name,
         comment: newComment.comment,
         createdAt: newComment.createdAt,
       },
-    }
+    };
   } catch (error) {
     console.error("Failed to create comment:", error);
     return {
       status: "error",
       message: "Failed to submit comment",
-    }
+    };
   }
 });
-

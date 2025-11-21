@@ -1,7 +1,26 @@
+import { articleExists } from "../../utils/article";
+
 export default defineEventHandler(async (event) => {
   const contentId = getRouterParam(event, "contentId");
   const userIp = getHeader(event, "x-forwarded-for");
-  
+
+  if (!contentId) {
+    return {
+      status: "error",
+      message: "Content ID is required",
+      userIp,
+    };
+  }
+
+  const exists = await articleExists(contentId);
+  if (!exists) {
+    return {
+      status: "error",
+      message: "Article not found",
+      userIp,
+    };
+  }
+
   // クエリパラメータからいいねのIDを取得
   const query = getQuery(event);
   const favoriteId = query.id as string;
@@ -11,7 +30,7 @@ export default defineEventHandler(async (event) => {
       status: "error",
       message: "Favorite ID is required",
       userIp,
-    }
+    };
   }
 
   try {
@@ -28,7 +47,7 @@ export default defineEventHandler(async (event) => {
         status: "error",
         message: "Favorite not found",
         userIp,
-      }
+      };
     }
 
     // いいねを削除
@@ -43,8 +62,7 @@ export default defineEventHandler(async (event) => {
       favoriteId,
       userIp,
       favorite,
-    }
-
+    };
   } catch (error) {
     console.error(error);
     return {
@@ -52,6 +70,6 @@ export default defineEventHandler(async (event) => {
       message: "Failed to delete favorite",
       favoriteId,
       userIp,
-    }
+    };
   }
 });

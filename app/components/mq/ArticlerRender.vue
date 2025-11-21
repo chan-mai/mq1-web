@@ -3,6 +3,8 @@ import * as cheerio from 'cheerio';
 import hljs from 'highlight.js'
 import 'highlight.js/styles/atom-one-light.css';
 
+defineOptions({ inheritAttrs: false });
+
 const props = defineProps({
     target: {
         type: String,
@@ -13,10 +15,78 @@ const props = defineProps({
 const route = useRoute();
 const config = useWebConfig();
 
-const articleHtml = computed(() => {
-    // コードハイライトとリンクアイコンの追加
+type ArticleSegment = { type: 'html'; content: string } | { type: 'link-card'; url: string };
+
+const attrs = useAttrs();
+
+const normalizeClass = (classValue: unknown): string[] => {
+    if (!classValue) return [];
+    if (typeof classValue === 'string') {
+        return classValue.split(/\s+/).filter(Boolean);
+    }
+    if (Array.isArray(classValue)) {
+        return classValue.flatMap(normalizeClass);
+    }
+    if (typeof classValue === 'object') {
+        return Object.entries(classValue)
+            .filter(([, applied]) => Boolean(applied))
+            .map(([className]) => className);
+    }
+    return [];
+};
+
+const containerAttrs = computed(() => {
+    const { class: _incomingClass, ...rest } = attrs;
+    return rest;
+});
+
+const rootClass = computed(() => {
+    const classList = normalizeClass(attrs.class);
+    return classList.filter((className) => className !== 'micro-cms');
+});
+
+const applyMicroCms = computed(() => normalizeClass(attrs.class).includes('micro-cms'));
+const htmlSegmentClass = computed(() =>
+    applyMicroCms.value ? ['micro-cms', 'micro-cms-html-segment'] : ['micro-cms-html-segment']
+);
+
+
+const buildSegments = (markup: string, urls: string[]): ArticleSegment[] => {
+    const placeholderRegex = /\[\[MQ_LINK_CARD:(\d+)]]/g;
+    const segments: ArticleSegment[] = [];
+    let lastIndex = 0;
+    let match: RegExpExecArray | null;
+
+    while ((match = placeholderRegex.exec(markup)) !== null) {
+        const preceding = markup.slice(lastIndex, match.index);
+        if (preceding.trim().length > 0) {
+            segments.push({ type: 'html', content: preceding });
+        }
+        const placeholderIdx = Number(match[1]);
+        const url = urls[placeholderIdx];
+        if (url) {
+            segments.push({ type: 'link-card', url });
+        }
+        lastIndex = match.index + match[0].length;
+    }
+
+    const trailing = markup.slice(lastIndex);
+    if (trailing.trim().length > 0) {
+        segments.push({ type: 'html', content: trailing });
+    }
+
+    if (segments.length === 0) {
+        segments.push({ type: 'html', content: markup });
+    }
+
+    return segments;
+};
+
+const articleContent = computed<{ segments: ArticleSegment[] }>(() => {
+    // コードハイライトとリンクアイコンの追加, リンクカードの置き換え
     if (props.target) {
         const $ = cheerio.load(props.target);
+        const linkCardUrls: string[] = [];
 
         // コードハイライト
         $('pre code').each((_, elem) => {
@@ -67,11 +137,22 @@ const articleHtml = computed(() => {
         // リンクにアイコンを追加
         $('a').each((_, elem) => {
             const $link = $(elem);
-            // リンクが既にアイコンを持っていないか、imgタグを含んでいない場合のみ追加
-            if (!$link.find('.link-icon').length && !$link.find('img').length) {
-                $link.addClass('link-with-icon');
-                $link.append('<span class="link-icon">&#128279;</span>');
+            const href = $link.attr('href')?.trim();
+            const textContent = $link.text().trim();
+
+            // hrefとテキストが一致するもの
+            if (href && href === textContent) {
+                const placeholderIndex = linkCardUrls.push(href) - 1;
+                // コンポーネント置き換えのために一旦プレースホルダを追加
+                $link.replaceWith(`[[MQ_LINK_CARD:${placeholderIndex}]]`);
+            } else {
+                // リンクが既にアイコンを持っていないか、imgタグを含んでいない場合のみ追加
+                if (!$link.find('.link-icon').length && !$link.find('img').length) {
+                    $link.addClass('link-with-icon');
+                    $link.append('<span class="link-icon">&#128279;</span>');
+                }
             }
+            
         });
 
         // 見出しの先頭にタグレベルに応じた#を追加
@@ -93,11 +174,14 @@ const articleHtml = computed(() => {
             });
         }
 
-        return $.html();
+        const htmlOutput = $.html();
+        const segments = buildSegments(htmlOutput, linkCardUrls);
+        return { segments };
     } else {
-        return '';
+        return { segments: [] };
     }
 });
+const articleSegments = computed(() => articleContent.value.segments);
 
 // 見出しをクリックしたときにパーマリンクをコピー
 const copyHeadingPermalink = (headingId: string) => {
@@ -171,10 +255,27 @@ onMounted(() => {
 </script>
 
 <template>
-    <div v-html="articleHtml" />
+    <div v-bind="containerAttrs" :class="rootClass">
+        <template v-for="(segment, index) in articleSegments" :key="index">
+            <div
+                v-if="segment.type === 'html'"
+                :class="htmlSegmentClass"
+                v-html="segment.content"
+            />
+            <MqLinkCard
+                v-else
+                class="px-5"
+                :url="segment.url"
+            />
+        </template>
+    </div>
 </template>
 
 <style lang="css">
+.micro-cms-html-segment {
+    display: contents;
+}
+
 .micro-cms {
     @apply space-y-4;
     overflow-x: hidden;
@@ -243,6 +344,19 @@ onMounted(() => {
 
 .micro-cms a {
     @apply text-accent no-underline relative;
+}
+
+.micro-cms .mq-link-card {
+    @apply my-6;
+}
+
+.micro-cms .mq-link-card__link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.micro-cms .mq-link-card img {
+    @apply m-0 p-0 w-auto min-w-0 max-w-full rounded-none bg-transparent;
 }
 
 .micro-cms a .link-icon {

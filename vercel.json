@@ -2,6 +2,7 @@
   "regions": ["hnd1"],
   "buildCommand": "prisma generate && pnpm prisma db push && pnpm build",
   "installCommand": "pnpm install",
+  "framework": "nuxtjs",
   "rewrites": [
     {
       "source": "/images/(.*)",

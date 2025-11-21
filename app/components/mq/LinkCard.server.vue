@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import * as cheerio from 'cheerio';
 
 type LinkCardPreview = {
@@ -12,6 +13,8 @@ type LinkCardPreview = {
 
 const props = defineProps<{
     url: string;
+    target?: string | null;
+    rel?: string | null;
 }>();
 
 const FALLBACK_TITLE = 'リンク';
@@ -153,15 +156,25 @@ if (preview.image) {
         delete preview.image;
     }
 }
+
+// 各属性がundefinedの場合、target="_blank" rel="noopener noreferrer"にフォールバック
+const resolvedTarget = computed(() => props.target ?? '_blank');
+const resolvedRel = computed(() => {
+    if (typeof props.rel === 'string' && props.rel.length > 0) {
+        return props.rel;
+    }
+    return resolvedTarget.value === '_blank' ? 'noopener noreferrer' : undefined;
+});
+const isExternalLink = computed(() => /^https?:\/\//.test(props.url));
 </script>
 
 <template>
     <div class="mq-link-card">
         <NuxtLink
             :to="preview.url"
-            :external="true"
-            target="_blank"
-            rel="noopener noreferrer"
+            :external="isExternalLink"
+            :target="resolvedTarget"
+            :rel="resolvedRel"
             class="mq-link-card__link group block w-full transition-colors duration-200"
         >
             <div

@@ -15,7 +15,13 @@ const props = defineProps({
 const route = useRoute();
 const config = useWebConfig();
 
-type ArticleSegment = { type: 'html'; content: string } | { type: 'link-card'; url: string };
+type LinkCardEntry = {
+    url: string;
+    target?: string;
+    rel?: string;
+};
+
+type ArticleSegment = { type: 'html'; content: string } | { type: 'link-card'; data: LinkCardEntry };
 
 const attrs = useAttrs();
 
@@ -51,7 +57,7 @@ const htmlSegmentClass = computed(() =>
 );
 
 
-const buildSegments = (markup: string, urls: string[]): ArticleSegment[] => {
+const buildSegments = (markup: string, linkCards: LinkCardEntry[]): ArticleSegment[] => {
     const placeholderRegex = /\[\[MQ_LINK_CARD:(\d+)]]/g;
     const segments: ArticleSegment[] = [];
     let lastIndex = 0;
@@ -63,9 +69,9 @@ const buildSegments = (markup: string, urls: string[]): ArticleSegment[] => {
             segments.push({ type: 'html', content: preceding });
         }
         const placeholderIdx = Number(match[1]);
-        const url = urls[placeholderIdx];
-        if (url) {
-            segments.push({ type: 'link-card', url });
+        const linkCard = linkCards[placeholderIdx];
+        if (linkCard) {
+            segments.push({ type: 'link-card', data: linkCard });
         }
         lastIndex = match.index + match[0].length;
     }
@@ -86,7 +92,7 @@ const articleContent = computed<{ segments: ArticleSegment[] }>(() => {
     // コードハイライトとリンクアイコンの追加, リンクカードの置き換え
     if (props.target) {
         const $ = cheerio.load(props.target);
-        const linkCardUrls: string[] = [];
+        const linkCardEntries: LinkCardEntry[] = [];
 
         // コードハイライト
         $('pre code').each((_, elem) => {
@@ -142,7 +148,13 @@ const articleContent = computed<{ segments: ArticleSegment[] }>(() => {
 
             // hrefとテキストが一致するもの
             if (href && href === textContent) {
-                const placeholderIndex = linkCardUrls.push(href) - 1;
+                // aタグ属性を構造体として保持
+                const placeholderIndex = linkCardEntries.push({
+                    url: href,
+                    // フォールバックはコンポーネント側で行うので、とりまundefinedにする
+                    target: $link.attr('target') ?? undefined,
+                    rel: $link.attr('rel') ?? undefined,
+                }) - 1;
                 // コンポーネント置き換えのために一旦プレースホルダを追加
                 $link.replaceWith(`[[MQ_LINK_CARD:${placeholderIndex}]]`);
             } else {
@@ -175,7 +187,7 @@ const articleContent = computed<{ segments: ArticleSegment[] }>(() => {
         }
 
         const htmlOutput = $.html();
-        const segments = buildSegments(htmlOutput, linkCardUrls);
+        const segments = buildSegments(htmlOutput, linkCardEntries);
         return { segments };
     } else {
         return { segments: [] };
@@ -265,7 +277,9 @@ onMounted(() => {
             <MqLinkCard
                 v-else
                 class="px-5"
-                :url="segment.url"
+                :url="segment.data.url"
+                :target="segment.data.target"
+                :rel="segment.data.rel"
             />
         </template>
     </div>

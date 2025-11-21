@@ -96,16 +96,10 @@ const addLike = async () => {
       
     } else if (response.status === 'error') {
       // エラー
-      if (response.message === 'Favorite already exists') {
-        isLiked.value = true;
-        toast.error({
-          title: 'すでにいいね済みです',
-        });
-      } else {
-        toast.error({
-          title: 'いいねの追加に失敗しました',
-        });
-      }
+      toast.error({
+        title: 'いいねの追加に失敗しました',
+        description: response.message,
+      });
     }
   } catch (err: any) {
     console.error('Failed to add like:', err);

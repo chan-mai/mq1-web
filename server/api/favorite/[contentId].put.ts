@@ -22,33 +22,19 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    // favoritesにcontentIdとuserIpが一致するものが存在するか確認
-    const existingFavorite = await prisma.favorites.findFirst({
-      where: {
+    // いいねの新規作成
+    // NOTE: MAP-E環境で同一IP扱いになることがあるらしいので、IPのユニーク制約を削除した(VercelがIPv6をサポートしないのが悪い)
+    const favorite = await prisma.favorites.create({
+      data: {
         contentId,
         userIp,
       },
     });
-    if (existingFavorite) {
-      return {
-        status: "error",
-        message: "Favorite already exists",
-        userIp,
-      };
-    } else {
-      // favoritesにcontentIdとuserIpが一致するものが存在しない場合は新規作成
-      const favorite = await prisma.favorites.create({
-        data: {
-          contentId,
-          userIp,
-        },
-      });
-      return {
-        status: "success",
-        favorite,
-        userIp,
-      };
-    }
+    return {
+      status: "success",
+      favorite,
+      userIp,
+    };
   } catch (error) {
     console.error(error);
     return {

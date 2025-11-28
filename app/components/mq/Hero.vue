@@ -15,12 +15,10 @@ defineProps({
         type: String,
     },
     title: {
-        type: String,
-        default: siteName
+        type: String
     },
     subtitle: {
-        type: String,
-        default: siteDescription
+        type: String
     },
     textHidden: {
         type: Boolean,
@@ -45,8 +43,8 @@ const isHovered = ref(false);
                 <picture>
                     <MqOgImage v-if="contentId && !url" class="block size-full object-cover" :title :contentId/>
                     <MqOgImage v-else-if="tagId && !url" class="block size-full object-cover" :title :tagId/>
-                    <NuxtImg v-else-if="url && url.length > 0" :src="url" format="webp" :alt="title" fetchpriority="high" class="block size-full object-cover" />
-                    <NuxtImg v-else src="hero.png" format="webp" sizes="xs:100vw sm:100vw md:100vw lg:1200px" :alt="title" fetchpriority="high" class="block size-full object-cover" />
+                    <NuxtImg v-else-if="url && url.length > 0" :src="url" format="webp" :alt="title ? title : siteName" fetchpriority="high" class="block size-full object-cover" />
+                    <NuxtImg v-else src="hero.png" format="webp" sizes="xs:100vw sm:100vw md:100vw lg:1200px" :alt="title ? title : siteName" fetchpriority="high" class="block size-full object-cover" />
                 </picture>
             </div>
 
@@ -55,9 +53,9 @@ const isHovered = ref(false);
                 <div class="col-span-full row-span-full flex flex-col items-center justify-center gap-3 text-center text-white">
                     <h1
                         class="font-accent text-4xl sm:text-5xl md:text-6xl">
-                        {{ title }}
+                        {{ title ? title : siteName }}
                     </h1>
-                    <p class="text-xs md:text-sm">{{ subtitle }}</p>
+                    <p class="text-xs md:text-sm">{{ subtitle ? subtitle : siteDescription }}</p>
                 </div>
             </div>
         </div>

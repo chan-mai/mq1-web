@@ -1,5 +1,5 @@
 import { createClient } from "microcms-js-sdk";
-import type { MicroCMSObject } from "~/types/microccms";
+import type { MicroCMSObject } from "#shared/types/microccms";
 
 const getMicroCMSClient = () => {
   const config = useRuntimeConfig();

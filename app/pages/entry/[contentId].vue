@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import * as cheerio from 'cheerio';
 import type { MicroCMSQueries } from 'microcms-js-sdk';
-import type { MicroCMSObject } from '~/types/microccms';
+import type { MicroCMSObject } from '#shared/types/microccms';
 
 const route = useRoute();
 const { contentId } = route.params as { contentId: string };

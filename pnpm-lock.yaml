@@ -11,9 +11,6 @@ importers:
 
   .:
     dependencies:
-      '@boringer-avatars/vue3':
-        specifier: ^0.2.1
-        version: 0.2.1(vue@3.5.25(typescript@5.8.3))
       '@nuxt/icon':
         specifier: 2.1.0
         version: 2.1.0(magicast@0.5.1)(vite@7.2.4(@types/node@22.14.1)(jiti@2.6.1)(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.1))(vue@3.5.25(typescript@5.8.3))
@@ -92,6 +89,9 @@ importers:
       vue:
         specifier: ^3.5.25
         version: 3.5.25(typescript@5.8.3)
+      vue-boring-avatars:
+        specifier: ^1.4.0
+        version: 1.4.0
       vue-router:
         specifier: ^4.6.3
         version: 4.6.3(vue@3.5.25(typescript@5.8.3))
@@ -249,11 +249,6 @@ packages:
   '@babel/types@7.28.5':
     resolution: {integrity: sha512-qQ5m48eI/MFLQ5PxQj4PFaprjyCTLI37ElWMmNs0K8Lk3dVeOdNpB3ks8jc7yM5CDmVC73eMVk/trk3fgmrUpA==}
     engines: {node: '>=6.9.0'}
-
-  '@boringer-avatars/vue3@0.2.1':
-    resolution: {integrity: sha512-KzAfh31SDXToTvFL0tBNG5Ur+VzfD1PP4jmY5/GS+eIuObGTIAiUu9eiht0LjuAGI+0xCgnaEgsTrOx8H3vLOQ==}
-    peerDependencies:
-      vue: ^3.0.0
 
   '@chevrotain/cst-dts-gen@10.5.0':
     resolution: {integrity: sha512-lhmC/FyqQ2o7pGK4Om+hzuDrm9rhFYIJ/AXoQBeongmn870Xeb0L6oGEiuR8nohFNL5sMaQEJWCxr1oIVIVXrw==}
@@ -4488,6 +4483,9 @@ packages:
   vscode-uri@3.1.0:
     resolution: {integrity: sha512-/BpdSx+yCQGnCvecbyXdxHDkuk55/G3xwnC0GqY4gmQ3j+A+g8kzzgB4Nk/SINjqn6+waqw3EgbVF2QKExkRxQ==}
 
+  vue-boring-avatars@1.4.0:
+    resolution: {integrity: sha512-J1TpAKKteZXoQ+KqU894lPfEWF1YdybeIFnKg4KSyZT3r+lY4X+XtniBxTFEfoJXX8eI0pJErrjHmrGsO7n1fA==}
+
   vue-bundle-renderer@2.2.0:
     resolution: {integrity: sha512-sz/0WEdYH1KfaOm0XaBmRZOWgYTEvUDt6yPYaUzl4E52qzgWLlknaPPTTZmp6benaPTlQAI/hN1x3tAzZygycg==}
 
@@ -4799,10 +4797,6 @@ snapshots:
     dependencies:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
-
-  '@boringer-avatars/vue3@0.2.1(vue@3.5.25(typescript@5.8.3))':
-    dependencies:
-      vue: 3.5.25(typescript@5.8.3)
 
   '@chevrotain/cst-dts-gen@10.5.0':
     dependencies:
@@ -9460,6 +9454,8 @@ snapshots:
       yaml: 2.8.1
 
   vscode-uri@3.1.0: {}
+
+  vue-boring-avatars@1.4.0: {}
 
   vue-bundle-renderer@2.2.0:
     dependencies:

@@ -10,7 +10,6 @@
     "postinstall": "prisma generate && nuxt prepare"
   },
   "dependencies": {
-    "@boringer-avatars/vue3": "^0.2.1",
     "@nuxt/icon": "2.1.0",
     "@nuxt/image": "2.0.0",
     "@nuxt/scripts": "^0.13.0",
@@ -37,6 +36,7 @@
     "pg": "^8.16.3",
     "prisma": "^7.0.1",
     "vue": "^3.5.25",
+    "vue-boring-avatars": "^1.4.0",
     "vue-router": "^4.6.3"
   },
   "resolutions": {

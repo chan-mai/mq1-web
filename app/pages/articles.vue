@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { MicroCMSQueries } from 'microcms-js-sdk';
-import type { MicroCMSObject } from '~/types/microccms';
+import type { MicroCMSObject } from '#shared/types/microccms';
 
 const articles: Ref<Article[] | null> = ref(null);
 

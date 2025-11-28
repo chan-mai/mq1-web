@@ -1,10 +1,14 @@
-import { createRequire } from "node:module";
-import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaClient, Permission } from "../generated/prisma/client";
+import pg from "pg";
+import "dotenv/config";
 
-const require = createRequire(import.meta.url);
-const { Permission } = require("@prisma/client");
+const { Pool } = pg;
 
-const prisma = new PrismaClient();
+const connectionString = process.env.DATABASE_URL;
+const pool = new Pool({ connectionString });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log("Start seeding admin users...");

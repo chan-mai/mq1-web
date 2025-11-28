@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { Avatar } from '@boringer-avatars/vue3';
-
 definePageMeta({
   middleware: 'admin',
   layout: 'admin'

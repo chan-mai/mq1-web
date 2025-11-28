@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Permission } from '@prisma/client';
+import type { Permission } from '../../../generated/prisma/enums';
 
 definePageMeta({
   layout: 'admin',

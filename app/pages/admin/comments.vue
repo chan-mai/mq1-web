@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { Avatar } from '@boringer-avatars/vue3';
+import Avatar from "vue-boring-avatars";
 import type { MicroCMSQueries } from 'microcms-js-sdk';
-import type { MicroCMSObject } from '~/types/microccms';
-import type { Permission } from '@prisma/client';
+import type { MicroCMSObject } from '#shared/types/microccms';
+import type { Permission } from '../../../generated/prisma/enums';
 
 definePageMeta({
   middleware: 'admin',

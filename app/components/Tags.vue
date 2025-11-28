@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { MicroCMSObject } from '~/types/microccms';
+import type { MicroCMSObject } from '#shared/types/microccms';
 
 const props = defineProps({
     limit: {

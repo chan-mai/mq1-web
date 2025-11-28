@@ -1,8 +1,8 @@
 import type { H3Event } from 'h3';
-import type { Permission } from '@prisma/client';
+import { Permission } from '../../generated/prisma/enums';
 import { prisma } from './prisma';
 
-export { Permission } from '@prisma/client';
+export { Permission };
 
 /**
  * セッション認証をチェックする関数

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { MicroCMSObject } from '~/types/microccms';
+import type { MicroCMSObject } from '#shared/types/microccms';
 
 type PageHeaderProps = {
     title?: string

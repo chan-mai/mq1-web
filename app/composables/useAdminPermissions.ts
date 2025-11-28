@@ -1,4 +1,4 @@
-import type { Permission } from "@prisma/client";
+import type { Permission } from '../../generated/prisma/enums';
 
 /**
  * 管理者の権限を管理するcomposable

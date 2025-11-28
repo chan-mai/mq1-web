@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { MicroCMSObject } from '~/types/microccms';
+import type { MicroCMSObject } from '#shared/types/microccms';
 
 // デフォルト値を指定
 const props = withDefaults(defineProps<{

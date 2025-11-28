@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { MicroCMSQueries } from 'microcms-js-sdk';
-import type { MicroCMSObject } from '~/types/microccms';
-import type { Permission } from '@prisma/client';
+import type { MicroCMSObject } from '#shared/types/microccms';
+import type { Permission } from '../../../generated/prisma/enums';
 
 definePageMeta({
   middleware: 'admin',

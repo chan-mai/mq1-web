@@ -59,6 +59,7 @@ export default defineNuxtConfig({
     },
   },
   gtag: {
+    enabled: process.env.NODE_ENV === 'production',
     id: process.env.GA_TRACKING_ID,
   },
   runtimeConfig: {
@@ -190,7 +191,6 @@ export default defineNuxtConfig({
   experimental: {
     viewTransition: true,
     payloadExtraction: false,
-    inlineSSRStyles: false,
     renderJsonPayloads: true,
     componentIslands: true,
   },

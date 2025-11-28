@@ -15,10 +15,12 @@ defineProps({
         type: String,
     },
     title: {
-        type: String
+        type: String,
+        default: siteName
     },
     subtitle: {
-        type: String
+        type: String,
+        default: siteDescription
     },
     textHidden: {
         type: Boolean,
@@ -53,9 +55,9 @@ const isHovered = ref(false);
                 <div class="col-span-full row-span-full flex flex-col items-center justify-center gap-3 text-center text-white">
                     <h1
                         class="font-accent text-4xl sm:text-5xl md:text-6xl">
-                        {{ title ? title : siteName }}
+                        {{ title }}
                     </h1>
-                    <p class="text-xs md:text-sm">{{ subtitle ? subtitle : siteDescription }}</p>
+                    <p class="text-xs md:text-sm">{{ subtitle }}</p>
                 </div>
             </div>
         </div>

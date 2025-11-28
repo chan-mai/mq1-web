@@ -44,7 +44,7 @@ const isHovered = ref(false);
                 <picture>
                     <MqOgImage v-if="articlePage" class="block size-full object-cover" :url :title/>
                     <img v-else-if="image" :src="image" alt="Hero Image" fetchpriority="high" class="block size-full object-cover" />
-                    <NuxtImg v-else src="hero.png" format="webp" alt="Hero Image" fetchpriority="high" class="block size-full object-cover" />
+                    <NuxtImg v-else src="hero.png" format="webp" sizes="xs:100vw sm:100vw md:100vw lg:1200px" alt="Hero Image" fetchpriority="high" class="block size-full object-cover" />
                 </picture>
             </div>
 

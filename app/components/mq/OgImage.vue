@@ -19,5 +19,5 @@ const ogUrl = computed(() => {
 
 </script>
 <template>
-    <NuxtImg :src="ogUrl" :alt="title" format="webp" fill class="w-full h-full object-contain object-center" loading="lazy" decoding="async"/>
+    <NuxtImg :src="ogUrl" :alt="title" format="webp" width="1200" height="630" class="w-full h-full object-contain object-center" loading="lazy" decoding="async"/>
 </template>

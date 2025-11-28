@@ -49,8 +49,6 @@
 </template>
 
 <script setup lang="ts">
-import type { ToastMessage } from '~/types/toast';
-
 const toasts = useState<ToastMessage[]>('toasts', () => []);
 
 const removeToast = (id: string) => {

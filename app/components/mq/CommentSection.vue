@@ -1,18 +1,12 @@
 <script setup lang="ts">
-import { Avatar } from '@boringer-avatars/vue3';
+import Avatar from 'vue-boring-avatars';
+import type { Comments } from '../../../generated/prisma/browser';
 
 const props = defineProps<{
   contentId: string;
 }>();
 
 const toast = useToast();
-
-interface Comment {
-  id: string;
-  name: string;
-  comment: string;
-  createdAt: string;
-}
 
 interface Pagination {
   page: number;
@@ -24,7 +18,7 @@ interface Pagination {
 }
 
 // コメント一覧
-const comments = ref<Comment[]>([]);
+const comments = ref<Comments[]>([]);
 const pagination = ref<Pagination | null>(null);
 const isLoadingList = ref<boolean>(false);
 const listError = ref<string | null>(null);
@@ -54,7 +48,7 @@ const fetchComments = async (page: number = 1) => {
   listError.value = null;
 
   try {
-    const response = await $fetch(`/api/comment/${props.contentId}?page=${page}&limit=10`);
+    const response = await $fetch<{ status: string; comments: Comments[]; pagination: Pagination }>(`/api/comment/${props.contentId}?page=${page}&limit=10`);
 
     if (response.status === 'success') {
       comments.value = response.comments;
@@ -72,7 +66,7 @@ const fetchComments = async (page: number = 1) => {
 };
 
 // 日付フォーマット
-const formatDate = (dateString: string): string => {
+const formatDate = (dateString: string | Date): string => {
   const date = new Date(dateString);
   return date.toLocaleString('ja-JP', {
     year: 'numeric',
@@ -202,7 +196,7 @@ onMounted(() => {
               />
               <span class="font-medium text-gray-800">{{ commentItem.name }}</span>
             </div>
-            <time class="text-xs text-gray-500" :datetime="commentItem.createdAt">
+            <time class="text-xs text-gray-500" :datetime="commentItem.createdAt.toISOString()">
               {{ formatDate(commentItem.createdAt) }}
             </time>
           </div>

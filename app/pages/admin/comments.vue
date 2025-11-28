@@ -2,7 +2,8 @@
 import Avatar from "vue-boring-avatars";
 import type { MicroCMSQueries } from 'microcms-js-sdk';
 import type { MicroCMSObject } from '#shared/types/microccms';
-import type { Permission } from '../../../generated/prisma/enums';
+import type { Permission, CommentStatus } from '../../../generated/prisma/enums';
+import type { Comments } from '../../../generated/prisma/browser';
 
 definePageMeta({
   middleware: 'admin',
@@ -12,17 +13,6 @@ definePageMeta({
 
 const { hasPermission } = useAdminPermissions();
 const toast = useToast();
-
-interface Comment {
-  id: string;
-  contentId: string;
-  name: string;
-  comment: string;
-  userIp: string;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED';
-  createdAt: string;
-  updatedAt: string;
-}
 
 interface Pagination {
   page: number;
@@ -47,7 +37,7 @@ useHead({
 });
 
 // 状態管理
-const comments = ref<Comment[]>([]);
+const comments = ref<Comments[]>([]);
 const pagination = ref<Pagination | null>(null);
 const statusCounts = ref<StatusCount[]>([]);
 const isLoading = ref<boolean>(false);
@@ -111,7 +101,7 @@ const fetchComments = async (page: number = 1) => {
       throw fetchError.value;
     }
     
-    const response = data.value;
+    const response = data.value as { status: string; comments: Comments[]; pagination: Pagination; statusCounts: StatusCount[] };
 
     if (response.status === 'success') {
       comments.value = response.comments;
@@ -146,9 +136,9 @@ const fetchComments = async (page: number = 1) => {
 };
 
 // コメントのステータスを更新
-const updateCommentStatus = async (commentId: string, status: 'PENDING' | 'APPROVED' | 'REJECTED') => {
+const updateCommentStatus = async (commentId: string, status: CommentStatus) => {
   try {
-    const response = await $fetch(`/api/admin/comment/${commentId}`, {
+    const response: any = await $fetch(`/api/admin/comment/${commentId}`, {
       method: 'PATCH',
       body: { status }
     });
@@ -180,7 +170,7 @@ const deleteComment = async (commentId: string) => {
   }
 
   try {
-    const response = await $fetch(`/api/admin/comment/${commentId}`, {
+    const response: any = await $fetch(`/api/admin/comment/${commentId}`, {
       method: 'DELETE'
     });
 
@@ -219,7 +209,7 @@ const changeStatusFilter = (status: string) => {
 };
 
 // 日付フォーマット
-const formatDate = (dateString: string): string => {
+const formatDate = (dateString: string | Date): string => {
   const date = new Date(dateString);
   return date.toLocaleString('ja-JP', {
     year: 'numeric',

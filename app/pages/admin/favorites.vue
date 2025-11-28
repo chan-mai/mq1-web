@@ -2,6 +2,7 @@
 import type { MicroCMSQueries } from 'microcms-js-sdk';
 import type { MicroCMSObject } from '#shared/types/microccms';
 import type { Permission } from '../../../generated/prisma/enums';
+import type { Favorites } from '../../../generated/prisma/browser';
 
 definePageMeta({
   middleware: 'admin',
@@ -10,14 +11,6 @@ definePageMeta({
 });
 
 const { hasPermission } = useAdminPermissions();
-
-interface Favorite {
-  id: string;
-  contentId: string;
-  userIp: string;
-  createdAt: string;
-  updatedAt: string;
-}
 
 interface Pagination {
   page: number;
@@ -48,7 +41,7 @@ useHead({
 });
 
 // 状態管理
-const favorites = ref<Favorite[]>([]);
+const favorites = ref<Favorites[]>([]);
 const pagination = ref<Pagination | null>(null);
 const contentIdCounts = ref<ContentIdCount[]>([]);
 const statistics = ref<Statistics | null>(null);
@@ -148,7 +141,7 @@ const fetchFavorites = async (page: number = 1) => {
       throw fetchError.value;
     }
     
-    const response = data.value;
+    const response: any = data.value;
 
     if (response.status === 'success') {
       favorites.value = response.favorites;
@@ -491,7 +484,7 @@ onMounted(() => {
               <div class="flex flex-wrap gap-4 text-xs text-gray-500 mb-4">
                 <div class="flex items-center gap-1">
                   <Icon name="mdi:clock-outline" class="w-4 h-4" />
-                  <span>作成: {{ formatDate(favorite.createdAt) }}</span>
+                  <span>作成: {{ formatDate(favorite.createdAt.toISOString()) }}</span>
                 </div>
               </div>
 

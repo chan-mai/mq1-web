@@ -5,7 +5,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   // サインインページはスキップ
   if (to.path === "/admin/signin") return;
 
-  const { loggedIn } = useUserSession();
+  const { loggedIn } = useUserSession() as { user: Ref<any>; loggedIn: Ref<boolean> };
 
   if (!loggedIn.value) {
     // リダイレクト先を保存

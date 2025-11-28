@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { Favorites } from '../../../generated/prisma/browser';
+
 const props = defineProps<{
   contentId: string;
 }>();
@@ -47,7 +49,7 @@ const isInitialLoading = useState<boolean>(`favorite:${props.contentId}:initLoad
 const fetchLikeCount = async () => {
   isInitialLoading.value = true;
   try {
-    const response = await $fetch(`/api/favorite/${props.contentId}`);
+    const response = await $fetch<{ status: string; count: number }>(`/api/favorite/${props.contentId}`);
     if (response.status === 'success') {
       likeCount.value = response.count;
     }
@@ -65,7 +67,7 @@ const addLike = async () => {
   isLoading.value = true;
   
   try {
-    const response = await $fetch(`/api/favorite/${props.contentId}`, {
+    const response = await $fetch<{ status: string; favorite?: Favorites; message?: string }>(`/api/favorite/${props.contentId}`, {
       method: 'PUT',
     });
     
@@ -98,7 +100,7 @@ const addLike = async () => {
       // エラー
       toast.error({
         title: 'いいねの追加に失敗しました',
-        description: response.message,
+        message: response.message,
       });
     }
   } catch (err: any) {
@@ -118,7 +120,7 @@ const removeLike = async () => {
   isLoading.value = true;
   
   try {
-    const response = await $fetch(`/api/favorite/${props.contentId}?id=${likeId.value}`, {
+    const response = await $fetch<{ status: string; message?: string }>(`/api/favorite/${props.contentId}?id=${likeId.value}`, {
       method: 'DELETE',
     });
     

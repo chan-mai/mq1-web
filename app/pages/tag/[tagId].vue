@@ -7,8 +7,8 @@ const route = useRoute();
 const { tagId } = route.params as { tagId: string };
 
 
-const articles: Ref<Article[] | null> = ref(null);
-const tag: Ref<Tag | null> = ref(null);
+const articles: Ref<MicroCMSObject<Article>[] | null> = ref(null);
+const tag: Ref<MicroCMSObject<Tag> | null> = ref(null);
 
 // tagIdからtagを取得
 const { data: tagResponse } = await useAsyncData<MicroCMSObject<Tag>>(`tag-${tagId}`, async () => {
@@ -87,7 +87,7 @@ useJsonld({
         name: config.value.author.name,
         url: pageUrl,
     },
-    blogPost: articles.value?.map((article: Article) => ({
+    blogPost: articles.value?.map((article: MicroCMSObject<Article>) => ({
         '@type': 'BlogPosting',
         headline: article.title,
         url: `${config.value.siteUrl}entry/${article.id}`,

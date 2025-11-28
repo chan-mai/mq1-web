@@ -13,7 +13,7 @@ useHead({
 });
 
 // ユーザーセッション情報
-const { user } = useUserSession();
+const { user } = useUserSession() as { user: Ref<any> };
 
 </script>
 

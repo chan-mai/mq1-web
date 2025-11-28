@@ -36,7 +36,7 @@ export const useAdminPermissions = () => {
 
   // ログイン状態が変わったら権限を取得
   if (process.client) {
-    const { loggedIn } = useUserSession();
+    const { loggedIn } = useUserSession() as { user: Ref<any>; loggedIn: Ref<boolean> };
 
     watch(
       () => loggedIn.value,

@@ -75,7 +75,7 @@ const fetchUsers = async () => {
       throw fetchError.value;
     }
     
-    users.value = data.value.users;
+    if (data.value) users.value = data.value.users;
   } catch (err: any) {
     error.value = err.data?.message || 'ユーザー一覧の取得に失敗しました';
     console.error(err);

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // Admin Console専用レイアウト
 const route = useRoute();
-const { user } = useUserSession();
+const { user } = useUserSession() as { user: Ref<any> };
 const { permissions, hasAnyPermission } = useAdminPermissions();
 
 // サイドバーの開閉状態（モバイル用）

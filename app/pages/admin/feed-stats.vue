@@ -72,7 +72,7 @@ const fetchStats = async () => {
       throw fetchError.value;
     }
     
-    stats.value = data.value;
+    if (data.value) stats.value = data.value;
   } catch (err: any) {
     console.error('Error fetching feed stats:', err);
     error.value = err.message || 'フィード統計の取得に失敗しました';

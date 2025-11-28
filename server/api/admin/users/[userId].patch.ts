@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
   // ADMIN_USER_ADMIN権限チェック
   await requirePermission(event, Permission.ADMIN_USER_ADMIN);
 
-  const userId = getRouterParam(event, 'userId');
+  const userId = getRouterParam(event, 'userId') as string;
   const body = await readBody(event);
   const { permissions, isActive } = body;
 

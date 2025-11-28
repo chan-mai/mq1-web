@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { MicroCMSObject } from '#shared/types/microccms';
 
 const props = defineProps({
     limit: {
@@ -6,7 +7,7 @@ const props = defineProps({
         default: "0",
     },
     articles: {
-        type: Array as () => Article[],
+        type: Array as () => MicroCMSObject<Article>[],
         default: () => [],
     },
     transition: {
@@ -23,7 +24,7 @@ const limitedArticles = computed(() => {
 });
 
 // サマリーを生成
-props.articles.map((article: Article) => {
+props.articles.map((article: MicroCMSObject<Article>) => {
     article.summary = useSummaryTextGenerator(article.content!);
 });
 

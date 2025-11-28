@@ -70,7 +70,7 @@ export function getClientIP(event: any): string {
   const forwardedFor = headers["x-forwarded-for"];
   if (forwardedFor) {
     const ips = forwardedFor.split(",");
-    return ips[0].trim();
+    return ips[0]?.trim() || "unknown";
   }
 
   const realIP = headers["x-real-ip"];

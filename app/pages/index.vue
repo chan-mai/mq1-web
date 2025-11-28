@@ -3,8 +3,8 @@ import type { MicroCMSQueries } from 'microcms-js-sdk';
 import type { MicroCMSObject } from '#shared/types/microccms';
 
 
-const tags: Ref<Tag[] | null> = ref(null);
-const articles: Ref<Article[] | null> = ref(null);
+const tags: Ref<MicroCMSObject<Tag>[] | null> = ref(null);
+const articles: Ref<MicroCMSObject<Article>[] | null> = ref(null);
 
 const client = useMicroCMSClient();
 
@@ -81,7 +81,7 @@ useJsonld([
             name: config.value.author.name,
             url: pageUrl,
         },
-        blogPost: articles.value?.map((article: Article) => ({
+        blogPost: articles.value?.map((article: MicroCMSObject<Article>) => ({
             '@type': 'BlogPosting',
             headline: article.title,
             url: `${config.value.siteUrl}entry/${article.id}`,

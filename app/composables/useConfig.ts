@@ -1,4 +1,47 @@
-export const useWebConfig = () => {
+interface Social {
+  name: string;
+  url: string;
+  icon: string;
+  color: string;
+}
+
+interface WebConfig {
+  siteUrl: string;
+  baseOgpUrl: string;
+  siteName: string;
+  siteDescription: string;
+  themeColor: string;
+  author: {
+    name: string;
+    birthDate: string;
+    jobTitle: string;
+    description: string;
+  };
+  headerMenu: {
+    title: string;
+    url: string;
+  }[];
+  footer: {
+    menu: {
+      title: string;
+      url: string;
+    }[];
+  };
+  socials: {
+    misskey: Social;
+    github: Social;
+    twitter: Social;
+    qiita: Social;
+  };
+  rss: {
+    name: string;
+    url: string;
+    icon: string;
+  };
+}
+
+
+export const useWebConfig = (): ComputedRef<WebConfig> => {
   const runtimeConfig = useRuntimeConfig();
   return computed(() => ({
     siteUrl: runtimeConfig.public.siteUrl as string,
@@ -11,6 +54,9 @@ export const useWebConfig = () => {
     // Author情報
     author: {
       name: "chan-mai",
+      birthDate: "2006-04-04",
+      jobTitle: "Engineer",
+      description: "九州に生息する自称フルスタック",
     },
 
     headerMenu: [

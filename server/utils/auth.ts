@@ -23,7 +23,7 @@ export const requireAdminSession = async (event: H3Event) => {
   // DBから管理者情報を取得
   const adminUser = await prisma.adminUser.findUnique({
     where: {
-      githubUsername: session.user.username,
+      githubUsername: (session.user as any).username,
     },
     include: {
       permissions: true,

@@ -2,7 +2,7 @@ import { articleExists } from "../../utils/article";
 
 export default defineEventHandler(async (event) => {
   const contentId = getRouterParam(event, "contentId");
-  const userIp = getHeader(event, "x-forwarded-for");
+  const userIp = getHeader(event, "x-forwarded-for") || "unknown";
 
   if (!contentId) {
     return {

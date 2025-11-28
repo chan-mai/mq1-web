@@ -1,4 +1,5 @@
 import { requirePermission, Permission } from '../../../utils/auth';
+import type { CommentStatus } from '../../../../generated/prisma/enums';
 
 // 管理者用：全コメント一覧取得（ステータス別）
 export default defineEventHandler(async (event) => {
@@ -16,7 +17,7 @@ export default defineEventHandler(async (event) => {
   const whereClause: any = {};
   
   if (status && validStatuses.includes(status)) {
-    whereClause.status = status;
+    whereClause.status = status as CommentStatus;
   }
 
   try {
@@ -49,7 +50,7 @@ export default defineEventHandler(async (event) => {
     const statusCounts = await Promise.all(
       validStatuses.map(async (s) => ({
         status: s,
-        count: await prisma.comments.count({ where: { status: s } }),
+        count: await prisma.comments.count({ where: { status: s as CommentStatus } }),
       }))
     );
 

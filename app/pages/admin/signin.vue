@@ -3,7 +3,7 @@ definePageMeta({
   layout: 'admin'
 });
 
-const { loggedIn } = useUserSession();
+const { loggedIn } = useUserSession() as { user: Ref<any>; loggedIn: Ref<boolean> };
 
 // すでにログイン済みの場合はリダイレクト
 onMounted(() => {

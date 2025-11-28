@@ -39,10 +39,10 @@ useJsonld([
     {
     '@context': 'https://schema.org',
     '@type': 'Person',
-    name: config.value.author.fullName,
+    name: config.value.author.name,
     alternateName: config.value.author.name,
-    givenName: config.value.author.givenName,
-    familyName: config.value.author.familyName,
+    givenName: config.value.author.name,
+    familyName: config.value.author.name,
     birthDate: config.value.author.birthDate,
     jobTitle: config.value.author.jobTitle,
     description: config.value.author.description,

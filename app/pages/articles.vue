@@ -2,7 +2,7 @@
 import type { MicroCMSQueries } from 'microcms-js-sdk';
 import type { MicroCMSObject } from '#shared/types/microccms';
 
-const articles: Ref<Article[] | null> = ref(null);
+const articles: Ref<MicroCMSObject<Article>[] | null> = ref(null);
 
 const client = useMicroCMSClient();
 // とりあえず直近100件の記事を取得
@@ -52,7 +52,7 @@ useJsonld({
         name: config.value.author.name,
         url: pageUrl,
     },
-    blogPost: articles.value?.map((article: Article) => ({
+    blogPost: articles.value?.map((article: MicroCMSObject<Article>) => ({
         '@type': 'BlogPosting',
         headline: article.title,
         url: `${config.value.siteUrl}entry/${article.id}`,

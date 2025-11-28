@@ -16,6 +16,7 @@ export default defineNuxtConfig({
         { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
         { rel: "dns-prefetch", href: "https://images.microcms-assets.io" },
         { rel: "preconnect", href: "https://images.microcms-assets.io" },
+        { rel: "preconnect", href: "https://www.googletagmanager.com" },
       ],
       htmlAttrs: {
         lang: "ja",
@@ -34,6 +35,7 @@ export default defineNuxtConfig({
     "nuxt-auth-utils",
     "nuxt-jsonld",
     "@nuxtjs/google-fonts",
+    "@nuxtjs/critters",
   ],
   googleFonts: {
     families: {
@@ -44,6 +46,8 @@ export default defineNuxtConfig({
     display: "swap",
     download: true,
     inject: true,
+    useStylesheet: true,
+    overwriting: true
   },
   tailwindcss: {
     config: {

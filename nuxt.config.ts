@@ -10,34 +10,12 @@ export default defineNuxtConfig({
   css: ["~/assets/css/fonts.css", "~/assets/css/view-transitions.css"],
   app: {
     head: {
+      charset: 'utf-16',
+      viewport: 'width=device-width',
       link: [
         { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
-        { rel: "preconnect", href: "https://fonts.googleapis.com" },
-        {
-          rel: "preconnect",
-          href: "https://fonts.gstatic.com",
-          crossorigin: "",
-        },
         { rel: "dns-prefetch", href: "https://images.microcms-assets.io" },
         { rel: "preconnect", href: "https://images.microcms-assets.io" },
-        {
-          rel: "stylesheet",
-          href: "https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap",
-          media: "print",
-          onload: "this.media='all'",
-        },
-        {
-          rel: "stylesheet",
-          href: "https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap",
-          media: "print",
-          onload: "this.media='all'",
-        },
-        {
-          rel: "stylesheet",
-          href: "https://fonts.googleapis.com/css2?family=Crafty+Girls&display=swap",
-          media: "print",
-          onload: "this.media='all'",
-        },
       ],
       htmlAttrs: {
         lang: "ja",
@@ -55,7 +33,18 @@ export default defineNuxtConfig({
     "@nuxtjs/turnstile",
     "nuxt-auth-utils",
     "nuxt-jsonld",
+    "@nuxtjs/google-fonts",
   ],
+  googleFonts: {
+    families: {
+      "Noto Sans JP": [300, 400, 500, 600, 700],
+      "Abril Fatface": true,
+      "Crafty Girls": true,
+    },
+    display: "swap",
+    download: true,
+    inject: true,
+  },
   tailwindcss: {
     config: {
       theme: {

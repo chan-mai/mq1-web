@@ -114,7 +114,7 @@ useJsonld([
             </div>
             <div>
                 <h3
-                    class="text-hey mb-4 max-w-2xl text-2xl leading-none font-extrabold md:text-3xl xl:text-4xl text-primary">
+                    class="text-hey mb-4 max-w-2xl text-2xl leading-none md:text-3xl xl:text-4xl text-primary">
                     Hey, I'm
                     <span
                         class="text-hey bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-indigo-400">chan-mai</span>

@@ -52,7 +52,7 @@ const isHovered = ref(false);
             <div v-if="!textHidden" class="col-span-full row-span-full flex flex-col items-center justify-center gap-4 text-center z-10">
                 <div class="col-span-full row-span-full flex flex-col items-center justify-center gap-3 text-center text-white">
                     <h1
-                        class="font-accent text-4xl font-bold sm:text-5xl md:text-6xl">
+                        class="font-accent text-4xl sm:text-5xl md:text-6xl">
                         {{ title ? title : siteName }}
                     </h1>
                     <p class="text-xs md:text-sm">{{ subtitle ? subtitle : siteDescription }}</p>

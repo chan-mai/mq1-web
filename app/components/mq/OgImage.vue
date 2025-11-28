@@ -4,14 +4,30 @@ const props = defineProps({
         type: String,
         required: false,
     },
+    contentId: {
+        type: String,
+        required: false,
+    },
+    tagId: {
+        type: String,
+        required: false,
+    },
     url: {
         type: String,
         required: false,
     },
 });
+const config = useWebConfig();
+
 const ogUrl = computed(() => {
     if ( !props.url || typeof props.url !== 'string' || props.url.length === 0 ) {
-        return useOgGenerator(props.title!);
+        if ( props.contentId ) {
+            return useArticleOgGenerator(props.contentId);
+        } else if ( props.tagId ) {
+            return useTagOgGenerator(props.tagId);
+        } else {
+            return "/ogp/ogp.png";
+        }
     } else {
         return props.url;
     }

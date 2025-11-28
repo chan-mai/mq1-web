@@ -42,7 +42,7 @@ const config = useWebConfig();
 if (article.value && article.value.content) {
     const pageTitle = `${article.value?.title || ''} - ${config.value.siteName}`;
     const pageDescription = useSummaryTextGenerator(article.value?.content ) || config.value.siteDescription;
-    const ogImageUrl = useOgGenerator(article.value?.title || '');
+    const ogImageUrl = article.value?.eyecatch?.url || useArticleOgGenerator(contentId);
     const pageUrl = `${config.value.siteUrl}entry/${contentId}`;
     const publishedTime = article.value?.publishedAt || article.value?.createdAt;
     const modifiedTime = article.value?.updatedAt;
@@ -51,7 +51,7 @@ if (article.value && article.value.content) {
     const metaTags = [
         { property: 'og:title', content: pageTitle },
         { property: 'og:description', content: pageDescription },
-        { property: 'og:image', content: article.value?.eyecatch?.url || ogImageUrl },
+        { property: 'og:image', content: ogImageUrl },
         { property: 'og:type', content: 'article' },
         { property: 'og:url', content: pageUrl },
         { property: 'og:site_name', content: config.value.siteName },
@@ -92,7 +92,7 @@ if (article.value && article.value.content) {
         '@type': 'BlogPosting',
         headline: article.value?.title || '',
         description: pageDescription,
-        image: article.value?.eyecatch?.url || ogImageUrl,
+        image: ogImageUrl,
         datePublished: publishedTime ? new Date(publishedTime).toISOString() : undefined,
         dateModified: modifiedTime ? new Date(modifiedTime).toISOString() : publishedTime ? new Date(publishedTime).toISOString() : undefined,
         author: {
@@ -200,7 +200,7 @@ const tableOfContents: Ref<{ id: string; text: string; level: number }[]> = ref(
     <main
         class="max-w-none text-[0.925rem] leading-loose tracking-wide text-inherit [&>div>*:first-child]:mt-0 max-w-7xl gap-16 md:gap-20">
 
-        <MqHero :url="article?.eyecatch?.url" :title="article?.title" text-hidden article-page
+        <MqHero :url="article?.eyecatch?.url" :content-id="contentId" :title="article?.title" text-hidden
             :style="`view-transition-name: article-${contentId};`" />
 
         <article class="mt-5 md:mt-16 mx-auto flex w-full max-w-6xl flex-col px-2 md:px-6 mb-16">

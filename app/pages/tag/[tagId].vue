@@ -58,7 +58,7 @@ if (articlesResponse.value) {
 const config = useWebConfig();
 const pageTitle = `#${tag.value?.name} - ${config.value.siteName}`;
 const pageDescription = `#${tag.value?.name}の記事一覧`;
-const ogImageUrl = useOgGenerator(`#${tag.value?.name}`);
+const ogImageUrl = useTagOgGenerator(`#${tag.value?.name}`);
 const pageUrl = `${config.value.siteUrl}tag/${tagId}`;
 
 useHead({
@@ -104,14 +104,14 @@ useJsonld({
 <template>
     <main
         class="max-w-none h-full text-[0.925rem] leading-loose tracking-wide text-inherit [&>div>*:first-child]:mt-0 max-w-7xl gap-16 md:gap-20 space-y-16">
-        <MqHero />
+        <MqHero :tag-id="tagId" :title="tag?.name" text-hidden />
 
         <!-- 直近記事 -->
         <section class="mx-auto flex w-full max-w-6xl flex-col gap-10 px-2 md:px-6">
             <div class="flex items-center justify-between">
                 <div>
                     <MqPageBack class="mb-3" />
-                    <h2 class="font-accent text-3xl font-bold text-slate-800 md:text-4xl" :style="`view-transition-name: tag-${tagId};`">
+                    <h2 class="font-accent text-3xl text-slate-800 md:text-4xl" :style="`view-transition-name: tag-${tagId};`">
                         <span class="bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-indigo-400">
                             #{{ tag?.name }}
                         </span>

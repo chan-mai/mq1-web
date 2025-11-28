@@ -40,7 +40,7 @@ export const articleExists = async (contentId?: string | null) => {
   return Boolean(article);
 };
 
-export const ensureArticleExists = async (contentId?: string | null) => {
+export const fetchArticle = async (contentId?: string | null) => {
   const article = await fetchArticleByContentId(contentId);
   if (!article) {
     throw createError({

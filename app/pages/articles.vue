@@ -23,7 +23,7 @@ if ( articlesResponse.value ) articles.value = articlesResponse.value.contents;
 const config = useWebConfig();
 const pageTitle = `記事一覧 - ${config.value.siteName}`;
 const pageDescription = config.value.siteDescription;
-const ogImageUrl = useOgGenerator('記事一覧');
+const ogImageUrl = config.value.baseOgpUrl;
 const pageUrl = `${config.value.siteUrl}articles`;
 
 useHead({

@@ -66,8 +66,8 @@ export default defineNuxtConfig({
     public: {
       siteName: "まいの雑記帳",
       siteDescription: "ちっちゃなうぇぶさいと",
-      siteUrl: "https://mq1.dev/",
-      siteOgpUrl: "https://mq1.dev/images/ogp/ogp.png",
+      siteUrl: process.env.NODE_ENV === "production" ? "https://mq1.dev/" : "http://localhost:3000/",
+      siteOgpUrl: process.env.NODE_ENV === "production" ? "https://mq1.dev/images/ogp/ogp.png" : "http://localhost:3000/images/ogp/ogp.png",
       microcms: {
         serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN,
         apiKey: process.env.MICROCMS_API_KEY,
@@ -172,15 +172,17 @@ export default defineNuxtConfig({
 
       // タグ
       const tagRoutes = tags.contents.map((mount: any) => `/tag/${mount.id}`);
+      const tagOgRoutes = tags.contents.map((mount: any) => `/api/og/tag/${mount.id}`);
       // 記事
-      const articleRoutes = articles.contents.map(
-        (mount: any) => `/entry/${mount.id}`
-      );
+      const articleRoutes = articles.contents.map((mount: any) => `/entry/${mount.id}`);
+      const articleOgRoutes = articles.contents.map((mount: any) => `/api/og/article/${mount.id}`);
 
       nitroConfig.prerender.routes = [
         ...nitroConfig.prerender.routes,
         ...tagRoutes,
+        ...tagOgRoutes,
         ...articleRoutes,
+        ...articleOgRoutes,
       ];
     },
   },

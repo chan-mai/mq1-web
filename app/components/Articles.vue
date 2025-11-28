@@ -69,7 +69,7 @@ function navigateToTag(tag: any) {
                                     <div class="md:w-1/3 w-full md:flex-shrink-0 md:min-w-[200px]">
                                         <div
                                             class="relative w-full overflow-hidden rounded-lg max-w-full">
-                                            <MqOgImage :url="article.eyecatch?.url" :title="article.title" fill
+                                            <MqOgImage :url="article.eyecatch?.url" :content-id="article.id" :title="article.title" fill
                                                 class="object-cover transition-transform duration-300 hover:scale-105 rounded-lg w-full h-full"
                                                 :style="`view-transition-name: article-${article.id}; max-width: 100%;`" />
                                         </div>

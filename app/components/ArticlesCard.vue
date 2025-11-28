@@ -33,7 +33,8 @@ function navigateToTag(tag: any) {
             <!-- 画像エリア -->
             <div class="image-wrapper">
                 <MqOgImage 
-                    :url="article.eyecatch?.url" 
+                    :content-id="article.id"
+                    :url="article.eyecatch?.url"
                     :title="article.title" 
                     fill
                     class="article-image"

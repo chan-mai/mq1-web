@@ -5,17 +5,16 @@ const siteName = config.value.siteName;
 const siteDescription = config.value.siteDescription;
 
 defineProps({
-    articlePage: {
-        type: Boolean,
-        default: false
-    },
     url: {
         type: String,
     },
-    title: {
-        type: String
+    contentId: {
+        type: String,
     },
-    image: {
+    tagId: {
+        type: String,
+    },
+    title: {
         type: String
     },
     subtitle: {
@@ -42,9 +41,10 @@ const isHovered = ref(false);
             <div class="col-span-full row-span-full overflow-hidden rounded-3xl transform transition-transform duration-300 hover:scale-[1.01]"
                 @mouseenter="isHovered = true" @mouseleave="isHovered = false">
                 <picture>
-                    <MqOgImage v-if="articlePage" class="block size-full object-cover" :url :title/>
-                    <img v-else-if="image" :src="image" alt="Hero Image" fetchpriority="high" class="block size-full object-cover" />
-                    <NuxtImg v-else src="hero.png" format="webp" sizes="xs:100vw sm:100vw md:100vw lg:1200px" alt="Hero Image" fetchpriority="high" class="block size-full object-cover" />
+                    <MqOgImage v-if="contentId && !url" class="block size-full object-cover" :title :contentId/>
+                    <MqOgImage v-else-if="tagId && !url" class="block size-full object-cover" :title :tagId/>
+                    <NuxtImg v-else-if="url && url.length > 0" :src="url" format="webp" :alt="title" fetchpriority="high" class="block size-full object-cover" />
+                    <NuxtImg v-else src="hero.png" format="webp" sizes="xs:100vw sm:100vw md:100vw lg:1200px" :alt="title" fetchpriority="high" class="block size-full object-cover" />
                 </picture>
             </div>
 

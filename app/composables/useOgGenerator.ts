@@ -20,3 +20,15 @@ export default function useOgGenerator(title: string){
     const url = baseImageURL + base64urlEncode(titleImageURL);
     return url;
 }
+
+export function useArticleOgGenerator(contentId: string){
+    const config = useWebConfig();
+    const url = `${config.value.siteUrl}api/og/article/${contentId}`;
+    return url;
+}
+
+export function useTagOgGenerator(tagId: string){
+    const config = useWebConfig();
+    const url = `${config.value.siteUrl}api/og/tag/${tagId}`;
+    return url;
+}

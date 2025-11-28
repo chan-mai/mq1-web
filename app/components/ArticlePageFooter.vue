@@ -77,7 +77,7 @@ if (nextArticleResponse.value && nextArticleResponse.value.contents && nextArtic
                     <div class="mt-2 flex flex-col sm:flex-row items-center">
                         <div
                             class="w-full md:max-w-1/3 md:h-20 sm:max-h-16 mb-2 sm:mb-0 sm:mr-3 overflow-hidden rounded">
-                            <MqOgImage :url="prevArticle.eyecatch?.url" :title="prevArticle.title"
+                            <MqOgImage :url="prevArticle.eyecatch?.url" :content-id="prevArticle.id" :title="prevArticle.title"
                                 class="w-full h-full object-contain" />
                         </div>
                         <p class="text-xs sm:text-sm text-gray-600 overflow-hidden line-clamp-2 sm:line-clamp-3">{{
@@ -111,7 +111,7 @@ if (nextArticleResponse.value && nextArticleResponse.value.contents && nextArtic
                             class="text-xs sm:text-sm text-gray-600 overflow-hidden line-clamp-2 sm:line-clamp-3 mt-2 sm:mt-0">
                             {{ nextArticle.summary || '' }}</p>
                         <div class="w-full md:max-w-1/3 md:h-20 sm:max-h-16 sm:ml-3 overflow-hidden rounded">
-                            <MqOgImage :url="nextArticle.eyecatch?.url" :title="nextArticle.title"
+                            <MqOgImage :url="nextArticle.eyecatch?.url" :content-id="nextArticle.id" :title="nextArticle.title"
                                 class="w-full h-full object-contain" />
                         </div>
                     </div>

@@ -26,4 +26,4 @@ logs
 .env.*
 !.env.example
 
-/app/generated/prisma
+/generated/prisma

@@ -52,6 +52,7 @@
     "@iconify-json/material-symbols": "^1.2.48",
     "@iconify-json/simple-icons": "^1.2.60",
     "@types/pg": "^8.15.6",
+    "@vite-pwa/nuxt": "^1.1.0",
     "tsx": "^4.20.6"
   }
 }

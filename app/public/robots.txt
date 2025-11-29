@@ -1,2 +1,4 @@
 User-Agent: *
 Disallow:
+
+Sitemap: https://mq1.dev/sitemap.xml

@@ -36,6 +36,7 @@ export default defineNuxtConfig({
     "nuxt-jsonld",
     "@nuxtjs/google-fonts",
     "@nuxtjs/critters",
+    "@vite-pwa/nuxt",
   ],
   googleFonts: {
     families: {
@@ -280,6 +281,22 @@ export default defineNuxtConfig({
       },
     },
   },
+  pwa: {
+    registerType: "autoUpdate",
+    manifest: {
+      name: "まいの雑記帳",
+      short_name: "まいの雑記帳",
+      description: "ちっちゃなうぇぶさいと",
+      theme_color: "#fc9fa8",
+    },
+    workbox: {
+      navigateFallback: "/",
+    },
+    devOptions: {
+      enabled: true,
+      type: "module",
+    },
+  },
   vite: {
     build: {
       rollupOptions: {
@@ -295,5 +312,11 @@ export default defineNuxtConfig({
     optimizeDeps: {
       include: ["cheerio", "microcms-js-sdk"],
     },
+  },
+  webpack: {
+    optimization: {
+      minimize: true,
+    },
+    optimizeCSS: true,
   },
 });

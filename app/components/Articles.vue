@@ -92,12 +92,12 @@ function navigateToTag(tag: any) {
                                         </div>
 
                                         <div class="w-full flex justify-end pt-4">
-                                            <NuxtLink :to="`/entry/${article.id}`"
+                                            <span
                                                 class="text-accent text-sm inline-flex items-center">
                                                 続きを読む
                                                 <Icon name="material-symbols:arrow-circle-right-outline"
                                                     class="w-5 h-5" />
-                                            </NuxtLink>
+                                            </span>
                                         </div>
                                     </div>
                                 </div>

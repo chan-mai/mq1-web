@@ -299,12 +299,14 @@ export default defineNuxtConfig({
   },
   vite: {
     build: {
+      chunkSizeWarningLimit: 1000,
       rollupOptions: {
         output: {
           manualChunks: {
             vendor: ["vue", "vue-router"],
             microcms: ["microcms-js-sdk"],
             cheerio: ["cheerio"],
+            hljs: ["highlight.js"],
           },
         },
       },

@@ -37,6 +37,7 @@ export default defineNuxtConfig({
     "@nuxtjs/google-fonts",
     "@nuxtjs/critters",
     "@vite-pwa/nuxt",
+    "@nuxtjs/robots",
   ],
   googleFonts: {
     families: {
@@ -323,5 +324,15 @@ export default defineNuxtConfig({
       minimize: true,
     },
     optimizeCSS: true,
+  },
+  robots: {
+    sitemap: "https://mq1.dev/sitemap.xml",
+    groups: [
+      {
+        userAgent: ["*"],
+        allow: ["/"],
+        disallow: ["/admin", "/api", "/_nuxt/"],
+      },
+    ],
   },
 });

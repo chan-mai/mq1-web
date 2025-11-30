@@ -74,7 +74,7 @@ export default defineNuxtConfig({
       siteName: "まいの雑記帳",
       siteDescription: "ちっちゃなうぇぶさいと",
       siteUrl: process.env.NODE_ENV === "production" ? "https://mq1.dev/" : "http://localhost:3000/",
-      siteOgpUrl: process.env.NODE_ENV === "production" ? "https://mq1.dev/images/ogp/ogp.png" : "http://localhost:3000/images/ogp/ogp.png",
+      siteOgpUrl: process.env.NODE_ENV === "production" ? "https://mq1.dev/ogp/ogp.png" : "http://localhost:3000/ogp/ogp.png",
       microcms: {
         serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN,
         apiKey: process.env.MICROCMS_API_KEY,

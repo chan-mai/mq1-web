@@ -298,6 +298,9 @@ export default defineNuxtConfig({
     },
   },
   vite: {
+    esbuild: {
+      drop: ["console", "debugger"],
+    },
     build: {
       chunkSizeWarningLimit: 1000,
       rollupOptions: {

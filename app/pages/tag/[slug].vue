@@ -2,6 +2,11 @@
 import type { MicroCMSQueries } from 'microcms-js-sdk';
 import type { MicroCMSObject } from '#shared/types/microccms';
 
+definePageMeta({
+    middleware: ['tag-compatibility-redirect'],
+});
+
+
 const client = useMicroCMSClient();
 const route = useRoute();
 const { slug } = route.params as { slug: string };
@@ -10,7 +15,7 @@ const { slug } = route.params as { slug: string };
 const articles: Ref<MicroCMSObject<Article>[] | null> = ref(null);
 const tag: Ref<MicroCMSObject<Tag> | null> = ref(null);
 
-// tagIdからtagを取得
+// slugからtagを取得
 const { data: tagResponse } = await useAsyncData<MicroCMSObject<Tag>>(`tag-${slug}`, async () => {
     return await client.getList<MicroCMSObject<Tag>>({
         endpoint: 'tags',
@@ -37,7 +42,9 @@ tag.value = tagResponse.value.contents[0];
 // slugが存在し、かつ現在のパスがslugでない場合はリダイレクト
 if (tag.value.slug && tag.value.slug !== slug) {
     await navigateTo(`/tag/${tag.value.slug}`, {
-        redirectCode: 301
+        redirectCode: 301,
+      // tip: external指定なしではコケることがある
+      external: true,
     });
 }
 

@@ -66,7 +66,7 @@ useJsonld([
 </script>
 <template>
     <div class="min-h-screen rounded-xl overflow-hidden mt-5 md:mt-10">
-        <div class="bg-accent text-white relative w-full max-w-none overflow-hidden md:overflow-visible">
+        <div class="bg-primary text-white relative w-full max-w-none overflow-hidden md:overflow-visible">
             <AboutHeadBackground />
             <!-- 右側のエッジ文字 -->
             <div class="absolute bottom-0 z-20 w-full h-2/3">
@@ -149,18 +149,15 @@ useJsonld([
                 <div class="mr-auto px-8 z-50 relative max-w-6xl mx-auto w-full">
                     <div class="mb-12 mt-5">
                         <h2
-                            class="text-hey mb-4 max-w-2xl text-2xl leading-none md:text-3xl xl:text-4xl text-primary">
+                            class="mb-4 max-w-2xl text-2xl leading-none md:text-3xl xl:text-4xl text-primary">
                             Hello, I'm
                             <span
-                                class="text-hey bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-indigo-400">chan-mai</span>
+                                class="bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-indigo-400">chan-mai</span>
                             <span class="waving-hand">👋🏻</span>
                         </h2>
-                        <p class="text-xl md:text-2xl mb-4 text-shadow-lg text-shadow-white">
-                            わたしについて
-                        </p>
-                        <div class="space-y-4 text-sm md:text-base font-light mb-2">
+                        <div class="space-y-4 text-sm md:text-base font-light mb-2 text-gray-800">
                             <p class="text-shadow-lg text-shadow-white">
-                                九州を根城に生息しているひとのふりをした自称フルスタックエンジニアです。
+                                九州を根城に生息している、ひとのふりをした自称フルスタックエンジニア。
                                 <br />
                                 たまにクリエイティブなことにも手を出します。
                             </p>
@@ -180,15 +177,15 @@ useJsonld([
                         class="grid grid-cols-1 md:grid-cols-2 gap-6 relative bg-white/90 md:bg-transparent z-60 md:z-auto">
                         <div>
                             <div class="text-accent text-lg font-medium">誕生日</div>
-                            <div class="text-xl">2006/04/04</div>
+                            <div class="text-xl text-gray-800">2006/04/04</div>
                         </div>
                         <div>
                             <div class="text-accent text-lg font-medium">趣味</div>
-                            <div class="text-xl">インターネット </div>
+                            <div class="text-xl text-gray-800">インターネット </div>
                         </div>
                         <div>
                             <div class="text-accent text-lg font-medium">好きな言語</div>
-                            <div class="text-xl">Go / Dart</div>
+                            <div class="text-xl text-gray-800">Go / Dart</div>
                         </div>
                     </div>
 

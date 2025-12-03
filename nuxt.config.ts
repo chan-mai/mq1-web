@@ -13,6 +13,8 @@ export default defineNuxtConfig({
       charset: 'utf-16',
       viewport: 'width=device-width',
       link: [
+        { rel: "canonical", href: "https://mq1.dev/" },
+        { rel: "stylesheet", href: "https://use.typekit.net/knf0bwf.css" },
         { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
         { rel: "dns-prefetch", href: "https://images.microcms-assets.io" },
         { rel: "preconnect", href: "https://images.microcms-assets.io" },
@@ -34,23 +36,10 @@ export default defineNuxtConfig({
     "@nuxtjs/turnstile",
     "nuxt-auth-utils",
     "nuxt-jsonld",
-    "@nuxtjs/google-fonts",
     "@nuxtjs/critters",
     "@vite-pwa/nuxt",
     "@nuxtjs/robots",
   ],
-  googleFonts: {
-    families: {
-      "Noto Sans JP": [300, 400, 500, 600, 700],
-      "Abril Fatface": true,
-      "Crafty Girls": true,
-    },
-    display: "swap",
-    download: true,
-    inject: true,
-    useStylesheet: true,
-    overwriting: true
-  },
   tailwindcss: {
     config: {
       theme: {

@@ -105,7 +105,7 @@ useJsonld([
         <!-- About Me -->
         <section class="mx-auto flex w-full max-w-6xl flex-col gap-10 px-2 md:px-6">
             <div class="flex items-center justify-between">
-                <h2 class="text-head font-accent text-4xl font-bold text-slate-800 md:text-6xl">
+                <h2 class="font-accent text-4xl font-bold text-slate-800 md:text-6xl">
                     About Me
                 </h2>
                 <MqAppLink to="/about">
@@ -114,10 +114,10 @@ useJsonld([
             </div>
             <div>
                 <h3
-                    class="text-hey mb-4 max-w-2xl text-2xl leading-none md:text-3xl xl:text-4xl text-primary">
+                    class="mb-4 max-w-2xl text-2xl leading-none md:text-3xl xl:text-4xl text-primary">
                     Hey, I'm
                     <span
-                        class="text-hey bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-indigo-400">chan-mai</span>
+                        class="bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-indigo-400">chan-mai</span>
                     <span class="waving-hand">👋🏻</span>
                 </h3>
                 <p class="mt-2.5 text-sm leading-relaxed first:mt-0">ちゃんまいです。コードを書いたり、絵を描いたり、映像をつくったりしている多趣味なエンジニア。</p>
@@ -128,7 +128,7 @@ useJsonld([
         <!-- 直近記事 -->
         <section class="mx-auto flex w-full max-w-6xl flex-col gap-10 px-2 md:px-6">
             <div class="flex items-center justify-between">
-                <h2 class="text-head font-accent text-4xl font-bold text-slate-800 md:text-6xl">
+                <h2 class="font-accent text-4xl font-bold text-slate-800 md:text-6xl">
                     Blogs
                 </h2>
                 <MqAppLink to="/articles/">

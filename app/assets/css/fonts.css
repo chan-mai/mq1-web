@@ -1,15 +1,5 @@
 * {
-  font-family: "Noto Sans JP", sans-serif;
+  font-family: "futura-pt", "Hiragino Kaku Gothic Pro", "ヒラギノ角ゴ Pro W3", "ヒラギノ角ゴ ProN W3", "Noto Sans JP", "Yu Gothic Medium", 游ゴシック体, 游ゴシック, "Yu Gothic", メイリオ, Meiryo, "ＭＳ Ｐゴシック", sans-serif;
   font-optical-sizing: auto;
-  font-style: normal;
-}
-
-.text-head {
-  font-family: "Abril Fatface", serif;
-  font-style: normal;
-}
-.text-hey {
-  font-family: "Crafty Girls", cursive;
-  font-weight: 500;
   font-style: normal;
 }

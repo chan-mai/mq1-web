@@ -1,10 +1,18 @@
 <script setup lang="ts">
 const config = useWebConfig();
+const route = useRoute();
 const [isVisibleOverlay, toggleOverlay] = useToggle();
 
 
 const isVisibleRssFeedCopyTooltip = ref<boolean>(false);
 
+const isActivePage = (url: string) => {
+  // 末尾の/を除去して比較
+  const currentPath = route.path.replace(/\/$/, '');
+  const targetUrl = url.replace(/\/$/, '');
+  // ルートパスの場合は完全一致、それ以外は前方一致
+  return currentPath === targetUrl || (url === '/' && route.path === '/');
+};
 
 const rssFeedCopy = () => {
   // RSSフィードのURLをクリップボードにコピー
@@ -63,7 +71,8 @@ whenever(
             <!-- 外部リンクの場合は別タブ -->
             <NuxtLink v-if="item.url" :to="item.url"
               :target="(item.url.startsWith('/') || item.url.startsWith('#')) ? '_self' : '_blank'"
-              class="relative flex items-center justify-center px-4 py-2 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:origin-right after:scale-x-0 after:scale-y-100 after:bg-primary after:transition-transform hover:after:origin-left hover:after:scale-x-100"
+              class="relative flex items-center justify-center px-4 py-2"
+              :class="[isActivePage(item.url) ? 'bg-primary/10 rounded-xl hover:bg-primary/20 transition-colors duration-800' : 'after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:origin-right after:scale-x-0 after:scale-y-100 after:bg-primary after:transition-transform hover:after:origin-left hover:after:scale-x-100']"
               @click="() => toggleOverlay(false)">
               <span class="text-sm font-bold md:text-xs">{{ item.title }}</span>
             </NuxtLink>

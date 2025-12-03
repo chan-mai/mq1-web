@@ -4,19 +4,19 @@ import type { MicroCMSObject } from '#shared/types/microccms';
 
 const client = useMicroCMSClient();
 const route = useRoute();
-const { tagId } = route.params as { tagId: string };
+const { slug } = route.params as { slug: string };
 
 
 const articles: Ref<MicroCMSObject<Article>[] | null> = ref(null);
 const tag: Ref<MicroCMSObject<Tag> | null> = ref(null);
 
 // tagIdからtagを取得
-const { data: tagResponse } = await useAsyncData<MicroCMSObject<Tag>>(`tag-${tagId}`, async () => {
+const { data: tagResponse } = await useAsyncData<MicroCMSObject<Tag>>(`tag-${slug}`, async () => {
     return await client.getList<MicroCMSObject<Tag>>({
         endpoint: 'tags',
         queries: {
             limit: 1,
-            filters: `id[equals]${tagId}`,
+            filters: `slug[equals]${slug}`,
         } satisfies MicroCMSQueries,
     });
 }, {
@@ -27,21 +27,28 @@ const { data: tagResponse } = await useAsyncData<MicroCMSObject<Tag>>(`tag-${tag
 if (!tagResponse.value || tagResponse.value.contents.length === 0) {
     throw createError({
         statusCode: 404,
-        statusMessage: `Tag not found: ${tagId}`,
+        statusMessage: `Tag not found: ${slug}`,
         fatal: true
     });
 }
 
 tag.value = tagResponse.value.contents[0];
 
+// slugが存在し、かつ現在のパスがslugでない場合はリダイレクト
+if (tag.value.slug && tag.value.slug !== slug) {
+    await navigateTo(`/tag/${tag.value.slug}`, {
+        redirectCode: 301
+    });
+}
+
 // とりあえずタグをソースに直近100件の記事を取得
 // TODO: ページネーションとかつくる
-const { data: articlesResponse } = await useAsyncData<MicroCMSObject<Article[]>>(`tag-${tagId}-articles`, async () => {
+const { data: articlesResponse } = await useAsyncData<MicroCMSObject<Article[]>>(`tag-${slug}-articles`, async () => {
     return await client.getList<MicroCMSObject<Article[]>>({
         endpoint: 'articles',
         queries: {
             limit: 100,
-            filters: `tags[contains]${tagId}`,
+            filters: `tags[contains]${tag.value.id}`,
         } satisfies MicroCMSQueries,
     });
 }, {
@@ -59,7 +66,7 @@ const config = useWebConfig();
 const pageTitle = `#${tag.value?.name} - ${config.value.siteName}`;
 const pageDescription = `#${tag.value?.name}の記事一覧`;
 const ogImageUrl = useTagOgGenerator(`#${tag.value?.name}`);
-const pageUrl = `${config.value.siteUrl}tag/${tagId}`;
+const pageUrl = `${config.value.siteUrl}tag/${tag.value?.slug}`;
 
 useHead({
     title: pageTitle,
@@ -104,14 +111,14 @@ useJsonld({
 <template>
     <main
         class="max-w-none h-full text-[0.925rem] leading-loose tracking-wide text-inherit [&>div>*:first-child]:mt-0 max-w-7xl gap-16 md:gap-20 space-y-16">
-        <MqHero :tag-id="tagId" :title="tag?.name" text-hidden />
+        <MqHero :tag-id="slug" :title="tag?.name" text-hidden />
 
         <!-- 直近記事 -->
         <section class="mx-auto flex w-full max-w-6xl flex-col gap-10 px-2 md:px-6">
             <div class="flex items-center justify-between">
                 <div>
                     <MqPageBack class="mb-3" />
-                    <h2 class="font-accent text-3xl text-slate-800 md:text-4xl" :style="`view-transition-name: tag-${tagId};`">
+                    <h2 class="font-accent text-3xl text-slate-800 md:text-4xl" :style="`view-transition-name: tag-${slug};`">
                         <span class="bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-indigo-400">
                             #{{ tag?.name }}
                         </span>

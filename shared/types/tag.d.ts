@@ -1,4 +1,5 @@
 interface Tag {
-    name?: string;
+    name: string;
+    slug: string;
     count?: number;
 }

@@ -167,8 +167,8 @@ export default defineNuxtConfig({
       ]);
 
       // タグ
-      const tagRoutes = tags.contents.map((mount: any) => `/tag/${mount.id}`);
-      const tagOgRoutes = tags.contents.map((mount: any) => `/api/og/tag/${mount.id}`);
+      const tagRoutes = tags.contents.map((mount: any) => `/tag/${mount.slug || mount.id}`);
+      const tagOgRoutes = tags.contents.map((mount: any) => `/api/og/tag/${mount.slug || mount.id}`);
       // 記事
       const articleRoutes = articles.contents.map((mount: any) => `/entry/${mount.id}`);
       const articleOgRoutes = articles.contents.map((mount: any) => `/api/og/article/${mount.id}`);
@@ -228,7 +228,7 @@ export default defineNuxtConfig({
           });
 
           return tags.map((tag: any) => ({
-            loc: `/tag/${tag.id}`,
+            loc: `/tag/${tag.slug}`,
             lastmod: tag.updatedAt || tag.publishedAt,
           }));
         },

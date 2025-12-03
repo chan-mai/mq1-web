@@ -24,7 +24,7 @@ const summary = computed(() => {
 // タグをクリックした時の処理
 const router = useRouter();
 function navigateToTag(tag: any) {
-    router.push(`/tag/${tag.id}`);
+    router.push(`/tag/${tag.slug}`);
 }
 </script>
 

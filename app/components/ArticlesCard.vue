@@ -29,210 +29,74 @@ function navigateToTag(tag: any) {
 </script>
 
 <template>
-    <div class="article-card group h-full">
-        <NuxtLink :to="`/entry/${article.id}`" class="block h-full flex flex-col">
-            <!-- 画像エリア -->
-            <div class="image-wrapper">
-                <MqOgImage 
-                    :content-id="article.id"
-                    :url="article.eyecatch?.url"
-                    :title="article.title" 
-                    fill
-                    class="article-image"
-                    :style="`view-transition-name: article-${article.id};`" 
+    <NuxtLink 
+        :to="`/entry/${article.id}`" 
+        class="group flex h-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white text-gray-900 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-md focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+    >
+        <!-- 画像エリア -->
+        <div class="relative aspect-video w-full bg-gray-100 overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-br from-gray-100 to-white opacity-0 transition-opacity duration-300 group-hover:opacity-10"></div>
+            
+            <MqOgImage 
+                :content-id="article.id"
+                :url="article.eyecatch?.url"
+                :title="article.title" 
+                fill
+                class="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                :style="`view-transition-name: article-${article.id};`" 
+            />
+
+            <!-- 日付バッジ -->
+            <div class="absolute bottom-3 left-3 rounded bg-white/90 px-2 py-0.5 font-mono text-xs text-gray-500 backdrop-blur border border-primary/50">
+                <time :datetime="article.publishedAt ?? article.createdAt">
+                    {{ new Date(article.publishedAt! ?? article.createdAt!).toLocaleString('ja-JP', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        timeZone: 'Asia/Tokyo',
+                    }).replace(/\//g, '.') }}
+                </time>
+            </div>
+        </div>
+
+        <!-- コンテンツエリア -->
+        <div class="flex flex-1 flex-col p-4 md:p-5">
+            <!-- タイトル -->
+            <h3 
+                class="mb-3 text-lg transition-colors group-hover:text-primary leading-[1.5] line-clamp-1"
+                :style="`view-transition-name: article-title-${article.id};`"
+            >
+                {{ article.title }}
+            </h3>
+
+            <!-- サマリー -->
+            <p class="mb-4 flex-1 text-sm leading-relaxed text-gray-500 line-clamp-3">
+                {{ summary }}
+            </p>
+
+            <!-- タグ -->
+            <div v-if="article.tags && article.tags.length > 0" class="mb-3 flex flex-wrap gap-2">
+                <MqTag 
+                    v-for="tag in article.tags.slice(0, 3)" 
+                    :key="tag.id"
+                    :tag="tag" 
+                    @click.stop.prevent="navigateToTag(tag)"
+                    :transition 
+                    class="text-[10px] px-2 py-0.5"
                 />
             </div>
 
-            <!-- コンテンツエリア -->
-            <div class="card-content">
-                <!-- 日付バッジ -->
-                <div class="date-badge">
-                    <Icon name="mdi:calendar-outline" class="w-3.5 h-3.5" />
-                    <span>
-                        {{ new Date(article.publishedAt! ?? article.createdAt!).toLocaleString('ja-JP', {
-                            year: 'numeric',
-                            month: '2-digit',
-                            day: '2-digit',
-                            timeZone: 'Asia/Tokyo',
-                        }) }}
-                    </span>
-                </div>
-
-                <!-- タイトル -->
-                <h3 
-                    class="article-title"
-                    :style="`view-transition-name: article-title-${article.id};`"
-                >
-                    {{ article.title }}
-                </h3>
-
-                <!-- サマリー -->
-                <p class="article-summary">
-                    {{ summary }}
-                </p>
-
-                <!-- タグ -->
-                <div v-if="article.tags && article.tags.length > 0" class="tags-wrapper">
-                    <MqTag 
-                        v-for="tag in article.tags.slice(0, 3)" 
-                        :key="tag.id"
-                        :tag="tag" 
-                        @click.stop.prevent="navigateToTag(tag)"
-                        :transition 
-                        class="text-xs px-2.5 py-1 flex-shrink-0 tag-fixed card-tag"
-                    />
-                </div>
-
-                <!-- 続きを読むリンク -->
-                <div class="read-more">
-                    <span class="read-more-text">
-                        続きを読む
-                        <Icon 
-                            name="mdi:arrow-right-circle"
-                            class="read-more-icon" 
-                        />
-                    </span>
+            <!-- 続きを読む -->
+            <div class="mt-auto flex items-center justify-between border-t border-gray-100 pt-4">
+                <span class="text-xs text-gray-400 transition-colors group-hover:text-primary">記事を読む</span>
+                <div class="flex h-7 w-7 items-center justify-center rounded-full bg-gray-50 text-gray-600 transition-colors group-hover:bg-primary group-hover:text-white">
+                    <Icon name="lucide:chevron-right" class="h-3.5 w-3.5" />
                 </div>
             </div>
-        </NuxtLink>
-    </div>
+        </div>
+    </NuxtLink>
 </template>
 
 <style scoped>
-/* カード全体 */
-.article-card {
-    background: white;
-    border-radius: 20px;
-    overflow: hidden;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-}
-
-.article-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-}
-
-/* 画像エリア */
-.image-wrapper {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 2/1;
-    overflow: hidden;
-    background: linear-gradient(135deg, #ffeef0 0%, #fff5f7 100%);
-}
-
-.article-image {
-    object-fit: cover;
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.group:hover .article-image {
-    transform: scale(1.05);
-}
-
-/* コンテンツエリア */
-.card-content {
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-}
-
-/* 日付バッジ */
-.date-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    padding: 0.375rem 0.75rem;
-    background: #fff0f3;
-    color: theme('colors.primary');
-    border-radius: 100px;
-    font-size: 0.75rem;
-    font-weight: 500;
-    width: fit-content;
-    margin-bottom: 1rem;
-}
-
-/* タイトル */
-.article-title {
-    font-size: 1.125rem;
-    font-weight: 700;
-    color: #1a1a1a;
-    margin-bottom: 0.75rem;
-    line-height: 1.5;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    transition: color 0.2s ease;
-}
-
-.group:hover .article-title {
-    color: theme('colors.primary');
-}
-
-/* サマリー */
-.article-summary {
-    color: #666;
-    font-size: 0.875rem;
-    line-height: 1.6;
-    margin-bottom: 1rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-/* タグエリア */
-.tags-wrapper {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-    flex-wrap: wrap;
-}
-
-.card-tag {
-    border-radius: 100px;
-    font-weight: 500;
-    transition: all 0.2s ease;
-}
-
-.card-tag :deep(.tag-icon) {
-    color: theme('colors.primary') !important;
-}
-
-.card-tag:hover :deep(.tag-icon) {
-    color: white !important;
-}
-
-/* 続きを読むリンク */
-.read-more {
-    margin-top: auto;
-    padding-top: 0.5rem;
-}
-
-.read-more-text {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    color: theme('colors.primary');
-    font-size: 0.875rem;
-    font-weight: 600;
-    transition: gap 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.group:hover .read-more-text {
-    gap: 0.625rem;
-}
-
-.read-more-icon {
-    width: 1.25rem;
-    height: 1.25rem;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.group:hover .read-more-icon {
-    transform: translateX(2px);
-}
+/* Tailwind Utility Classes are used instead of Scoped CSS */
 </style>

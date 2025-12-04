@@ -1,4 +1,5 @@
-import { createClient } from "microcms-js-sdk";
+import { createClient, type MicroCMSListResponse } from "microcms-js-sdk";
+import type { MicroCMSObject } from '#shared/types/microccms';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -140,7 +141,7 @@ export default defineNuxtConfig({
     },
   },
   hooks: {
-    async "nitro:config"(nitroConfig) {
+    async "nitro:config"(nitroConfig: any) {
       if (nitroConfig.dev) return;
       if (nitroConfig.prerender?.routes === undefined) return;
 
@@ -149,7 +150,8 @@ export default defineNuxtConfig({
         apiKey: process.env.MICROCMS_API_KEY!,
       });
 
-      const [articles, tags] = await Promise.all([
+      // TODO: 後々全件取得する方法を考える
+      const [articles, tags]: [MicroCMSListResponse<Article>, MicroCMSListResponse<Tag>] = await Promise.all([
         client.get({
           endpoint: "articles",
           queries: {
@@ -167,11 +169,45 @@ export default defineNuxtConfig({
       ]);
 
       // タグ
-      const tagRoutes = tags.contents.map((mount: any) => `/tag/${mount.slug}`);
-      const tagOgRoutes = tags.contents.map((mount: any) => `/api/og/tag/${mount.id}`);
+      const tagRoutes: string[] = tags.contents.map((mount) => `/tag/${mount.slug}`);
+      const tagOgRoutes: string[] = tags.contents.map((mount) => `/api/og/tag/${mount.id}`);
       // 記事
-      const articleRoutes = articles.contents.map((mount: any) => `/entry/${mount.id}`);
-      const articleOgRoutes = articles.contents.map((mount: any) => `/api/og/article/${mount.id}`);
+      const articleRoutes: string[] = articles.contents.map((mount) => `/entry/${mount.id}`);
+      const articleOgRoutes: string[] = articles.contents.map((mount) => `/api/og/article/${mount.id}`);
+
+      const limit = 12;
+
+      // 記事一覧のページネーション
+      const totalArticlePages = Math.ceil(articles.totalCount / limit);
+      const articlePaginationRoutes: string[] = [
+        `/articles`,
+      ];
+      for (let i = 1; i <= totalArticlePages; i++) {
+        articlePaginationRoutes.push(`/articles?page=${i}`);
+      }
+
+      // タグごとのページネーション
+      const tagPaginationRoutes: string[] = [];
+      const tagCounts: Record<string, number> = {};
+      
+      // 各タグの記事数をカウント
+      articles.contents.forEach((article) => {
+        if (article.tags) {
+          article.tags.forEach((tag: MicroCMSObject<Tag>) => {
+            tagCounts[tag.id] = (tagCounts[tag.id] || 0) + 1;
+          });
+        }
+      });
+
+      // タグごとにページ数を計算してルート生成
+      tags.contents.forEach((tag) => {
+        const count = tagCounts[tag.id] || 0;
+        const totalPages = Math.ceil(count / limit);
+        for (let i = 1; i <= totalPages; i++) {
+          tagPaginationRoutes.push(`/tag/${tag.slug}?page=${i}`);
+        }
+        tagPaginationRoutes.push(`/tag/${tag.slug}`);
+      });
 
       nitroConfig.prerender.routes = [
         ...nitroConfig.prerender.routes,
@@ -179,6 +215,8 @@ export default defineNuxtConfig({
         ...tagOgRoutes,
         ...articleRoutes,
         ...articleOgRoutes,
+        ...articlePaginationRoutes,
+        ...tagPaginationRoutes,
       ];
     },
   },

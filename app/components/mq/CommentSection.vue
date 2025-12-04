@@ -80,7 +80,6 @@ const formatDate = (dateString: string | Date): string => {
 
 // ページ変更
 const changePage = (page: number) => {
-  if (page < 1 || (pagination.value && page > pagination.value.totalPages)) return;
   fetchComments(page);
   // スクロール位置をコメントセクションに移動
   const element = document.getElementById('comments-section');
@@ -205,54 +204,13 @@ onMounted(() => {
       </div>
 
       <!-- ページネーション -->
-      <div
+      <MqPagination
         v-if="pagination && pagination.totalPages > 1"
-        class="flex items-center justify-center gap-2 mt-4"
-      >
-        <button
-          @click="changePage(currentPage - 1)"
-          :disabled="!pagination.hasPrev"
-          :class="[
-            'p-2 rounded-lg transition-all duration-200',
-            pagination.hasPrev
-              ? 'text-gray-700 bg-white/70 hover:bg-gray-100 border border-gray-200'
-              : 'text-gray-400 bg-gray-100 cursor-not-allowed'
-          ]"
-          aria-label="前のページ"
-        >
-          <Icon name="mdi:chevron-left" class="w-5 h-5" />
-        </button>
-
-        <div class="flex items-center gap-1">
-          <button
-            v-for="page in pagination.totalPages"
-            :key="page"
-            @click="changePage(page)"
-            :class="[
-              'min-w-[2.5rem] px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200',
-              page === currentPage
-                ? 'bg-primary text-white shadow-md'
-                : 'text-gray-700 bg-white/70 hover:bg-gray-100 border border-gray-200'
-            ]"
-          >
-            {{ page }}
-          </button>
-        </div>
-
-        <button
-          @click="changePage(currentPage + 1)"
-          :disabled="!pagination.hasNext"
-          :class="[
-            'p-2 rounded-lg transition-all duration-200',
-            pagination.hasNext
-              ? 'text-gray-700 bg-white/70 hover:bg-gray-100 border border-gray-200'
-              : 'text-gray-400 bg-gray-100 cursor-not-allowed'
-          ]"
-          aria-label="次のページ"
-        >
-          <Icon name="mdi:chevron-right" class="w-5 h-5" />
-        </button>
-      </div>
+        :total-count="pagination.totalCount"
+        :current-page="currentPage"
+        :limit="pagination.limit"
+        @change="changePage"
+      />
     </div>
 
     <!-- コメント投稿フォーム -->

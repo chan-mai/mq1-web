@@ -18,10 +18,10 @@
     "@nuxtjs/sitemap": "7.4.7",
     "@nuxtjs/tailwindcss": "6.14.0",
     "@nuxtjs/turnstile": "1.1.1",
-    "@prisma/adapter-pg": "^7.0.1",
-    "@prisma/client": "^7.0.1",
-    "@vercel/analytics": "^1.5.0",
-    "@vercel/speed-insights": "^1.2.0",
+    "@prisma/adapter-pg": "^7.1.0",
+    "@prisma/client": "^7.1.0",
+    "@vercel/analytics": "^1.6.1",
+    "@vercel/speed-insights": "^1.3.1",
     "@vueuse/core": "^14.1.0",
     "@vueuse/nuxt": "14.1.0",
     "cheerio": "^1.1.2",
@@ -35,13 +35,14 @@
     "nuxt-gtag": "4.1.0",
     "nuxt-jsonld": "^2.2.1",
     "pg": "^8.16.3",
-    "prisma": "^7.0.1",
+    "prisma": "^7.1.0",
     "vue": "^3.5.25",
     "vue-boring-avatars": "^1.4.0",
     "vue-router": "^4.6.3"
   },
   "resolutions": {
-    "ipx": "^3.0.0"
+    "ipx": "^3.0.0",
+    "next": "^14.2.32"
   },
   "packageManager": "pnpm@10.9.0+sha512.0486e394640d3c1fb3c9d43d49cf92879ff74f8516959c235308f5a8f62e2e19528a65cdc2a3058f587cde71eba3d5b56327c8c33a97e4c4051ca48a10ca2d5f",
   "prisma": {
@@ -49,10 +50,10 @@
   },
   "devDependencies": {
     "@iconify-json/line-md": "^1.2.11",
-    "@iconify-json/material-symbols": "^1.2.48",
-    "@iconify-json/simple-icons": "^1.2.60",
+    "@iconify-json/material-symbols": "^1.2.49",
+    "@iconify-json/simple-icons": "^1.2.61",
     "@types/pg": "^8.15.6",
     "@vite-pwa/nuxt": "^1.1.0",
-    "tsx": "^4.20.6"
+    "tsx": "^4.21.0"
   }
 }

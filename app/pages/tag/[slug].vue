@@ -9,10 +9,14 @@ definePageMeta({
 
 const client = useMicroCMSClient();
 const route = useRoute();
+const router = useRouter();
 const { slug } = route.params as { slug: string };
+const page = computed(() => Number(route.query.page) || 1);
+const limit = 12;
 
 
 const articles: Ref<MicroCMSObject<Article>[] | null> = ref(null);
+const totalCount: Ref<number> = ref(0);
 const tag: Ref<MicroCMSObject<Tag> | null> = ref(null);
 
 // slugからtagを取得
@@ -48,26 +52,39 @@ if (tag.value.slug && tag.value.slug !== slug) {
     });
 }
 
-// とりあえずタグをソースに直近100件の記事を取得
-// TODO: ページネーションとかつくる
-const { data: articlesResponse } = await useAsyncData<MicroCMSObject<Article[]>>(`tag-${slug}-articles`, async () => {
-    return await client.getList<MicroCMSObject<Article[]>>({
-        endpoint: 'articles',
-        queries: {
-            limit: 100,
-            filters: `tags[contains]${tag.value.id}`,
-        } satisfies MicroCMSQueries,
-    });
-}, {
-    server: true,
-});
+const { data: articlesResponse, status } = await useAsyncData(
+    () => `tag-${slug}-articles-${page.value}`,
+    async () => {
+        return await client.getList<Article>({
+            endpoint: 'articles',
+            queries: {
+                limit: limit,
+                offset: (page.value - 1) * limit,
+                filters: `tags[contains]${tag.value.id}`,
+            } satisfies MicroCMSQueries,
+        });
+    },
+    {
+        watch: [page],
+        server: true,
+    }
+);
 
-// 記事が存在しない場合は空配列を設定
-if (articlesResponse.value) {
-    articles.value = articlesResponse.value.contents;
-} else {
-    articles.value = [];
-}
+watch(articlesResponse, (newVal) => {
+    if (newVal) {
+        articles.value = newVal.contents as unknown as MicroCMSObject<Article>[];
+        totalCount.value = newVal.totalCount;
+    } else {
+        // 記事がなければ空配列を設定しておく
+        articles.value = [];
+        totalCount.value = 0;
+    }
+}, { immediate: true });
+
+const onPageChange = (newPage: number) => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    router.push({ query: { ...route.query, page: newPage } });
+};
 
 const config = useWebConfig();
 const pageTitle = `#${tag.value?.name} - ${config.value.siteName}`;
@@ -123,28 +140,43 @@ useJsonld({
         <!-- 直近記事 -->
         <section class="mx-auto flex w-full max-w-6xl flex-col gap-10 px-2 md:px-6">
             <div class="flex items-center justify-between">
-                <div>
+                <div class="w-full">
                     <MqPageBack class="mb-3" />
-                    <h2 class="font-accent text-3xl text-slate-800 md:text-4xl" :style="`view-transition-name: tag-${slug};`">
-                        <span class="bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-indigo-400">
-                            #{{ tag?.name }}
-                        </span>
-                        の記事一覧
-                    </h2>
+                    <div class="flex items-center justify-between">
+                        <h2 class="font-accent text-3xl text-slate-800 md:text-4xl" :style="`view-transition-name: tag-${slug};`">
+                                <span class="bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-indigo-400">
+                                    #{{ tag?.name }}
+                                </span>
+                                の記事一覧
+                            </h2>
+
+                        <span class="text-slate-500 text-sm">全{{ totalCount }}記事</span>
+                    </div>
                 </div>
             </div>
             <div class="flex flex-col gap-8">
-                <div v-if="articles" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <ArticlesCard 
-                        v-for="article in articles" 
-                        :key="article.id" 
-                        :article="article" 
+                <MqLoading v-if="status === 'pending'" />
+                <template v-else>
+                    <div v-if="articles?.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <ArticlesCard 
+                            v-for="article in articles" 
+                            :key="article.id" 
+                            :article="article" 
+                        />
+                    </div>
+                    <div v-else class="flex flex-col items-center justify-center gap-4 py-16">
+                        <p class="text-lg font-bold text-accent">記事が見つかりませんでした。</p>
+                        <p class="text-sm text-slate-500">他のタグを試してみてください。</p>
+                    </div>
+
+                    <MqPagination
+                        v-if="totalCount > limit"
+                        :total-count="totalCount"
+                        :current-page="page"
+                        :limit="limit"
+                        @change="onPageChange"
                     />
-                </div>
-                <div v-else class="flex flex-col items-center justify-center gap-4 py-16">
-                    <p class="text-lg font-bold text-accent">記事が見つかりませんでした。</p>
-                    <p class="text-sm text-slate-500">他のタグを試してみてください。</p>
-                </div>
+                </template>
             </div>
         </section>
     </main>

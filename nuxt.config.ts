@@ -168,56 +168,44 @@ export default defineNuxtConfig({
         }),
       ]);
 
-      // タグ
-      const tagRoutes: string[] = tags.contents.map((mount) => `/tag/${mount.slug}`);
-      const tagOgRoutes: string[] = tags.contents.map((mount) => `/api/og/tag/${mount.id}`);
-      // 記事
-      const articleRoutes: string[] = articles.contents.map((mount) => `/entry/${mount.id}`);
-      const articleOgRoutes: string[] = articles.contents.map((mount) => `/api/og/article/${mount.id}`);
+      const routes: string[] = [];
+
+      // 記事関連のルート生成, タグ集計
+      const tagCounts: Record<string, number> = {};
+      
+      for (const article of articles.contents) {
+        routes.push(`/entry/${article.id}`);
+        routes.push(`/api/og/article/${article.id}`);
+        
+        if (article.tags) {
+          for (const tag of article.tags) {
+            tagCounts[tag.id] = (tagCounts[tag.id] || 0) + 1;
+          }
+        }
+      }
 
       const limit = 12;
 
-      // 記事一覧のページネーション
+      // 記事一覧
       const totalArticlePages = Math.ceil(articles.totalCount / limit);
-      const articlePaginationRoutes: string[] = [
-        `/articles`,
-      ];
+      routes.push('/articles');
       for (let i = 1; i <= totalArticlePages; i++) {
-        articlePaginationRoutes.push(`/articles?page=${i}`);
+        routes.push(`/articles?page=${i}`);
       }
 
-      // タグごとのページネーション
-      const tagPaginationRoutes: string[] = [];
-      const tagCounts: Record<string, number> = {};
-      
-      // 各タグの記事数をカウント
-      articles.contents.forEach((article) => {
-        if (article.tags) {
-          article.tags.forEach((tag: MicroCMSObject<Tag>) => {
-            tagCounts[tag.id] = (tagCounts[tag.id] || 0) + 1;
-          });
-        }
-      });
+      // タグ関連
+      for (const tag of tags.contents) {
+        routes.push(`/tag/${tag.slug}`);
+        routes.push(`/api/og/tag/${tag.id}`);
 
-      // タグごとにページ数を計算してルート生成
-      tags.contents.forEach((tag) => {
         const count = tagCounts[tag.id] || 0;
         const totalPages = Math.ceil(count / limit);
         for (let i = 1; i <= totalPages; i++) {
-          tagPaginationRoutes.push(`/tag/${tag.slug}?page=${i}`);
+          routes.push(`/tag/${tag.slug}?page=${i}`);
         }
-        tagPaginationRoutes.push(`/tag/${tag.slug}`);
-      });
+      }
 
-      nitroConfig.prerender.routes = [
-        ...nitroConfig.prerender.routes,
-        ...tagRoutes,
-        ...tagOgRoutes,
-        ...articleRoutes,
-        ...articleOgRoutes,
-        ...articlePaginationRoutes,
-        ...tagPaginationRoutes,
-      ];
+      nitroConfig.prerender.routes.push(...routes);
     },
   },
 

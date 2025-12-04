@@ -135,7 +135,7 @@ useJsonld({
 <template>
     <main
         class="max-w-none h-full text-[0.925rem] leading-loose tracking-wide text-inherit [&>div>*:first-child]:mt-0 max-w-7xl gap-16 md:gap-20 space-y-16">
-        <MqHero :tag-id="slug" :title="tag?.name" text-hidden />
+        <MqHero :tag-id="tag?.id" :title="tag?.name" text-hidden />
 
         <!-- 直近記事 -->
         <section class="mx-auto flex w-full max-w-6xl flex-col gap-10 px-2 md:px-6">

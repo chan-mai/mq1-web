@@ -483,7 +483,7 @@ onMounted(() => {
               <div class="flex flex-wrap gap-4 text-xs text-gray-500 mb-4">
                 <div class="flex items-center gap-1">
                   <Icon name="mdi:clock-outline" class="w-4 h-4" />
-                  <span>作成: {{ formatDate(favorite.createdAt.toISOString()) }}</span>
+                  <span>作成: {{ formatDate(new Date(favorite.createdAt).toISOString()) }}</span>
                 </div>
               </div>
 

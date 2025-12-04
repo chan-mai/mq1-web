@@ -9,7 +9,23 @@ const props = defineProps({
     transition: {
         type: Boolean,
         default: false
+    },
+    variant: {
+        type: String,
+        default: 'default',
+        validator: (value: string) => ['default', 'compact'].includes(value)
     }
+});
+
+const formattedDate = computed(() => {
+    const dateStr = props.article.publishedAt ?? props.article.createdAt;
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    const jstDate = new Date(date.getTime() + 9 * 60 * 60 * 1000);
+    const year = jstDate.getUTCFullYear();
+    const month = String(jstDate.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(jstDate.getUTCDate()).padStart(2, '0');
+    return `${year}.${month}.${day}`;
 });
 
 // サマリーを生成
@@ -29,7 +45,9 @@ function navigateToTag(tag: any) {
 </script>
 
 <template>
+    <!-- Default Layout -->
     <NuxtLink 
+        v-if="variant === 'default'"
         :to="`/entry/${article.id}`" 
         class="group flex h-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white text-gray-900 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-md focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
     >
@@ -49,12 +67,7 @@ function navigateToTag(tag: any) {
             <!-- 日付バッジ -->
             <div class="absolute bottom-3 left-3 rounded bg-white/90 px-2 py-0.5 font-mono text-xs text-gray-500 backdrop-blur border border-primary/50">
                 <time :datetime="article.publishedAt ?? article.createdAt">
-                    {{ new Date(article.publishedAt! ?? article.createdAt!).toLocaleString('ja-JP', {
-                        year: 'numeric',
-                        month: '2-digit',
-                        day: '2-digit',
-                        timeZone: 'Asia/Tokyo',
-                    }).replace(/\//g, '.') }}
+                    {{ formattedDate }}
                 </time>
             </div>
         </div>
@@ -81,7 +94,7 @@ function navigateToTag(tag: any) {
                     :key="tag.id"
                     :tag="tag" 
                     @click.stop.prevent="navigateToTag(tag)"
-                    :transition 
+                    :transition
                     class="text-[10px] px-2 py-0.5"
                 />
             </div>
@@ -91,6 +104,47 @@ function navigateToTag(tag: any) {
                 <span class="text-xs text-gray-400 transition-colors group-hover:text-primary">記事を読む</span>
                 <div class="flex h-7 w-7 items-center justify-center rounded-full bg-gray-50 text-gray-600 transition-colors group-hover:bg-primary group-hover:text-white">
                     <Icon name="lucide:chevron-right" class="h-3.5 w-3.5" />
+                </div>
+            </div>
+        </div>
+    </NuxtLink>
+
+    <!-- Compact Layout -->
+    <NuxtLink 
+        v-else-if="variant === 'compact'"
+        :to="`/entry/${article.id}`" 
+        class="group flex items-start gap-3 rounded-lg border border-gray-100 bg-white/80 p-3 transition-all duration-300 hover:bg-white hover:border-primary/30 hover:shadow-sm"
+    >
+        <!-- Thumbnail -->
+        <div class="relative w-28 aspect-video shrink-0 overflow-hidden rounded-md bg-gray-100">
+            <MqOgImage 
+                :content-id="article.id"
+                :url="article.eyecatch?.url"
+                :title="article.title" 
+                fill
+                class="absolute inset-0 h-full w-full object-fit transition-transform duration-500 group-hover:scale-105"
+            />
+        </div>
+
+        <!-- Content -->
+        <div class="flex min-w-0 flex-1 flex-col justify-between self-stretch py-0.5">
+            <h3 class="line-clamp-1 text-sm leading-snug transition-colors group-hover:text-primary">
+                {{ article.title }}
+            </h3>
+            <p class="line-clamp-2 text-xs leading-snug text-gray-500 transition-colors group-hover:text-primary">
+                {{ summary }}
+            </p>
+            <div class="mt-auto pt-1 flex items-center gap-2">
+                <div v-if="article.tags && article.tags.length > 0" class="flex flex-nowrap overflow-hidden min-w-0">
+                    <MqTag 
+                        v-for="tag in article.tags" 
+                        :key="tag.id"
+                        :tag="tag" 
+                        @click.stop.prevent="navigateToTag(tag)"
+                        variant="compact"
+                        :transition
+                        class="shrink-0"
+                    />
                 </div>
             </div>
         </div>

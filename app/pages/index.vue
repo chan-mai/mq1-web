@@ -5,8 +5,22 @@ import type { MicroCMSObject } from '#shared/types/microccms';
 
 const tags: Ref<MicroCMSObject<Tag>[] | null> = ref(null);
 const articles: Ref<MicroCMSObject<Article>[] | null> = ref(null);
+const pinnedArticles: Ref<MicroCMSObject<Article>[] | null> = ref(null);
 
 const client = useMicroCMSClient();
+
+// globalから固定記事を取得
+const { data: globalResponse } = await useAsyncData<MicroCMSObject<Global>>('global', async () => {
+    return await client.getObject<MicroCMSObject<Global>>({
+        endpoint: 'global',
+        queries: {
+            // tags要素にslug, nameを含めるため
+            depth: 2,
+        } satisfies MicroCMSQueries,
+    });
+}, {
+    server: true,
+});
 
 // 50件のタグを取得
 const { data: tagsResponse } = await useAsyncData<MicroCMSObject<Tag[]>>('index-tags', async () => {
@@ -124,7 +138,6 @@ useJsonld([
                 <p class="mt-2.5 text-sm leading-relaxed first:mt-0">猫とパステルとかわいいものがすき。</p>
             </div>
         </section>
-
         <!-- 直近記事 -->
         <section class="mx-auto flex w-full max-w-6xl flex-col gap-10 px-2 md:px-6">
             <div class="flex items-center justify-between">
@@ -140,7 +153,31 @@ useJsonld([
                     日常から非日常まで、書きたいことを自由に書いていく雑記帳です。</p>
 
                 <Tags :tags="tags || []" />
-                <Articles v-if="articles" limit="5" :articles :loading="false" transition />
+
+                <!-- 固定記事エリア -->
+                <div v-if="globalResponse?.pinned_articles" class="max-w-6xl mx-auto px-4 w-full">
+                    <div class="mb-2 flex items-center gap-2 text-primary/80">
+                        <Icon name="lucide:pin" class="h-4 w-4" />
+                        <span class="font-semibold text-xs tracking-wider uppercase">Pinned</span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        <ArticlesCard 
+                            v-for="article in globalResponse.pinned_articles" 
+                            :key="article.id" 
+                            :article="article" 
+                            variant="compact"
+                        />
+                    </div>
+                </div>
+
+                <!-- 通常記事エリア -->
+                <div v-if="articles" class="max-w-6xl mx-auto px-4 w-full">
+                    <div class="mb-2 flex items-center gap-2 text-primary/80">
+                        <Icon name="lucide:book" class="h-4 w-4" />
+                        <span class="font-semibold text-xs tracking-wider uppercase">Archives</span>
+                    </div>
+                    <Articles v-if="articles" limit="5" :articles :loading="false" transition />
+                </div>
                 <div v-else class="flex flex-col items-center justify-center gap-4">
                     <p class="text-lg font-bold text-accent">記事が見つかりませんでした。</p>
                     <p class="text-sm text-slate-500">初めての投稿をお待ちください。</p>

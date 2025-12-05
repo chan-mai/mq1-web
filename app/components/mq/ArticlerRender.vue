@@ -436,11 +436,17 @@ onMounted(() => {
 }
 
 .micro-cms td {
-    @apply p-2 border border-gray-300;
+    @apply p-2 border border-gray-300 space-y-0;
 }
 
 .micro-cms pre code {
     @apply rounded-lg;
+}
+
+.micro-cms pre code span {
+    font-family: "fira-code", monospace;
+    font-weight: 400;
+    font-style: normal;
 }
 
 /* コードブロックのファイル名表示 */
@@ -453,6 +459,9 @@ onMounted(() => {
 
 .code-header .filename {
     @apply text-gray-600 font-medium;
+    font-family: "fira-code", monospace;
+    font-weight: 400;
+    font-style: normal;
 }
 
 .code-header::before {
@@ -491,8 +500,10 @@ onMounted(() => {
 }
 
 .micro-cms p code {
-    @apply rounded-md px-2 py-1 bg-gray-200 text-gray-800 font-mono text-sm;
-    border: 1px solid #d1d5db;
+    @apply rounded-lg px-1 py-0.5 bg-gray-100 text-gray-800 text-sm border border-gray-300;
+    font-family: "fira-code", monospace;
+    font-weight: 400;
+    font-style: normal;
 }
 
 /* スクロール可能な要素のラッパー */

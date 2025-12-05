@@ -36,6 +36,9 @@ whenever(
       isVisibleRssFeedCopyTooltip.value = false
     }, 3000),
 );
+
+// Search Popup Ref
+const searchPopup = ref<{ open: () => void } | null>(null);
 </script>
 
 <template>
@@ -80,12 +83,17 @@ whenever(
         </ul>
       </nav>
       <div class="flex items-center gap-1 px-2.5 py-6 md:px-0 md:py-0">
-        <NuxtLink :title="config.socials.misskey.name" :to="config.socials.misskey.url" aria-label="Misskeyのプロフィールを開く"
-          class="relative flex size-8 items-center justify-center rounded before:absolute before:-z-10 before:size-full before:rounded before:bg-slate-200/50 before:opacity-0 before:transition-opacity hover:before:opacity-100"
-          target="_blank">
-          <Icon :name="config.socials.misskey.icon" class="size-5" />
-        </NuxtLink>
+        <button
+          type="button"
+          aria-label="検索を開く"
+          class="relative flex size-8 items-center justify-center border-none rounded transition-colors hover:bg-slate-100 dark:hover:bg-slate-800"
+          @click="searchPopup?.open()"
+        >
+          <Icon name="material-symbols:search" class="size-5" />
+        </button>
+
         <MqPopupRssGuide type="header" />
+        <MqSearchPopup ref="searchPopup" />
       </div>
     </div>
   </header>

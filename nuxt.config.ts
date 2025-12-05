@@ -8,7 +8,7 @@ export default defineNuxtConfig({
   devtools: {
     enabled: true,
   },
-  css: ["~/assets/css/fonts.css", "~/assets/css/view-transitions.css"],
+  css: ["kiso.css", "~/assets/css/fonts.css", "~/assets/css/view-transitions.css"],
   app: {
     head: {
       charset: 'utf-16',

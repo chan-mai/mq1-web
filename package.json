@@ -29,6 +29,7 @@
     "dotenv": "^17.2.3",
     "feed": "^5.1.0",
     "highlight.js": "^11.11.1",
+    "kiso.css": "^1.2.2",
     "microcms-js-sdk": "^3.2.0",
     "nuxt": "^4.2.1",
     "nuxt-auth-utils": "^0.5.25",

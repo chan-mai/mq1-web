@@ -69,6 +69,9 @@ importers:
       highlight.js:
         specifier: ^11.11.1
         version: 11.11.1
+      kiso.css:
+        specifier: ^1.2.2
+        version: 1.2.2
       microcms-js-sdk:
         specifier: ^3.2.0
         version: 3.2.0
@@ -3691,6 +3694,9 @@ packages:
     resolution: {integrity: sha512-iYSchDJ+liQ8iwbSI2QqsQOvqv58eJCEanyJPJi+Khyu8smkcKSFUCbPwzFcL7YVtZ6eONjqRX/38caJ7QjRAQ==}
     engines: {node: '>= 0.6'}
     deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+
+  kiso.css@1.2.2:
+    resolution: {integrity: sha512-lv5pmbiqfov6DRUnHmtqEit5DzAtFAtKL+Pw0X2cBHtq/fBmXkVe+DAFnTdvawuA8f3vly7yaLLha0nAMlSz5A==}
 
   kleur@3.0.3:
     resolution: {integrity: sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==}
@@ -9685,6 +9691,8 @@ snapshots:
   keygrip@1.1.0:
     dependencies:
       tsscmp: 1.0.6
+
+  kiso.css@1.2.2: {}
 
   kleur@3.0.3: {}
 

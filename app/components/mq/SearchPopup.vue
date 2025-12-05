@@ -419,7 +419,7 @@ onUnmounted(() => {
                          </div>
                          <div class="flex items-center gap-2">
                             <span class="text-xs text-gray-400">Search by</span>
-                            <NuxtImg src="microCMS_logo_black.png" class="h-4 w-auto" />
+                            <NuxtImg src="microCMS_logo_black.png" format="webp" class="h-4 w-auto" loading="eager" decoding="async" />
                          </div>
                     </div>
                 </div>

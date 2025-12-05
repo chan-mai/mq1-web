@@ -239,7 +239,7 @@ onMounted(() => {
             required
             :disabled="isLoadingForm"
             :class="[
-              'px-4 py-2.5 rounded-xl border transition-all duration-200',
+              'px-4 py-2.5 rounded-xl border border-gray-200 transition-all duration-200',
               'focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary',
               isLoadingForm ? 'bg-gray-100 cursor-not-allowed' : 'bg-white/70 backdrop-blur-sm'
             ]"
@@ -262,7 +262,7 @@ onMounted(() => {
             required
             :disabled="isLoadingForm"
             :class="[
-              'px-4 py-2.5 rounded-xl border transition-all duration-200 resize-none',
+              'px-4 py-2.5 rounded-xl border border-gray-200 transition-all duration-200 resize-none',
               'focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary',
               isLoadingForm ? 'bg-gray-100 cursor-not-allowed' : 'bg-white/70 backdrop-blur-sm'
             ]"
@@ -280,7 +280,7 @@ onMounted(() => {
             type="submit"
             :disabled="!isFormValid || isLoadingForm"
             :class="[
-              'group relative flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-xl min-w-[120px]',
+              'group relative flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium border-none transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-xl min-w-[120px]',
               isFormValid && !isLoadingForm
                 ? 'text-white bg-primary hover:opacity-90 hover:scale-105 focus:ring-primary/20'
                 : 'text-gray-400 bg-gray-200 cursor-not-allowed',
@@ -306,7 +306,7 @@ onMounted(() => {
           <button
             type="button"
             @click="isPolicyExpanded = !isPolicyExpanded"
-            class="w-full flex items-center justify-between px-4 py-3 hover:bg-primary/10 transition-colors duration-200"
+            class="w-full flex items-center justify-between px-4 py-3 border-none hover:bg-primary/10 transition-colors duration-200"
           >
             <div class="flex items-center gap-2">
               <Icon name="mdi:information-outline" class="w-5 h-5 text-primary flex-shrink-0" />

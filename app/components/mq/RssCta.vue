@@ -68,7 +68,7 @@ const handleClose = () => {
       <button
         v-if="type === 'floating'"
         @click="handleClose"
-        class="absolute right-2 top-2 z-50 rounded-full bg-white bg-opacity-70 p-1 text-gray-400 hover:text-gray-600 transition-colors"
+        class="absolute right-2 top-2 z-50 rounded-full bg-white bg-opacity-70 p-1 border-none text-gray-400 hover:text-gray-600 transition-colors"
         aria-label="閉じる"
       >
         <Icon name="tabler:x" class="h-3.5 w-3.5" />

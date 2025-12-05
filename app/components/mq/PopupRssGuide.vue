@@ -46,13 +46,13 @@ whenever(
         </button>
 
         <button v-if="type === 'header'" title="RSSで購読する" aria-label="RSSで購読する"
-            class="relative flex size-8 items-center justify-center rounded before:absolute before:-z-10 before:size-full before:rounded before:bg-slate-200/50 before:opacity-0 before:transition-opacity hover:before:opacity-100"
+            class="relative flex size-8 border-none items-center justify-center rounded before:absolute before:-z-10 before:size-full before:rounded before:bg-slate-200/50 before:opacity-0 before:transition-opacity hover:before:opacity-100"
             @click="isOpen = true">
             <Icon :name="config.rss.icon" class="size-5" />
         </button>
 
         <button v-if="type === 'footer'" title="RSSで購読する" aria-label="RSSで購読する"
-            class="relative flex size-8 items-center justify-center rounded before:absolute before:size-full before:rounded before:bg-current before:opacity-0 before:transition-opacity hover:before:opacity-20 hover:text-primary"
+            class="relative flex size-8 border-none items-center justify-center rounded before:absolute before:size-full before:rounded before:bg-current before:opacity-0 before:transition-opacity hover:before:opacity-20 hover:text-primary"
             @click="isOpen = true">
             <Icon :name="rss.icon" class="size-5" />
         </button>

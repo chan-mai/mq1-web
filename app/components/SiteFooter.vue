@@ -40,7 +40,7 @@ const menu = config.value.footer.menu;
           <MqPopupRssGuide type="footer" />
         </div>
       </div>
-      <div class="text-xs">&copy; 2025-{{ year }} {{ name }}</div>
+      <div class="text-xs">Copyright © 2025-{{ year }} {{ config.author.name }} All Rights Reserved.</div>
     </div>
   </footer>
 </template>

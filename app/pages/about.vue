@@ -65,137 +65,135 @@ useJsonld([
 ]);
 </script>
 <template>
-    <div class="min-h-screen rounded-xl overflow-hidden mt-5 md:mt-10">
-        <div class="bg-primary text-white relative w-full max-w-none overflow-hidden md:overflow-visible">
-            <AboutHeadBackground />
-            <!-- 右側のエッジ文字 -->
-            <div class="absolute bottom-0 z-20 w-full h-2/3">
-                <NuxtImg src="/about/mai-bg-text.png" format="webp" alt="Mai Sudachi" fetchpriority="high"
-                    class="w-full h-full object-contain object-right" loading="eager" />
-            </div>
-            <div class="w-full px-8 py-8 max-w-6xl mx-auto">
-                <!-- ふわふわ円形 -->
-                <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-                    <div
-                        class="absolute rounded-full opacity-10 bg-white w-[300px] h-[300px] -top-[100px] -left-[100px] circle-1">
-                    </div>
-                    <div
-                        class="absolute rounded-full opacity-10 bg-white w-[200px] h-[200px] -bottom-[50px] right-[30%] circle-2">
-                    </div>
-                    <div
-                        class="absolute rounded-full opacity-10 bg-white w-[150px] h-[150px] top-[20%] right-[10%] circle-3">
-                    </div>
+    <main class="max-w-none h-full text-[0.925rem] leading-loose tracking-wide text-inherit [&>div>*:first-child]:mt-0 max-w-7xl gap-16 md:gap-20 space-y-16">
+        <div class="min-h-screen rounded-xl overflow-hidden -mt-5 md:-mt-7">
+            <div class="bg-primary text-white relative w-full max-w-none overflow-hidden md:overflow-visible">
+                <AboutHeadBackground />
+                <!-- 右側のエッジ文字 -->
+                <div class="absolute bottom-0 z-20 w-full h-2/3">
+                    <NuxtImg src="/about/mai-bg-text.png" format="webp" alt="Mai Sudachi" fetchpriority="high"
+                        class="w-full h-full object-contain object-right" loading="eager" />
                 </div>
+                <div class="w-full px-8 py-8 max-w-6xl mx-auto">
+                    <!-- ふわふわ円形 -->
+                    <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+                        <div
+                            class="absolute rounded-full opacity-10 bg-white w-[300px] h-[300px] -top-[100px] -left-[100px] circle-1">
+                        </div>
+                        <div
+                            class="absolute rounded-full opacity-10 bg-white w-[200px] h-[200px] -bottom-[50px] right-[30%] circle-2">
+                        </div>
+                        <div
+                            class="absolute rounded-full opacity-10 bg-white w-[150px] h-[150px] top-[20%] right-[10%] circle-3">
+                        </div>
+                    </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <!-- ヘッダ 情報 -->
-                    <div class="z-30 relative">
-                        <div class="mb-6">
-                            <p class="text-sm md:text-base font-light mb-2">応用睡眠技術者</p>
-                            <div class="w-16 h-0.5 bg-white mb-4"></div>
-                            <h1 class="text-5xl md:text-6xl font-bold mb-2">月出里 まい</h1>
-                            <p class="text-sm tracking-widest mb-16">SUDACHI MAI</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- ヘッダ 情報 -->
+                        <div class="z-30 relative">
+                            <div class="mb-6">
+                                <p class="text-sm md:text-base font-light mb-2">応用睡眠技術者</p>
+                                <div class="w-16 h-0.5 bg-white mb-4"></div>
+                                <h1 class="text-5xl md:text-6xl font-bold mb-2">月出里 まい</h1>
+                                <p class="text-sm tracking-widest mb-16">SUDACHI MAI</p>
 
-                            <!-- Socials -->
-                            <div class="grid grid-cols-1 space-y-2 mb-8 relative z-30">
-                                <NuxtLink v-for="social in socials" :key="social.name" :to="social.url"
-                                    target="_blank"
-                                    class="w-1/3 bg-white text-accent rounded-md px-3 py-2 hover:bg-primary hover:text-white transition-all flex items-center">
-                                    <Icon :name="social.icon" class="mr-2 size-5" />
-                                    <span class="text-sm">{{ social.name }}</span>
-                                </NuxtLink>
-                            </div>
-
-                            <p class="text-sm mb-4">イラスト： <NuxtLink to="https://x.com/CSea2073" target="_blank"
-                                    class="p-2 font-semibold hover:bg-white hover:text-accent rounded-xl transition-all ">
-                                    しなもん</NuxtLink>
-                            </p>
-
-                            <!-- 顔 -->
-                            <div class="flex space-x-4 mb-12">
-                                <div class="bg-white rounded-full p-1 size-15">
-                                    <NuxtImg src="/about/mai-crop2.png" format="webp" alt="Icon 1"
-                                        class="rounded-full size-10" />
+                                <!-- Socials -->
+                                <div class="grid grid-cols-1 space-y-2 mb-8 relative z-30">
+                                    <NuxtLink v-for="social in socials" :key="social.name" :to="social.url"
+                                        target="_blank"
+                                        class="w-1/3 bg-white text-accent rounded-md px-3 py-2 hover:bg-primary hover:text-white transition-all flex items-center">
+                                        <Icon :name="social.icon" class="mr-2 size-5" />
+                                        <span class="text-sm">{{ social.name }}</span>
+                                    </NuxtLink>
                                 </div>
-                                <div class="bg-white rounded-full p-1 size-15 relative z-10">
-                                    <NuxtImg src="/about/mai-crop.png" format="webp" alt="Icon 1" class="rounded-full size-10" />
+
+                                <p class="text-sm mb-4">イラスト： <NuxtLink to="https://x.com/CSea2073" target="_blank"
+                                        class="p-2 font-semibold hover:bg-white hover:text-accent rounded-xl transition-all ">
+                                        しなもん</NuxtLink>
+                                </p>
+
+                                <!-- 顔 -->
+                                <div class="flex space-x-4 mb-12">
+                                    <div class="bg-white rounded-full p-1 size-15">
+                                        <NuxtImg src="/about/mai-crop2.png" format="webp" alt="Icon 1"
+                                            class="rounded-full size-10" />
+                                    </div>
+                                    <div class="bg-white rounded-full p-1 size-15 relative z-10">
+                                        <NuxtImg src="/about/mai-crop.png" format="webp" alt="Icon 1" class="rounded-full size-10" />
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="absolute w-full h-full left-0 pointer-events-none">
-                <!-- 背景画像 -->
-                <div class="absolute top-0 z-20 w-full h-full opacity-40 -translate-y-full">
-                    <NuxtImg src="/about/mai-bg.png" format="webp" alt="doted mai" fetchpriority="high"
-                        class="w-full h-full object-cover object-center" loading="eager" />
-                </div>
+                <div class="absolute w-full h-full left-0 pointer-events-none">
+                    <!-- 背景画像 -->
+                    <div class="absolute top-0 z-20 w-full h-full opacity-40 -translate-y-full">
+                        <NuxtImg src="/about/mai-bg.png" format="webp" alt="doted mai" fetchpriority="high"
+                            class="w-full h-full object-cover object-center" loading="eager" />
+                    </div>
 
-                <!-- 立ち絵後 グロー -->
-                <div class="absolute w-full top-0 z-20 -translate-y-[75%] md:-translate-y-2/3  
-         scale-80 md:scale-100 -right-0 md:right-[15%]">
-                    <div class="character-glow absolute w-full h-full top-0 right-0 z-40"></div>
-                    <NuxtImg src="/about/mai.png" format="webp" alt="Mai Sudachi" fetchpriority="high"
-                        class="object-contain max-h-[800px] relative z-[60] ml-auto" loading="eager" decoding="async" />
+                    <!-- 立ち絵後 グロー -->
+                    <div class="absolute w-full top-0 z-20 -translate-y-[75%] md:-translate-y-2/3  
+            scale-80 md:scale-100 -right-0 md:right-[15%]">
+                        <div class="character-glow absolute w-full h-full top-0 right-0 z-40"></div>
+                        <NuxtImg src="/about/mai.png" format="webp" alt="Mai Sudachi" fetchpriority="high"
+                            class="object-contain max-h-[800px] relative z-[60] ml-auto" loading="eager" decoding="async" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- 以下下部セクション -->
+            <div class="bg-white text-black relative pt-12 pb-32" ref="containerRef">
+                <div class="container mx-auto px-4">
+                    <!-- 詳細 -->
+                    <div class="mr-auto px-8 z-50 relative max-w-6xl mx-auto w-full">
+                        <div class="mb-12 mt-5">
+                            <h2
+                                class="mb-4 max-w-2xl text-2xl leading-none md:text-3xl xl:text-4xl text-primary">
+                                Hello, I'm
+                                <span
+                                    class="bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-indigo-400">chan-mai</span>
+                                <span class="waving-hand">👋🏻</span>
+                            </h2>
+                            <div class="space-y-4 text-sm md:text-base font-light mb-2 text-gray-800">
+                                <p class="text-shadow-lg text-shadow-white">
+                                    九州を根城に生息している、ひとのふりをした自称フルスタックエンジニア。
+                                    <br />
+                                    たまにクリエイティブなことにも手を出します。
+                                </p>
+                                <p class="text-shadow-lg text-shadow-white">
+                                    普段はMisskeyで鯖缶をしています。
+                                    <br />
+                                    あまいものとかわいいものがすきです。
+                                </p>
+                                <p class="text-shadow-lg text-shadow-white">
+                                    以後お見知りおきを。
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- box -->
+                        <div
+                            class="grid grid-cols-1 md:grid-cols-2 gap-6 relative bg-white/90 md:bg-transparent z-60 md:z-auto">
+                            <div>
+                                <div class="text-accent text-lg font-medium">誕生日</div>
+                                <div class="text-xl text-gray-800">2006/04/04</div>
+                            </div>
+                            <div>
+                                <div class="text-accent text-lg font-medium">趣味</div>
+                                <div class="text-xl text-gray-800">インターネット </div>
+                            </div>
+                            <div>
+                                <div class="text-accent text-lg font-medium">好きな言語</div>
+                                <div class="text-xl text-gray-800">Go / Dart</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <!-- 以下下部セクション -->
-        <div class="bg-white text-black relative pt-12 pb-32" ref="containerRef">
-            <div class="container mx-auto px-4">
-                <!-- 詳細 -->
-                <div class="mr-auto px-8 z-50 relative max-w-6xl mx-auto w-full">
-                    <div class="mb-12 mt-5">
-                        <h2
-                            class="mb-4 max-w-2xl text-2xl leading-none md:text-3xl xl:text-4xl text-primary">
-                            Hello, I'm
-                            <span
-                                class="bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-indigo-400">chan-mai</span>
-                            <span class="waving-hand">👋🏻</span>
-                        </h2>
-                        <div class="space-y-4 text-sm md:text-base font-light mb-2 text-gray-800">
-                            <p class="text-shadow-lg text-shadow-white">
-                                九州を根城に生息している、ひとのふりをした自称フルスタックエンジニア。
-                                <br />
-                                たまにクリエイティブなことにも手を出します。
-                            </p>
-                            <p class="text-shadow-lg text-shadow-white">
-                                普段はMisskeyで鯖缶をしています。
-                                <br />
-                                あまいものとかわいいものがすきです。
-                            </p>
-                            <p class="text-shadow-lg text-shadow-white">
-                                以後お見知りおきを。
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- box -->
-                    <div
-                        class="grid grid-cols-1 md:grid-cols-2 gap-6 relative bg-white/90 md:bg-transparent z-60 md:z-auto">
-                        <div>
-                            <div class="text-accent text-lg font-medium">誕生日</div>
-                            <div class="text-xl text-gray-800">2006/04/04</div>
-                        </div>
-                        <div>
-                            <div class="text-accent text-lg font-medium">趣味</div>
-                            <div class="text-xl text-gray-800">インターネット </div>
-                        </div>
-                        <div>
-                            <div class="text-accent text-lg font-medium">好きな言語</div>
-                            <div class="text-xl text-gray-800">Go / Dart</div>
-                        </div>
-                    </div>
-
-                </div>
-
-
-
-            </div>
-        </div>
-    </div>
+    </main>
 </template>
 <style scoped>
 .character-glow {

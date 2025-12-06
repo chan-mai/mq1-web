@@ -69,7 +69,7 @@ whenever(
                                 class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary bg-opacity-20">
                                 <Icon :name="rss.icon" class="size-6 bg-primary" />
                             </div>
-                            <h2 class="text-xl font-bold text-primary">RSSって？</h2>
+                            <h2 class="text-xl font-semibold text-primary">RSSって？</h2>
                             <p class="mt-2 text-gray-500">ブログの更新をカンタンにチェックする方法です</p>
                         </div>
 
@@ -118,7 +118,7 @@ whenever(
                                 </span>
                             </button>
                             <button @click="isOpen = false"
-                                class="mt-2 rounded-md border border-primary px-4 py-2 text-primary hover:bg-primary/20 sm:mt-0">
+                                class="mt-2 rounded-md border border-primary px-4 py-2 text-center text-primary hover:bg-primary/20 sm:mt-0">
                                 閉じる
                             </button>
                         </div>

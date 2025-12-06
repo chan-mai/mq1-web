@@ -62,7 +62,7 @@ useEventListener('resize', updateBreakpoint);
 
 <template>
   <ClientOnly>
-    <div class="zzz-container">
+    <div class="zzz-container" data-header-inverse="true">
       <div class="zzz-bleed"></div>
       <div class="zzz-content">
         <div v-for="(zzzs, i) in splitZzzs" :key="`row-${i}`" class="zzz-row">

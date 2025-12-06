@@ -60,16 +60,16 @@ export const useWebConfig = (): ComputedRef<WebConfig> => {
     },
 
     headerMenu: [
-      { title: "トップ", url: "/" },
-      { title: "運営者情報", url: "/about" },
-      { title: "記事一覧", url: "/articles" },
+      { title: "TOP", url: "/" },
+      { title: "ABOUT", url: "/about" },
+      { title: "ARTICLES", url: "/articles" },
     ],
     footer: {
       menu: [
-        { title: "トップ", url: "/" },
-        { title: "記事一覧", url: "/articles" },
-        { title: "運営者情報", url: "/about" },
-        { title: "プライバシーポリシー", url: "/privacy" },
+        { title: "TOP", url: "/" },
+        { title: "ARTICLES", url: "/articles" },
+        { title: "ABOUT", url: "/about" },
+        { title: "PRIVACY", url: "/privacy" },
       ],
     },
     socials: {

@@ -7,7 +7,7 @@ import { Analytics } from '@vercel/analytics/nuxt'
     <Analytics/>
     <main class="bg-back text-slate-600">
         <SiteHeader />
-        <div class="relative z-0 mx-auto min-w-screen box-content flex min-h-[calc(100vh-30rem)] flex-col px-6">
+        <div class="relative z-0 mx-auto min-w-screen box-content flex min-h-[calc(100vh-30rem)] flex-col px-6 pt-[120px] md:pt-[160px]">
             <slot />
         </div>
         <SiteFooter />

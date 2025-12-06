@@ -353,7 +353,7 @@ onMounted(() => {
 }
 
 .micro-cms p {
-    @apply ml-5 pb-3;
+    @apply ml-3 md:ml-8 mt-0 pb-2 leading-7;
 }
 
 .micro-cms a {

@@ -134,7 +134,7 @@ useJsonld({
 </script>
 <template>
     <main
-        class="min-h-screen pt-[120px] md:pt-[160px]">
+        class="min-h-screen pt-[120px] md:pt-[160px] px-6">
         <!-- 直近記事 -->
         <section class="mx-auto flex w-full max-w-6xl flex-col gap-10 px-2 md:px-6">
             <div class="flex items-center justify-between">

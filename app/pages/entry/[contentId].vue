@@ -198,7 +198,7 @@ const tableOfContents: Ref<{ id: string; text: string; level: number }[]> = ref(
     </div>
     <ScrollProgressBar />
     <main
-        class="min-h-screen pt-[120px] md:pt-[160px]">
+        class="min-h-screen pt-[120px] md:pt-[160px] px-6">
         <article class="mx-auto flex w-full max-w-6xl flex-col px-2 md:px-6 mb-16">
             <ArticlePageHead :title="article?.title" :published="article?.publishedAt ?? article?.createdAt"
                 :updated="article?.updatedAt" :tags="article?.tags"

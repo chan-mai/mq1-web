@@ -106,7 +106,7 @@ onMounted(() => {
           <Icon name="lucide:book-open" class="h-4 w-4 text-pink-500" />
           <h2 class="text-gradient">{{ title }}</h2>
         </div>
-        <button class="rounded px-2 bg-white rounded-lg" @click="isOpen = !isOpen">
+        <button class="rounded px-2 bg-white rounded-lg border-none" @click="isOpen = !isOpen">
           <Icon name="lucide:chevron-up" v-if="isOpen" class="h-5 w-5 text-purple-500" />
           <Icon name="lucide:chevron-down" v-else class="h-5 w-5 text-purple-500" />
           <span class="sr-only">{{ isOpen ? "Close table of contents" : "Open table of contents" }}</span>
@@ -119,7 +119,7 @@ onMounted(() => {
           <template v-for="item in nestedItems" :key="item.id">
             <div class="toc-item">
               <div class="toc-item-content">
-                <button v-if="item.children.length" @click="toggleSection(item.id)" class="toc-toggle">
+                <button v-if="item.children.length" @click="toggleSection(item.id)" class="toc-toggle border-none">
                   <Icon :name="isExpanded(item.id) ? 'lucide:chevron-down' : 'lucide:chevron-right'"
                     class="h-3 w-3 transition-transform" />
                 </button>

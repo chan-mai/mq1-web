@@ -19,7 +19,7 @@ useHead({
 });
 </script>
 <template>
-  <div class="min-h-screen pt-[120px] md:pt-[160px]">
+  <div class="min-h-screen pt-[120px] md:pt-[160px] px-6">
     <div class="max-w-4xl mx-auto px-4">
       
       <div class="mb-12">

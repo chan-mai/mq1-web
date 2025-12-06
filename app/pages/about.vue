@@ -65,16 +65,19 @@ useJsonld([
 ]);
 </script>
 <template>
-    <main class="max-w-none h-full text-[0.925rem] leading-loose tracking-wide text-inherit [&>div>*:first-child]:mt-0 max-w-7xl gap-16 md:gap-20 space-y-16">
-        <div class="min-h-screen rounded-xl overflow-hidden -mt-5 md:-mt-7">
-            <div class="bg-primary text-white relative w-full max-w-none overflow-hidden md:overflow-visible">
+    <main class="max-w-none h-full text-[0.925rem] leading-loose tracking-wide text-inherit [&>div>*:first-child]:mt-0">
+        <div class="min-h-screen overflow-hidden">
+
+            <div class="bg-primary text-white relative w-full max-w-none overflow-hidden md:overflow-visible dot-overlay">
+                <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none bg-[url(/about/bg.png)] bg-cover opacity-50 contrast-110" />
                 <AboutHeadBackground />
+                
                 <!-- 右側のエッジ文字 -->
                 <div class="absolute bottom-0 z-20 w-full h-2/3">
                     <NuxtImg src="/about/mai-bg-text.png" format="webp" alt="Mai Sudachi" fetchpriority="high"
                         class="w-full h-full object-contain object-right" loading="eager" />
                 </div>
-                <div class="w-full px-8 py-8 max-w-6xl mx-auto">
+                <div class="w-full px-8 pt-[120px] md:pt-[160px] pb-8 max-w-6xl mx-auto">
                     <!-- ふわふわ円形 -->
                     <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
                         <div
@@ -101,7 +104,7 @@ useJsonld([
                                 <div class="grid grid-cols-1 space-y-2 mb-8 relative z-30">
                                     <NuxtLink v-for="social in socials" :key="social.name" :to="social.url"
                                         target="_blank"
-                                        class="w-1/3 bg-white text-accent rounded-md px-3 py-2 hover:bg-primary hover:text-white transition-all flex items-center">
+                                        class="w-1/3 bg-white/80 text-accent rounded-full px-3 py-2 hover:bg-primary/90 hover:text-white transition-all flex items-center">
                                         <Icon :name="social.icon" class="mr-2 size-5" />
                                         <span class="text-sm">{{ social.name }}</span>
                                     </NuxtLink>
@@ -145,7 +148,7 @@ useJsonld([
 
             <!-- 以下下部セクション -->
             <div class="bg-white text-black relative pt-12 pb-32" ref="containerRef">
-                <div class="container mx-auto px-4">
+                <div class="w-full max-w-7xl mx-auto px-6">
                     <!-- 詳細 -->
                     <div class="mr-auto px-8 z-50 relative max-w-6xl mx-auto w-full">
                         <div class="mb-12 mt-5">
@@ -226,5 +229,18 @@ useJsonld([
         transform: scale(1.1);
         opacity: 0.15;
     }
+}
+
+.dot-overlay::after {
+    content: '';
+    position: absolute;
+    z-index: 10;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAG0lEQVQYV2NkYGD4z8DAwMgABXAGNgGwSgwVAFbmAgXQdISfAAAAAElFTkSuQmCC) repeat;
+    background-color: rgba(0, 0, 0, 0.1);
+    pointer-events: none;
 }
 </style>

@@ -91,9 +91,7 @@ useJsonld({
 </script>
 <template>
     <main
-        class="max-w-none h-full text-[0.925rem] leading-loose tracking-wide text-inherit [&>div>*:first-child]:mt-0 max-w-7xl gap-16 md:gap-20 space-y-16">
-        <MqHero />
-
+        class="min-h-screen pt-[120px] md:pt-[160px]">
         <!-- 直近記事 -->
         <section class="mx-auto flex w-full max-w-6xl flex-col gap-10 px-2 md:px-6">
             <div class="flex items-center justify-between">

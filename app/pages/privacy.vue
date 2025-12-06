@@ -19,8 +19,8 @@ useHead({
 });
 </script>
 <template>
-  <div class="min-h-screen">
-    <div class="max-w-4xl mx-auto px-4 py-8 md:py-16">
+  <div class="min-h-screen pt-[120px] md:pt-[160px]">
+    <div class="max-w-4xl mx-auto px-4">
       
       <div class="mb-12">
         <div class="flex items-center gap-3 mb-4">

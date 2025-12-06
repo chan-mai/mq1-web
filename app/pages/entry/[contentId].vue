@@ -198,12 +198,8 @@ const tableOfContents: Ref<{ id: string; text: string; level: number }[]> = ref(
     </div>
     <ScrollProgressBar />
     <main
-        class="max-w-none text-[0.925rem] leading-loose tracking-wide text-inherit [&>div>*:first-child]:mt-0 max-w-7xl gap-16 md:gap-20">
-
-        <MqHero :url="article?.eyecatch?.url" :content-id="contentId" :title="article?.title" text-hidden
-            :style="`view-transition-name: article-${contentId};`" />
-
-        <article class="mt-5 md:mt-16 mx-auto flex w-full max-w-6xl flex-col px-2 md:px-6 mb-16">
+        class="min-h-screen pt-[120px] md:pt-[160px]">
+        <article class="mx-auto flex w-full max-w-6xl flex-col px-2 md:px-6 mb-16">
             <ArticlePageHead :title="article?.title" :published="article?.publishedAt ?? article?.createdAt"
                 :updated="article?.updatedAt" :tags="article?.tags"
                 :readingTime :style="`view-transition-name: article-title-${contentId};`" :contentId />

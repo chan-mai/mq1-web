@@ -113,76 +113,78 @@ useJsonld([
 </script>
 <template>
     <main
-        class="max-w-none text-[0.925rem] leading-loose tracking-wide text-inherit [&>div>*:first-child]:mt-0 max-w-7xl gap-16 md:gap-20 space-y-16">
+        class="max-w-none text-[0.925rem] leading-loose tracking-wide text-inherit [&>div>*:first-child]:mt-0">
         <MqHero />
 
-        <!-- About Me -->
-        <section class="mx-auto flex w-full max-w-6xl flex-col gap-10 px-2 md:px-6">
-            <div class="flex items-center justify-between">
-                <h2 class="font-accent text-4xl font-bold text-slate-800 md:text-6xl">
-                    About Me
-                </h2>
-                <MqAppLink to="/about">
-                    <span class="text-xs">もっとみる</span>
-                </MqAppLink>
-            </div>
-            <div>
-                <h3
-                    class="mb-4 max-w-2xl text-2xl leading-none md:text-3xl xl:text-4xl text-primary">
-                    Hey, I'm
-                    <span
-                        class="bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-indigo-400">chan-mai</span>
-                    <span class="waving-hand">👋🏻</span>
-                </h3>
-                <p class="mt-2.5 text-sm leading-relaxed first:mt-0">ちゃんまいです。コードを書いたり、絵を描いたり、映像をつくったりしている多趣味なエンジニア。</p>
-                <p class="mt-2.5 text-sm leading-relaxed first:mt-0">猫とパステルとかわいいものがすき。</p>
-            </div>
-        </section>
-        <!-- 直近記事 -->
-        <section class="mx-auto flex w-full max-w-6xl flex-col gap-10 px-2 md:px-6">
-            <div class="flex items-center justify-between">
-                <h2 class="font-accent text-4xl font-bold text-slate-800 md:text-6xl">
-                    Blogs
-                </h2>
-                <MqAppLink to="/articles/">
-                    <span class="text-xs">もっとみる</span>
-                </MqAppLink>
-            </div>
-            <div class="flex flex-col gap-8">
-                <p class="text-sm leading-relaxed">
-                    日常から非日常まで、書きたいことを自由に書いていく雑記帳です。</p>
-
-                <Tags :tags="tags || []" />
-
-                <!-- 固定記事エリア -->
-                <div v-if="globalResponse?.pinned_articles" class="max-w-6xl mx-auto px-4 w-full">
-                    <div class="mb-2 flex items-center gap-2 text-primary/80">
-                        <Icon name="lucide:pin" class="h-4 w-4" />
-                        <span class="font-semibold text-xs tracking-wider uppercase">Pinned</span>
+        <div class="mx-auto max-w-7xl px-6 space-y-16 md:space-y-20 pb-20 mt-20">
+            <!-- About Me -->
+            <section class="mx-auto flex w-full max-w-6xl flex-col gap-10 px-2 md:px-6">
+                <div class="flex items-center justify-between">
+                    <h2 class="font-accent text-4xl font-bold text-slate-800 md:text-6xl">
+                        About Me
+                    </h2>
+                    <MqAppLink to="/about">
+                        <span class="text-xs">もっとみる</span>
+                    </MqAppLink>
+                </div>
+                <div>
+                    <h3
+                        class="mb-4 max-w-2xl text-2xl leading-none md:text-3xl xl:text-4xl text-primary">
+                        Hey, I'm
+                        <span
+                            class="bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-indigo-400">chan-mai</span>
+                        <span class="waving-hand">👋🏻</span>
+                    </h3>
+                    <p class="mt-2.5 text-sm leading-relaxed first:mt-0">ちゃんまいです。コードを書いたり、絵を描いたり、映像をつくったりしている多趣味なエンジニア。</p>
+                    <p class="mt-2.5 text-sm leading-relaxed first:mt-0">猫とパステルとかわいいものがすき。</p>
+                </div>
+            </section>
+            <!-- 直近記事 -->
+            <section class="mx-auto flex w-full max-w-6xl flex-col gap-10 px-2 md:px-6">
+                <div class="flex items-center justify-between">
+                    <h2 class="font-accent text-4xl font-bold text-slate-800 md:text-6xl">
+                        Blogs
+                    </h2>
+                    <MqAppLink to="/articles/">
+                        <span class="text-xs">もっとみる</span>
+                    </MqAppLink>
+                </div>
+                <div class="flex flex-col gap-8">
+                    <p class="text-sm leading-relaxed">
+                        日常から非日常まで、書きたいことを自由に書いていく雑記帳です。</p>
+    
+                    <Tags :tags="tags || []" />
+    
+                    <!-- 固定記事エリア -->
+                    <div v-if="globalResponse?.pinned_articles" class="max-w-6xl mx-auto px-4 w-full">
+                        <div class="mb-2 flex items-center gap-2 text-primary/80">
+                            <Icon name="lucide:pin" class="h-4 w-4" />
+                            <span class="font-semibold text-xs tracking-wider uppercase">Pinned</span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                            <ArticlesCard 
+                                v-for="article in globalResponse.pinned_articles" 
+                                :key="article.id" 
+                                :article="article" 
+                                variant="compact"
+                            />
+                        </div>
                     </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                        <ArticlesCard 
-                            v-for="article in globalResponse.pinned_articles" 
-                            :key="article.id" 
-                            :article="article" 
-                            variant="compact"
-                        />
+    
+                    <!-- 通常記事エリア -->
+                    <div v-if="articles" class="max-w-6xl mx-auto px-4 w-full">
+                        <div class="mb-2 flex items-center gap-2 text-primary/80">
+                            <Icon name="lucide:book" class="h-4 w-4" />
+                            <span class="font-semibold text-xs tracking-wider uppercase">Archives</span>
+                        </div>
+                        <Articles v-if="articles" limit="5" :articles :loading="false" transition />
+                    </div>
+                    <div v-else class="flex flex-col items-center justify-center gap-4">
+                        <p class="text-lg font-bold text-accent">記事が見つかりませんでした。</p>
+                        <p class="text-sm text-slate-500">初めての投稿をお待ちください。</p>
                     </div>
                 </div>
-
-                <!-- 通常記事エリア -->
-                <div v-if="articles" class="max-w-6xl mx-auto px-4 w-full">
-                    <div class="mb-2 flex items-center gap-2 text-primary/80">
-                        <Icon name="lucide:book" class="h-4 w-4" />
-                        <span class="font-semibold text-xs tracking-wider uppercase">Archives</span>
-                    </div>
-                    <Articles v-if="articles" limit="5" :articles :loading="false" transition />
-                </div>
-                <div v-else class="flex flex-col items-center justify-center gap-4">
-                    <p class="text-lg font-bold text-accent">記事が見つかりませんでした。</p>
-                    <p class="text-sm text-slate-500">初めての投稿をお待ちください。</p>
-                </div>
-            </div>
-        </section>
+            </section>
+        </div>
     </main>
 </template>

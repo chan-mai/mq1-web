@@ -89,7 +89,7 @@ const onPageChange = (newPage: number) => {
 const config = useWebConfig();
 const pageTitle = `#${tag.value?.name} - ${config.value.siteName}`;
 const pageDescription = `#${tag.value?.name}の記事一覧`;
-const ogImageUrl = useTagOgGenerator(`#${tag.value?.name}`);
+const ogImageUrl = useTagOgGenerator(tag.value?.id);
 const pageUrl = `${config.value.siteUrl}tag/${tag.value?.slug}`;
 
 useHead({

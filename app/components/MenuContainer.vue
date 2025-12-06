@@ -39,15 +39,19 @@ const close = () => {
       ></div>
       
       <!-- 背景画像 -->
-       <NuxtImg
-         src="hero.png"
-         alt=""
-         format="webp"
-         class="block object-cover h-full min-h-[800px] w-[26%] max-[800px]:w-[42%] max-[800px]:min-h-0 absolute z-0 top-0 right-0 transition-all duration-[800px] ease-in-out"
+      <div 
+         class="dot-overlay h-full min-h-[800px] w-[26%] max-[800px]:w-[42%] max-[800px]:min-h-0 absolute z-0 top-0 right-0 transition-all duration-[800px] ease-in-out"
          :class="isVisible 
             ? 'translate-x-0 opacity-100 delay-0 duration-[600ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)]' 
             : 'translate-x-[30px] opacity-0'"
-       />
+      >
+        <NuxtImg
+          src="hero.png"
+          alt=""
+          format="webp"
+          class="block object-cover w-full h-full"
+        />
+      </div>
 
       <div class="h-full min-h-[800px] flex justify-start items-center relative z-[4] max-[800px]:justify-center max-[800px]:items-start max-[800px]:flex-col max-[800px]:min-h-0 max-[800px]:pt-[60px]">
         <div class="relative max-w-[1490px] w-[calc(86%+60px)] mx-auto px-[60px] max-[800px]:static max-[800px]:px-[30px]">
@@ -81,7 +85,7 @@ const close = () => {
           
           <!-- ソーシャルリンク -->
           <div 
-             class="absolute bottom-[14px] left-[48%] transition-all duration-[800ms] ease-in-out max-[800px]:static max-[800px]:mt-[60px] max-[800px]:ml-[30px]"
+             class="absolute bottom-[14px] left-[48%] transition-all duration-[800ms] ease-in-out max-[800px]:static max-[800px]:mt-[60px] max-[800px]:ml-0"
              :class="isVisible ? 'translate-x-0 opacity-100 delay-[1050ms]' : '-translate-x-[15px] opacity-0 delay-[200ms]'"
           >
              <p class="mb-[14px] text-[14px] font-[300] max-[800px]:hidden">SOCIAL ACCOUNTS</p>
@@ -115,5 +119,18 @@ const close = () => {
 <style scoped>
 .before\:increment-listnum::before {
     counter-increment: listnum;
+}
+
+.dot-overlay::after {
+    content: '';
+    position: absolute;
+    z-index: 10;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAG0lEQVQYV2NkYGD4z8DAwMgABXAGNgGwSgwVAFbmAgXQdISfAAAAAElFTkSuQmCC) repeat;
+    background-color: rgba(0, 0, 0, 0.2);
+    pointer-events: none;
 }
 </style>

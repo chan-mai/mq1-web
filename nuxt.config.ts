@@ -87,44 +87,10 @@ export default defineNuxtConfig({
     siteKey: process.env.TURNSTILE_SITE_KEY,
   },
   routeRules: {
-    "/": { prerender: true },
     "/about": { prerender: true },
-    "/entry/**": {
-      headers: {
-        "Cache-Control": "public, max-age=3600, s-maxage=86400",
-        "X-Content-Type-Options": "nosniff",
-        "X-Frame-Options": "DENY",
-        "X-XSS-Protection": "1; mode=block",
-      },
-    },
-    "/tag/**": {
-      headers: {
-        "Cache-Control": "public, max-age=3600, s-maxage=86400",
-        "X-Content-Type-Options": "nosniff",
-        "X-Frame-Options": "DENY",
-        "X-XSS-Protection": "1; mode=block",
-      },
-    },
-    "/articles": {
-      headers: {
-        "Cache-Control": "public, max-age=1800, s-maxage=3600",
-        "X-Content-Type-Options": "nosniff",
-        "X-Frame-Options": "DENY",
-        "X-XSS-Protection": "1; mode=block",
-      },
-    },
-    // "/search/**": { ssr: true, headers: { 'Cache-Control': 'public, max-age=60, immutable' } },
-    "/feed.xml": {
-      headers: { "content-type": "application/rss+xml; charset=UTF-8" },
-    },
+    "/privacy": { prerender: true },
   },
   nitro: {
-    prerender: {
-      autoSubfolderIndex: true,
-      crawlLinks: false,
-      routes: [],
-      failOnError: false,
-    },
     compressPublicAssets: {
       gzip: true,
       brotli: true,
@@ -140,75 +106,6 @@ export default defineNuxtConfig({
       },
     },
   },
-  hooks: {
-    async "nitro:config"(nitroConfig: any) {
-      if (nitroConfig.dev) return;
-      if (nitroConfig.prerender?.routes === undefined) return;
-
-      const client = createClient({
-        serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN!,
-        apiKey: process.env.MICROCMS_API_KEY!,
-      });
-
-      // TODO: 後々全件取得する方法を考える
-      const [articles, tags]: [MicroCMSListResponse<Article>, MicroCMSListResponse<Tag>] = await Promise.all([
-        client.get({
-          endpoint: "articles",
-          queries: {
-            limit: 100,
-            orders: "-publishedAt",
-          },
-        }),
-        client.get({
-          endpoint: "tags",
-          queries: {
-            limit: 100,
-            orders: "-publishedAt",
-          },
-        }),
-      ]);
-
-      const routes: string[] = [];
-
-      // 記事関連のルート生成, タグ集計
-      const tagCounts: Record<string, number> = {};
-      
-      for (const article of articles.contents) {
-        routes.push(`/entry/${article.id}`);
-        routes.push(`/api/og/article/${article.id}`);
-        
-        if (article.tags) {
-          for (const tag of article.tags) {
-            tagCounts[tag.id] = (tagCounts[tag.id] || 0) + 1;
-          }
-        }
-      }
-
-      const limit = 12;
-
-      // 記事一覧
-      const totalArticlePages = Math.ceil(articles.totalCount / limit);
-      routes.push('/articles');
-      for (let i = 1; i <= totalArticlePages; i++) {
-        routes.push(`/articles?page=${i}`);
-      }
-
-      // タグ関連
-      for (const tag of tags.contents) {
-        routes.push(`/tag/${tag.slug}`);
-        routes.push(`/api/og/tag/${tag.id}`);
-
-        const count = tagCounts[tag.id] || 0;
-        const totalPages = Math.ceil(count / limit);
-        for (let i = 1; i <= totalPages; i++) {
-          routes.push(`/tag/${tag.slug}?page=${i}`);
-        }
-      }
-
-      nitroConfig.prerender.routes.push(...routes);
-    },
-  },
-
   experimental: {
     viewTransition: true,
     payloadExtraction: false,

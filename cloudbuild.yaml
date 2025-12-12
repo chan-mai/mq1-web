@@ -1,0 +1,68 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    env:
+      - 'DOCKER_BUILDKIT=1'
+    args:
+      - '-c'
+      - |
+        docker build -t ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_IMAGE} \
+          --build-arg DATABASE_URL="$$DATABASE_URL" \
+          --build-arg DISCORD_WEBHOOK_URL="$$DISCORD_WEBHOOK_URL" \
+          --build-arg GA_TRACKING_ID="$$GA_TRACKING_ID" \
+          --build-arg GITHUB_CLIENT_ID="$$GITHUB_CLIENT_ID" \
+          --build-arg GITHUB_SECRET="$$GITHUB_SECRET" \
+          --build-arg MICROCMS_API_KEY="$$MICROCMS_API_KEY" \
+          --build-arg MICROCMS_SERVICE_DOMAIN="$$MICROCMS_SERVICE_DOMAIN" \
+          --build-arg NUXT_SESSION_PASSWORD="$$NUXT_SESSION_PASSWORD" \
+          --build-arg TURNSTILE_SECRET_KEY="$$TURNSTILE_SECRET_KEY" \
+          --build-arg TURNSTILE_SITE_KEY="$$TURNSTILE_SITE_KEY" \
+          .
+    secretEnv: ['DATABASE_URL','DISCORD_WEBHOOK_URL','GA_TRACKING_ID','GITHUB_CLIENT_ID','GITHUB_SECRET','MICROCMS_API_KEY','MICROCMS_SERVICE_DOMAIN','NUXT_SESSION_PASSWORD','TURNSTILE_SECRET_KEY','TURNSTILE_SITE_KEY']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', '${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_IMAGE}']
+
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args: 
+      - -c
+      - |
+        gcloud run deploy ${_SERVICE} \
+          --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_IMAGE} \
+          --platform managed \
+          --region ${_REGION} \
+          --allow-unauthenticated \
+          --set-env-vars "DATABASE_URL=$$DATABASE_URL,DISCORD_WEBHOOK_URL=$$DISCORD_WEBHOOK_URL,GA_TRACKING_ID=$$GA_TRACKING_ID,GITHUB_CLIENT_ID=$$GITHUB_CLIENT_ID,GITHUB_SECRET=$$GITHUB_SECRET,MICROCMS_API_KEY=$$MICROCMS_API_KEY,MICROCMS_SERVICE_DOMAIN=$$MICROCMS_SERVICE_DOMAIN,NUXT_SESSION_PASSWORD=$$NUXT_SESSION_PASSWORD,TURNSTILE_SECRET_KEY=$$TURNSTILE_SECRET_KEY,TURNSTILE_SITE_KEY=$$TURNSTILE_SITE_KEY"
+    secretEnv: ['DATABASE_URL','DISCORD_WEBHOOK_URL','GA_TRACKING_ID','GITHUB_CLIENT_ID','GITHUB_SECRET','MICROCMS_API_KEY','MICROCMS_SERVICE_DOMAIN','NUXT_SESSION_PASSWORD','TURNSTILE_SECRET_KEY','TURNSTILE_SITE_KEY']
+availableSecrets:
+  secretManager:
+    - versionName: projects/749757387366/secrets/DATABASE_URL/versions/1
+      env: DATABASE_URL
+    - versionName: projects/749757387366/secrets/DISCORD_WEBHOOK_URL/versions/1
+      env: DISCORD_WEBHOOK_URL
+    - versionName: projects/749757387366/secrets/GA_TRACKING_ID/versions/1
+      env: GA_TRACKING_ID
+    - versionName: projects/749757387366/secrets/GITHUB_CLIENT_ID/versions/1
+      env: GITHUB_CLIENT_ID
+    - versionName: projects/749757387366/secrets/GITHUB_SECRET/versions/1
+      env: GITHUB_SECRET
+    - versionName: projects/749757387366/secrets/MICROCMS_API_KEY/versions/1
+      env: MICROCMS_API_KEY
+    - versionName: projects/749757387366/secrets/MICROCMS_SERVICE_DOMAIN/versions/1
+      env: MICROCMS_SERVICE_DOMAIN
+    - versionName: projects/749757387366/secrets/NUXT_SESSION_PASSWORD/versions/1
+      env: NUXT_SESSION_PASSWORD
+    - versionName: projects/749757387366/secrets/TURNSTILE_SECRET_KEY/versions/1
+      env: TURNSTILE_SECRET_KEY
+    - versionName: projects/749757387366/secrets/TURNSTILE_SITE_KEY/versions/1
+      env: TURNSTILE_SITE_KEY
+substitutions:
+  _LOCATION: asia-northeast1
+  _REGION: asia-northeast1
+  _REPOSITORY: cloud-run-source-deploy
+  _IMAGE: mq1-web
+  _SERVICE: mq1-web
+options:
+  logging: CLOUD_LOGGING_ONLY
+      

@@ -17,8 +17,8 @@ import type * as Prisma from "./prismaNamespace"
 
 const config: runtime.GetPrismaClientConfig = {
   "previewFeatures": [],
-  "clientVersion": "7.0.1",
-  "engineVersion": "f09f2815f091dbba658cdcd2264306d88bb5bda6",
+  "clientVersion": "7.1.0",
+  "engineVersion": "ab635e6b9d606fa5c8fb8b1a7f909c3c3c1c98ba",
   "activeProvider": "cockroachdb",
   "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"cockroachdb\"\n}\n\n// いいね\nmodel Favorites {\n  id        String   @id @default(uuid(7))\n  contentId String   @map(\"content_id\")\n  userIp    String   @map(\"user_ip\")\n  createdAt DateTime @default(now()) @map(\"created_at\")\n  updatedAt DateTime @updatedAt @map(\"updated_at\")\n\n  @@index([contentId])\n  @@index([userIp])\n  @@map(\"favorites\")\n}\n\n// コメントステータス\nenum CommentStatus {\n  PENDING // 承認待ち\n  APPROVED // 承認\n  REJECTED // 拒否\n}\n\n// コメント\nmodel Comments {\n  id        String        @id @default(uuid(7))\n  contentId String        @map(\"content_id\")\n  name      String\n  comment   String\n  userIp    String        @map(\"user_ip\")\n  status    CommentStatus @default(PENDING)\n  createdAt DateTime      @default(now()) @map(\"created_at\")\n  updatedAt DateTime      @updatedAt @map(\"updated_at\")\n\n  @@index([contentId])\n  @@index([userIp])\n  @@index([status])\n  @@map(\"comments\")\n}\n\n// 権限の種類\nenum Permission {\n  COMMENT_VIEW // コメント閲覧\n  COMMENT_ADMIN // コメント管理\n  FAVORITE_VIEW // お気に入り閲覧\n  FAVORITE_ADMIN // お気に入り管理\n  ADMIN_USER_VIEW // 管理者ユーザー閲覧\n  ADMIN_USER_ADMIN // 管理者ユーザー管理\n  FEED_STATS_VIEW // フィード統計閲覧\n}\n\n// 管理者ユーザー\nmodel AdminUser {\n  id             String            @id @default(uuid(7))\n  githubUsername String            @unique @map(\"github_username\")\n  githubUserId   BigInt            @map(\"github_user_id\")\n  displayName    String?           @map(\"display_name\")\n  email          String?\n  avatarUrl      String?           @map(\"avatar_url\")\n  isActive       Boolean           @default(true) @map(\"is_active\")\n  createdAt      DateTime          @default(now()) @map(\"created_at\")\n  updatedAt      DateTime          @updatedAt @map(\"updated_at\")\n  permissions    AdminPermission[]\n\n  @@index([githubUsername])\n  @@index([isActive])\n  @@map(\"admin_users\")\n}\n\n// 管理者権限\nmodel AdminPermission {\n  id         String     @id @default(uuid(7))\n  adminId    String     @map(\"admin_id\")\n  permission Permission\n  createdAt  DateTime   @default(now()) @map(\"created_at\")\n  updatedAt  DateTime   @updatedAt @map(\"updated_at\")\n  admin      AdminUser  @relation(fields: [adminId], references: [id], onDelete: Cascade)\n\n  @@unique([adminId, permission])\n  @@index([adminId])\n  @@index([permission])\n  @@map(\"admin_permissions\")\n}\n\n// RSSフィードアクセスログ\nmodel FeedAccessLog {\n  id         String   @id @default(uuid(7))\n  userAgent  String?  @map(\"user_agent\")\n  readerType String?  @map(\"reader_type\")\n  ipAddress  String   @map(\"ip_address\")\n  referer    String?\n  accessedAt DateTime @default(now()) @map(\"accessed_at\")\n\n  @@index([accessedAt])\n  @@index([readerType])\n  @@index([ipAddress, accessedAt])\n  @@map(\"feed_access_logs\")\n}\n",
   "runtimeDataModel": {
@@ -62,7 +62,7 @@ export interface PrismaClientConstructor {
    * const favorites = await prisma.favorites.findMany()
    * ```
    * 
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client).
+   * Read more in our [docs](https://pris.ly/d/client).
    */
 
   new <
@@ -84,7 +84,7 @@ export interface PrismaClientConstructor {
  * const favorites = await prisma.favorites.findMany()
  * ```
  * 
- * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client).
+ * Read more in our [docs](https://pris.ly/d/client).
  */
 
 export interface PrismaClient<
@@ -113,7 +113,7 @@ export interface PrismaClient<
    * const result = await prisma.$executeRaw`UPDATE User SET cool = ${true} WHERE email = ${'user@email.com'};`
    * ```
    *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   * Read more in our [docs](https://pris.ly/d/raw-queries).
    */
   $executeRaw<T = unknown>(query: TemplateStringsArray | Prisma.Sql, ...values: any[]): Prisma.PrismaPromise<number>;
 
@@ -125,7 +125,7 @@ export interface PrismaClient<
    * const result = await prisma.$executeRawUnsafe('UPDATE User SET cool = $1 WHERE email = $2 ;', true, 'user@email.com')
    * ```
    *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   * Read more in our [docs](https://pris.ly/d/raw-queries).
    */
   $executeRawUnsafe<T = unknown>(query: string, ...values: any[]): Prisma.PrismaPromise<number>;
 
@@ -136,7 +136,7 @@ export interface PrismaClient<
    * const result = await prisma.$queryRaw`SELECT * FROM User WHERE id = ${1} OR email = ${'user@email.com'};`
    * ```
    *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   * Read more in our [docs](https://pris.ly/d/raw-queries).
    */
   $queryRaw<T = unknown>(query: TemplateStringsArray | Prisma.Sql, ...values: any[]): Prisma.PrismaPromise<T>;
 
@@ -148,7 +148,7 @@ export interface PrismaClient<
    * const result = await prisma.$queryRawUnsafe('SELECT * FROM User WHERE id = $1 OR email = $2;', 1, 'user@email.com')
    * ```
    *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   * Read more in our [docs](https://pris.ly/d/raw-queries).
    */
   $queryRawUnsafe<T = unknown>(query: string, ...values: any[]): Prisma.PrismaPromise<T>;
 

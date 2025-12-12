@@ -59,6 +59,9 @@ useHead({
         { property: 'og:url', content: pageUrl },
         { property: 'og:site_name', content: config.value.siteName },
         { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'twitter:title', content: pageTitle },
+        { name: 'twitter:description', content: pageDescription },
+        { name: 'twitter:image', content: ogImageUrl },
         { name: 'description', content: pageDescription },
     ],
 });

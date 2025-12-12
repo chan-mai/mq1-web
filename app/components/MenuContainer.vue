@@ -6,10 +6,16 @@ const isVisible = defineModel<boolean>('visible', { default: false });
 const emit = defineEmits(['close']);
 
 // メニュー表示時にスクロールをロックするためbodyクラスを切り替え
-watch(isVisible, (newVal) => {
+watch(isVisible, async (newVal) => {
   if (import.meta.client) {
     if (newVal) {
       document.body.classList.add('is-menu-open');
+      // メニューが開いたらフォーカスを移動
+      await nextTick();
+      setTimeout(() => {
+        const firstLink = document.querySelector('#global-menu a') as HTMLElement;
+        firstLink?.focus();
+      }, 100);
     } else {
       document.body.classList.remove('is-menu-open');
     }
@@ -20,11 +26,24 @@ const close = () => {
   isVisible.value = false;
   emit('close');
 };
+
+// escで閉じる
+if (import.meta.client) {
+  useEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && isVisible.value) {
+      close();
+    }
+  });
+}
 </script>
 
 <template>
   <Teleport to="body">
     <div 
+      id="global-menu"
+      role="dialog"
+      aria-modal="true"
+      aria-label="メインメニュー"
       class="fixed z-[9999] top-0 left-0 w-full h-full bg-neutral-800 text-white overflow-x-hidden overflow-y-auto"
       :class="[
         isVisible 
@@ -44,6 +63,7 @@ const close = () => {
          :class="isVisible 
             ? 'translate-x-0 opacity-100 delay-0 duration-[600ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)]' 
             : 'translate-x-[30px] opacity-0'"
+         aria-hidden="true"
       >
         <NuxtImg
           src="hero.png"
@@ -68,11 +88,11 @@ const close = () => {
               >
                 <NuxtLink 
                     :to="item.url" 
-                    class="relative block text-[36px] text-white no-underline group/link max-[800px]:text-[21px] cursor-react" 
+                    class="relative block text-[36px] text-white no-underline group/link max-[800px]:text-[21px] cursor-react uppercase" 
                     @click="close"
                 >
                   <!-- ナンバリング -->
-                  <span class="hidden min-[801px]:block absolute top-[22px] left-0 text-[12px] font-[600] leading-none text-white opacity-0 transition-opacity duration-300 ease-out group-hover/link:opacity-100 pointer-events-none before:content-[counter(listnum,decimal-leading-zero)] before:increment-listnum">
+                  <span aria-hidden="true" class="hidden min-[801px]:block absolute top-[22px] left-0 text-[12px] font-[600] leading-none text-white opacity-0 transition-opacity duration-300 ease-out group-hover/link:opacity-100 pointer-events-none before:content-[counter(listnum,decimal-leading-zero)] before:increment-listnum">
                   </span>
                   
                   <span class="inline-block transition-transform duration-300 ease-out min-[801px]:group-hover/link:translate-x-[32px]">
@@ -95,9 +115,9 @@ const close = () => {
                     :key="social.url" 
                     :style="{ transitionDelay: isVisible ? `${0.3 + (index as unknown as number) * 0.15}s` : '0s' }"
                 >
-                    <a class="text-white cursor-react-sml" :href="social.url" target="_blank">
+                    <NuxtLink class="text-white cursor-react-sml" :to="social.url" target="_blank" :aria-label="social.name">
                         <Icon :name="social.icon" class="size-5" />
-                    </a>
+                    </NuxtLink>
                 </li> 
              </ul>    
           </div>

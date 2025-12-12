@@ -318,6 +318,9 @@ onUnmounted(() => {
             <div v-if="isOpen" class="fixed inset-0 z-50 flex items-start justify-center p-4 pt-16 sm:pt-24 pointer-events-none">
                 <!-- 本体 -->
                 <div
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label="検索"
                     class="pointer-events-auto relative flex w-full max-w-2xl flex-col overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black/5">
                     
                     <!-- 検索 -->
@@ -339,6 +342,7 @@ onUnmounted(() => {
                                  v-model="searchInput"
                                  class="min-w-[50px] flex-1 border-0 bg-transparent p-0 text-lg text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm outline-none ring-0 border-none focus:outline-none focus:border-none"
                                  :placeholder="searchOptions.length === 0 ? '検索' : ''"
+                                 aria-label="検索キーワード"
                                  autofocus
                                  @keydown="handleInputKeydown"
                                  @paste="onPaste"

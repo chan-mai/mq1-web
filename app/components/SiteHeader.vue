@@ -128,7 +128,7 @@ if (import.meta.client) {
         <li v-for="(item, index) in config.headerMenu" :key="item.url"
           class="min-[801px]:ml-[46px] max-[1260px]:ml-[30px] first:ml-0 relative" :class="{ 'group': true }">
           <NuxtLink :to="item.url" :target="(item.url.startsWith('/') || item.url.startsWith('#')) ? '_self' : '_blank'"
-            class="text-[14px] font-semibold tracking-[0.05em] no-underline transition-colors duration-300 ease-out cursor-react"
+            class="text-[14px] font-semibold tracking-[0.05em] no-underline transition-colors duration-300 ease-out cursor-react uppercase"
             :class="[
               isActivePage(item.url) ? 'text-primary' : 'text-current'
             ]">
@@ -156,8 +156,15 @@ if (import.meta.client) {
     <div
       class="fixed z-[10001] top-[16px] right-[20px] w-[50px] h-[50px] pt-[17px] max-[1260px]:right-[30px] min-[801px]:top-[58px] min-[801px]:right-[50px] cursor-pointer cursor-react group/menu"
       @click="() => toggleMenu()">
-      <button class="block relative z-100 w-[30px] h-[15px] mx-auto bg-transparent border-none p-0 menu-trigger"
-        :class="{ 'is-active': isVisibleMenu }">
+      <button 
+        type="button"
+        class="block relative z-100 w-[30px] h-[15px] mx-auto bg-transparent border-none p-0 menu-trigger"
+        :class="{ 'is-active': isVisibleMenu }"
+        aria-label="メニューを開く"
+        :aria-expanded="isVisibleMenu"
+        aria-controls="global-menu"
+        @click.stop="toggleMenu()"
+      >
         <span
           class="inline-block absolute z-[3] right-0 w-full top-0 h-[1px] bg-current rounded-[8px] transition-all duration-200 ease-out origin-center group-hover/menu:w-full"
           :class="{ 'translate-y-[7px] rotate-[30deg]': isVisibleMenu }"></span>

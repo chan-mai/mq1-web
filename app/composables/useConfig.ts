@@ -60,16 +60,16 @@ export const useWebConfig = (): ComputedRef<WebConfig> => {
     },
 
     headerMenu: [
-      { title: "TOP", url: "/" },
-      { title: "ABOUT", url: "/about" },
-      { title: "ARTICLES", url: "/articles" },
+      { title: "Top", url: "/" },
+      { title: "About", url: "/about" },
+      { title: "Articles", url: "/articles" },
     ],
     footer: {
       menu: [
-        { title: "TOP", url: "/" },
-        { title: "ARTICLES", url: "/articles" },
-        { title: "ABOUT", url: "/about" },
-        { title: "PRIVACY", url: "/privacy" },
+        { title: "Top", url: "/" },
+        { title: "Articles", url: "/articles" },
+        { title: "About", url: "/about" },
+        { title: "Privacy", url: "/privacy" },
       ],
     },
     socials: {

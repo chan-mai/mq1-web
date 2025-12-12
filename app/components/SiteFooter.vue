@@ -18,7 +18,7 @@ const menu = config.value.footer.menu;
           <ul class="flex flex-wrap items-center gap-x-4 gap-y-1.5 px-1">
             <li v-for="item in menu" :key="item.url">
               <NuxtLink :to="item.url">
-                <span class="text-xs font-bold no-underline hover:no-underline hover:text-primary">
+                <span class="text-xs font-bold no-underline hover:no-underline hover:text-primary uppercase">
                   {{ item.title }}
                 </span>
               </NuxtLink>

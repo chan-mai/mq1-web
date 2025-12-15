@@ -72,6 +72,7 @@ const addLike = async () => {
     });
     
     if (response.status === 'success' && response.favorite) {
+      useTrackEvent('favorite_added', { contentId: props.contentId });
       // 成功
       isLiked.value = true;
       likeId.value = response.favorite.id;
@@ -125,6 +126,7 @@ const removeLike = async () => {
     });
     
     if (response.status === 'success') {
+      useTrackEvent('favorite_removed', { contentId: props.contentId });
       // 成功
       isLiked.value = false;
       likeId.value = null;

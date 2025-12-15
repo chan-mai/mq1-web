@@ -16,6 +16,7 @@ const isVisibleRssFeedCopyTooltip = ref<boolean>(false)
 const rssFeedCopy = () => {
     // RSSフィードのURLをクリップボードにコピー
     navigator.clipboard.writeText(config.value.rss.url).then(() => {
+        useTrackEvent('feed_subscribed');
         useToast().success({
             title: 'RSSフィードのURLをコピーしました！',
         });

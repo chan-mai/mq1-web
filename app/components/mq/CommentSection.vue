@@ -105,6 +105,7 @@ const submitComment = async () => {
     });
 
     if (response.status === 'success') {
+      useTrackEvent('comment_added', { contentId: props.contentId });
       toast.success({
         title: 'コメントを投稿しました。',
         message: '承認されると表示されます。',

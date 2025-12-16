@@ -285,7 +285,7 @@ onMounted(() => {
             />
             <MqLinkCard
                 v-else
-                class="px-5"
+                class="px-8 pt-2"
                 :url="segment.data.url"
                 :target="segment.data.target"
                 :rel="segment.data.rel"
@@ -401,7 +401,7 @@ onMounted(() => {
 }
 
 .micro-cms blockquote {
-    @apply border-l-4 border-primary/50 bg-gray-50/50 py-4 pr-4 my-8 rounded-r-lg text-gray-600 italic;
+    @apply border-l-4 border-primary/50 bg-gray-50/50 py-4 pr-4 m-8 rounded-r-lg text-gray-600 italic;
 }
 
 .micro-cms blockquote p {

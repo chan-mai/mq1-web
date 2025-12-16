@@ -126,7 +126,16 @@ const articleContent = computed<{ segments: ArticleSegment[] }>(() => {
             const filename = $div.attr('data-filename') || $pre.attr('data-filename');
             if (filename) {
                 // ファイル名表示用のヘッダーを作成
-                const header = $(`<div class="code-header"><span class="filename">${filename}</span></div>`);
+                const header = $(`
+                    <div class="code-header">
+                        <div class="mac-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        <span class="filename">${filename}</span>
+                    </div>
+                `);
                 
                 // div要素にdata-filenameがある場合は、div要素の中にヘッダーを挿入
                 if ($div.attr('data-filename')) {
@@ -436,30 +445,37 @@ onMounted(() => {
     font-style: normal;
 }
 
-/* コードブロックのファイル名表示 */
+/* コードブロックのファイル名表示 (Mac-Light Theme) */
 .code-header {
-    @apply bg-gray-100 text-gray-700 px-4 py-3 rounded-t-lg text-sm font-mono mb-0 mx-6 overflow-hidden;
+    @apply bg-gray-100 text-gray-700 px-4 py-3 rounded-t-xl text-sm font-mono mb-0 mx-6 flex items-center gap-4;
     border: 1px solid #e5e7eb;
-    border-bottom: none;
-    position: relative;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.code-header .mac-dots {
+    @apply flex gap-1.5;
+}
+
+.code-header .mac-dots span {
+    @apply w-3 h-3 rounded-full block;
+    border: 1px solid rgba(0,0,0,0.1);
+}
+
+.code-header .mac-dots span:nth-child(1) {
+    background-color: #ff5f56;
+}
+
+.code-header .mac-dots span:nth-child(2) {
+    background-color: #ffbd2e;
+}
+
+.code-header .mac-dots span:nth-child(3) {
+    background-color: #27c93f;
 }
 
 .code-header .filename {
-    @apply text-gray-600 font-medium;
+    @apply text-gray-600 text-xs font-medium tracking-wide;
     font-family: "fira-code", monospace;
-    font-weight: 400;
-    font-style: normal;
-}
-
-.code-header::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #caecff, #ef9eff, #ffb1cb);
-    border-radius: 4px 4px 0 0;
 }
 
 .micro-cms pre.has-filename {
@@ -484,6 +500,12 @@ onMounted(() => {
     @apply rounded-t-none;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
+}
+
+.micro-cms pre {
+    @apply mx-6 my-8 bg-gray-50 border border-gray-200 rounded-xl text-gray-800;
+    overflow-x: auto;
+    max-width: 100%;
 }
 
 .micro-cms p code {

@@ -304,30 +304,15 @@ onMounted(() => {
 }
 
 .micro-cms img {
-    @apply w-full min-w-[30vw] max-w-[75vw] bg-white mx-5 pr-0 rounded-lg;
+    @apply mx-3 md:mx-8 w-auto h-auto max-w-full md:max-w-[80%] lg:max-w-[70%] max-h-[600px] object-contain block bg-white rounded-lg;
 }
 
 .micro-cms figure figcaption {
-    @apply max-w-full text-sm text-gray-400 ml-5 mt-0 pt-0;
+    @apply max-w-full text-sm text-gray-400 text-center mt-2;
 }
 
-/* タブレット */
-@media (min-width: 640px) {
-    .micro-cms img {
-        @apply max-w-[50vw];
-    }
-}
-
-/* PC */
-@media (min-width: 1024px) {
-    .micro-cms img {
-        @apply max-w-[50vw];
-    }
-}
-
-/* 画像を左寄せ */
 .micro-cms figure {
-    @apply text-left;
+    @apply w-full m-0;
 }
 
 .micro-cms h1 {
@@ -353,7 +338,7 @@ onMounted(() => {
 }
 
 .micro-cms p {
-    @apply ml-3 md:ml-8 mt-0 pb-2 leading-7;
+    @apply mx-3 md:mx-8 mt-0 leading-8 pb-2;
 }
 
 .micro-cms a {

@@ -315,16 +315,17 @@ onMounted(() => {
     @apply w-full m-0;
 }
 
+
 .micro-cms h1 {
-    @apply mt-5 mb-5 text-3xl;
+    @apply pt-10 mt-10 text-3xl font-semibold;
 }
 
 .micro-cms h2 {
-    @apply mt-5 mb-5 text-2xl;
+    @apply pt-5 mt-12 text-2xl font-semibold;
 }
 
 .micro-cms h3 {
-    @apply mt-5 mb-5 text-xl;
+    @apply mt-8 text-xl  font-semibold;
 }
 
 /* クリック可能な見出し */
@@ -338,15 +339,15 @@ onMounted(() => {
 }
 
 .micro-cms p {
-    @apply mx-3 md:mx-8 mt-0 leading-8 pb-2;
+    @apply mx-3 md:mx-8 mb-6 leading-loose tracking-wide text-base;
 }
 
 .micro-cms a {
-    @apply text-accent no-underline relative;
+    @apply text-primary no-underline relative font-medium transition-all duration-200;
 }
 
 .micro-cms .mq-link-card {
-    @apply my-6;
+    @apply my-8;
 }
 
 .micro-cms .mq-link-card__link {
@@ -355,11 +356,11 @@ onMounted(() => {
 }
 
 .micro-cms .mq-link-card img {
-    @apply m-0 p-0 w-auto min-w-0 max-w-full rounded-none bg-transparent;
+    @apply m-0 p-0 w-auto min-w-0 max-w-full rounded-none bg-transparent shadow-none border-none hover:scale-100 hover:shadow-none;
 }
 
 .micro-cms a .link-icon {
-    @apply ml-0.5 inline-block text-xs relative;
+    @apply ml-0.5 inline-block text-xs relative text-gray-400;
     vertical-align: baseline;
     opacity: 0.7;
     transition: opacity 0.2s;
@@ -371,10 +372,11 @@ onMounted(() => {
 
 .micro-cms a:hover .link-icon {
     opacity: 1;
+    @apply text-accent;
 }
 
 .micro-cms a:hover {
-    @apply underline;
+    @apply underline decoration-accent/30 decoration-2 underline-offset-2;
 }
 
 .micro-cms a u {
@@ -382,29 +384,29 @@ onMounted(() => {
 }
 
 .micro-cms ul {
-    @apply list-disc list-inside mx-5;
+    @apply list-disc list-inside mx-5 my-6 space-y-2 text-gray-800 leading-relaxed;
 }
 
 .micro-cms ol {
-    @apply list-decimal list-inside mx-5;
+    @apply list-decimal list-inside mx-5 my-6 space-y-2 text-gray-800 leading-relaxed;
 }
 
 .micro-cms blockquote {
-    @apply border-l-4 border-primary text-gray-500;
+    @apply border-l-4 border-primary/50 bg-gray-50/50 py-4 pr-4 my-8 rounded-r-lg text-gray-600 italic;
 }
 
 .micro-cms blockquote p {
-    @apply pl-2;
+    @apply pl-4 my-0;
 }
 
 .micro-cms pre {
-    @apply px-6;
+    @apply px-6 my-8;
     overflow-x: auto;
     max-width: 100%;
 }
 
 .micro-cms li {
-    @apply mb-1;
+    @apply mb-1 pl-1;
 }
 
 /* テーブル */
@@ -485,7 +487,7 @@ onMounted(() => {
 }
 
 .micro-cms p code {
-    @apply rounded-lg px-1 py-0.5 bg-gray-100 text-gray-800 text-sm border border-gray-300;
+    @apply rounded-lg px-1 mx-1 py-0.5 bg-gray-100 text-gray-800 text-sm border border-gray-300;
     font-family: "fira-code", monospace;
     font-weight: 400;
     font-style: normal;

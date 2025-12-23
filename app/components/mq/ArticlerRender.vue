@@ -88,7 +88,10 @@ const buildSegments = (markup: string, linkCards: LinkCardEntry[]): ArticleSegme
     return segments;
 };
 
-const articleContent = computed<{ segments: ArticleSegment[] }>(() => {
+const articleSegments = ref<ArticleSegment[]>([]);
+const isLoading = ref(true);
+
+const processContent = () => {
     // コードハイライトとリンクアイコンの追加, リンクカードの置き換え
     if (props.target) {
         const $ = cheerio.load(props.target);
@@ -190,19 +193,22 @@ const articleContent = computed<{ segments: ArticleSegment[] }>(() => {
                 
                 // クリック可能なクラスを追加
                 $el.addClass('clickable-heading');
-                // linkアイコン追加
-                $el.append('&nbsp;<span class="link-icon text-sm">&#128279;</span>');
             });
         }
 
+    // ... (rest of processContent logic) ...
         const htmlOutput = $.html();
-        const segments = buildSegments(htmlOutput, linkCardEntries);
-        return { segments };
+        articleSegments.value = buildSegments(htmlOutput, linkCardEntries);
     } else {
-        return { segments: [] };
+        articleSegments.value = [];
     }
-});
-const articleSegments = computed(() => articleContent.value.segments);
+    isLoading.value = false;
+
+    // DOM要素が更新された後にインタラクティブ要素を初期化
+    nextTick(() => {
+        initInteractiveElements();
+    });
+};
 
 // 見出しをクリックしたときにパーマリンクをコピー
 const copyHeadingPermalink = (headingId: string) => {
@@ -222,74 +228,88 @@ const copyHeadingPermalink = (headingId: string) => {
     }
 };
 
-// スクロール可能な要素を検出し、インジケーターを追加する
-onMounted(() => {
-    nextTick(() => {
-        const tables = document.querySelectorAll('.micro-cms table');
-        const codeBlocks = document.querySelectorAll('code');
-        
-        // スクロール可能な要素にインジケーターを追加
-        function addScrollIndicator(elements: any) {
-            elements.forEach((element: any) => {
-                if (element.scrollWidth > element.clientWidth) {
-                    // スクロール可能な場合、インジケーターを追加
-                    const indicator = document.createElement('div');
-                    indicator.className = 'scroll-indicator';
-                    indicator.innerHTML = 'スクロール可能です →';
+const initInteractiveElements = () => {
+    const tables = document.querySelectorAll('.micro-cms table');
+    const codeBlocks = document.querySelectorAll('code');
+    
+    // スクロール可能な要素にインジケーターを追加
+    function addScrollIndicator(elements: any) {
+        elements.forEach((element: any) => {
+            if (element.scrollWidth > element.clientWidth) {
+                // スクロール可能な場合、インジケーターを追加
+                const indicator = document.createElement('div');
+                indicator.className = 'scroll-indicator';
+                indicator.innerHTML = 'スクロール可能です →';
+                
+                // 要素をラップする
+                const wrapper = document.createElement('div');
+                wrapper.className = 'scrollable-wrapper';
+                element.parentNode.insertBefore(wrapper, element);
+                wrapper.appendChild(element);
+                wrapper.appendChild(indicator);
+                
+                // スクロールイベントを検知したら点滅を止める
+                element.addEventListener('scroll', () => {
+                    indicator.classList.remove('blink');
+                    indicator.classList.add('fade-out');
                     
-                    // 要素をラップする
-                    const wrapper = document.createElement('div');
-                    wrapper.className = 'scrollable-wrapper';
-                    element.parentNode.insertBefore(wrapper, element);
-                    wrapper.appendChild(element);
-                    wrapper.appendChild(indicator);
-                    
-                    // スクロールイベントを検知したら点滅を止める
-                    element.addEventListener('scroll', () => {
-                        indicator.classList.remove('blink');
-                        indicator.classList.add('fade-out');
-                        
-                        // 少し時間を置いてから非表示に
-                        setTimeout(() => {
-                            indicator.style.display = 'none';
-                        }, 1000);
-                    });
-                }
-            });
-        }
-        
-        addScrollIndicator(tables);
-        addScrollIndicator(codeBlocks);
-        
-        // 見出しにクリックイベントを追加
-        const headings = document.querySelectorAll('.micro-cms .clickable-heading');
-        headings.forEach((heading) => {
-            heading.addEventListener('click', () => {
-                const id = heading.getAttribute('id');
-                if (id) {
-                    copyHeadingPermalink(id);
-                }
-            });
+                    // 少し時間を置いてから非表示に
+                    setTimeout(() => {
+                        indicator.style.display = 'none';
+                    }, 1000);
+                });
+            }
+        });
+    }
+    
+    addScrollIndicator(tables);
+    addScrollIndicator(codeBlocks);
+    
+    // 見出しにクリックイベントを追加
+    const headings = document.querySelectorAll('.micro-cms .clickable-heading');
+    headings.forEach((heading) => {
+        heading.addEventListener('click', () => {
+            const id = heading.getAttribute('id');
+            if (id) {
+                copyHeadingPermalink(id);
+            }
         });
     });
+};
+
+onMounted(() => {
+    // メインスレッドをブロックしないように非同期で処理を実行
+    setTimeout(() => {
+        processContent();
+    }, 500);
+});
+
+watch(() => props.target, () => {
+    isLoading.value = true;
+    setTimeout(() => {
+        processContent();
+    }, 500);
 });
 </script>
 
 <template>
     <div v-bind="containerAttrs" :class="rootClass">
-        <template v-for="(segment, index) in articleSegments" :key="index">
-            <div
-                v-if="segment.type === 'html'"
-                :class="htmlSegmentClass"
-                v-html="segment.content"
-            />
-            <MqLinkCard
-                v-else
-                class="px-8 pt-2"
-                :url="segment.data.url"
-                :target="segment.data.target"
-                :rel="segment.data.rel"
-            />
+        <MqLoading text="Loading article..." v-if="isLoading" />
+        <template v-else>
+            <template v-for="(segment, index) in articleSegments" :key="index">
+                <div
+                    v-if="segment.type === 'html'"
+                    :class="htmlSegmentClass"
+                    v-html="segment.content"
+                />
+                <MqLinkCard
+                    v-else
+                    class="px-8 pt-2"
+                    :url="segment.data.url"
+                    :target="segment.data.target"
+                    :rel="segment.data.rel"
+                />
+            </template>
         </template>
     </div>
 </template>
@@ -340,11 +360,11 @@ onMounted(() => {
 /* クリック可能な見出し */
 .micro-cms .clickable-heading {
     @apply cursor-pointer;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.3s ease;
 }
 
 .micro-cms .clickable-heading:hover {
-    @apply text-primary/70 rounded-md px-2 -mx-2 transition-colors duration-200;
+    @apply text-primary/70 rounded-md px-2 -mx-2 transition-colors;
 }
 
 .micro-cms p {

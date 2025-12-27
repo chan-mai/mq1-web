@@ -37,6 +37,13 @@ resource "google_cloud_run_service" "main" {
             }
           }
         }
+        dynamic "env" {
+          for_each = var.custom_domain != "" ? [1] : []
+          content {
+            name  = "NUXT_PUBLIC_BASE_URL"
+            value = "https://${var.custom_domain}"
+          }
+        }
         env {
           name = "DISCORD_WEBHOOK_URL"
           value_from {

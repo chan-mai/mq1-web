@@ -37,25 +37,25 @@ steps:
     secretEnv: ['DATABASE_URL','DISCORD_WEBHOOK_URL','GA_TRACKING_ID','GITHUB_CLIENT_ID','GITHUB_SECRET','MICROCMS_API_KEY','MICROCMS_SERVICE_DOMAIN','NUXT_SESSION_PASSWORD','TURNSTILE_SECRET_KEY','TURNSTILE_SITE_KEY']
 availableSecrets:
   secretManager:
-    - versionName: projects/749757387366/secrets/DATABASE_URL/versions/1
+    - versionName: projects/749757387366/secrets/DATABASE_URL/versions/latest
       env: DATABASE_URL
-    - versionName: projects/749757387366/secrets/DISCORD_WEBHOOK_URL/versions/1
+    - versionName: projects/749757387366/secrets/DISCORD_WEBHOOK_URL/versions/latest
       env: DISCORD_WEBHOOK_URL
-    - versionName: projects/749757387366/secrets/GA_TRACKING_ID/versions/1
+    - versionName: projects/749757387366/secrets/GA_TRACKING_ID/versions/latest
       env: GA_TRACKING_ID
-    - versionName: projects/749757387366/secrets/GITHUB_CLIENT_ID/versions/1
+    - versionName: projects/749757387366/secrets/GITHUB_CLIENT_ID/versions/latest
       env: GITHUB_CLIENT_ID
-    - versionName: projects/749757387366/secrets/GITHUB_SECRET/versions/1
+    - versionName: projects/749757387366/secrets/GITHUB_SECRET/versions/latest
       env: GITHUB_SECRET
-    - versionName: projects/749757387366/secrets/MICROCMS_API_KEY/versions/1
+    - versionName: projects/749757387366/secrets/MICROCMS_API_KEY/versions/latest
       env: MICROCMS_API_KEY
-    - versionName: projects/749757387366/secrets/MICROCMS_SERVICE_DOMAIN/versions/1
+    - versionName: projects/749757387366/secrets/MICROCMS_SERVICE_DOMAIN/versions/latest
       env: MICROCMS_SERVICE_DOMAIN
-    - versionName: projects/749757387366/secrets/NUXT_SESSION_PASSWORD/versions/1
+    - versionName: projects/749757387366/secrets/NUXT_SESSION_PASSWORD/versions/latest
       env: NUXT_SESSION_PASSWORD
-    - versionName: projects/749757387366/secrets/TURNSTILE_SECRET_KEY/versions/1
+    - versionName: projects/749757387366/secrets/TURNSTILE_SECRET_KEY/versions/latest
       env: TURNSTILE_SECRET_KEY
-    - versionName: projects/749757387366/secrets/TURNSTILE_SITE_KEY/versions/1
+    - versionName: projects/749757387366/secrets/TURNSTILE_SITE_KEY/versions/latest
       env: TURNSTILE_SITE_KEY
 substitutions:
   _LOCATION: asia-northeast1

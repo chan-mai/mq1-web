@@ -1,0 +1,620 @@
+[
+  {
+    "availableSecrets": {
+      "secretManager": [
+        {
+          "env": "DATABASE_URL",
+          "versionName": "projects/mq1-web/secrets/PROD_DATABASE_URL/versions/latest"
+        },
+        {
+          "env": "DISCORD_WEBHOOK_URL",
+          "versionName": "projects/mq1-web/secrets/PROD_DISCORD_WEBHOOK_URL/versions/latest"
+        },
+        {
+          "env": "GA_TRACKING_ID",
+          "versionName": "projects/mq1-web/secrets/PROD_GA_TRACKING_ID/versions/latest"
+        },
+        {
+          "env": "GITHUB_CLIENT_ID",
+          "versionName": "projects/mq1-web/secrets/PROD_GITHUB_CLIENT_ID/versions/latest"
+        },
+        {
+          "env": "GITHUB_SECRET",
+          "versionName": "projects/mq1-web/secrets/PROD_GITHUB_SECRET/versions/latest"
+        },
+        {
+          "env": "MICROCMS_API_KEY",
+          "versionName": "projects/mq1-web/secrets/PROD_MICROCMS_API_KEY/versions/latest"
+        },
+        {
+          "env": "MICROCMS_SERVICE_DOMAIN",
+          "versionName": "projects/mq1-web/secrets/PROD_MICROCMS_SERVICE_DOMAIN/versions/latest"
+        },
+        {
+          "env": "NUXT_SESSION_PASSWORD",
+          "versionName": "projects/mq1-web/secrets/PROD_NUXT_SESSION_PASSWORD/versions/latest"
+        },
+        {
+          "env": "TURNSTILE_SECRET_KEY",
+          "versionName": "projects/mq1-web/secrets/PROD_TURNSTILE_SECRET_KEY/versions/latest"
+        },
+        {
+          "env": "TURNSTILE_SITE_KEY",
+          "versionName": "projects/mq1-web/secrets/PROD_TURNSTILE_SITE_KEY/versions/latest"
+        }
+      ]
+    },
+    "createTime": "2025-12-27T10:17:18.097344244Z",
+    "failureInfo": {
+      "detail": "Build step failure: build step 2 \"gcr.io/cloud-builders/gcloud\" failed: step exited with non-zero status: 1",
+      "type": "USER_BUILD_STEP"
+    },
+    "finishTime": "2025-12-27T10:21:38.591495Z",
+    "id": "00ecaf0c-170a-49b7-8914-c4ca4feb88df",
+    "logUrl": "https://console.cloud.google.com/cloud-build/builds/00ecaf0c-170a-49b7-8914-c4ca4feb88df?project=749757387366",
+    "logsBucket": "gs://749757387366.cloudbuild-logs.googleusercontent.com",
+    "name": "projects/749757387366/locations/global/builds/00ecaf0c-170a-49b7-8914-c4ca4feb88df",
+    "options": {
+      "logging": "LEGACY",
+      "pool": {}
+    },
+    "projectId": "mq1-web",
+    "queueTtl": "3600s",
+    "results": {
+      "buildStepImages": [
+        "sha256:bbfb43e87f62ec9afca4c78a2348fed90f32312a9bbd002114147c853c4b3654",
+        "sha256:bbfb43e87f62ec9afca4c78a2348fed90f32312a9bbd002114147c853c4b3654",
+        "sha256:fd5ec5eebd835355df4551bda2b3004e509ba503cabd47080c352e8c5f2b7a96"
+      ],
+      "buildStepOutputs": [
+        "",
+        "",
+        ""
+      ]
+    },
+    "serviceAccount": "projects/mq1-web/serviceAccounts/749757387366-compute@developer.gserviceaccount.com",
+    "source": {
+      "storageSource": {
+        "bucket": "mq1-web_cloudbuild",
+        "generation": "1766830636799769",
+        "object": "source/1766830623.496377-61e859f4f1be4e598a566e2fa0e10ff9.tgz"
+      }
+    },
+    "sourceProvenance": {
+      "fileHashes": {
+        "gs://mq1-web_cloudbuild/source/1766830623.496377-61e859f4f1be4e598a566e2fa0e10ff9.tgz#1766830636799769": {
+          "fileHash": [
+            {
+              "type": "MD5",
+              "value": "CIYke3b-CpXnpJzu1gLPpw=="
+            }
+          ]
+        }
+      },
+      "resolvedStorageSource": {
+        "bucket": "mq1-web_cloudbuild",
+        "generation": "1766830636799769",
+        "object": "source/1766830623.496377-61e859f4f1be4e598a566e2fa0e10ff9.tgz"
+      }
+    },
+    "startTime": "2025-12-27T10:17:19.014595383Z",
+    "status": "FAILURE",
+    "steps": [
+      {
+        "args": [
+          "-c",
+          "docker build -t asia-northeast1-docker.pkg.dev/mq1-web/cloud-run-source-deploy-prod/prod-mq1-web:latest \\\n  --build-arg DATABASE_URL=\"$DATABASE_URL\" \\\n  --build-arg DISCORD_WEBHOOK_URL=\"$DISCORD_WEBHOOK_URL\" \\\n  --build-arg GA_TRACKING_ID=\"$GA_TRACKING_ID\" \\\n  --build-arg GITHUB_CLIENT_ID=\"$GITHUB_CLIENT_ID\" \\\n  --build-arg GITHUB_SECRET=\"$GITHUB_SECRET\" \\\n  --build-arg MICROCMS_API_KEY=\"$MICROCMS_API_KEY\" \\\n  --build-arg MICROCMS_SERVICE_DOMAIN=\"$MICROCMS_SERVICE_DOMAIN\" \\\n  --build-arg NUXT_SESSION_PASSWORD=\"$NUXT_SESSION_PASSWORD\" \\\n  --build-arg TURNSTILE_SECRET_KEY=\"$TURNSTILE_SECRET_KEY\" \\\n  --build-arg TURNSTILE_SITE_KEY=\"$TURNSTILE_SITE_KEY\" \\\n  .\n"
+        ],
+        "entrypoint": "bash",
+        "env": [
+          "DOCKER_BUILDKIT=1"
+        ],
+        "name": "gcr.io/cloud-builders/docker",
+        "pullTiming": {
+          "endTime": "2025-12-27T10:17:26.830585961Z",
+          "startTime": "2025-12-27T10:17:26.824205604Z"
+        },
+        "secretEnv": [
+          "DATABASE_URL",
+          "DISCORD_WEBHOOK_URL",
+          "GA_TRACKING_ID",
+          "GITHUB_CLIENT_ID",
+          "GITHUB_SECRET",
+          "MICROCMS_API_KEY",
+          "MICROCMS_SERVICE_DOMAIN",
+          "NUXT_SESSION_PASSWORD",
+          "TURNSTILE_SECRET_KEY",
+          "TURNSTILE_SITE_KEY"
+        ],
+        "status": "SUCCESS",
+        "timing": {
+          "endTime": "2025-12-27T10:20:28.864041696Z",
+          "startTime": "2025-12-27T10:17:26.824205604Z"
+        }
+      },
+      {
+        "args": [
+          "push",
+          "asia-northeast1-docker.pkg.dev/mq1-web/cloud-run-source-deploy-prod/prod-mq1-web:latest"
+        ],
+        "name": "gcr.io/cloud-builders/docker",
+        "pullTiming": {
+          "endTime": "2025-12-27T10:20:28.866052913Z",
+          "startTime": "2025-12-27T10:20:28.864105598Z"
+        },
+        "status": "SUCCESS",
+        "timing": {
+          "endTime": "2025-12-27T10:21:19.413557773Z",
+          "startTime": "2025-12-27T10:20:28.864105598Z"
+        }
+      },
+      {
+        "args": [
+          "-c",
+          "gcloud run deploy prod-mq1-web \\\n  --image asia-northeast1-docker.pkg.dev/mq1-web/cloud-run-source-deploy-prod/prod-mq1-web:latest \\\n  --platform managed \\\n  --region asia-northeast1 \\\n  --allow-unauthenticated \\\n  --set-env-vars \"DATABASE_URL=$DATABASE_URL,DISCORD_WEBHOOK_URL=$DISCORD_WEBHOOK_URL,GA_TRACKING_ID=$GA_TRACKING_ID,GITHUB_CLIENT_ID=$GITHUB_CLIENT_ID,GITHUB_SECRET=$GITHUB_SECRET,MICROCMS_API_KEY=$MICROCMS_API_KEY,MICROCMS_SERVICE_DOMAIN=$MICROCMS_SERVICE_DOMAIN,NUXT_SESSION_PASSWORD=$NUXT_SESSION_PASSWORD,TURNSTILE_SECRET_KEY=$TURNSTILE_SECRET_KEY,TURNSTILE_SITE_KEY=$TURNSTILE_SITE_KEY\"\n"
+        ],
+        "entrypoint": "bash",
+        "exitCode": 1,
+        "name": "gcr.io/cloud-builders/gcloud",
+        "pullTiming": {
+          "endTime": "2025-12-27T10:21:19.421937498Z",
+          "startTime": "2025-12-27T10:21:19.413691709Z"
+        },
+        "secretEnv": [
+          "DATABASE_URL",
+          "DISCORD_WEBHOOK_URL",
+          "GA_TRACKING_ID",
+          "GITHUB_CLIENT_ID",
+          "GITHUB_SECRET",
+          "MICROCMS_API_KEY",
+          "MICROCMS_SERVICE_DOMAIN",
+          "NUXT_SESSION_PASSWORD",
+          "TURNSTILE_SECRET_KEY",
+          "TURNSTILE_SITE_KEY"
+        ],
+        "status": "FAILURE",
+        "timing": {
+          "endTime": "2025-12-27T10:21:26.158649824Z",
+          "startTime": "2025-12-27T10:21:19.413691709Z"
+        }
+      }
+    ],
+    "substitutions": {
+      "_AR_HOSTNAME": "asia-northeast1-docker.pkg.dev",
+      "_AR_REPOSITORY": "cloud-run-source-deploy-prod",
+      "_DEPLOY_REGION": "asia-northeast1",
+      "_PLATFORM": "managed",
+      "_SECRET_PREFIX": "PROD_",
+      "_SERVICE": "prod-mq1-web"
+    },
+    "timeout": "3600s",
+    "timing": {
+      "BUILD": {
+        "endTime": "2025-12-27T10:21:26.158800695Z",
+        "startTime": "2025-12-27T10:17:26.155510471Z"
+      },
+      "FETCHSOURCE": {
+        "endTime": "2025-12-27T10:17:26.154180322Z",
+        "startTime": "2025-12-27T10:17:20.858962221Z"
+      },
+      "STORAGE_SOURCE": {
+        "endTime": "2025-12-27T10:17:26.154180322Z",
+        "startTime": "2025-12-27T10:17:20.858962221Z"
+      }
+    }
+  },
+  {
+    "availableSecrets": {
+      "secretManager": [
+        {
+          "env": "DATABASE_URL",
+          "versionName": "projects/749757387366/secrets/DATABASE_URL/versions/1"
+        },
+        {
+          "env": "DISCORD_WEBHOOK_URL",
+          "versionName": "projects/749757387366/secrets/DISCORD_WEBHOOK_URL/versions/1"
+        },
+        {
+          "env": "GA_TRACKING_ID",
+          "versionName": "projects/749757387366/secrets/GA_TRACKING_ID/versions/1"
+        },
+        {
+          "env": "GITHUB_CLIENT_ID",
+          "versionName": "projects/749757387366/secrets/GITHUB_CLIENT_ID/versions/1"
+        },
+        {
+          "env": "GITHUB_SECRET",
+          "versionName": "projects/749757387366/secrets/GITHUB_SECRET/versions/1"
+        },
+        {
+          "env": "MICROCMS_API_KEY",
+          "versionName": "projects/749757387366/secrets/MICROCMS_API_KEY/versions/1"
+        },
+        {
+          "env": "MICROCMS_SERVICE_DOMAIN",
+          "versionName": "projects/749757387366/secrets/MICROCMS_SERVICE_DOMAIN/versions/1"
+        },
+        {
+          "env": "NUXT_SESSION_PASSWORD",
+          "versionName": "projects/749757387366/secrets/NUXT_SESSION_PASSWORD/versions/1"
+        },
+        {
+          "env": "TURNSTILE_SECRET_KEY",
+          "versionName": "projects/749757387366/secrets/TURNSTILE_SECRET_KEY/versions/1"
+        },
+        {
+          "env": "TURNSTILE_SITE_KEY",
+          "versionName": "projects/749757387366/secrets/TURNSTILE_SITE_KEY/versions/1"
+        }
+      ]
+    },
+    "buildTriggerId": "351e4a5d-55df-4ea7-8546-9ff72a6a5299",
+    "createTime": "2025-12-23T13:34:53.564029Z",
+    "finishTime": "2025-12-23T13:39:04.444763Z",
+    "id": "245599d9-552c-4ca8-bba0-25dec017a55e",
+    "logUrl": "https://console.cloud.google.com/cloud-build/builds/245599d9-552c-4ca8-bba0-25dec017a55e?project=749757387366",
+    "name": "projects/749757387366/locations/global/builds/245599d9-552c-4ca8-bba0-25dec017a55e",
+    "options": {
+      "dynamicSubstitutions": true,
+      "logging": "CLOUD_LOGGING_ONLY",
+      "pool": {},
+      "substitutionOption": "ALLOW_LOOSE"
+    },
+    "projectId": "mq1-web",
+    "queueTtl": "3600s",
+    "results": {
+      "buildStepImages": [
+        "sha256:bbfb43e87f62ec9afca4c78a2348fed90f32312a9bbd002114147c853c4b3654",
+        "sha256:bbfb43e87f62ec9afca4c78a2348fed90f32312a9bbd002114147c853c4b3654",
+        "sha256:fd5ec5eebd835355df4551bda2b3004e509ba503cabd47080c352e8c5f2b7a96"
+      ],
+      "buildStepOutputs": [
+        "",
+        "",
+        ""
+      ]
+    },
+    "serviceAccount": "projects/mq1-web/serviceAccounts/749757387366-compute@developer.gserviceaccount.com",
+    "source": {
+      "gitSource": {
+        "revision": "91a115bb6d29a95ed69341ccef14f4a483d3de13",
+        "url": "https://github.com/chan-mai/mq1-web.git"
+      }
+    },
+    "sourceProvenance": {
+      "resolvedGitSource": {
+        "revision": "91a115bb6d29a95ed69341ccef14f4a483d3de13",
+        "url": "https://github.com/chan-mai/mq1-web.git"
+      }
+    },
+    "startTime": "2025-12-23T13:34:54.174082746Z",
+    "status": "SUCCESS",
+    "steps": [
+      {
+        "args": [
+          "-c",
+          "docker build -t asia-northeast1-docker.pkg.dev/mq1-web/cloud-run-source-deploy/mq1-web \\\n  --build-arg DATABASE_URL=\"$DATABASE_URL\" \\\n  --build-arg DISCORD_WEBHOOK_URL=\"$DISCORD_WEBHOOK_URL\" \\\n  --build-arg GA_TRACKING_ID=\"$GA_TRACKING_ID\" \\\n  --build-arg GITHUB_CLIENT_ID=\"$GITHUB_CLIENT_ID\" \\\n  --build-arg GITHUB_SECRET=\"$GITHUB_SECRET\" \\\n  --build-arg MICROCMS_API_KEY=\"$MICROCMS_API_KEY\" \\\n  --build-arg MICROCMS_SERVICE_DOMAIN=\"$MICROCMS_SERVICE_DOMAIN\" \\\n  --build-arg NUXT_SESSION_PASSWORD=\"$NUXT_SESSION_PASSWORD\" \\\n  --build-arg TURNSTILE_SECRET_KEY=\"$TURNSTILE_SECRET_KEY\" \\\n  --build-arg TURNSTILE_SITE_KEY=\"$TURNSTILE_SITE_KEY\" \\\n  .\n"
+        ],
+        "entrypoint": "bash",
+        "env": [
+          "DOCKER_BUILDKIT=1"
+        ],
+        "name": "gcr.io/cloud-builders/docker",
+        "pullTiming": {
+          "endTime": "2025-12-23T13:34:59.138157897Z",
+          "startTime": "2025-12-23T13:34:59.134146422Z"
+        },
+        "secretEnv": [
+          "DATABASE_URL",
+          "DISCORD_WEBHOOK_URL",
+          "GA_TRACKING_ID",
+          "GITHUB_CLIENT_ID",
+          "GITHUB_SECRET",
+          "MICROCMS_API_KEY",
+          "MICROCMS_SERVICE_DOMAIN",
+          "NUXT_SESSION_PASSWORD",
+          "TURNSTILE_SECRET_KEY",
+          "TURNSTILE_SITE_KEY"
+        ],
+        "status": "SUCCESS",
+        "timing": {
+          "endTime": "2025-12-23T13:37:44.267659588Z",
+          "startTime": "2025-12-23T13:34:59.134146422Z"
+        }
+      },
+      {
+        "args": [
+          "push",
+          "asia-northeast1-docker.pkg.dev/mq1-web/cloud-run-source-deploy/mq1-web"
+        ],
+        "name": "gcr.io/cloud-builders/docker",
+        "pullTiming": {
+          "endTime": "2025-12-23T13:37:44.269150530Z",
+          "startTime": "2025-12-23T13:37:44.267915021Z"
+        },
+        "status": "SUCCESS",
+        "timing": {
+          "endTime": "2025-12-23T13:38:25.170060165Z",
+          "startTime": "2025-12-23T13:37:44.267915021Z"
+        }
+      },
+      {
+        "args": [
+          "-c",
+          "gcloud run deploy mq1-web \\\n  --image asia-northeast1-docker.pkg.dev/mq1-web/cloud-run-source-deploy/mq1-web \\\n  --platform managed \\\n  --region asia-northeast1 \\\n  --allow-unauthenticated \\\n  --set-env-vars \"DATABASE_URL=$DATABASE_URL,DISCORD_WEBHOOK_URL=$DISCORD_WEBHOOK_URL,GA_TRACKING_ID=$GA_TRACKING_ID,GITHUB_CLIENT_ID=$GITHUB_CLIENT_ID,GITHUB_SECRET=$GITHUB_SECRET,MICROCMS_API_KEY=$MICROCMS_API_KEY,MICROCMS_SERVICE_DOMAIN=$MICROCMS_SERVICE_DOMAIN,NUXT_SESSION_PASSWORD=$NUXT_SESSION_PASSWORD,TURNSTILE_SECRET_KEY=$TURNSTILE_SECRET_KEY,TURNSTILE_SITE_KEY=$TURNSTILE_SITE_KEY\"\n"
+        ],
+        "entrypoint": "bash",
+        "name": "gcr.io/cloud-builders/gcloud",
+        "pullTiming": {
+          "endTime": "2025-12-23T13:38:25.178191294Z",
+          "startTime": "2025-12-23T13:38:25.170138649Z"
+        },
+        "secretEnv": [
+          "DATABASE_URL",
+          "DISCORD_WEBHOOK_URL",
+          "GA_TRACKING_ID",
+          "GITHUB_CLIENT_ID",
+          "GITHUB_SECRET",
+          "MICROCMS_API_KEY",
+          "MICROCMS_SERVICE_DOMAIN",
+          "NUXT_SESSION_PASSWORD",
+          "TURNSTILE_SECRET_KEY",
+          "TURNSTILE_SITE_KEY"
+        ],
+        "status": "SUCCESS",
+        "timing": {
+          "endTime": "2025-12-23T13:39:03.027440775Z",
+          "startTime": "2025-12-23T13:38:25.170138649Z"
+        }
+      }
+    ],
+    "substitutions": {
+      "BRANCH_NAME": "develop",
+      "COMMIT_SHA": "91a115bb6d29a95ed69341ccef14f4a483d3de13",
+      "REF_NAME": "develop",
+      "REPO_FULL_NAME": "chan-mai/mq1-web",
+      "REPO_NAME": "mq1-web",
+      "REVISION_ID": "91a115bb6d29a95ed69341ccef14f4a483d3de13",
+      "SHORT_SHA": "91a115b",
+      "TRIGGER_BUILD_CONFIG_PATH": "cloudbuild.yaml",
+      "TRIGGER_NAME": "rmgpgab-mq1-web-asia-northeast1-chan-mai-mq1-web--develtfx",
+      "_AR_HOSTNAME": "asia-northeast1-docker.pkg.dev",
+      "_AR_PROJECT_ID": "mq1-web",
+      "_AR_REPOSITORY": "cloud-run-source-deploy",
+      "_DEPLOY_REGION": "asia-northeast1",
+      "_IMAGE": "mq1-web",
+      "_LOCATION": "asia-northeast1",
+      "_PLATFORM": "managed",
+      "_REGION": "asia-northeast1",
+      "_REPOSITORY": "cloud-run-source-deploy",
+      "_SERVICE": "mq1-web",
+      "_SERVICE_NAME": "mq1-web",
+      "_TRIGGER_ID": "351e4a5d-55df-4ea7-8546-9ff72a6a5299"
+    },
+    "tags": [
+      "trigger-351e4a5d-55df-4ea7-8546-9ff72a6a5299"
+    ],
+    "timeout": "3600s",
+    "timing": {
+      "BUILD": {
+        "endTime": "2025-12-23T13:39:03.027491231Z",
+        "startTime": "2025-12-23T13:34:58.594058200Z"
+      },
+      "FETCHSOURCE": {
+        "endTime": "2025-12-23T13:34:58.593323088Z",
+        "startTime": "2025-12-23T13:34:56.862628113Z"
+      },
+      "GIT_SOURCE": {
+        "endTime": "2025-12-23T13:34:58.593323088Z",
+        "startTime": "2025-12-23T13:34:56.862628113Z"
+      }
+    }
+  },
+  {
+    "availableSecrets": {
+      "secretManager": [
+        {
+          "env": "DATABASE_URL",
+          "versionName": "projects/749757387366/secrets/DATABASE_URL/versions/1"
+        },
+        {
+          "env": "DISCORD_WEBHOOK_URL",
+          "versionName": "projects/749757387366/secrets/DISCORD_WEBHOOK_URL/versions/1"
+        },
+        {
+          "env": "GA_TRACKING_ID",
+          "versionName": "projects/749757387366/secrets/GA_TRACKING_ID/versions/1"
+        },
+        {
+          "env": "GITHUB_CLIENT_ID",
+          "versionName": "projects/749757387366/secrets/GITHUB_CLIENT_ID/versions/1"
+        },
+        {
+          "env": "GITHUB_SECRET",
+          "versionName": "projects/749757387366/secrets/GITHUB_SECRET/versions/1"
+        },
+        {
+          "env": "MICROCMS_API_KEY",
+          "versionName": "projects/749757387366/secrets/MICROCMS_API_KEY/versions/1"
+        },
+        {
+          "env": "MICROCMS_SERVICE_DOMAIN",
+          "versionName": "projects/749757387366/secrets/MICROCMS_SERVICE_DOMAIN/versions/1"
+        },
+        {
+          "env": "NUXT_SESSION_PASSWORD",
+          "versionName": "projects/749757387366/secrets/NUXT_SESSION_PASSWORD/versions/1"
+        },
+        {
+          "env": "TURNSTILE_SECRET_KEY",
+          "versionName": "projects/749757387366/secrets/TURNSTILE_SECRET_KEY/versions/1"
+        },
+        {
+          "env": "TURNSTILE_SITE_KEY",
+          "versionName": "projects/749757387366/secrets/TURNSTILE_SITE_KEY/versions/1"
+        }
+      ]
+    },
+    "buildTriggerId": "351e4a5d-55df-4ea7-8546-9ff72a6a5299",
+    "createTime": "2025-12-16T07:58:32.933609Z",
+    "finishTime": "2025-12-16T08:02:11.977500Z",
+    "id": "ee1b6991-df84-4922-ac59-ad949888b819",
+    "logUrl": "https://console.cloud.google.com/cloud-build/builds/ee1b6991-df84-4922-ac59-ad949888b819?project=749757387366",
+    "name": "projects/749757387366/locations/global/builds/ee1b6991-df84-4922-ac59-ad949888b819",
+    "options": {
+      "dynamicSubstitutions": true,
+      "logging": "CLOUD_LOGGING_ONLY",
+      "pool": {},
+      "substitutionOption": "ALLOW_LOOSE"
+    },
+    "projectId": "mq1-web",
+    "queueTtl": "3600s",
+    "results": {
+      "buildStepImages": [
+        "sha256:bbfb43e87f62ec9afca4c78a2348fed90f32312a9bbd002114147c853c4b3654",
+        "sha256:bbfb43e87f62ec9afca4c78a2348fed90f32312a9bbd002114147c853c4b3654",
+        "sha256:fd5ec5eebd835355df4551bda2b3004e509ba503cabd47080c352e8c5f2b7a96"
+      ],
+      "buildStepOutputs": [
+        "",
+        "",
+        ""
+      ]
+    },
+    "serviceAccount": "projects/mq1-web/serviceAccounts/749757387366-compute@developer.gserviceaccount.com",
+    "source": {
+      "gitSource": {
+        "revision": "00aeb5d941a0153dceb320cfb108601e347ca1d2",
+        "url": "https://github.com/chan-mai/mq1-web.git"
+      }
+    },
+    "sourceProvenance": {
+      "resolvedGitSource": {
+        "revision": "00aeb5d941a0153dceb320cfb108601e347ca1d2",
+        "url": "https://github.com/chan-mai/mq1-web.git"
+      }
+    },
+    "startTime": "2025-12-16T07:58:40.393460934Z",
+    "status": "SUCCESS",
+    "steps": [
+      {
+        "args": [
+          "-c",
+          "docker build -t asia-northeast1-docker.pkg.dev/mq1-web/cloud-run-source-deploy/mq1-web \\\n  --build-arg DATABASE_URL=\"$DATABASE_URL\" \\\n  --build-arg DISCORD_WEBHOOK_URL=\"$DISCORD_WEBHOOK_URL\" \\\n  --build-arg GA_TRACKING_ID=\"$GA_TRACKING_ID\" \\\n  --build-arg GITHUB_CLIENT_ID=\"$GITHUB_CLIENT_ID\" \\\n  --build-arg GITHUB_SECRET=\"$GITHUB_SECRET\" \\\n  --build-arg MICROCMS_API_KEY=\"$MICROCMS_API_KEY\" \\\n  --build-arg MICROCMS_SERVICE_DOMAIN=\"$MICROCMS_SERVICE_DOMAIN\" \\\n  --build-arg NUXT_SESSION_PASSWORD=\"$NUXT_SESSION_PASSWORD\" \\\n  --build-arg TURNSTILE_SECRET_KEY=\"$TURNSTILE_SECRET_KEY\" \\\n  --build-arg TURNSTILE_SITE_KEY=\"$TURNSTILE_SITE_KEY\" \\\n  .\n"
+        ],
+        "entrypoint": "bash",
+        "env": [
+          "DOCKER_BUILDKIT=1"
+        ],
+        "name": "gcr.io/cloud-builders/docker",
+        "pullTiming": {
+          "endTime": "2025-12-16T07:58:45.130975674Z",
+          "startTime": "2025-12-16T07:58:45.122651064Z"
+        },
+        "secretEnv": [
+          "DATABASE_URL",
+          "DISCORD_WEBHOOK_URL",
+          "GA_TRACKING_ID",
+          "GITHUB_CLIENT_ID",
+          "GITHUB_SECRET",
+          "MICROCMS_API_KEY",
+          "MICROCMS_SERVICE_DOMAIN",
+          "NUXT_SESSION_PASSWORD",
+          "TURNSTILE_SECRET_KEY",
+          "TURNSTILE_SITE_KEY"
+        ],
+        "status": "SUCCESS",
+        "timing": {
+          "endTime": "2025-12-16T08:00:53.324986176Z",
+          "startTime": "2025-12-16T07:58:45.122651064Z"
+        }
+      },
+      {
+        "args": [
+          "push",
+          "asia-northeast1-docker.pkg.dev/mq1-web/cloud-run-source-deploy/mq1-web"
+        ],
+        "name": "gcr.io/cloud-builders/docker",
+        "pullTiming": {
+          "endTime": "2025-12-16T08:00:53.326332452Z",
+          "startTime": "2025-12-16T08:00:53.325097173Z"
+        },
+        "status": "SUCCESS",
+        "timing": {
+          "endTime": "2025-12-16T08:01:25.586417156Z",
+          "startTime": "2025-12-16T08:00:53.325097173Z"
+        }
+      },
+      {
+        "args": [
+          "-c",
+          "gcloud run deploy mq1-web \\\n  --image asia-northeast1-docker.pkg.dev/mq1-web/cloud-run-source-deploy/mq1-web \\\n  --platform managed \\\n  --region asia-northeast1 \\\n  --allow-unauthenticated \\\n  --set-env-vars \"DATABASE_URL=$DATABASE_URL,DISCORD_WEBHOOK_URL=$DISCORD_WEBHOOK_URL,GA_TRACKING_ID=$GA_TRACKING_ID,GITHUB_CLIENT_ID=$GITHUB_CLIENT_ID,GITHUB_SECRET=$GITHUB_SECRET,MICROCMS_API_KEY=$MICROCMS_API_KEY,MICROCMS_SERVICE_DOMAIN=$MICROCMS_SERVICE_DOMAIN,NUXT_SESSION_PASSWORD=$NUXT_SESSION_PASSWORD,TURNSTILE_SECRET_KEY=$TURNSTILE_SECRET_KEY,TURNSTILE_SITE_KEY=$TURNSTILE_SITE_KEY\"\n"
+        ],
+        "entrypoint": "bash",
+        "name": "gcr.io/cloud-builders/gcloud",
+        "pullTiming": {
+          "endTime": "2025-12-16T08:01:25.597420808Z",
+          "startTime": "2025-12-16T08:01:25.586495039Z"
+        },
+        "secretEnv": [
+          "DATABASE_URL",
+          "DISCORD_WEBHOOK_URL",
+          "GA_TRACKING_ID",
+          "GITHUB_CLIENT_ID",
+          "GITHUB_SECRET",
+          "MICROCMS_API_KEY",
+          "MICROCMS_SERVICE_DOMAIN",
+          "NUXT_SESSION_PASSWORD",
+          "TURNSTILE_SECRET_KEY",
+          "TURNSTILE_SITE_KEY"
+        ],
+        "status": "SUCCESS",
+        "timing": {
+          "endTime": "2025-12-16T08:02:10.604203787Z",
+          "startTime": "2025-12-16T08:01:25.586495039Z"
+        }
+      }
+    ],
+    "substitutions": {
+      "BRANCH_NAME": "develop",
+      "COMMIT_SHA": "00aeb5d941a0153dceb320cfb108601e347ca1d2",
+      "REF_NAME": "develop",
+      "REPO_FULL_NAME": "chan-mai/mq1-web",
+      "REPO_NAME": "mq1-web",
+      "REVISION_ID": "00aeb5d941a0153dceb320cfb108601e347ca1d2",
+      "SHORT_SHA": "00aeb5d",
+      "TRIGGER_BUILD_CONFIG_PATH": "cloudbuild.yaml",
+      "TRIGGER_NAME": "rmgpgab-mq1-web-asia-northeast1-chan-mai-mq1-web--develtfx",
+      "_AR_HOSTNAME": "asia-northeast1-docker.pkg.dev",
+      "_AR_PROJECT_ID": "mq1-web",
+      "_AR_REPOSITORY": "cloud-run-source-deploy",
+      "_DEPLOY_REGION": "asia-northeast1",
+      "_IMAGE": "mq1-web",
+      "_LOCATION": "asia-northeast1",
+      "_PLATFORM": "managed",
+      "_REGION": "asia-northeast1",
+      "_REPOSITORY": "cloud-run-source-deploy",
+      "_SERVICE": "mq1-web",
+      "_SERVICE_NAME": "mq1-web",
+      "_TRIGGER_ID": "351e4a5d-55df-4ea7-8546-9ff72a6a5299"
+    },
+    "tags": [
+      "trigger-351e4a5d-55df-4ea7-8546-9ff72a6a5299"
+    ],
+    "timeout": "3600s",
+    "timing": {
+      "BUILD": {
+        "endTime": "2025-12-16T08:02:10.604327450Z",
+        "startTime": "2025-12-16T07:58:44.592569848Z"
+      },
+      "FETCHSOURCE": {
+        "endTime": "2025-12-16T07:58:44.591261228Z",
+        "startTime": "2025-12-16T07:58:42.670743263Z"
+      },
+      "GIT_SOURCE": {
+        "endTime": "2025-12-16T07:58:44.591261228Z",
+        "startTime": "2025-12-16T07:58:42.670743263Z"
+      }
+    }
+  }
+]

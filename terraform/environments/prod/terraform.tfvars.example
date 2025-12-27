@@ -1,0 +1,14 @@
+project_id = "mq1-web"
+region     = "asia-northeast1"
+
+# Secrets
+database_url            = "postgresql://user:password@host:port/dbname?sslmode=prefer"
+discord_webhook_url     = "https://discord.com/api/webhooks/..."
+ga_tracking_id          = "G-XXXXXXXXXX"
+github_client_id        = "Iv1.xxxxxxxxxxxx"
+github_secret           = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+microcms_api_key        = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+microcms_service_domain = "service-domain"
+nuxt_session_password   = "very-long-and-secure-password-at-least-32-chars"
+turnstile_secret_key    = "0x4AAAAAA..."
+turnstile_site_key      = "0x4AAAAAA..."

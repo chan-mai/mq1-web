@@ -66,3 +66,7 @@ substitutions:
   _DEPLOY_REGION: asia-northeast1
   _SERVICE: mq1-web
   _SECRET_PREFIX: "" # Default to empty for backward compatibility if needed, but TF will override
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  

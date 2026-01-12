@@ -29,7 +29,7 @@ const close = () => {
 
 // escで閉じる
 if (import.meta.client) {
-  useEventListener('keydown', (e) => {
+  useEventListener('keydown', (e: KeyboardEvent) => {
     if (e.key === 'Escape' && isVisible.value) {
       close();
     }

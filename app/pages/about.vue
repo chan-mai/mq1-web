@@ -25,12 +25,12 @@ useHead({
         { property: 'og:site_name', content: config.value.siteName },
         { property: 'og:title', content: `${config.value.siteName} - 私について` },
         { property: 'og:description', content: config.value.siteDescription },
-        { property: 'og:image', content: `${config.value.siteUrl}ogp/about-ogp.png` },
+        { property: 'og:image', content: `${config.value.siteUrl}images/ogp/about-ogp.png` },
         { property: 'og:url', content: `${config.value.siteUrl}about` },
         { property: 'og:type', content: 'website' },
         { name: 'twitter:card', content: 'summary_large_image' },
         { name: 'twitter:card', content: 'summary_large_image' },
-        { name: 'twitter:image', content: `${config.value.siteUrl}ogp/about-ogp.png` },
+        { name: 'twitter:image', content: `${config.value.siteUrl}images/ogp/about-ogp.png` },
     ],
 });
 
@@ -47,7 +47,7 @@ useJsonld([
     jobTitle: config.value.author.jobTitle,
     description: config.value.author.description,
     url: config.value.siteUrl,
-    image: `${config.value.siteUrl}about/mai.png`,
+    image: `${config.value.siteUrl}images/about/mai.png`,
     sameAs: socials.map((social: any) => social.url),
     },
     {
@@ -69,12 +69,12 @@ useJsonld([
         <div class="min-h-screen overflow-hidden">
 
             <div class="bg-primary text-white relative w-full max-w-none overflow-hidden md:overflow-visible dot-overlay">
-                <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none bg-[url(/about/bg.png)] bg-cover opacity-50 contrast-110" />
+                <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none bg-[url(/images/about/bg.png)] bg-cover opacity-50 contrast-110" />
                 <AboutHeadBackground />
                 
                 <!-- 右側のエッジ文字 -->
                 <div class="absolute bottom-0 z-20 w-full h-2/3">
-                    <NuxtImg src="/about/mai-bg-text.png" format="webp" alt="Mai Sudachi" fetchpriority="high"
+                    <NuxtImg src="/images/about/mai-bg-text.png" format="webp" alt="Mai Sudachi" fetchpriority="high"
                         class="w-full h-full object-contain object-right" loading="eager" />
                 </div>
                 <div class="w-full px-8 pt-[120px] md:pt-[160px] pb-8 max-w-6xl mx-auto">
@@ -118,11 +118,11 @@ useJsonld([
                                 <!-- 顔 -->
                                 <div class="flex space-x-4 mb-12">
                                     <div class="bg-white rounded-full p-1 size-15">
-                                        <NuxtImg src="/about/mai-crop2.png" format="webp" alt="Icon 1"
+                                        <NuxtImg src="/images/about/mai-crop2.png" format="webp" alt="Icon 1"
                                             class="rounded-full size-10" />
                                     </div>
                                     <div class="bg-white rounded-full p-1 size-15 relative z-10">
-                                        <NuxtImg src="/about/mai-crop.png" format="webp" alt="Icon 1" class="rounded-full size-10" />
+                                        <NuxtImg src="/images/about/mai-crop.png" format="webp" alt="Icon 1" class="rounded-full size-10" />
                                     </div>
                                 </div>
                             </div>
@@ -132,7 +132,7 @@ useJsonld([
                 <div class="absolute w-full h-full left-0 pointer-events-none">
                     <!-- 背景画像 -->
                     <div class="absolute top-0 z-20 w-full h-full opacity-40 -translate-y-full">
-                        <NuxtImg src="/about/mai-bg.png" format="webp" alt="doted mai" fetchpriority="high"
+                        <NuxtImg src="/images/about/mai-bg.png" format="webp" alt="doted mai" fetchpriority="high"
                             class="w-full h-full object-cover object-center" loading="eager" />
                     </div>
 
@@ -140,7 +140,7 @@ useJsonld([
                     <div class="absolute w-full top-0 z-20 -translate-y-[75%] md:-translate-y-2/3  
             scale-80 md:scale-100 -right-0 md:right-[15%]">
                         <div class="character-glow absolute w-full h-full top-0 right-0 z-40"></div>
-                        <NuxtImg src="/about/mai.png" format="webp" alt="Mai Sudachi" fetchpriority="high"
+                        <NuxtImg src="/images/about/mai.png" format="webp" alt="Mai Sudachi" fetchpriority="high"
                             class="object-contain max-h-[800px] relative z-[60] ml-auto" loading="eager" decoding="async" />
                     </div>
                 </div>

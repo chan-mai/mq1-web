@@ -66,7 +66,7 @@ if (import.meta.client) {
          aria-hidden="true"
       >
         <NuxtImg
-          src="hero.png"
+          src="/images/hero.png"
           alt=""
           format="webp"
           class="block object-cover w-full h-full"

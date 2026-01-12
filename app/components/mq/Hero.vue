@@ -32,7 +32,7 @@ defineProps({
             <div class="col-span-full row-span-full overflow-hidden transform transition-transform duration-300 hover:scale-[1.01] dot-overlay">
                 <picture>
                     <NuxtImg v-if="url && url.length > 0" :src="url" format="webp" :alt="title" fetchpriority="high" class="block size-full object-cover" />
-                    <NuxtImg v-else src="hero.png" format="webp" sizes="xs:100vw sm:100vw md:100vw lg:1200px" :alt="title" fetchpriority="high" class="block size-full object-cover" />
+                    <NuxtImg v-else src="/images/hero.png" format="webp" sizes="xs:100vw sm:100vw md:100vw lg:1200px" :alt="title" fetchpriority="high" class="block size-full object-cover" />
                 </picture>
             </div>
 

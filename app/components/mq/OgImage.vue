@@ -26,7 +26,7 @@ const ogUrl = computed(() => {
         } else if ( props.tagId ) {
             return useTagOgGenerator(props.tagId);
         } else {
-            return "/ogp/ogp.png";
+            return "/images/ogp/ogp.png";
         }
     } else {
         return props.url;

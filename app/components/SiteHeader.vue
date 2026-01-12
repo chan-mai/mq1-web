@@ -117,7 +117,7 @@ if (import.meta.client) {
     <h1
       class="fixed z-40 top-[20px] left-[20px] min-[801px]:top-[60px] min-[801px]:left-[60px] max-[1260px]:left-[30px]">
       <NuxtLink to="/" class="cursor-react">
-        <NuxtImg :alt="config.siteName" src="web-logo.png" height="200" format="webp"
+        <NuxtImg :alt="config.siteName" src="/images/web-logo.png" height="200" format="webp"
           class="max-h-[80px] w-auto max-[800px]:w-[180px] transition-[filter] duration-300"
           :class="{ 'brightness-0 invert': headerTheme === 'dark' }" />
       </NuxtLink>

@@ -72,13 +72,14 @@ if (nextArticleResponse.value && nextArticleResponse.value.contents && nextArtic
                         <span class="text-xs sm:text-sm group-hover:text-primary">前の記事</span>
                     </div>
                     <h4
-                        class="text-gray-800 text-sm sm:text-base font-medium line-clamp-1 overflow-hidden text-ellipsis">
+                        class="text-gray-800 text-sm sm:text-base font-medium line-clamp-1 overflow-hidden text-ellipsis"
+                        :style="`view-transition-name: article-title-${prevArticle.id};`">
                         {{ prevArticle.title }}</h4>
                     <div class="mt-2 flex flex-col sm:flex-row items-center">
                         <div
                             class="w-full md:max-w-1/3 md:h-20 sm:max-h-16 mb-2 sm:mb-0 sm:mr-3 overflow-hidden rounded">
                             <MqOgImage :url="prevArticle.eyecatch?.url" :content-id="prevArticle.id" :title="prevArticle.title"
-                                class="w-full h-full object-contain" />
+                                class="w-full h-full object-contain" :style="`view-transition-name: article-${prevArticle.id};`" />
                         </div>
                         <p class="text-xs sm:text-sm text-gray-600 overflow-hidden line-clamp-2 sm:line-clamp-3">{{
                             prevArticle.summary || '' }}</p>
@@ -104,7 +105,8 @@ if (nextArticleResponse.value && nextArticleResponse.value.contents && nextArtic
                         <Icon name="material-symbols:arrow-forward" class="ml-1 w-4 h-4 group-hover:text-primary" />
                     </div>
                     <h4
-                        class="text-gray-800 text-sm sm:text-base font-medium line-clamp-1 overflow-hidden text-ellipsis text-right">
+                        class="text-gray-800 text-sm sm:text-base font-medium line-clamp-1 overflow-hidden text-ellipsis text-right"
+                        :style="`view-transition-name: article-title-${nextArticle.id};`">
                         {{ nextArticle.title }}</h4>
                     <div class="mt-2 flex flex-col-reverse sm:flex-row items-center">
                         <p
@@ -112,7 +114,7 @@ if (nextArticleResponse.value && nextArticleResponse.value.contents && nextArtic
                             {{ nextArticle.summary || '' }}</p>
                         <div class="w-full md:max-w-1/3 md:h-20 sm:max-h-16 sm:ml-3 overflow-hidden rounded">
                             <MqOgImage :url="nextArticle.eyecatch?.url" :content-id="nextArticle.id" :title="nextArticle.title"
-                                class="w-full h-full object-contain" />
+                                class="w-full h-full object-contain" :style="`view-transition-name: article-${nextArticle.id};`" />
                         </div>
                     </div>
                 </div>

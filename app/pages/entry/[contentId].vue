@@ -201,34 +201,56 @@ const tableOfContents: Ref<{ id: string; text: string; level: number }[]> = ref(
     </div>
     <ScrollProgressBar />
     <main
-        class="min-h-screen pt-[120px] md:pt-[160px] px-6">
-        <article class="mx-auto flex w-full max-w-6xl flex-col px-2 md:px-6 mb-16">
-            <ArticlePageHead :title="article?.title" :published="article?.publishedAt ?? article?.createdAt"
-                :updated="article?.updatedAt" :tags="article?.tags"
-                :readingTime :style="`view-transition-name: article-title-${contentId};`" :contentId />
+        class="min-h-screen pt-[120px] md:pt-[160px] px-4 sm:px-6">
+        <div class="mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start mb-20">
+            <!-- Left Sidebar (Social Actions) -->
+            <aside class="hidden lg:flex lg:col-span-1 sticky top-32 flex-col gap-6 items-center z-20 pt-8">
+                 <MqFavoriteButton :content-id="contentId" variant="icon-only" />
+                 <div class="h-px w-10 bg-gray-200"></div>
+                 <MqShareButtons 
+                    :title="article?.title || ''" 
+                    :url="`/entry/${contentId}`"
+                    orientation="vertical"
+                />
+            </aside>
 
-            <MqCollapsibleToc :items="tableOfContents" :title="article?.title"
-                class="mt-5" />
+            <!-- Main Content -->
+            <article class="lg:col-span-8 w-full min-w-0">
+                <ArticlePageHead :title="article?.title" :published="article?.publishedAt ?? article?.createdAt"
+                    :updated="article?.updatedAt" :tags="article?.tags"
+                    :readingTime :contentId />
 
-            <div class="content prose">
-                <MqArticlerRender :target="article?.content!" class="micro-cms mt-6 md:mt-10" />
-            </div>
-        </article>
-        <!-- 共有ボタン -->
-        <div class="mt-6 mb-4 max-w-6xl mx-auto w-full px-2 md:px-6">
-            <MqShareButtons 
-                :title="article?.title || ''" 
-                :url="`/entry/${contentId}`"
-            />
-        </div>
+                <!-- Mobile 目次 -->
+                <MqCollapsibleToc :items="tableOfContents" :title="article?.title"
+                    class="mt-8 lg:hidden" />
 
-        <!-- いいねボタン -->
-        <div class="mt-6 mb-4 max-w-6xl mx-auto w-full px-2 md:px-6">
-            <MqFavoriteButton :content-id="contentId" class="px-5 py-3" />
-        </div>
-        <!-- コメントセクション -->
-        <div class="mt-8 mb-8 max-w-6xl mx-auto w-full px-2 md:px-6">
-            <MqCommentSection :content-id="contentId" />
+                <div class="content prose max-w-none">
+                    <MqArticlerRender :target="article?.content!" class="micro-cms mt-8 md:mt-12" />
+                </div>
+                
+                <!-- いいねボタン -->
+                <div class="mt-12 mb-8 w-full">
+                    <MqFavoriteButton :content-id="contentId" class="px-5 py-3" />
+                </div>
+
+                <!-- 共有ボタン -->
+                <div class="mt-6 mb-8 w-full">
+                    <MqShareButtons 
+                        :title="article?.title || ''" 
+                        :url="`/entry/${contentId}`"
+                    />
+                </div>
+                
+                <!-- コメントセクション -->
+                <div class="mt-8 mb-8 w-full">
+                    <MqCommentSection :content-id="contentId" />
+                </div>
+            </article>
+
+            <!-- PC, サイド目次 -->
+            <aside class="hidden lg:block lg:col-span-3 sticky top-32 pt-8">
+                 <MqCollapsibleToc class="max-h-[calc(100vh-9rem)] overflow-y-auto custom-scrollbar" :items="tableOfContents" :title="article?.title" />
+            </aside>
         </div>
     </main>
     <ArticlePageFooter :current-article="article!" />

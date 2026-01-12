@@ -105,7 +105,7 @@ onMounted(() => {
             <div class="p-1.5 rounded-md text-primary bg-white/50 size-8 flex items-center justify-center">
                 <Icon name="lucide:list" class="size-6" />
             </div>
-          <h2 class="text-sm font-bold text-gray-700 tracking-wide uppercase">{{ title }}</h2>
+          <h2 class="text-sm font-bold text-gray-700 tracking-wide uppercase">目次</h2>
         </div>
         <button 
             class="text-gray-400 hover:text-gray-600 transition-colors p-1 flex items-center justify-center aspect-square size-8 rounded-md border-none hover:bg-gray-100" 
@@ -136,9 +136,9 @@ onMounted(() => {
                 </button>
                 <span v-else class="w-6 shrink-0"></span> <!-- Spacer for alignment -->
                 
-                <NuxtLink :to="`#${item.id}`" class="block flex-1 py-1.5">
-                  <span class="font-mono text-xs text-gray-400 mr-2 group-hover:text-primary transition-colors">{{ item.counter }}</span>
-                  <span class="text-sm text-gray-700 group-hover:text-gray-900 group-hover:text-primary group-hover:underline decoration-1 decoration-primary underline-offset-4 transition-all">{{ item.text }}</span>
+                <NuxtLink :to="`#${item.id}`" class="flex items-start flex-1 py-1.5">
+                  <span class="font-mono text-xs text-gray-400 mr-2 shrink-0 group-hover:text-primary transition-colors mt-0.5">{{ item.counter }}</span>
+                  <span class="text-sm text-gray-700 line-clamp-1 md:line-clamp-2 group-hover:text-gray-900 group-hover:text-primary group-hover:underline decoration-1 decoration-primary underline-offset-4 transition-all">{{ item.text }}</span>
                 </NuxtLink>
             </div>
 
@@ -147,9 +147,9 @@ onMounted(() => {
                 <ol v-if="item.children.length && isExpanded(item.id)" class="pl-2 ml-3 border-l border-gray-200/60 my-1 space-y-1 list-none">
                   <li v-for="child in item.children" :key="child.id">
                     <div class="flex items-center justify-center group pl-4">
-                        <NuxtLink :to="`#${child.id}`" class="block flex-1 py-1">
-                            <span class="font-mono text-[10px] text-gray-300 mr-2 group-hover:text-primary transition-colors">{{ child.counter }}</span>
-                            <span class="text-sm text-gray-600 group-hover:text-gray-900 group-hover:text-primary group-hover:underline decoration-1 decoration-primary underline-offset-4 transition-all">{{ child.text }}</span>
+                        <NuxtLink :to="`#${child.id}`" class="flex items-start flex-1 py-1">
+                            <span class="font-mono text-[10px] text-gray-300 mr-2 shrink-0 group-hover:text-primary transition-colors mt-0.5">{{ child.counter }}</span>
+                            <span class="text-sm text-gray-600 line-clamp-1 md:line-clamp-2 group-hover:text-gray-900 group-hover:text-primary group-hover:underline decoration-1 decoration-primary underline-offset-4 transition-all">{{ child.text }}</span>
                         </NuxtLink>
                     </div>
 
@@ -158,9 +158,9 @@ onMounted(() => {
                       <ol v-if="child.children.length" class="pl-2 ml-3 border-l border-gray-200/60 my-1 space-y-1 list-none">
                         <li v-for="grandChild in child.children" :key="grandChild.id">
                           <div class="flex items-center justify-center group pl-4">
-                            <NuxtLink :to="`#${grandChild.id}`" class="block flex-1 py-1">
-                                <span class="font-mono text-[10px] text-gray-300 mr-2 group-hover:text-primary transition-colors">{{ grandChild.counter }}</span>
-                                <span class="text-xs text-gray-500 group-hover:text-gray-800 transition-colors">{{ grandChild.text }}</span>
+                            <NuxtLink :to="`#${grandChild.id}`" class="flex items-start flex-1 py-1">
+                                <span class="font-mono text-[10px] text-gray-300 mr-2 shrink-0 group-hover:text-primary transition-colors mt-0.5">{{ grandChild.counter }}</span>
+                                <span class="text-xs text-gray-500 line-clamp-1 md:line-clamp-2 group-hover:text-gray-800 transition-colors">{{ grandChild.text }}</span>
                             </NuxtLink>
                           </div>
                         </li>
@@ -210,4 +210,23 @@ onMounted(() => {
   margin-bottom: 0;
   overflow: hidden;
 }
+
+
+nav::-webkit-scrollbar {
+  width: 6px;
+}
+nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+nav::-webkit-scrollbar-thumb {
+  background-color: rgba(209, 213, 219, 0.8);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+nav:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.8);
+}
+
 </style>
+

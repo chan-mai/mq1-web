@@ -39,7 +39,7 @@ const updatedDate = computed(() => (props.updated && props.updated !== props.pub
 <template>
     <MqPageBack class="mt-3" />
     <div class="flex flex-col gap-5">
-        <h1 class="text-3xl leading-snug text-slate-800 md:text-4xl md:leading-normal">
+        <h1 class="text-3xl leading-snug text-slate-800 md:text-4xl md:leading-normal" :style="`view-transition-name: article-title-${contentId}`">
             {{ title }}
         </h1>
         <div class="flex flex-wrap gap-2">

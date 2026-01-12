@@ -239,7 +239,7 @@ useJsonld([
     left: 0;
     width: 100%;
     height: 100%;
-    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAG0lEQVQYV2NkYGD4z8DAwMgABXAGNgGwSgwVAFbmAgXQdISfAAAAAElFTkSuQmCC) repeat;
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAEElEQVR4nGP4//9/GgNlAADe/gNkBNkWTgAAAABJRU5ErkJggg==) repeat;
     background-color: rgba(0, 0, 0, 0.1);
     pointer-events: none;
 }

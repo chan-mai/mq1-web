@@ -2,9 +2,12 @@
 interface Props {
   title: string;
   url: string;
+  orientation?: 'horizontal' | 'vertical';
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  orientation: 'horizontal'
+});
 
 const config = useWebConfig();
 
@@ -105,26 +108,33 @@ const shareButtons = [
 
 <template>
   <div class="share-buttons">
-    <div class="flex flex-col gap-3 rounded-xl px-5 py-4">
-      <div class="flex items-center gap-2">
+    <div 
+        class="flex gap-3 rounded-xl py-4"
+        :class="orientation === 'vertical' ? 'flex-col items-center px-2' : 'flex-col px-5'"
+    >
+      <div v-if="orientation === 'horizontal'" class="flex items-center gap-2">
         <div class="flex h-8 w-8 items-center justify-center rounded-full bg-primary">
           <Icon name="material-symbols:share" class="h-4 w-4 text-white" />
         </div>
         <h3 class="text-lg text-primary">この記事を共有</h3>
       </div>
-      <div class="flex flex-wrap gap-2">
+      <div 
+        class="flex gap-2"
+        :class="orientation === 'vertical' ? 'flex-col w-full' : 'flex-wrap'"
+      >
         <button
           v-for="button in shareButtons"
           :key="button.name"
           @click="button.action"
           :class="[
-            'group relative flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-600 bg-white/70 backdrop-blur-sm border border-gray-200/60 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:ring-offset-2',
-            button.color
+            'group relative flex items-center justify-center gap-2 text-sm font-medium text-gray-600 bg-white/70 backdrop-blur-sm border border-gray-200/60 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:ring-offset-2',
+            button.color,
+            orientation === 'vertical' ? 'w-10 h-10 p-0 rounded-full mx-auto' : 'px-4 py-2.5'
           ]"
           :title="`${button.name}で共有`"
         >
           <Icon :name="button.icon" class="w-4 h-4 flex-shrink-0 transition-transform group-hover:scale-110" />
-          <span class="hidden sm:inline whitespace-nowrap font-medium">{{ button.name }}</span>
+          <span v-if="orientation === 'horizontal'" class="hidden sm:inline whitespace-nowrap font-medium">{{ button.name }}</span>
         </button>
       </div>
     </div>

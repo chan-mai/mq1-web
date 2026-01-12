@@ -1,20 +1,10 @@
 <script setup lang="ts">
 const ZZZ = () => h('div', {
-  class: 'zzz-text',
-  style: {
-    whiteSpace: 'nowrap',
-    fontSize: '12rem',
-    userSelect: 'none',
-    fontWeight: '800',
-    letterSpacing: '10px',
-    height: 'fit-content',
-    lineHeight: '0.95',
-    color: 'var(--color-bg-subtle, #f5f5f5)'
-  }
+  class: 'whitespace-nowrap text-[12rem] select-none font-extrabold tracking-[10px] h-fit leading-[0.95] text-[#f5f5f5] opacity-10 max-[768px]:text-[9rem] max-[768px]:tracking-[6px] max-[640px]:text-[6rem] max-[640px]:tracking-[4px]'
 }, 'MAI SUDACHI');
 
 const breakpoint = ref('md');
-const kiRurasCount = computed(() => {
+const zzzCount = computed(() => {
   switch (breakpoint.value) {
     case 'xs': return 20;
     case 'sm': return 130;
@@ -22,7 +12,7 @@ const kiRurasCount = computed(() => {
   }
 });
 
-const zzzs = computed(() => Array(kiRurasCount.value).fill(ZZZ));
+const zzzs = computed(() => Array(zzzCount.value).fill(ZZZ));
 
 const doubleZzzs = computed(() => {
   const result = [];
@@ -62,21 +52,13 @@ useEventListener('resize', updateBreakpoint);
 
 <template>
   <ClientOnly>
-    <div class="zzz-container" data-header-inverse="true">
-      <div class="zzz-bleed"></div>
-      <div class="zzz-content">
-        <div v-for="(zzzs, i) in splitZzzs" :key="`row-${i}`" class="zzz-row">
-          <div 
-            v-for="(doubleZzzs, j) in zzzs" 
-            :key="`group-${i}-${j}`"
-            class="zzz-group"
-            :class="`slide-${i % 2 === 0 ? 'left' : 'right'}`"
-          >
-            <component 
-              v-for="(ZZZ, k) in doubleZzzs" 
-              :key="`zzz-${i}-${j}-${k}`"
-              :is="ZZZ"
-            />
+    <div class="absolute z-[1] flex items-center justify-center overflow-hidden max-w-full w-full h-full max-h-[75rem]" data-header-inverse="true">
+      <div class="absolute w-full h-full z-[2] bg-gradient-to-b from-transparent to-accent"></div>
+      <div class="-rotate-45 max-[640px]:-rotate-90">
+        <div v-for="(zzzs, i) in splitZzzs" :key="`row-${i}`" class="flex flex-row">
+          <div v-for="(doubleZzzs, j) in zzzs" :key="`group-${i}-${j}`" class="flex flex-row"
+            :class="i % 2 === 0 ? 'animate-slide-left' : 'animate-slide-right'">
+            <component v-for="(ZZZ, k) in doubleZzzs" :key="`zzz-${i}-${j}-${k}`" :is="ZZZ" />
           </div>
         </div>
       </div>
@@ -85,63 +67,11 @@ useEventListener('resize', updateBreakpoint);
 </template>
 
 <style scoped>
-.zzz-container {
-  position: absolute;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  max-width: 100%;
-  height: 100%;
-  max-height: 75rem;
-}
-
-.zzz-bleed {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(to bottom, transparent, var(--color-accent));
-  z-index: 2;
-}
-
-.zzz-content {
-  transform: rotate(-45deg);
-}
-
-@media (max-width: 640px) {
-  .zzz-content {
-    transform: rotate(-90deg);
-  }
-}
-
-.zzz-row {
-  display: flex;
-  flex-direction: row;
-}
-
-.zzz-group {
-  display: flex;
-  flex-direction: row;
-}
-
-.zzz-text {
-  white-space: nowrap;
-  font-size: 12rem;
-  user-select: none;
-  font-weight: 800;
-  letter-spacing: 10px;
-  height: fit-content;
-  line-height: 0.95;
-  color: #fff;
-  opacity: 0.1;
-}
-
-.slide-left {
+.animate-slide-left {
   animation: slide-to-left-full 200s linear infinite;
 }
 
-.slide-right {
+.animate-slide-right {
   animation: slide-to-right-full 200s linear infinite;
 }
 
@@ -149,6 +79,7 @@ useEventListener('resize', updateBreakpoint);
   0% {
     transform: translateX(100%);
   }
+
   100% {
     transform: translateX(-100%);
   }
@@ -158,22 +89,9 @@ useEventListener('resize', updateBreakpoint);
   0% {
     transform: translateX(-100%);
   }
+
   100% {
     transform: translateX(100%);
-  }
-}
-
-@media (max-width: 640px) {
-  .zzz-text {
-    font-size: 6rem;
-    letter-spacing: 4px;
-  }
-}
-
-@media (min-width: 641px) and (max-width: 768px) {
-  .zzz-text {
-    font-size: 9rem;
-    letter-spacing: 6px;
   }
 }
 </style>

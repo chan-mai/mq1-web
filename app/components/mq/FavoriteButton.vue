@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import type { Favorites } from '../../../generated/prisma/browser';
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   contentId: string;
-}>();
+  variant?: 'default' | 'icon-only';
+}>(), {
+  variant: 'default'
+});
 
 const toast = useToast();
 
@@ -192,7 +195,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="relative flex flex-col gap-3 rounded-xl">
+  <div class="relative flex flex-col gap-3 rounded-xl" :class="{ 'items-center': variant === 'icon-only' }">
     <div class="flex flex-wrap gap-2">
       <button
         @mouseenter="ensureCatPreloaded"
@@ -200,10 +203,11 @@ onMounted(() => {
         @click="toggleLike"
         :disabled="isLoading || isInitialLoading"
         :class="[
-          'group relative flex items-center justify-center gap-2 px-5 py-3 text-sm font-semibold rounded-2xl min-w-[132px] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2',
-          isLiked
-            ? 'bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-lg shadow-pink-300/40 hover:shadow-pink-400/50 hover:-translate-y-[1px]'
-            : 'text-gray-700 dark:text-gray-200 bg-white/80 dark:bg-white/10 border border-gray-200/60 dark:border-white/10 backdrop-blur-md hover:bg-gradient-to-r hover:from-pink-50 hover:to-rose-50 dark:hover:from-pink-950/30 dark:hover:to-rose-950/30 hover:border-pink-200/60 hover:shadow-lg hover:shadow-pink-200/40 hover:-translate-y-[1px]',
+          'group relative flex items-center justify-center gap-2 font-semibold rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2',
+          variant === 'icon-only' ? 'w-10 h-10 p-0 rounded-full' : 'px-5 py-3 text-sm min-w-[132px]',
+            isLiked
+              ? 'bg-gradient-to-r from-pink-400 to-rose-400 text-white shadow-lg shadow-pink-200/40 hover:shadow-pink-300/50 hover:-translate-y-[1px]'
+              : 'text-gray-700 dark:text-gray-200 bg-white/80 dark:bg-white/10 border border-gray-200/30 dark:border-white/10 backdrop-blur-md hover:bg-gradient-to-r hover:from-pink-50 hover:to-rose-50 dark:hover:from-pink-950/30 dark:hover:to-rose-950/30 hover:border-pink-200/60 hover:shadow-lg hover:shadow-pink-200/40 hover:-translate-y-[1px]',
           (isLoading || isInitialLoading) && 'opacity-75 cursor-wait hover:translate-y-0'
         ]"
         :aria-label="isLiked ? 'いいね！を解除' : 'いいね！する'"
@@ -227,11 +231,11 @@ onMounted(() => {
             ]"
           />
         </span>
-        <span class="whitespace-nowrap font-medium">
+        <span v-if="variant !== 'icon-only'" class="whitespace-nowrap font-medium">
           {{ isInitialLoading ? '取得中' :  isLoading ? '処理中...' : isLiked ? 'いいね！済み' : 'いいね！する' }}
         </span>
         <span 
-          v-if="!isInitialLoading"
+          v-if="!isInitialLoading && variant !== 'icon-only'"
           :class="[
             'ml-1 px-2 py-0.5 rounded-full text-xs font-bold',
             isLiked 
@@ -242,6 +246,11 @@ onMounted(() => {
           {{ likeCount }}
         </span>
       </button>
+    </div>
+    
+    <!-- アイコンのみモード用のカウント表示 -->
+    <div v-if="variant === 'icon-only' && !isInitialLoading" class="text-xs font-bold text-gray-500 text-center w-full">
+         {{ likeCount }}
     </div>
     
     <!-- いいねありがとう -->
@@ -255,7 +264,8 @@ onMounted(() => {
     >
       <div
         v-if="showLikeCard"
-        class="z-50 absolute top-14 left-0 mt-2 w-full max-w-sm bg-white/95 dark:bg-gray-900/95 backdrop-blur rounded-2xl p-4 border border-gray-200/70 dark:border-white/10"
+        class="z-50 absolute top-14 left-0 mt-2 bg-white/95 dark:bg-gray-900/95 backdrop-blur rounded-2xl p-4 border border-gray-200/70 dark:border-white/10"
+        :class="variant === 'icon-only' ? 'w-80' : 'w-full max-w-sm'"
         role="status" aria-live="polite"
       >
         <!-- 吹き出しの矢印 -->

@@ -13,6 +13,10 @@ const props = defineProps({
     transition: {
         type: Boolean,
         default: false
+    },
+    tagTransition: {
+        type: Boolean,
+        default: false
     }
 })
 const limit = props.limit as unknown as number;
@@ -72,7 +76,7 @@ function navigateToTag(tag: any) {
                                             class="relative w-full overflow-hidden rounded-lg max-w-full">
                                             <MqOgImage :url="article.eyecatch?.url" :content-id="article.id" :title="article.title" fill
                                                 class="object-cover transition-transform duration-300 hover:scale-105 rounded-lg w-full h-full"
-                                                :style="`view-transition-name: article-${article.id}; max-width: 100%;`" />
+                                                :style="transition ? `view-transition-name: article-${article.id}; max-width: 100%;` : 'max-width: 100%;'" />
                                         </div>
                                     </div>
 
@@ -80,14 +84,14 @@ function navigateToTag(tag: any) {
                                     <div class="w-full flex flex-col justify-between h-full md:flex-1 md:min-w-0">
                                         <div>
                                             <h3 class="text-lg font-medium text-gray-800 mb-2 whitespace-nowrap overflow-hidden text-ellipsis"
-                                                :style="`view-transition-name: article-title-${article.id};`">{{
+                                                :style="transition ? `view-transition-name: article-title-${article.id};` : ''">{{
                                                 article.title }}</h3>
                                             <p class="text-gray-600 text-sm mb-2 overflow-hidden line-clamp-3">{{ article.summary }}</p>
 
                                             <div class="flex flex-wrap gap-2 mt-4">
                                                 <MqTag v-for="tag in article.tags!.slice(0, 5)" :key="tag.id"
                                                     :tag="tag" @click.stop.prevent="navigateToTag(tag)"
-                                                    :transition />
+                                                    :transition="tagTransition" />
                                             </div>
                                         </div>
 

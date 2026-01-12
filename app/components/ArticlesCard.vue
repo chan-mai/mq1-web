@@ -10,6 +10,10 @@ const props = defineProps({
         type: Boolean,
         default: false
     },
+    tagTransition: {
+        type: Boolean,
+        default: false
+    },
     variant: {
         type: String,
         default: 'default',
@@ -61,7 +65,7 @@ function navigateToTag(tag: any) {
                 :title="article.title" 
                 fill
                 class="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                :style="`view-transition-name: article-${article.id};`" 
+                :style="transition ? `view-transition-name: article-${article.id};` : ''" 
             />
 
             <!-- 日付バッジ -->
@@ -77,7 +81,7 @@ function navigateToTag(tag: any) {
             <!-- タイトル -->
             <h3 
                 class="mb-3 text-lg transition-colors group-hover:text-primary leading-[1.5] line-clamp-1"
-                :style="`view-transition-name: article-title-${article.id};`"
+                :style="transition ? `view-transition-name: article-title-${article.id};` : ''"
             >
                 {{ article.title }}
             </h3>
@@ -94,7 +98,7 @@ function navigateToTag(tag: any) {
                     :key="tag.id"
                     :tag="tag" 
                     @click.stop.prevent="navigateToTag(tag)"
-                    :transition
+                    :transition="tagTransition"
                     class="text-[10px] px-2 py-0.5"
                 />
             </div>
@@ -123,12 +127,13 @@ function navigateToTag(tag: any) {
                 :title="article.title" 
                 fill
                 class="absolute inset-0 h-full w-full object-fit transition-transform duration-500 group-hover:scale-105"
+                :style="transition ? `view-transition-name: article-${article.id};` : ''"
             />
         </div>
 
         <!-- Content -->
         <div class="flex min-w-0 flex-1 flex-col justify-between self-stretch py-0.5">
-            <h3 class="line-clamp-1 text-sm leading-snug transition-colors group-hover:text-primary">
+            <h3 class="line-clamp-1 text-sm leading-snug transition-colors group-hover:text-primary" :style="transition ? `view-transition-name: article-title-${article.id};` : ''">
                 {{ article.title }}
             </h3>
             <p class="line-clamp-2 text-xs leading-snug text-gray-500 transition-colors group-hover:text-primary">
@@ -142,7 +147,7 @@ function navigateToTag(tag: any) {
                         :tag="tag" 
                         @click.stop.prevent="navigateToTag(tag)"
                         variant="compact"
-                        :transition
+                        :transition="tagTransition"
                         class="shrink-0"
                     />
                 </div>

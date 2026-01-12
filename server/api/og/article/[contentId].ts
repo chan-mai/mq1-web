@@ -18,7 +18,11 @@ export default defineEventHandler(async (event) => {
 
         // eyecatchがあればそれをレスポンス
         if (article.eyecatch) {
-            const imageResponse = await fetch(article.eyecatch.url);
+            // Twitter用にPNG形式を強制する
+            const imageUrl = new URL(article.eyecatch.url);
+            imageUrl.searchParams.set('fm', 'webp');
+
+            const imageResponse = await fetch(imageUrl.toString());
             if (!imageResponse.ok) {
                 throw createError({
                     statusCode: 500,
@@ -27,7 +31,7 @@ export default defineEventHandler(async (event) => {
             }
             const arrayBuffer = await imageResponse.arrayBuffer();
             const buffer = Buffer.from(arrayBuffer);
-            setHeader(event, 'Content-Type', imageResponse.headers.get('Content-Type') || 'image/webp');
+            setHeader(event, 'Content-Type', 'image/webp');
             setHeader(event, 'Cache-Control', 'public, max-age=31536000, immutable');
             return buffer;
         }

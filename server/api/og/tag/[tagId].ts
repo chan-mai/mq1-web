@@ -9,8 +9,9 @@ export default defineEventHandler(async (event) => {
 
     try {
         const tag = await fetchTag(tagId);
-        const ogUrl = generateOgImageUrl(`「#${tag.name}」が含まれる記事`);
-        const imageResponse = await fetch(ogUrl);
+        const ogUrlObj = new URL(generateOgImageUrl(`「#${tag.name}」が含まれる記事`));
+        ogUrlObj.searchParams.set('fm', 'webp');
+        const imageResponse = await fetch(ogUrlObj.toString());
         
         if (!imageResponse.ok) {
             throw createError({

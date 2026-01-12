@@ -41,7 +41,7 @@ whenever(
     <div>
         <!-- トリガー -->
         <button v-if="type === 'button'" @click="isOpen = true" title="RSSで購読する" aria-label="RSSで購読する"
-            class="flex items-center gap-2 rounded-full border-pink-200 bg-pink-50 px-4 py-2 text-primary hover:bg-pink-100">
+            class="flex items-center gap-2 rounded-full border-none bg-pink-50 px-4 py-2 text-primary hover:bg-pink-100">
             <Icon :name="rss.icon" class="size-4" />
             RSSで購読
         </button>

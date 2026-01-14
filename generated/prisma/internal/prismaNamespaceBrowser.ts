@@ -90,6 +90,7 @@ export const CommentsScalarFieldEnum = {
   comment: 'comment',
   userIp: 'userIp',
   status: 'status',
+  parentCommentId: 'parentCommentId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

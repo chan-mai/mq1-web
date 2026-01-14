@@ -3,7 +3,6 @@ import Avatar from "vue-boring-avatars";
 import type { MicroCMSQueries } from 'microcms-js-sdk';
 import type { MicroCMSObject } from '#shared/types/microccms';
 import type { Permission, CommentStatus } from '../../../generated/prisma/enums';
-import type { Comments } from '../../../generated/prisma/browser';
 
 definePageMeta({
   middleware: 'admin',
@@ -13,15 +12,6 @@ definePageMeta({
 
 const { hasPermission } = useAdminPermissions();
 const toast = useToast();
-
-interface Pagination {
-  page: number;
-  limit: number;
-  totalCount: number;
-  totalPages: number;
-  hasNext: boolean;
-  hasPrev: boolean;
-}
 
 interface StatusCount {
   status: string;
@@ -37,8 +27,8 @@ useHead({
 });
 
 // 状態管理
-const comments = ref<Comments[]>([]);
-const pagination = ref<Pagination | null>(null);
+const comments = ref<CommentWithReplies[]>([]);
+const pagination = ref<CommentsPagination | null>(null);
 const statusCounts = ref<StatusCount[]>([]);
 const isLoading = ref<boolean>(false);
 
@@ -101,7 +91,7 @@ const fetchComments = async (page: number = 1) => {
       throw fetchError.value;
     }
     
-    const response = data.value as { status: string; comments: Comments[]; pagination: Pagination; statusCounts: StatusCount[] };
+    const response = data.value as { status: string; comments: CommentWithReplies[]; pagination: CommentsPagination; statusCounts: StatusCount[] };
 
     if (response.status === 'success') {
       comments.value = response.comments;
@@ -358,6 +348,15 @@ onMounted(() => {
 
           <!-- コメント本文 -->
           <div class="mb-4">
+            <!-- 返信元表示 -->
+            <div v-if="comment.parent" class="flex items-center gap-2 mb-2 px-3 py-2 bg-gray-50 rounded-lg text-sm text-gray-600 border border-gray-100">
+              <Icon name="mdi:reply" class="w-4 h-4 text-gray-400" />
+              <span>
+                <span class="font-medium text-gray-800">{{ comment.parent.name }}</span>
+                への返信: {{ comment.parent.comment.length > 30 ? comment.parent.comment.substring(0, 30) + '...' : comment.parent.comment }}
+              </span>
+            </div>
+            
             <p class="text-gray-700 whitespace-pre-wrap break-words">{{ comment.comment }}</p>
           </div>
 
@@ -374,6 +373,10 @@ onMounted(() => {
             <div v-if="comment.createdAt !== comment.updatedAt" class="flex items-center gap-1">
               <Icon name="mdi:update" class="w-4 h-4" />
               <span>更新: {{ formatDate(comment.updatedAt) }}</span>
+            </div>
+            <div v-if="comment.parentCommentId" class="flex items-center gap-1 text-gray-400">
+               <Icon name="mdi:subdirectory-arrow-right" class="w-4 h-4" />
+               <span>返信ID: {{ comment.parentCommentId.substring(0, 8) }}...</span>
             </div>
           </div>
 

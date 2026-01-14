@@ -1,46 +1,23 @@
-<script setup lang="ts">
-import Avatar from 'vue-boring-avatars';
-import type { Comments } from '../../../generated/prisma/browser';
-
+<script lang="ts" setup>
 const props = defineProps<{
   contentId: string;
 }>();
 
 const toast = useToast();
 
-interface Pagination {
-  page: number;
-  limit: number;
-  totalCount: number;
-  totalPages: number;
-  hasNext: boolean;
-  hasPrev: boolean;
-}
-
 // コメント一覧
-const comments = ref<Comments[]>([]);
-const pagination = ref<Pagination | null>(null);
+const comments = ref<CommentWithReplies[]>([]);
+const pagination = ref<CommentsPagination | null>(null);
 const isLoadingList = ref<boolean>(false);
 const listError = ref<string | null>(null);
 const currentPage = ref<number>(1);
 
-// フォームの状態
-const name = ref<string>('');
-const comment = ref<string>('');
+// 返信フォームの状態
+const replyingToId = ref<string | null>(null);
+const replyingToName = ref<string | null>(null);
+
+// フォームの状態（ローディングのみ親で管理）
 const isLoadingForm = ref<boolean>(false);
-const turnstile = ref();
-
-// 注意事項の折りたたみ状態
-const isPolicyExpanded = ref<boolean>(false);
-
-// バリデーション
-const isNameValid = computed(() => name.value.trim().length > 0 && name.value.trim().length <= 50);
-const isCommentValid = computed(() => comment.value.trim().length > 0 && comment.value.trim().length <= 1000);
-const isFormValid = computed(() => isNameValid.value && isCommentValid.value);
-
-// 文字数カウント
-const nameLength = computed(() => name.value.trim().length);
-const commentLength = computed(() => comment.value.trim().length);
 
 // コメント一覧を取得
 const fetchComments = async (page: number = 1) => {
@@ -48,7 +25,7 @@ const fetchComments = async (page: number = 1) => {
   listError.value = null;
 
   try {
-    const response = await $fetch<{ status: string; comments: Comments[]; pagination: Pagination }>(`/api/comment/${props.contentId}?page=${page}&limit=10`);
+    const response = await $fetch<{ status: string; comments: CommentWithReplies[]; pagination: CommentsPagination }>(`/api/comment/${props.contentId}?page=${page}&limit=10`);
 
     if (response.status === 'success') {
       comments.value = response.comments;
@@ -88,51 +65,70 @@ const changePage = (page: number) => {
   }
 };
 
+// 返信開始
+const startReply = (commentItem: CommentWithReplies) => {
+  // ネストされたコメントへの返信も、そのコメントIDを親IDとして設定する
+  replyingToId.value = commentItem.id;
+  replyingToName.value = commentItem.name;
+};
+
+// 返信キャンセル
+const cancelReply = () => {
+  replyingToId.value = null;
+  replyingToName.value = null;
+};
+
 // コメント送信
-const submitComment = async () => {
-  if (!isFormValid.value || isLoadingForm.value) return;
+const submitComment = async (payload: { name: string; comment: string; token: string }) => {
+  if (isLoadingForm.value) return;
 
   isLoadingForm.value = true;
 
   try {
+    const body: any = {
+      name: payload.name,
+      comment: payload.comment,
+      token: payload.token,
+    };
+
+    if (replyingToId.value) {
+      body.parentCommentId = replyingToId.value;
+    }
+
     const response = await $fetch(`/api/comment/${props.contentId}`, {
       method: 'POST',
-      body: {
-        name: name.value.trim(),
-        comment: comment.value.trim(),
-        token: turnstile.value,
-      },
+      body,
     });
 
     if (response.status === 'success') {
-      useTrackEvent('comment_added', { contentId: props.contentId });
+      useTrackEvent('comment_added', { contentId: props.contentId, isReply: !!replyingToId.value });
       toast.success({
-        title: 'コメントを投稿しました。',
+        title: replyingToId.value ? '返信を投稿しました。' : 'コメントを投稿しました。',
         message: '承認されると表示されます。',
       });
       
-      // フォームをクリア
-      name.value = '';
-      comment.value = '';
+      // 返信状態をリセット
+      replyingToId.value = null;
+      replyingToName.value = null;
 
       // コメント一覧を更新
       await fetchComments(currentPage.value);
     } else if (response.status === 'error') {
       toast.error({
-        title: 'コメントの投稿に失敗しました',
+        title: '投稿に失敗しました',
+        message: response.message || undefined,
       });
     }
   } catch (err: any) {
     console.error('Failed to submit comment:', err);
     toast.error({
-      title: 'コメントの投稿に失敗しました。もう一度お試しください。',
+      title: '投稿に失敗しました。もう一度お試しください。',
     });
   } finally {
     isLoadingForm.value = false;
   }
 };
 
-// 初期化
 onMounted(() => {
   fetchComments(1);
 });
@@ -183,24 +179,19 @@ onMounted(() => {
         <div
           v-for="commentItem in comments"
           :key="commentItem.id"
-          class="flex flex-col gap-2 px-4 py-3 rounded-lg bg-white/70 backdrop-blur-sm border border-gray-200/60"
+          class="flex flex-col gap-2"
         >
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <Avatar 
-                :name="commentItem.name" 
-                variant="beam"
-                :size="32"
-                :square="false"
-                class="flex-shrink-0"
-              />
-              <span class="font-medium text-gray-800">{{ commentItem.name }}</span>
-            </div>
-            <time class="text-xs text-gray-500" :datetime="commentItem.createdAt.toISOString()">
-              {{ formatDate(commentItem.createdAt) }}
-            </time>
-          </div>
-          <p class="text-gray-700 whitespace-pre-wrap break-words pl-10">{{ commentItem.comment }}</p>
+          <!-- ルートコメント（再帰コンポーネントの起点） -->
+          <MqCommentItem 
+            :comment="commentItem"
+            :depth="0"
+            :replying-to-id="replyingToId"
+            :replying-to-name="replyingToName"
+            :is-loading-form="isLoadingForm"
+            @reply="startReply"
+            @submit="submitComment"
+            @cancel="cancelReply"
+          />
         </div>
       </div>
 
@@ -214,135 +205,11 @@ onMounted(() => {
       />
     </div>
 
-    <!-- コメント投稿フォーム -->
-    <div class="flex flex-col gap-3 rounded-xl px-5 py-4">
-      <div class="flex items-center gap-2">
-        <div class="flex h-8 w-8 items-center justify-center rounded-full bg-primary">
-          <Icon name="mdi:comment-edit-outline" class="h-4 w-4 text-white" />
-        </div>
-        <h3 class="text-lg text-primary">コメントを投稿</h3>
-      </div>
-
-      <form @submit.prevent="submitComment" class="flex flex-col gap-4">
-        <!-- 名前入力 -->
-        <div class="flex flex-col gap-2">
-          <label for="comment-name" class="text-sm font-medium text-gray-700">
-            お名前
-            <span class="text-red-500 ml-1">*</span>
-            <span class="text-xs text-gray-500 ml-2">{{ nameLength }}/50</span>
-          </label>
-          <input
-            id="comment-name"
-            v-model="name"
-            type="text"
-            placeholder="お名前を入力してください"
-            maxlength="50"
-            required
-            :disabled="isLoadingForm"
-            :class="[
-              'px-4 py-2.5 rounded-xl border border-gray-200 transition-all duration-200',
-              'focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary',
-              isLoadingForm ? 'bg-gray-100 cursor-not-allowed' : 'bg-white/70 backdrop-blur-sm'
-            ]"
-          />
-        </div>
-
-        <!-- コメント入力 -->
-        <div class="flex flex-col gap-2">
-          <label for="comment-content" class="text-sm font-medium text-gray-700">
-            コメント
-            <span class="text-red-500 ml-1">*</span>
-            <span class="text-xs text-gray-500 ml-2">{{ commentLength }}/1000</span>
-          </label>
-          <textarea
-            id="comment-content"
-            v-model="comment"
-            placeholder="コメントを入力してください"
-            rows="4"
-            maxlength="1000"
-            required
-            :disabled="isLoadingForm"
-            :class="[
-              'px-4 py-2.5 rounded-xl border border-gray-200 transition-all duration-200 resize-none',
-              'focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary',
-              isLoadingForm ? 'bg-gray-100 cursor-not-allowed' : 'bg-white/70 backdrop-blur-sm'
-            ]"
-          />
-        </div>
-
-        <!-- Turnstile -->
-        <div>
-          <NuxtTurnstile v-model="turnstile" />
-        </div>
-
-        <!-- 送信ボタン -->
-        <div class="flex flex-wrap gap-2">
-          <button
-            type="submit"
-            :disabled="!isFormValid || isLoadingForm"
-            :class="[
-              'group relative flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium border-none transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-xl min-w-[120px]',
-              isFormValid && !isLoadingForm
-                ? 'text-white bg-primary hover:opacity-90 hover:scale-105 focus:ring-primary/20'
-                : 'text-gray-400 bg-gray-200 cursor-not-allowed',
-              isLoadingForm && 'opacity-75 cursor-wait'
-            ]"
-          >
-            <Icon 
-              :name="isLoadingForm ? 'mdi:loading' : 'mdi:send'" 
-              :class="[
-                'w-5 h-5 flex-shrink-0 transition-transform',
-                isLoadingForm && 'animate-spin'
-              ]"
-            />
-            <span class="whitespace-nowrap font-medium">
-              {{ isLoadingForm ? '送信中...' : 'コメントを投稿' }}
-            </span>
-          </button>
-        </div>
-
-        <!-- コメントポリシー注意事項 -->
-        <div class="rounded-lg bg-primary/5 border border-primary overflow-hidden">
-          <!-- ヘッダー（クリック可能） -->
-          <button
-            type="button"
-            @click="isPolicyExpanded = !isPolicyExpanded"
-            class="w-full flex items-center justify-between px-4 py-3 border-none hover:bg-primary/10 transition-colors duration-200"
-          >
-            <div class="flex items-center gap-2">
-              <Icon name="mdi:information-outline" class="w-5 h-5 text-primary flex-shrink-0" />
-              <p class="text-sm font-semibold text-primary">注意事項</p>
-            </div>
-            <Icon 
-              :name="isPolicyExpanded ? 'mdi:chevron-up' : 'mdi:chevron-down'" 
-              class="w-5 h-5 text-primary transition-transform duration-200"
-            />
-          </button>
-          
-          <!-- 折りたたみ可能なコンテンツ -->
-          <transition
-            enter-active-class="transition-all duration-300 ease-out"
-            enter-from-class="max-h-0 opacity-0"
-            enter-to-class="max-h-96 opacity-100"
-            leave-active-class="transition-all duration-300 ease-in"
-            leave-from-class="max-h-96 opacity-100"
-            leave-to-class="max-h-0 opacity-0"
-          >
-            <div v-show="isPolicyExpanded" class="overflow-hidden">
-              <div class="px-4 pb-3 pt-1">
-                <div class="text-xs text-gray-500 space-y-2">
-                  <p class="leading-relaxed">
-                    このサイトでは「自分が何者であるかを明確にする」ことに重きを置いています。したがって、基本的にはSNSアカウントなどで利用しているIDを記入することを推奨します。<br />名前だけであなたが何者であるかを明らかにできる場合は、実名の使用も歓迎します。
-                  </p>
-                  <p class="leading-relaxed text-primary">
-                    ⚠️ この機能は、コメントの責任の所在を明らかにする意思を問うものであり、真偽を検証する機能はありません。ただし、明らかに偽りや無効な名前、不適切な内容が含まれる場合、そのコメントは削除される可能性があります。
-                  </p>
-                </div>
-              </div>
-            </div>
-          </transition>
-        </div>
-      </form>
-    </div>
+    <!-- コメント投稿フォーム（返信中でない場合のみ表示） -->
+    <MqCommentForm 
+      v-if="!replyingToId" 
+      :is-loading="isLoadingForm" 
+      @submit="submitComment"
+    />
   </div>
 </template>

@@ -65,6 +65,31 @@ export default defineEventHandler(async (event) => {
     };
   }
 
+  // 親コメントIDのチェック
+  let parentCommentId: string | undefined = undefined;
+  if (body.parentCommentId) {
+    const parentComment = await prisma.comments.findUnique({
+      where: { id: body.parentCommentId },
+    });
+
+    if (!parentComment) {
+      return {
+        status: 'error',
+        message: 'Parent comment not found',
+      };
+    }
+
+    // 親コメントが同じ記事に対するものかチェック
+    if (parentComment.contentId !== contentId) {
+      return {
+        status: 'error',
+        message: 'Parent comment belongs to different content',
+      };
+    }
+
+    parentCommentId = body.parentCommentId;
+  }
+
   try {
     // コメントを作成（デフォルトでPENDINGステータス）
     const newComment = await prisma.comments.create({
@@ -74,6 +99,7 @@ export default defineEventHandler(async (event) => {
         comment: comment.trim(),
         userIp,
         status: "PENDING", // 承認待ち
+        parentCommentId,
       },
     });
 

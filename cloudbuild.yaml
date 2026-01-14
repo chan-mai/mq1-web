@@ -6,22 +6,16 @@ steps:
     args:
       - '-c'
       - |
-        docker build -t ${_AR_HOSTNAME}/$PROJECT_ID/${_AR_REPOSITORY}/${_SERVICE}:latest \
-          --build-arg DATABASE_URL="$$DATABASE_URL" \
-          --build-arg DISCORD_WEBHOOK_URL="$$DISCORD_WEBHOOK_URL" \
-          --build-arg GA_TRACKING_ID="$$GA_TRACKING_ID" \
-          --build-arg GITHUB_CLIENT_ID="$$GITHUB_CLIENT_ID" \
-          --build-arg GITHUB_SECRET="$$GITHUB_SECRET" \
-          --build-arg MICROCMS_API_KEY="$$MICROCMS_API_KEY" \
-          --build-arg MICROCMS_SERVICE_DOMAIN="$$MICROCMS_SERVICE_DOMAIN" \
-          --build-arg NUXT_SESSION_PASSWORD="$$NUXT_SESSION_PASSWORD" \
-          --build-arg TURNSTILE_SECRET_KEY="$$TURNSTILE_SECRET_KEY" \
-          --build-arg TURNSTILE_SITE_KEY="$$TURNSTILE_SITE_KEY" \
-          .
-    secretEnv: ['DATABASE_URL','DISCORD_WEBHOOK_URL','GA_TRACKING_ID','GITHUB_CLIENT_ID','GITHUB_SECRET','MICROCMS_API_KEY','MICROCMS_SERVICE_DOMAIN','NUXT_SESSION_PASSWORD','TURNSTILE_SECRET_KEY','TURNSTILE_SITE_KEY']
+        docker build -t ${_AR_HOSTNAME}/$PROJECT_ID/${_AR_REPOSITORY}/${_SERVICE}:latest .
 
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', '${_AR_HOSTNAME}/$PROJECT_ID/${_AR_REPOSITORY}/${_SERVICE}:latest']
+
+  # マイグレーションを実行
+  - name: '${_AR_HOSTNAME}/$PROJECT_ID/${_AR_REPOSITORY}/${_SERVICE}:latest'
+    entrypoint: 'npx'
+    args: ['prisma', 'migrate', 'deploy']
+    secretEnv: ['DATABASE_URL']
 
   - name: 'gcr.io/cloud-builders/gcloud'
     entrypoint: 'bash'
@@ -33,8 +27,16 @@ steps:
           --platform ${_PLATFORM} \
           --region ${_DEPLOY_REGION} \
           --allow-unauthenticated \
-          --allow-unauthenticated
-    secretEnv: ['DATABASE_URL','DISCORD_WEBHOOK_URL','GA_TRACKING_ID','GITHUB_CLIENT_ID','GITHUB_SECRET','MICROCMS_API_KEY','MICROCMS_SERVICE_DOMAIN','NUXT_SESSION_PASSWORD','TURNSTILE_SECRET_KEY','TURNSTILE_SITE_KEY']
+          --set-secrets="DATABASE_URL=${_SECRET_PREFIX}DATABASE_URL:latest,\
+          DISCORD_WEBHOOK_URL=${_SECRET_PREFIX}DISCORD_WEBHOOK_URL:latest,\
+          GA_TRACKING_ID=${_SECRET_PREFIX}GA_TRACKING_ID:latest,\
+          GITHUB_CLIENT_ID=${_SECRET_PREFIX}GITHUB_CLIENT_ID:latest,\
+          GITHUB_SECRET=${_SECRET_PREFIX}GITHUB_SECRET:latest,\
+          MICROCMS_API_KEY=${_SECRET_PREFIX}MICROCMS_API_KEY:latest,\
+          MICROCMS_SERVICE_DOMAIN=${_SECRET_PREFIX}MICROCMS_SERVICE_DOMAIN:latest,\
+          NUXT_SESSION_PASSWORD=${_SECRET_PREFIX}NUXT_SESSION_PASSWORD:latest,\
+          TURNSTILE_SECRET_KEY=${_SECRET_PREFIX}TURNSTILE_SECRET_KEY:latest,\
+          TURNSTILE_SITE_KEY=${_SECRET_PREFIX}TURNSTILE_SITE_KEY:latest"
 
 availableSecrets:
   secretManager:

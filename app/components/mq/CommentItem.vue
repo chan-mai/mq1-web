@@ -36,16 +36,6 @@ const formatDate = (dateString: string | Date): string => {
 const handleReply = (target: CommentWithReplies) => {
   emit('reply', target);
 };
-
-const parsedComment = computed(() => {
-  const text = props.comment.comment || '';
-  // @で始まり、空白(半角/全角)か改行で終わる、または文字列末尾までの部分を抽出
-  const regex = /(@[^\s \n]+)/g;
-  return text.split(regex).map(part => ({
-    text: part,
-    isMention: part.startsWith('@') && part.length > 1
-  }));
-});
 </script>
 
 <template>
@@ -89,13 +79,8 @@ const parsedComment = computed(() => {
       </div>
       <!-- アバター(32px) + gap(12px) = 44px -->
       <p class="text-sm text-gray-700 whitespace-pre-wrap break-words pl-[44px] leading-relaxed">
-        <template v-for="(segment, i) in parsedComment" :key="i">
-          <span 
-            v-if="segment.isMention" 
-            class="text-primary font-bold"
-          >{{ segment.text }}</span>
-          <span v-else>{{ segment.text }}</span>
-        </template>
+        <span v-if="comment.parent" class="text-primary font-bold mr-1 select-none">@{{ comment.parent.name }}</span>
+        <span>{{ comment.comment }}</span>
       </p>
 
       <!-- 返信ボタン -->
@@ -115,7 +100,6 @@ const parsedComment = computed(() => {
         <MqCommentForm 
           :is-loading="isLoadingForm" 
           :reply-to-name="replyingToName"
-          :initial-comment="`@${comment.name} `"
           @submit="(payload) => emit('submit', payload)"
           @cancel="emit('cancel')"
         />

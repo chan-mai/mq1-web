@@ -29,12 +29,37 @@ const fetchComments = async (page: number = 1) => {
   try {
     const response = await $fetch<{ status: string; comments: CommentWithReplies[]; pagination: CommentsPagination; overallCount: number }>(`/api/comment/${props.contentId}?page=${page}&limit=10`);
 
-    if (response.status === 'success') {
-      comments.value = response.comments;
-      pagination.value = response.pagination;
-      currentPage.value = page;
-      overallCount.value = response.overallCount;
-    } else {
+      if (response.status === 'success') {
+        const resultComments = response.comments;
+        
+        // クライアント側でメンションを動的に付与
+        // 全コメントをIDで引けるようにマップ化
+        const commentMap = new Map<string, CommentWithReplies>();
+        const registerMap = (list: CommentWithReplies[]) => {
+          list.forEach(c => {
+            commentMap.set(c.id, c);
+            if (c.replies) registerMap(c.replies);
+          });
+        };
+        registerMap(resultComments);
+
+        // メンション付与処理
+        const processMentions = (list: CommentWithReplies[]) => {
+          list.forEach(c => {
+            if (c.parentCommentId && commentMap.has(c.parentCommentId)) {
+              // 親オブジェクトへの参照をセット
+              c.parent = commentMap.get(c.parentCommentId)!;
+            }
+            if (c.replies) processMentions(c.replies);
+          });
+        };
+        processMentions(resultComments);
+
+        comments.value = resultComments;
+        pagination.value = response.pagination;
+        currentPage.value = page;
+        overallCount.value = response.overallCount;
+      } else {
       listError.value = 'コメントの取得に失敗しました';
     }
   } catch (err) {
@@ -78,9 +103,6 @@ const submitComment = async (payload: { name: string; comment: string; token: st
   isLoadingForm.value = true;
 
   try {
-    // メンション処理: 本文に @Name が含まれていない場合でも、返信先が明確ならbackendでどうこう...
-    // フロントエンド側ですでに @Name は form で自動挿入されている前提。
-    
     const body: any = {
       name: payload.name,
       comment: payload.comment,
@@ -88,14 +110,7 @@ const submitComment = async (payload: { name: string; comment: string; token: st
     };
 
     if (replyingToId.value) {
-      // メンション自動付与（フロントエンド側）
-      // 返信対象の名前が分かっていて、かつ本文に含まれていない場合、先頭に付与する
-      if (replyingToName.value) {
-        const mentionText = `@${replyingToName.value}`;
-        if (!body.comment.includes(mentionText)) {
-          body.comment = `${mentionText} ${body.comment}`;
-        }
-      }
+
 
       body.parentCommentId = replyingToId.value;
     }

@@ -48,22 +48,47 @@ export default defineEventHandler(async (event) => {
 
     const totalPages = Math.ceil(totalRootCount / limit);
 
-    // 4. 取得したルートコメントに対する子コメントを取得
+    // 4. ルートコメント以下の全子孫コメントを再帰的に取得
     const rootCommentIds = rootComments.map((c) => c.id);
-    const childComments = await prisma.comments.findMany({
-      where: {
-        contentId,
-        status: "APPROVED",
-        parentCommentId: {
-          in: rootCommentIds,
-        },
-      },
-      orderBy: {
-        createdAt: "asc",
-      },
-    });
+    const allDescendants: CommentWithReplies[] = [];
+    let currentParentIds = [...rootCommentIds];
+    
+    // どのコメントがどのルートに属するかを追跡するマップ (CommentID -> RootID)
+    const rootIdMap = new Map<string, string>();
+    rootComments.forEach(c => rootIdMap.set(c.id, c.id));
 
-    // 5. メモリ上で結合
+    // 再帰的に取得
+    while (currentParentIds.length > 0) {
+      const nextLevelComments = await prisma.comments.findMany({
+        where: {
+          contentId,
+          status: "APPROVED",
+          parentCommentId: {
+            in: currentParentIds,
+          },
+        },
+        orderBy: {
+          createdAt: "asc",
+        },
+      });
+
+      if (nextLevelComments.length === 0) {
+        break;
+      }
+
+      // 取得したコメントのルートIDを特定し、マップに登録
+      nextLevelComments.forEach(c => {
+        if (c.parentCommentId && rootIdMap.has(c.parentCommentId)) {
+          const rootId = rootIdMap.get(c.parentCommentId)!;
+          rootIdMap.set(c.id, rootId);
+        }
+      });
+
+      allDescendants.push(...(nextLevelComments as CommentWithReplies[]));
+      currentParentIds = nextLevelComments.map(c => c.id);
+    }
+
+    // 5. メモリ上で結合 (フラット構造)
     const commentMap = new Map<string, CommentWithReplies>();
     
     // ルートコメントをマップに登録
@@ -74,15 +99,26 @@ export default defineEventHandler(async (event) => {
 
     resultComments.forEach(c => commentMap.set(c.id, c));
 
-    // 子コメントを紐付け
-    childComments.forEach(c => {
-      // 念のため存在チェック（クエリ条件的に親はあるはずだが）
-      if (c.parentCommentId && commentMap.has(c.parentCommentId)) {
-        const parent = commentMap.get(c.parentCommentId)!;
-        parent.replies?.push({
-          ...c,
-          replies: [] 
-        } as CommentWithReplies);
+    // 全子孫コメントをそれぞれのルートの replies に追加
+    allDescendants.forEach(c => {
+      // 親(ルート)を特定
+      if (rootIdMap.has(c.id)) {
+        const rootId = rootIdMap.get(c.id)!;
+        if (commentMap.has(rootId)) {
+          const root = commentMap.get(rootId)!;
+          // 再帰構造ではなくフラットなリストとして追加
+          root.replies?.push({
+            ...c,
+            replies: [] 
+          } as CommentWithReplies);
+        }
+      }
+    });
+    
+    // 返信を日付順にソート (念のため)
+    resultComments.forEach(root => {
+      if (root.replies) {
+        root.replies.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
       }
     });
 

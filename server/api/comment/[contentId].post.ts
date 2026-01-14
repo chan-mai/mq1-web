@@ -96,21 +96,6 @@ export default defineEventHandler(async (event) => {
     }
 
     parentCommentId = body.parentCommentId;
-
-    // メンションの自動付与（子コメントの場合）
-    // 本文に @ParentName が含まれていない場合、先頭に付与する
-    const mentionText = `@${parentComment.name}`;
-    if (!comment.includes(mentionText)) {
-      comment = `${mentionText} ${comment}`;
-    }
-
-    // 親コメントがすでに親を持っている場合（つまり孫コメントになろうとしている場合）、
-    // その親（ルートコメント）のIDを親IDとして保存し、兄弟関係にする。
-    if (parentComment.parentCommentId) {
-      parentCommentId = parentComment.parentCommentId;
-    } else {
-      parentCommentId = parentComment.id;
-    }
   }
 
   try {
@@ -121,7 +106,7 @@ export default defineEventHandler(async (event) => {
         name: name.trim(),
         comment: comment.trim(),
         userIp,
-        status: "PENDING", // 承認待ち
+        status: process.env.NODE_ENV === 'development' ? "APPROVED" : "PENDING", // 開発環境は承認済み、本番は承認待ち
         parentCommentId,
       },
     });

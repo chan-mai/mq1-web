@@ -25,3 +25,5 @@ declare global {
     overallCount: number; // 返信を含む全コメント数
   }
 }
+
+export {}

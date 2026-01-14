@@ -8,7 +8,7 @@ const toast = useToast();
 // コメント一覧
 const comments = ref<CommentWithReplies[]>([]);
 const pagination = ref<CommentsPagination | null>(null);
-const isLoadingList = ref<boolean>(false);
+const isLoadingList = ref<boolean>(true);
 const listError = ref<string | null>(null);
 const currentPage = ref<number>(1);
 const overallCount = ref<number>(0);
@@ -167,8 +167,21 @@ onMounted(() => {
       </div>
 
       <!-- ローディング -->
-      <div v-if="isLoadingList" class="flex justify-center py-8">
-        <Icon name="mdi:loading" class="w-8 h-8 text-gray-400 animate-spin" />
+      <div v-if="isLoadingList" class="flex flex-col gap-4">
+        <div v-for="i in 3" :key="i" class="flex flex-col gap-2 px-4 py-3 rounded-xl bg-white/50 border-2 border-gray-100 animate-pulse">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-gray-200"></div>
+            <div class="flex flex-col gap-2">
+              <div class="w-24 h-3 rounded bg-gray-200"></div>
+              <div class="w-16 h-2 rounded bg-gray-200"></div>
+            </div>
+          </div>
+          <div class="pl-[44px] flex flex-col gap-2 mt-1">
+            <div class="w-full h-3 rounded bg-gray-200"></div>
+            <div class="w-3/4 h-3 rounded bg-gray-200"></div>
+            <div class="w-1/2 h-3 rounded bg-gray-200"></div>
+          </div>
+        </div>
       </div>
 
       <!-- エラー -->

@@ -11,6 +11,7 @@ const pagination = ref<CommentsPagination | null>(null);
 const isLoadingList = ref<boolean>(false);
 const listError = ref<string | null>(null);
 const currentPage = ref<number>(1);
+const overallCount = ref<number>(0);
 
 // 返信フォームの状態
 const replyingToId = ref<string | null>(null);
@@ -31,6 +32,7 @@ const fetchComments = async (page: number = 1) => {
       comments.value = response.comments;
       pagination.value = response.pagination;
       currentPage.value = page;
+      overallCount.value = response.pagination.totalCount;
     } else {
       listError.value = 'コメントの取得に失敗しました';
     }
@@ -144,8 +146,8 @@ onMounted(() => {
         </div>
         <h3 class="text-lg text-primary">
           コメント
-          <span v-if="pagination" class="text-sm text-gray-500 ml-2">
-            ({{ pagination.totalCount }}件)
+          <span v-if="overallCount !== undefined" class="text-sm text-gray-500 ml-2">
+            ({{ overallCount }}件)
           </span>
         </h3>
       </div>

@@ -22,5 +22,6 @@ declare global {
     status: 'success' | 'check' | 'error';
     comments: CommentWithReplies[];
     pagination: CommentsPagination;
+    overallCount: number; // 返信を含む全コメント数
   }
 }

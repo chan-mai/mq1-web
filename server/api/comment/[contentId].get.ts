@@ -44,13 +44,15 @@ export default defineEventHandler(async (event) => {
     rootComments.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
     // ページネーション適用
-    const totalCount = allComments.length;
+    const totalCount = rootComments.length;
+    const overallCount = allComments.length;
     const totalPages = Math.ceil(totalCount / limit);
     const paginatedComments = rootComments.slice(offset, offset + limit);
 
     return {
       status: "success",
       comments: paginatedComments,
+      overallCount,
       pagination: {
         page,
         limit,

@@ -36,6 +36,16 @@ const formatDate = (dateString: string | Date): string => {
 const handleReply = (target: CommentWithReplies) => {
   emit('reply', target);
 };
+
+const parsedComment = computed(() => {
+  const text = props.comment.comment || '';
+  // @で始まり、空白(半角/全角)か改行で終わる、または文字列末尾までの部分を抽出
+  const regex = /(@[^\s \n]+)/g;
+  return text.split(regex).map(part => ({
+    text: part,
+    isMention: part.startsWith('@') && part.length > 1
+  }));
+});
 </script>
 
 <template>
@@ -56,7 +66,10 @@ const handleReply = (target: CommentWithReplies) => {
     </template>
 
     <!-- コメント本体 -->
-    <div class="relative z-10 flex flex-col gap-2 px-4 py-3 rounded-xl bg-white/50 border-2 border-gray-100 transition-all duration-200 hover:bg-white hover:border-primary/50 mb-3 ml-2 group">
+    <div 
+      :id="`comment-${comment.id}`"
+      class="relative z-10 flex flex-col gap-2 px-4 py-3 rounded-xl bg-white/50 border-2 border-gray-100 transition-all duration-200 hover:bg-white hover:border-primary/50 mb-3 ml-2 group"
+    >
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-3">
           <Avatar 
@@ -75,7 +88,16 @@ const handleReply = (target: CommentWithReplies) => {
         </div>
       </div>
       <!-- アバター(32px) + gap(12px) = 44px -->
-      <p class="text-sm text-gray-700 whitespace-pre-wrap break-words pl-[44px] leading-relaxed">{{ comment.comment }}</p>
+      <!-- アバター(32px) + gap(12px) = 44px -->
+      <p class="text-sm text-gray-700 whitespace-pre-wrap break-words pl-[44px] leading-relaxed">
+        <template v-for="(segment, i) in parsedComment" :key="i">
+          <span 
+            v-if="segment.isMention" 
+            class="text-primary font-bold"
+          >{{ segment.text }}</span>
+          <span v-else>{{ segment.text }}</span>
+        </template>
+      </p>
 
       <!-- 返信ボタン -->
       <div class="flex justify-end mt-1">
@@ -104,7 +126,7 @@ const handleReply = (target: CommentWithReplies) => {
     <!-- 子コメントコンテナ（再帰表示） -->
     <!-- 親アバター中心(32px)から -left-2 (-8px) の位置に線を引くため、
          子コンテナは padding box 左端から 40px 位置に線を引く -->
-    <div v-if="comment.replies && comment.replies.length > 0" class="pl-12 relative">
+    <div v-if="comment.replies && comment.replies.length > 0 && (!depth || depth < 1)" class="pl-12 relative">
       <!-- ルート直下の場合、親アバター下からの接続線を補完 -->
       <!-- 親アバター中心は(ml-2 + px-4 + 16) = 40px -->
       <!-- pl-12コンテナの左端(0)から 40px の位置に線を引く -> left-10 -->

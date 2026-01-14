@@ -16,6 +16,7 @@ const overallCount = ref<number>(0);
 // 返信フォームの状態
 const replyingToId = ref<string | null>(null);
 const replyingToName = ref<string | null>(null);
+const replyingToComment = ref<CommentWithReplies | null>(null);
 
 // フォームの状態（ローディングのみ親で管理）
 const isLoadingForm = ref<boolean>(false);
@@ -57,14 +58,17 @@ const changePage = (page: number) => {
 // 返信開始
 const startReply = (commentItem: CommentWithReplies) => {
   // ネストされたコメントへの返信も、そのコメントIDを親IDとして設定する
+  // ただし、submit時に親の親IDがある場合はそちらを使用する（2階層制限）
   replyingToId.value = commentItem.id;
   replyingToName.value = commentItem.name;
+  replyingToComment.value = commentItem;
 };
 
 // 返信キャンセル
 const cancelReply = () => {
   replyingToId.value = null;
   replyingToName.value = null;
+  replyingToComment.value = null;
 };
 
 // コメント送信
@@ -74,6 +78,9 @@ const submitComment = async (payload: { name: string; comment: string; token: st
   isLoadingForm.value = true;
 
   try {
+    // メンション処理: 本文に @Name が含まれていない場合でも、返信先が明確ならbackendでどうこう...
+    // フロントエンド側ですでに @Name は form で自動挿入されている前提。
+    
     const body: any = {
       name: payload.name,
       comment: payload.comment,
@@ -81,7 +88,25 @@ const submitComment = async (payload: { name: string; comment: string; token: st
     };
 
     if (replyingToId.value) {
-      body.parentCommentId = replyingToId.value;
+      // メンション自動付与（フロントエンド側）
+      // 返信対象の名前が分かっていて、かつ本文に含まれていない場合、先頭に付与する
+      if (replyingToName.value) {
+        const mentionText = `@${replyingToName.value}`;
+        if (!body.comment.includes(mentionText)) {
+          body.comment = `${mentionText} ${body.comment}`;
+        }
+      }
+
+      // 2階層制限ロジック:
+      // 返信対象(replyingToComment)がすでに親を持っている(parentCommentIdがある)場合、
+      // その親ID (parentCommentId) を 親ID として送信する。これによって兄弟関係になる。
+      // 親を持っていない場合（ルートコメント）は、そのID (replyingToId) を 親ID とする。
+      
+      if (replyingToComment.value && replyingToComment.value.parentCommentId) {
+        body.parentCommentId = replyingToComment.value.parentCommentId;
+      } else {
+        body.parentCommentId = replyingToId.value;
+      }
     }
 
     const response = await $fetch(`/api/comment/${props.contentId}`, {
@@ -99,6 +124,7 @@ const submitComment = async (payload: { name: string; comment: string; token: st
       // 返信状態をリセット
       replyingToId.value = null;
       replyingToName.value = null;
+      replyingToComment.value = null;
 
       // コメント一覧を更新
       await fetchComments(currentPage.value);
@@ -118,6 +144,7 @@ const submitComment = async (payload: { name: string; comment: string; token: st
   }
 };
 
+// メンションクリックハンドラ
 onMounted(() => {
   fetchComments(1);
 });

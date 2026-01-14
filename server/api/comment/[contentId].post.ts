@@ -13,7 +13,8 @@ export default defineEventHandler(async (event) => {
 
   // リクエストボディを取得
   const body = await readBody(event);
-  const { name, comment, token } = body;
+  let { comment } = body;
+  const { name, token } = body;
 
   // Turnstileのバリデーション
   const isValid = await verifyTurnstileToken(
@@ -95,6 +96,13 @@ export default defineEventHandler(async (event) => {
     }
 
     parentCommentId = body.parentCommentId;
+
+    // メンションの自動付与（子コメントの場合）
+    // 本文に @ParentName が含まれていない場合、先頭に付与する
+    const mentionText = `@${parentComment.name}`;
+    if (!comment.includes(mentionText)) {
+      comment = `${mentionText} ${comment}`;
+    }
   }
 
   try {

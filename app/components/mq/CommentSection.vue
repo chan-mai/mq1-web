@@ -105,8 +105,6 @@ const changePage = (page: number) => {
 
 // 返信開始
 const startReply = (commentItem: CommentWithReplies) => {
-  // ネストされたコメントへの返信も、そのコメントIDを親IDとして設定する
-  // ただし、submit時に親の親IDがある場合はそちらを使用する（2階層制限）
   replyingToId.value = commentItem.id;
   replyingToName.value = commentItem.name;
   replyingToComment.value = commentItem;

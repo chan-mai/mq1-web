@@ -121,7 +121,7 @@ export default defineEventHandler(async (event) => {
             {
               title: "🆕 新しいコメントが投稿されました",
               url: `${siteUrl}admin/comments`,
-              color: 0xffa500,
+              color: newComment.status === "APPROVED" ? 0x00ff00 : 0xffa500,
               fields: [
                 {
                   name: "記事ID",
@@ -148,7 +148,9 @@ export default defineEventHandler(async (event) => {
                 },
               ],
               footer: {
-                text: "ステータス: 承認待ち",
+                text: `ステータス: ${
+                  newComment.status === "APPROVED" ? "承認済み" : "承認待ち"
+                }`,
               },
               timestamp: new Date().toISOString(),
             },

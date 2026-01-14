@@ -3,43 +3,50 @@ export default defineEventHandler(async (event) => {
 
   // クエリパラメータを取得
   const query = getQuery(event);
-  const page = parseInt(query.page as string) || 1;
-  const limit = parseInt(query.limit as string) || 20;
+  let page = parseInt(query.page as string) || 1;
+  let limit = parseInt(query.limit as string) || 20;
+
+  // パラメータ検証
+  if (page < 1) page = 1;
+  if (limit < 1) limit = 1;
+  if (limit > 100) limit = 100;
+
   const offset = (page - 1) * limit;
 
   try {
-    // 1. 全承認済みコメント数（表示用）
-    const overallCount = await prisma.comments.count({
-      where: {
-        contentId,
-        status: "APPROVED",
-      },
-    });
-
-    // 2. ルートコメントの総数（ページネーション計算用）
-    const totalRootCount = await prisma.comments.count({
-      where: {
-        contentId,
-        status: "APPROVED",
-        parentCommentId: null,
-      },
-    });
+    // 1-3. 独立したクエリを並列実行
+    const [overallCount, totalRootCount, rootComments] = await Promise.all([
+      // 1. 全承認済みコメント数（表示用）
+      prisma.comments.count({
+        where: {
+          contentId,
+          status: "APPROVED",
+        },
+      }),
+      // 2. ルートコメントの総数（ページネーション計算用）
+      prisma.comments.count({
+        where: {
+          contentId,
+          status: "APPROVED",
+          parentCommentId: null,
+        },
+      }),
+      // 3. ルートコメントの取得（ページネーション適用）
+      prisma.comments.findMany({
+        where: {
+          contentId,
+          status: "APPROVED",
+          parentCommentId: null,
+        },
+        orderBy: {
+          createdAt: "desc", // 新しい順
+        },
+        skip: offset,
+        take: limit,
+      }),
+    ]);
 
     const totalPages = Math.ceil(totalRootCount / limit);
-
-    // 3. ルートコメントの取得（ページネーション適用）
-    const rootComments = await prisma.comments.findMany({
-      where: {
-        contentId,
-        status: "APPROVED",
-        parentCommentId: null,
-      },
-      orderBy: {
-        createdAt: "desc", // 新しい順
-      },
-      skip: offset,
-      take: limit,
-    });
 
     // 4. 取得したルートコメントに対する子コメントを取得
     const rootCommentIds = rootComments.map((c) => c.id);
@@ -92,8 +99,10 @@ export default defineEventHandler(async (event) => {
         hasPrev: page > 1,
       },
     };
-  } catch (err) {
-    console.error("Failed to fetch comments:", err);
+  } catch (err: unknown) {
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    console.error("Failed to fetch comments:", errorMessage);
+    
     return {
       status: "error",
       message: "Failed to fetch comments",

@@ -103,6 +103,14 @@ export default defineEventHandler(async (event) => {
     if (!comment.includes(mentionText)) {
       comment = `${mentionText} ${comment}`;
     }
+
+    // 親コメントがすでに親を持っている場合（つまり孫コメントになろうとしている場合）、
+    // その親（ルートコメント）のIDを親IDとして保存し、兄弟関係にする。
+    if (parentComment.parentCommentId) {
+      parentCommentId = parentComment.parentCommentId;
+    } else {
+      parentCommentId = parentComment.id;
+    }
   }
 
   try {

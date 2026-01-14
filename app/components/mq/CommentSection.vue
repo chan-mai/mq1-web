@@ -97,16 +97,7 @@ const submitComment = async (payload: { name: string; comment: string; token: st
         }
       }
 
-      // 2階層制限ロジック:
-      // 返信対象(replyingToComment)がすでに親を持っている(parentCommentIdがある)場合、
-      // その親ID (parentCommentId) を 親ID として送信する。これによって兄弟関係になる。
-      // 親を持っていない場合（ルートコメント）は、そのID (replyingToId) を 親ID とする。
-      
-      if (replyingToComment.value && replyingToComment.value.parentCommentId) {
-        body.parentCommentId = replyingToComment.value.parentCommentId;
-      } else {
-        body.parentCommentId = replyingToId.value;
-      }
+      body.parentCommentId = replyingToId.value;
     }
 
     const response = await $fetch(`/api/comment/${props.contentId}`, {

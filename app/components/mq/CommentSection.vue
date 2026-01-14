@@ -26,13 +26,13 @@ const fetchComments = async (page: number = 1) => {
   listError.value = null;
 
   try {
-    const response = await $fetch<{ status: string; comments: CommentWithReplies[]; pagination: CommentsPagination }>(`/api/comment/${props.contentId}?page=${page}&limit=10`);
+    const response = await $fetch<{ status: string; comments: CommentWithReplies[]; pagination: CommentsPagination; overallCount: number }>(`/api/comment/${props.contentId}?page=${page}&limit=10`);
 
     if (response.status === 'success') {
       comments.value = response.comments;
       pagination.value = response.pagination;
       currentPage.value = page;
-      overallCount.value = response.pagination.totalCount;
+      overallCount.value = response.overallCount;
     } else {
       listError.value = 'コメントの取得に失敗しました';
     }

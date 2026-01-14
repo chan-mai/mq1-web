@@ -70,7 +70,7 @@ defineExpose({ clear, name, comment });
     <form @submit.prevent="onSubmit" class="flex flex-col gap-4">
       <!-- 名前入力 -->
       <div class="flex flex-col gap-2">
-        <label class="text-sm font-medium text-gray-700">
+        <label class="text-sm font-medium text-gray-700" for="reply-name">
           お名前
           <span class="text-red-500 ml-1">*</span>
           <span class="text-xs text-gray-500 ml-2">{{ nameLength }}/50</span>
@@ -93,12 +93,13 @@ defineExpose({ clear, name, comment });
 
       <!-- コメント入力 -->
       <div class="flex flex-col gap-2">
-        <label class="text-sm font-medium text-gray-700">
+        <label class="text-sm font-medium text-gray-700" for="reply-comment">
           コメント
           <span class="text-red-500 ml-1">*</span>
           <span class="text-xs text-gray-500 ml-2">{{ commentLength }}/1000</span>
         </label>
         <textarea
+          id="reply-comment"
           v-model="comment"
           placeholder="コメントを入力してください"
           rows="4"

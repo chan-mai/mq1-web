@@ -40,20 +40,7 @@ const handleReply = (target: CommentWithReplies) => {
 
 <template>
   <div class="relative">
-    <!-- スレッド接続線（曲線） -->
-    <template v-if="depth && depth > 0">
-      <!-- カーブして自分につながる線 -->
-      <!-- Vertical Line + Curve -->
-      <div 
-        class="absolute -top-3 -left-2 w-4 h-[40px] border-l-2 border-b-2 border-gray-200 rounded-bl-xl pointer-events-none"
-      ></div>
-      
-      <!-- 自分が最後でない場合、下に続く縦線 -->
-      <div 
-        v-if="!isLast"
-        class="absolute top-0 bottom-0 -left-2 w-0 border-l-2 border-gray-200 pointer-events-none"
-      ></div>
-    </template>
+
 
     <!-- コメント本体 -->
     <div 
@@ -107,25 +94,14 @@ const handleReply = (target: CommentWithReplies) => {
     </div>
 
     <!-- 子コメントコンテナ（再帰表示） -->
-    <!-- 親アバター中心(32px)から -left-2 (-8px) の位置に線を引くため、
-         子コンテナは padding box 左端から 40px 位置に線を引く -->
-    <div v-if="comment.replies && comment.replies.length > 0 && (!depth || depth < 1)" class="pl-12 relative">
-      <!-- ルート直下の場合、親アバター下からの接続線を補完 -->
-      <!-- 親アバター中心は(ml-2 + px-4 + 16) = 40px -->
-      <!-- pl-12コンテナの左端(0)から 40px の位置に線を引く -> left-10 -->
-      <div v-if="depth === 0" class="absolute left-10 -top-3 h-4 w-0 border-l-2 border-gray-200 pointer-events-none"></div>
-
-      <!-- ルート直下の場合、親からの接続線を補完 -->
-      <!-- 親アバター中心は32px。子コンテナ開始は48px。差は-16px (-left-4)。 -->
-      <!-- 上記の `border-l-2` のロジックで合っているはず。
-           各子は `-left-6` に縦線を持つ（!isLastの場合）。
-           
-           問題は「最初の子」の上の線。
-           `div class="absolute ... -top-3"` でカバーしている。
-           
-           これで理論上はつながるはず。
-      -->
-      
+    <div 
+      v-if="comment.replies && comment.replies.length > 0" 
+      class="flex flex-col relative"
+      :class="{ 
+        'mt-2 pl-4 md:pl-8 ml-3 md:ml-5 border-l-2 border-gray-200': (depth || 0) === 0,
+        'mt-2': (depth || 0) > 0
+      }"
+    >
       <MqCommentItem
         v-for="(reply, index) in comment.replies"
         :key="reply.id"

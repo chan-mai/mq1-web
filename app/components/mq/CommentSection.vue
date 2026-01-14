@@ -32,30 +32,53 @@ const fetchComments = async (page: number = 1) => {
       if (response.status === 'success') {
         const resultComments = response.comments;
         
-        // クライアント側でメンションを動的に付与
-        // 全コメントをIDで引けるようにマップ化
-        const commentMap = new Map<string, CommentWithReplies>();
-        const registerMap = (list: CommentWithReplies[]) => {
-          list.forEach(c => {
-            commentMap.set(c.id, c);
-            if (c.replies) registerMap(c.replies);
-          });
-        };
-        registerMap(resultComments);
+        // フラットリスト（ルート + その子孫）を完全なツリー構造に再構築
+        const allComments = new Map<string, CommentWithReplies>();
 
-        // メンション付与処理
-        const processMentions = (list: CommentWithReplies[]) => {
+        // 1. 全コメントをマップに登録し、repliesを初期化
+        const registerToMap = (list: CommentWithReplies[]) => {
           list.forEach(c => {
-            if (c.parentCommentId && commentMap.has(c.parentCommentId)) {
-              // 親オブジェクトへの参照をセット
-              c.parent = commentMap.get(c.parentCommentId)!;
+            // オブジェクトをコピーして新しい参照を作成（副作用を防ぐ & repliesをリセット）
+            const newObj = { ...c, replies: [] };
+            allComments.set(c.id, newObj as CommentWithReplies);
+            if (c.replies && c.replies.length > 0) {
+              registerToMap(c.replies);
             }
-            if (c.replies) processMentions(c.replies);
           });
         };
-        processMentions(resultComments);
+        registerToMap(resultComments);
 
-        comments.value = resultComments;
+        // 2. ツリー構造の構築 & 親参照のリンク
+        const treeRoots: CommentWithReplies[] = [];
+        const orphanReplies: CommentWithReplies[] = []; // 親が見つからない子コメント（念のため）
+
+        // マップの順序は挿入順（概ね作成順）だが、確実にするため後でソートする
+        allComments.forEach(comment => {
+          if (comment.parentCommentId && allComments.has(comment.parentCommentId)) {
+            const parent = allComments.get(comment.parentCommentId)!;
+            comment.parent = parent;
+            parent.replies = parent.replies || [];
+            parent.replies.push(comment);
+          } else {
+            // 親IDがない、または親が現在のセットに含まれていない場合はルート扱い
+            // （APIの仕様上、ページネーションで取得したルートの子孫は全て含まれているはず）
+            treeRoots.push(comment);
+          }
+        });
+
+        // 3. 日付順ソート & レベル計算
+        const processNode = (node: CommentWithReplies, level: number) => {
+          node.level = level;
+          if (node.replies && node.replies.length > 0) {
+            node.replies.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+            node.replies.forEach(child => processNode(child, level + 1));
+          }
+        };
+
+        treeRoots.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()); // ルートは新しい順
+        treeRoots.forEach(root => processNode(root, 0));
+
+        comments.value = treeRoots;
         pagination.value = response.pagination;
         currentPage.value = page;
         overallCount.value = response.overallCount;

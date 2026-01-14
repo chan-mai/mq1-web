@@ -5,6 +5,7 @@ declare global {
   interface CommentWithReplies extends Comments {
     replies?: CommentWithReplies[];
     parent?: CommentWithReplies | null;
+    level?: number;
   }
 
   // ページネーション情報のインターフェース

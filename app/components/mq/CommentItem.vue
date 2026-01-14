@@ -88,7 +88,6 @@ const parsedComment = computed(() => {
         </div>
       </div>
       <!-- アバター(32px) + gap(12px) = 44px -->
-      <!-- アバター(32px) + gap(12px) = 44px -->
       <p class="text-sm text-gray-700 whitespace-pre-wrap break-words pl-[44px] leading-relaxed">
         <template v-for="(segment, i) in parsedComment" :key="i">
           <span 

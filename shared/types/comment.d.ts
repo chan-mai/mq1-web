@@ -3,8 +3,8 @@ import type { Comments } from '~~/generated/prisma/browser';
 declare global {
   // PrismaのComments型を拡張して返信を含む型を定義
   interface CommentWithReplies extends Comments {
-    replies?: Comments[];
-    parent?: Comments | null;
+    replies?: CommentWithReplies[];
+    parent?: CommentWithReplies | null;
   }
 
   // ページネーション情報のインターフェース

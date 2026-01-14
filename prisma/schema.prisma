@@ -47,12 +47,27 @@ model Comments {
 
   parent  Comments?  @relation("CommentReplies", fields: [parentCommentId], references: [id], onDelete: Cascade)
   replies Comments[] @relation("CommentReplies")
+  likes   CommentLike[]
 
   @@index([contentId])
   @@index([userIp])
   @@index([status])
   @@index([parentCommentId])
   @@map("comments")
+}
+
+// コメントへのいいね
+model CommentLike {
+  id        String   @id @default(uuid(7))
+  commentId String   @map("comment_id")
+  userIp    String   @map("user_ip")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  comment   Comments @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@index([commentId])
+  @@index([userIp])
+  @@map("comment_likes")
 }
 
 // 権限の種類

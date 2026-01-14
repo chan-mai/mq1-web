@@ -1,5 +1,6 @@
 export default defineEventHandler(async (event) => {
   const contentId = getRouterParam(event, "contentId");
+  const userIp = getHeader(event, "x-forwarded-for") || "unknown";
 
   // クエリパラメータを取得
   const query = getQuery(event);
@@ -38,6 +39,14 @@ export default defineEventHandler(async (event) => {
           status: "APPROVED",
           parentCommentId: null,
         },
+        include: {
+          _count: {
+            select: { likes: true },
+          },
+          likes: {
+            select: { id: true },
+          },
+        },
         orderBy: {
           createdAt: "desc", // 新しい順
         },
@@ -50,7 +59,7 @@ export default defineEventHandler(async (event) => {
 
     // 4. ルートコメント以下の全子孫コメントを再帰的に取得
     const rootCommentIds = rootComments.map((c) => c.id);
-    const allDescendants: CommentWithReplies[] = [];
+    const allDescendants: any[] = []; // 型定義回避のためにany使用 (Prismaの返り値型は複雑なため)
     let currentParentIds = [...rootCommentIds];
     
     // どのコメントがどのルートに属するかを追跡するマップ (CommentID -> RootID)
@@ -65,6 +74,14 @@ export default defineEventHandler(async (event) => {
           status: "APPROVED",
           parentCommentId: {
             in: currentParentIds,
+          },
+        },
+        include: {
+          _count: {
+            select: { likes: true },
+          },
+          likes: {
+            select: { id: true },
           },
         },
         orderBy: {
@@ -84,18 +101,27 @@ export default defineEventHandler(async (event) => {
         }
       });
 
-      allDescendants.push(...(nextLevelComments as CommentWithReplies[]));
+      allDescendants.push(...nextLevelComments);
       currentParentIds = nextLevelComments.map(c => c.id);
     }
+
+    // データをマッピングするヘルパー関数
+    const mapToCommentWithReplies = (c: any): CommentWithReplies => {
+      // Prismaの返り値から必要なプロパティを抽出し、CommentWithReplies型に合わせる
+      const { _count, likes, ...rest } = c;
+      return {
+        ...rest,
+        likes: _count?.likes || 0,
+        likeIds: likes?.map((l: any) => l.id) || [],
+        replies: [],
+      };
+    };
 
     // 5. メモリ上で結合 (フラット構造)
     const commentMap = new Map<string, CommentWithReplies>();
     
     // ルートコメントをマップに登録
-    const resultComments: CommentWithReplies[] = rootComments.map(c => ({
-      ...c,
-      replies: []
-    }));
+    const resultComments: CommentWithReplies[] = rootComments.map(mapToCommentWithReplies);
 
     resultComments.forEach(c => commentMap.set(c.id, c));
 
@@ -106,11 +132,10 @@ export default defineEventHandler(async (event) => {
         const rootId = rootIdMap.get(c.id)!;
         if (commentMap.has(rootId)) {
           const root = commentMap.get(rootId)!;
+          const descendant = mapToCommentWithReplies(c);
+          
           // 再帰構造ではなくフラットなリストとして追加
-          root.replies?.push({
-            ...c,
-            replies: [] 
-          } as CommentWithReplies);
+          root.replies?.push(descendant);
         }
       }
     });

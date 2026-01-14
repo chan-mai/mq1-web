@@ -6,6 +6,8 @@ declare global {
     replies?: CommentWithReplies[];
     parent?: CommentWithReplies | null;
     level?: number;
+    likes: number;
+    likeIds: string[];
   }
 
   // ページネーション情報のインターフェース

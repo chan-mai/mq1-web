@@ -1,271 +1,232 @@
-<script lang="ts" setup>
-const props = defineProps<{
-  contentId: string;
-}>();
-
+<script setup lang="ts">
+const route = useRoute();
+const contentId = route.params.contentId as string;
 const toast = useToast();
 
-// コメント一覧
+// ステート
 const comments = ref<CommentWithReplies[]>([]);
-const pagination = ref<CommentsPagination | null>(null);
-const isLoadingList = ref<boolean>(true);
-const listError = ref<string | null>(null);
-const currentPage = ref<number>(1);
-const overallCount = ref<number>(0);
+const isLoading = ref(true);
+const isSubmitting = ref(false);
+const page = ref(1);
+const hasMore = ref(false);
+const totalCount = ref(0);
+const formRef = ref<any>(null);
 
-// 返信フォームの状態
-const replyingToId = ref<string | null>(null);
-const replyingToName = ref<string | null>(null);
-const replyingToComment = ref<CommentWithReplies | null>(null);
+// ツリー再構築ヘルパー
+const reconstructTree = (rootId: string, flatDescendants: CommentWithReplies[]): CommentWithReplies[] => {
+  if (!flatDescendants || flatDescendants.length === 0) return [];
 
-// フォームの状態（ローディングのみ親で管理）
-const isLoadingForm = ref<boolean>(false);
+  const map = new Map<string, CommentWithReplies>();
+  const roots: CommentWithReplies[] = [];
 
-// コメント一覧を取得
-const fetchComments = async (page: number = 1) => {
-  isLoadingList.value = true;
-  listError.value = null;
+  // 1. マップの初期化
+  flatDescendants.forEach(c => {
+    map.set(c.id, { ...c, replies: [] });
+  });
+
+  // 2. 階層構造の構築
+  flatDescendants.forEach(original => {
+    const c = map.get(original.id)!;
+    if (c.parentCommentId === rootId) {
+      roots.push(c);
+    } else if (c.parentCommentId && map.has(c.parentCommentId)) {
+      const parent = map.get(c.parentCommentId)!;
+      parent.replies!.push(c);
+    } else {
+      // Fallback
+      if (c.parentCommentId === rootId) {
+         roots.push(c);
+      }
+    }
+  });
+
+  // 3. 返信を日付順にソート
+  const sortReplies = (list: CommentWithReplies[]) => {
+    list.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+    list.forEach(c => {
+      if (c.replies?.length) sortReplies(c.replies);
+    });
+  };
+  
+  // ルートを日付順にソート
+  roots.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+  // ルートの子要素に再帰的なソートを適用
+  roots.forEach(root => {
+     if (root.replies?.length) sortReplies(root.replies);
+  });
+  
+  return roots;
+};
+
+// コメント取得
+const fetchComments = async (isLoadMore = false) => {
+  isLoading.value = true;
+  
+  if (!isLoadMore) {
+    page.value = 1;
+    comments.value = [];
+  }
 
   try {
-    const response = await $fetch<{ status: string; comments: CommentWithReplies[]; pagination: CommentsPagination; overallCount: number }>(`/api/comment/${props.contentId}?page=${page}&limit=10`);
-
-      if (response.status === 'success') {
-        const resultComments = response.comments;
-        
-        // フラットリスト（ルート + その子孫）を完全なツリー構造に再構築
-        const allComments = new Map<string, CommentWithReplies>();
-
-        // 1. 全コメントをマップに登録し、repliesを初期化
-        const registerToMap = (list: CommentWithReplies[]) => {
-          list.forEach(c => {
-            // オブジェクトをコピーして新しい参照を作成（副作用を防ぐ & repliesをリセット）
-            const newObj = { ...c, replies: [] };
-            allComments.set(c.id, newObj as CommentWithReplies);
-            if (c.replies && c.replies.length > 0) {
-              registerToMap(c.replies);
-            }
-          });
-        };
-        registerToMap(resultComments);
-
-        // 2. ツリー構造の構築 & 親参照のリンク
-        const treeRoots: CommentWithReplies[] = [];
-        const orphanReplies: CommentWithReplies[] = []; // 親が見つからない子コメント（念のため）
-
-        // マップの順序は挿入順（概ね作成順）だが、確実にするため後でソートする
-        allComments.forEach(comment => {
-          if (comment.parentCommentId && allComments.has(comment.parentCommentId)) {
-            const parent = allComments.get(comment.parentCommentId)!;
-            comment.parent = parent;
-            parent.replies = parent.replies || [];
-            parent.replies.push(comment);
-          } else {
-            // 親IDがない、または親が現在のセットに含まれていない場合はルート扱い
-            // （APIの仕様上、ページネーションで取得したルートの子孫は全て含まれているはず）
-            treeRoots.push(comment);
-          }
-        });
-
-        // 3. 日付順ソート & レベル計算
-        const processNode = (node: CommentWithReplies, level: number) => {
-          node.level = level;
-          if (node.replies && node.replies.length > 0) {
-            node.replies.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-            node.replies.forEach(child => processNode(child, level + 1));
-          }
-        };
-
-        treeRoots.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()); // ルートは新しい順
-        treeRoots.forEach(root => processNode(root, 0));
-
-        comments.value = treeRoots;
-        pagination.value = response.pagination;
-        currentPage.value = page;
-        overallCount.value = response.overallCount;
-      } else {
-      listError.value = 'コメントの取得に失敗しました';
-    }
-  } catch (err) {
-    console.error('Failed to fetch comments:', err);
-    listError.value = 'コメントの取得に失敗しました';
-  } finally {
-    isLoadingList.value = false;
-  }
-};
-
-// ページ変更
-const changePage = (page: number) => {
-  fetchComments(page);
-  // スクロール位置をコメントセクションに移動
-  const element = document.getElementById('comments-section');
-  if (element) {
-    element.scrollIntoView({ behavior: 'smooth' });
-  }
-};
-
-// 返信開始
-const startReply = (commentItem: CommentWithReplies) => {
-  replyingToId.value = commentItem.id;
-  replyingToName.value = commentItem.name;
-  replyingToComment.value = commentItem;
-};
-
-// 返信キャンセル
-const cancelReply = () => {
-  replyingToId.value = null;
-  replyingToName.value = null;
-  replyingToComment.value = null;
-};
-
-// コメント送信
-const submitComment = async (payload: { name: string; comment: string; token: string }) => {
-  if (isLoadingForm.value) return;
-
-  isLoadingForm.value = true;
-
-  try {
-    const body: any = {
-      name: payload.name,
-      comment: payload.comment,
-      token: payload.token,
-    };
-
-    if (replyingToId.value) {
-
-
-      body.parentCommentId = replyingToId.value;
-    }
-
-    const response = await $fetch(`/api/comment/${props.contentId}`, {
-      method: 'POST',
-      body,
+    const response = await $fetch<any>(`/api/comment/${contentId}`, {
+      params: {
+        page: page.value,
+        limit: 10,
+      }
     });
 
     if (response.status === 'success') {
-      useTrackEvent('comment_added', { contentId: props.contentId, isReply: !!replyingToId.value });
-      toast.success({
-        title: replyingToId.value ? '返信を投稿しました。' : 'コメントを投稿しました。',
-        message: '承認されると表示されます。',
-      });
+      const fetchedRoots = response.comments as CommentWithReplies[];
       
-      // 返信状態をリセット
-      replyingToId.value = null;
-      replyingToName.value = null;
-      replyingToComment.value = null;
-
-      // コメント一覧を更新
-      await fetchComments(currentPage.value);
-    } else if (response.status === 'error') {
-      toast.error({
-        title: '投稿に失敗しました',
-        message: response.message || undefined,
+      const processedRoots = fetchedRoots.map(root => {
+        if (root.replies && root.replies.length > 0) {
+           const tree = reconstructTree(root.id, root.replies);
+           return { ...root, replies: tree };
+        }
+        return root;
       });
+
+      if (isLoadMore) {
+        comments.value.push(...processedRoots);
+      } else {
+        comments.value = processedRoots;
+      }
+      
+      totalCount.value = response.overallCount;
+      hasMore.value = response.pagination.hasNext;
+      if (hasMore.value) {
+        page.value++;
+      }
     }
-  } catch (err: any) {
-    console.error('Failed to submit comment:', err);
-    toast.error({
-      title: '投稿に失敗しました。もう一度お試しください。',
-    });
+  } catch (error) {
+    console.error('Failed to fetch comments:', error);
+    toast.error({ title: 'コメントの読み込みに失敗しました' });
   } finally {
-    isLoadingForm.value = false;
+    isLoading.value = false;
   }
 };
 
-// メンションクリックハンドラ
+// 新規ルートコメントの送信処理
+const handleRootSubmit = async (payload: { name: string; comment: string; token: string }) => {
+  if (isSubmitting.value) return;
+  isSubmitting.value = true;
+
+  try {
+    const response = await $fetch<any>(`/api/comment/${contentId}`, {
+      method: 'POST',
+      body: {
+        name: payload.name,
+        comment: payload.comment,
+        token: payload.token,
+      },
+    });
+
+    if (response.status === 'success') {
+      toast.success({ title: 'コメントを投稿しました' });
+      formRef.value?.clear();
+      await new Promise(resolve => setTimeout(resolve, 500));
+      await fetchComments(false);
+    } else {
+      throw new Error(response.message || '投稿に失敗しました');
+    }
+  } catch (error: any) {
+    console.error('Submit error:', error);
+    toast.error({ title: error.message || 'コメントの投稿に失敗しました' });
+  } finally {
+    isSubmitting.value = false;
+  }
+};
+
+// 返信の送信処理
+const handleReply = async (payload: { parentId: string; content: string; name: string; token: string }) => {
+  try {
+    const response = await $fetch<any>(`/api/comment/${contentId}`, {
+      method: 'POST',
+      body: {
+        name: payload.name,
+        comment: payload.content,
+        token: payload.token,
+        parentCommentId: payload.parentId,
+      },
+    });
+
+    if (response.status === 'success') {
+      toast.success({ title: '返信を投稿しました' });
+      await new Promise(resolve => setTimeout(resolve, 500));
+      await fetchComments(false);
+    } else {
+      throw new Error(response.message || '投稿に失敗しました');
+    }
+  } catch (error: any) {
+     console.error('Reply error:', error);
+     toast.error({ title: error.message || '返信の投稿に失敗しました' });
+  }
+};
+
 onMounted(() => {
-  fetchComments(1);
+  fetchComments();
 });
 </script>
 
 <template>
-  <div id="comments-section" class="flex flex-col gap-6">
-    <!-- コメント一覧 -->
-    <div class="flex flex-col gap-3 rounded-xl px-5 py-4">
-      <div class="flex items-center gap-2 mb-2">
-        <div class="flex h-8 w-8 items-center justify-center rounded-full bg-primary">
-          <Icon name="mdi:comment-multiple-outline" class="h-4 w-4 text-white" />
-        </div>
-        <h3 class="text-lg text-primary">
-          コメント
-          <span v-if="overallCount !== undefined" class="text-sm text-gray-500 ml-2">
-            ({{ overallCount }}件)
-          </span>
-        </h3>
+  <section class="max-w-3xl mx-auto px-4 py-8">
+    <div class="flex items-center gap-2 mb-4">
+      <div class="flex h-8 w-8 items-center justify-center rounded-full bg-primary">
+        <Icon name="lucide:message-square" class="h-4 w-4 text-white" />
       </div>
+      <h3 class="text-lg text-primary">コメント</h3>
+      <span class="text-sm text-gray-500 bg-gray-200 px-2 py-0.5 rounded-full">{{ totalCount }}件</span>
+    </div>
 
-      <!-- ローディング -->
-      <div v-if="isLoadingList" class="flex flex-col gap-4">
-        <div v-for="i in 3" :key="i" class="flex flex-col gap-2 px-4 py-3 rounded-xl bg-white/50 border-2 border-gray-100 animate-pulse">
-          <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-full bg-gray-200"></div>
-            <div class="flex flex-col gap-2">
-              <div class="w-24 h-3 rounded bg-gray-200"></div>
-              <div class="w-16 h-2 rounded bg-gray-200"></div>
-            </div>
-          </div>
-          <div class="pl-[44px] flex flex-col gap-2 mt-1">
-            <div class="w-full h-3 rounded bg-gray-200"></div>
-            <div class="w-3/4 h-3 rounded bg-gray-200"></div>
-            <div class="w-1/2 h-3 rounded bg-gray-200"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- エラー -->
-      <div
-        v-else-if="listError"
-        class="flex items-center gap-2 px-4 py-3 rounded-lg bg-red-50 border border-red-200"
-      >
-        <Icon name="mdi:alert-circle" class="w-5 h-5 text-red-600 flex-shrink-0" />
-        <p class="text-sm text-red-700">{{ listError }}</p>
-      </div>
-
-      <!-- コメントなし -->
-      <div
-        v-else-if="comments.length === 0"
-        class="flex flex-col items-center justify-center py-8 px-4 rounded-lg bg-gray-50 border border-gray-200"
-      >
-        <Icon name="mdi:comment-off-outline" class="w-12 h-12 text-gray-400 mb-2" />
-        <p class="text-gray-600">まだコメントがありません</p>
-        <p class="text-sm text-gray-500">最初のコメントを投稿してみましょう！</p>
-      </div>
-
-      <!-- コメント一覧 -->
-      <div v-else class="flex flex-col gap-3">
-        <div
-          v-for="commentItem in comments"
-          :key="commentItem.id"
-          class="flex flex-col gap-2"
-        >
-          <!-- ルートコメント（再帰コンポーネントの起点） -->
-          <MqCommentItem 
-            :comment="commentItem"
-            :depth="0"
-            :replying-to-id="replyingToId"
-            :replying-to-name="replyingToName"
-            :is-loading-form="isLoadingForm"
-            @reply="startReply"
-            @submit="submitComment"
-            @cancel="cancelReply"
-          />
-        </div>
-      </div>
-
-      <!-- ページネーション -->
-      <MqPagination
-        v-if="pagination && pagination.totalPages > 1"
-        :total-count="pagination.totalCount"
-        :current-page="currentPage"
-        :limit="pagination.limit"
-        @change="changePage"
+    <div class="mb-10">
+      <MqCommentForm
+        ref="formRef"
+        :is-loading="isSubmitting"
+        @submit="handleRootSubmit"
       />
     </div>
 
-    <!-- コメント投稿フォーム（返信中でない場合のみ表示） -->
-    <MqCommentForm 
-      v-if="!replyingToId" 
-      :is-loading="isLoadingForm" 
-      @submit="submitComment"
-    />
-  </div>
+    <div v-if="isLoading && comments.length === 0" class="space-y-8">
+      <div v-for="i in 3" :key="i" class="animate-pulse flex gap-4">
+        <div class="w-10 h-10 bg-gray-200 rounded-full shrink-0"></div>
+        <div class="flex-1 space-y-3">
+          <div class="h-4 bg-gray-200 rounded w-1/4"></div>
+          <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- コメントリスト -->
+    <div class="space-y-8">
+      <MqCommentItem
+        v-for="comment in comments"
+        :key="comment.id"
+        :comment="comment"
+        :depth="0"
+        @reply="handleReply"
+      />
+    </div>
+
+    <!-- さらに読み込む -->
+    <div v-if="hasMore" class="mt-8 text-center border-t border-gray-100 pt-8">
+      <button
+        @click="fetchComments(true)"
+        :disabled="isLoading"
+        class="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors border border-gray-200"
+      >
+        <Icon v-if="isLoading" name="mdi:loading" class="w-4 h-4 animate-spin" />
+        <Icon v-else name="lucide:chevron-down" class="w-4 h-4" />
+        <span>さらに読み込む</span>
+      </button>
+    </div>
+    
+    <!-- 空の状態 -->
+    <div v-if="!isLoading && comments.length === 0" class="text-center py-12 text-gray-500">
+       <div class="bg-gray-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
+         <Icon name="mdi:comment-outline" class="w-8 h-8 text-gray-400" />
+       </div>
+       <p>まだコメントはありません。<br>最初のコメントを投稿してみましょう！</p>
+    </div>
+  </section>
 </template>

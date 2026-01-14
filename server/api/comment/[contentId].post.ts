@@ -67,7 +67,14 @@ export default defineEventHandler(async (event) => {
 
   // 親コメントIDのチェック
   let parentCommentId: string | undefined = undefined;
-  if (body.parentCommentId) {
+  if (body.parentCommentId !== undefined && body.parentCommentId !== null) {
+    if (typeof body.parentCommentId !== 'string') {
+      return {
+        status: 'error',
+        message: 'Parent comment ID must be a string',
+      };
+    }
+
     const parentComment = await prisma.comments.findUnique({
       where: { id: body.parentCommentId },
     });

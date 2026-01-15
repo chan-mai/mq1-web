@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import Avatar from 'vue-boring-avatars';
 
+import { onClickOutside } from '@vueuse/core';
+
 const props = defineProps<{
   comment: CommentWithReplies;
   depth?: number;
@@ -178,6 +180,12 @@ const checkLikeStatus = () => {
 
 const userSecret = ref<string | undefined>(undefined);
 const showDeleteModal = ref(false);
+const showMenu = ref(false);
+const menuRef = ref<HTMLElement | null>(null);
+
+onClickOutside(menuRef, () => {
+  showMenu.value = false;
+});
 
 const isEditing = ref(false);
 const editContent = ref('');
@@ -351,7 +359,7 @@ const formatDate = (date: string | Date) => {
 
         <p v-else class="text-sm leading-relaxed text-gray-800 mb-3 whitespace-pre-wrap">{{ comment.comment }}</p>
 
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-4 relative">
           <button
             @click="handleLike"
             :disabled="isLoading"
@@ -375,20 +383,34 @@ const formatDate = (date: string | Date) => {
           </button>
 
           <template v-if="userSecret">
-            <button
-              @click="handleEdit"
-              class="flex items-center gap-1.5 text-xs border-none text-gray-500 hover:text-gray-900 transition-colors duration-200 ml-2"
-            >
-               <Icon name="lucide:edit-2" class="w-4 h-4" />
-               <span>編集</span>
-            </button>
-            <button
-               @click="handleDelete"
-               class="flex items-center gap-1.5 text-xs border-none text-red-500 hover:text-red-700 transition-colors duration-200 ml-2"
-            >
-               <Icon name="lucide:trash-2" class="w-4 h-4" />
-               <span>削除</span>
-            </button>
+             <div ref="menuRef" class="relative">
+                <button 
+                  @click="showMenu = !showMenu"
+                  class="flex items-center justify-center w-6 h-6 border-none rounded-full hover:bg-gray-100 text-gray-500 transition-colors"
+                >
+                   <Icon name="lucide:more-vertical" class="w-4 h-4" />
+                </button>
+
+                <div 
+                  v-if="showMenu"
+                  class="absolute right-0 top-full mt-1 min-w-[120px] bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-10 overflow-hidden"
+                >
+                   <button
+                     @click="handleEdit(); showMenu = false"
+                     class="w-full text-left px-4 py-2 text-xs border-none text-gray-700 hover:bg-gray-50 flex items-center gap-2 transition-colors"
+                   >
+                      <Icon name="lucide:edit-2" class="w-3 h-3" />
+                      編集する
+                   </button>
+                   <button
+                      @click="handleDelete(); showMenu = false"
+                      class="w-full text-left px-4 py-2 text-xs border-none text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors"
+                   >
+                      <Icon name="lucide:trash-2" class="w-3 h-3" />
+                      削除する
+                   </button>
+                </div>
+             </div>
           </template>
         </div>
 

@@ -25,8 +25,8 @@ steps:
 
   # マイグレーションを実行
   - name: '${_AR_HOSTNAME}/$PROJECT_ID/${_AR_REPOSITORY}/${_SERVICE}:latest'
-    entrypoint: 'pnpm'
-    args: ['exec', 'prisma', 'migrate', 'deploy']
+    entrypoint: './node_modules/.bin/prisma'
+    args: ['migrate', 'deploy']
     secretEnv: ['DATABASE_URL']
 
   - name: 'gcr.io/cloud-builders/gcloud'

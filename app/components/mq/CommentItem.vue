@@ -250,8 +250,9 @@ onMounted(async () => {
   userSecret.value = await getCommentSecret(props.comment.id);
 });
 
-watch(() => props.comment, () => {
+watch(() => props.comment, (newVal) => {
   checkLikeStatus();
+  likesCount.value = newVal.likes;
 });
 
 const handleReplySubmit = (payload: { name: string; comment: string; token: string }) => {

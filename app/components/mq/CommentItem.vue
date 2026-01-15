@@ -82,8 +82,8 @@ const isEdited = computed(() => {
   if (!props.comment.updatedAt) return false;
   const created = new Date(props.comment.createdAt).getTime();
   const updated = new Date(props.comment.updatedAt).getTime();
-  // String comparison removed as requested; rely solely on > 60s diff
-  return updated - created > 60000;
+  // String comparison removed as requested; rely solely on > 5s diff
+  return updated - created > 5000;
 });
 
 const handleLike = async () => {

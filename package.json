@@ -40,7 +40,9 @@
     "prisma": "^7.2.0",
     "vue": "^3.5.26",
     "vue-boring-avatars": "^1.4.0",
-    "vue-router": "^4.6.4"
+    "vue-router": "^4.6.4",
+    "tsx": "^4.21.0",
+    "@vite-pwa/nuxt": "^1.1.0"
   },
   "packageManager": "pnpm@10.9.0+sha512.0486e394640d3c1fb3c9d43d49cf92879ff74f8516959c235308f5a8f62e2e19528a65cdc2a3058f587cde71eba3d5b56327c8c33a97e4c4051ca48a10ca2d5f",
   "pnpm": {
@@ -57,8 +59,6 @@
     "@iconify-json/material-symbols": "^1.2.51",
     "@iconify-json/simple-icons": "^1.2.66",
     "@types/bcryptjs": "^3.0.0",
-    "@types/pg": "^8.16.0",
-    "@vite-pwa/nuxt": "^1.1.0",
-    "tsx": "^4.21.0"
+    "@types/pg": "^8.16.0"
   }
 }

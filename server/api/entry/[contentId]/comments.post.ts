@@ -1,4 +1,6 @@
-import { articleExists } from "../../utils/article";
+import { hashSecret } from "~~/server/utils/hashing";
+import { articleExists } from "~~/server/utils/article";
+import crypto from "node:crypto";
 
 export default defineEventHandler(async (event) => {
   const contentId = getRouterParam(event, "contentId");
@@ -13,7 +15,8 @@ export default defineEventHandler(async (event) => {
 
   // リクエストボディを取得
   const body = await readBody(event);
-  const { name, comment, token } = body;
+  let { comment } = body;
+  const { name, token } = body;
 
   // Turnstileのバリデーション
   const isValid = await verifyTurnstileToken(
@@ -65,7 +68,43 @@ export default defineEventHandler(async (event) => {
     };
   }
 
+  // 親コメントIDのチェック
+  let parentCommentId: string | undefined = undefined;
+  if (body.parentCommentId !== undefined && body.parentCommentId !== null) {
+    if (typeof body.parentCommentId !== 'string') {
+      return {
+        status: 'error',
+        message: 'Parent comment ID must be a string',
+      };
+    }
+
+    const parentComment = await prisma.comments.findUnique({
+      where: { id: body.parentCommentId },
+    });
+
+    if (!parentComment) {
+      return {
+        status: 'error',
+        message: 'Parent comment not found',
+      };
+    }
+
+    // 親コメントが同じ記事に対するものかチェック
+    if (parentComment.contentId !== contentId) {
+      return {
+        status: 'error',
+        message: 'Parent comment belongs to different content',
+      };
+    }
+
+    parentCommentId = body.parentCommentId;
+  }
+
   try {
+    // シークレットを生成
+    const secret = crypto.randomUUID();
+    const hashedSecret = await hashSecret(secret);
+
     // コメントを作成（デフォルトでPENDINGステータス）
     const newComment = await prisma.comments.create({
       data: {
@@ -73,7 +112,9 @@ export default defineEventHandler(async (event) => {
         name: name.trim(),
         comment: comment.trim(),
         userIp,
-        status: "PENDING", // 承認待ち
+        status: process.env.NODE_ENV === 'development' ? "APPROVED" : "PENDING", // 開発環境は承認済み、本番は承認待ち
+        parentCommentId,
+        secret: hashedSecret,
       },
     });
 
@@ -87,7 +128,7 @@ export default defineEventHandler(async (event) => {
             {
               title: "🆕 新しいコメントが投稿されました",
               url: `${siteUrl}admin/comments`,
-              color: 0xffa500,
+              color: newComment.status === "APPROVED" ? 0x00ff00 : 0xffa500,
               fields: [
                 {
                   name: "記事ID",
@@ -114,7 +155,9 @@ export default defineEventHandler(async (event) => {
                 },
               ],
               footer: {
-                text: "ステータス: 承認待ち",
+                text: `ステータス: ${
+                  newComment.status === "APPROVED" ? "承認済み" : "承認待ち"
+                }`,
               },
               timestamp: new Date().toISOString(),
             },
@@ -165,6 +208,7 @@ export default defineEventHandler(async (event) => {
         name: newComment.name,
         comment: newComment.comment,
         createdAt: newComment.createdAt,
+        secret: secret, // クライアント保存用 (平文を返す)
       },
     };
   } catch (error) {

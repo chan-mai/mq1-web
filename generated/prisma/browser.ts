@@ -28,6 +28,11 @@ export type Favorites = Prisma.FavoritesModel
  */
 export type Comments = Prisma.CommentsModel
 /**
+ * Model CommentLike
+ * 
+ */
+export type CommentLike = Prisma.CommentLikeModel
+/**
  * Model AdminUser
  * 
  */

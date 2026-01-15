@@ -10,6 +10,7 @@
  */
 export type * from './models/Favorites'
 export type * from './models/Comments'
+export type * from './models/CommentLike'
 export type * from './models/AdminUser'
 export type * from './models/AdminPermission'
 export type * from './models/FeedAccessLog'

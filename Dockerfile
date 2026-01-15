@@ -34,7 +34,7 @@ ENV NUXT_SESSION_PASSWORD=$NUXT_SESSION_PASSWORD
 ENV TURNSTILE_SECRET_KEY=$TURNSTILE_SECRET_KEY
 ENV TURNSTILE_SITE_KEY=$TURNSTILE_SITE_KEY
 
-RUN pnpm nuxt prepare && pnpm prisma generate && pnpm prisma db push && pnpm build
+RUN pnpm nuxt prepare && pnpm prisma generate && pnpm build
 
 FROM base
 COPY --from=prod-deps /app/node_modules /app/node_modules

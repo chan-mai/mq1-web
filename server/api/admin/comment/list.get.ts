@@ -31,6 +31,14 @@ export default defineEventHandler(async (event) => {
         comment: true,
         userIp: true,
         status: true,
+        parentCommentId: true,
+        parent: {
+          select: {
+            id: true,
+            name: true,
+            comment: true,
+          }
+        },
         createdAt: true,
         updatedAt: true,
       },

@@ -35,19 +35,41 @@ enum CommentStatus {
 
 // コメント
 model Comments {
-  id        String        @id @default(uuid(7))
-  contentId String        @map("content_id")
-  name      String
-  comment   String
-  userIp    String        @map("user_ip")
-  status    CommentStatus @default(PENDING)
-  createdAt DateTime      @default(now()) @map("created_at")
-  updatedAt DateTime      @updatedAt @map("updated_at")
+  id              String        @id @default(uuid(7))
+  contentId       String        @map("content_id")
+  name            String
+  comment         String
+  userIp          String        @map("user_ip")
+  status          CommentStatus @default(PENDING)
+  parentCommentId String?       @map("parent_comment_id")
+  secret          String?
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  parent  Comments?  @relation("CommentReplies", fields: [parentCommentId], references: [id], onDelete: Cascade)
+  replies Comments[] @relation("CommentReplies")
+  likes   CommentLike[]
 
   @@index([contentId])
   @@index([userIp])
   @@index([status])
+  @@index([parentCommentId])
   @@map("comments")
+}
+
+// コメントへのいいね
+model CommentLike {
+  id        String   @id @default(uuid(7))
+  commentId String   @map("comment_id")
+  userIp    String   @map("user_ip")
+  secret    String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  comment   Comments @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@index([commentId])
+  @@index([userIp])
+  @@map("comment_likes")
 }
 
 // 権限の種類

@@ -1,3 +1,4 @@
+import { hashSecret } from "~~/server/utils/hashing";
 import { articleExists } from "~~/server/utils/article";
 import crypto from "node:crypto";
 
@@ -102,6 +103,7 @@ export default defineEventHandler(async (event) => {
   try {
     // シークレットを生成
     const secret = crypto.randomUUID();
+    const hashedSecret = await hashSecret(secret);
 
     // コメントを作成（デフォルトでPENDINGステータス）
     const newComment = await prisma.comments.create({
@@ -112,7 +114,7 @@ export default defineEventHandler(async (event) => {
         userIp,
         status: process.env.NODE_ENV === 'development' ? "APPROVED" : "PENDING", // 開発環境は承認済み、本番は承認待ち
         parentCommentId,
-        secret,
+        secret: hashedSecret,
       },
     });
 
@@ -206,7 +208,7 @@ export default defineEventHandler(async (event) => {
         name: newComment.name,
         comment: newComment.comment,
         createdAt: newComment.createdAt,
-        secret: newComment.secret, // クライアント保存用
+        secret: secret, // クライアント保存用 (平文を返す)
       },
     };
   } catch (error) {

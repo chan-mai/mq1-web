@@ -23,6 +23,7 @@
     "@prisma/client": "^7.2.0",
     "@vueuse/core": "^14.1.0",
     "@vueuse/nuxt": "14.1.0",
+    "bcryptjs": "^3.0.3",
     "cheerio": "^1.1.2",
     "cross-env": "^10.1.0",
     "dotenv": "^17.2.3",
@@ -55,6 +56,7 @@
     "@iconify-json/lucide": "^1.2.84",
     "@iconify-json/material-symbols": "^1.2.51",
     "@iconify-json/simple-icons": "^1.2.66",
+    "@types/bcryptjs": "^3.0.0",
     "@types/pg": "^8.16.0",
     "@vite-pwa/nuxt": "^1.1.0",
     "tsx": "^4.21.0"

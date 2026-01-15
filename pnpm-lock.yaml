@@ -47,6 +47,9 @@ importers:
       '@vueuse/nuxt':
         specifier: 14.1.0
         version: 14.1.0(magicast@0.5.1)(nuxt@4.2.2(@electric-sql/pglite@0.3.2)(@netlify/blobs@8.2.0)(@parcel/watcher@2.5.4)(@types/node@25.0.6)(@vue/compiler-sfc@3.5.26)(cac@6.7.14)(db0@0.3.4(@electric-sql/pglite@0.3.2)(mysql2@3.15.3))(encoding@0.1.13)(ioredis@5.9.1)(magicast@0.5.1)(mysql2@3.15.3)(rollup@4.55.1)(terser@5.44.1)(tsx@4.21.0)(typescript@5.8.3)(vite@7.3.1(@types/node@25.0.6)(jiti@2.6.1)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(yaml@2.8.2))(vue@3.5.26(typescript@5.8.3))
+      bcryptjs:
+        specifier: ^3.0.3
+        version: 3.0.3
       cheerio:
         specifier: ^1.1.2
         version: 1.1.2
@@ -111,6 +114,9 @@ importers:
       '@iconify-json/simple-icons':
         specifier: ^1.2.66
         version: 1.2.66
+      '@types/bcryptjs':
+        specifier: ^3.0.0
+        version: 3.0.0
       '@types/pg':
         specifier: ^8.16.0
         version: 8.16.0
@@ -2034,6 +2040,10 @@ packages:
   '@tybys/wasm-util@0.10.1':
     resolution: {integrity: sha512-9tTaPJLSiejZKx+Bmog4uSubteqTvFrVrURwkmHixBo0G4seD0zUxp98E1DzUBJxLQ3NPwXrGKDiVjwx/DpPsg==}
 
+  '@types/bcryptjs@3.0.0':
+    resolution: {integrity: sha512-WRZOuCuaz8UcZZE4R5HXTco2goQSI2XxjGY3hbM/xDvwmqFWd4ivooImsMx65OKM6CtNKbnZ5YL+YwAwK7c1dg==}
+    deprecated: This is a stub types definition. bcryptjs provides its own type definitions, so you do not need this installed.
+
   '@types/cloudflare-turnstile@0.2.2':
     resolution: {integrity: sha512-3Yf7b1Glci+V2bFWwWBbZkRgTuegp7RDgNTOG4U0UNPB9RV4AWvwqg2/qqLff8G+SwKFNXoXvTkqaRBZrAFdKA==}
 
@@ -2372,6 +2382,10 @@ packages:
 
   baseline-browser-mapping@2.9.14:
     resolution: {integrity: sha512-B0xUquLkiGLgHhpPBqvl7GWegWBUNuujQ6kXd/r1U38ElPT6Ok8KZ8e+FpUGEc2ZoRQUzq/aUnaKFc/svWUGSg==}
+    hasBin: true
+
+  bcryptjs@3.0.3:
+    resolution: {integrity: sha512-GlF5wPWnSa/X5LKM1o0wz0suXIINz1iHRLvTS+sLyi7XPbe5ycmYI3DlZqVGZZtDgl4DmasFg7gOB3JYbphV5g==}
     hasBin: true
 
   beasties@0.3.5:
@@ -7856,6 +7870,10 @@ snapshots:
       tslib: 2.8.1
     optional: true
 
+  '@types/bcryptjs@3.0.0':
+    dependencies:
+      bcryptjs: 3.0.3
+
   '@types/cloudflare-turnstile@0.2.2': {}
 
   '@types/estree@0.0.39': {}
@@ -8281,6 +8299,8 @@ snapshots:
   base64-js@1.5.1: {}
 
   baseline-browser-mapping@2.9.14: {}
+
+  bcryptjs@3.0.3: {}
 
   beasties@0.3.5:
     dependencies:

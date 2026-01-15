@@ -1,3 +1,5 @@
+import { verifySecret } from "~~/server/utils/hashing";
+
 export default defineEventHandler(async (event) => {
   const commentId = getRouterParam(event, "commentId");
   const body = await readBody(event);
@@ -30,7 +32,7 @@ export default defineEventHandler(async (event) => {
       };
     }
 
-    if (comment.secret !== secret) {
+    if (!comment.secret || !(await verifySecret(secret, comment.secret))) {
       return {
         status: "error",
         message: "Invalid secret",

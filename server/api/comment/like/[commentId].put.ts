@@ -1,3 +1,6 @@
+import { hashSecret } from "~~/server/utils/hashing";
+import crypto from "node:crypto";
+
 export default defineEventHandler(async (event) => {
   const commentId = getRouterParam(event, "commentId");
   const userIp = getHeader(event, "x-forwarded-for") || "unknown";
@@ -23,11 +26,12 @@ export default defineEventHandler(async (event) => {
 
   try {
     const secret = crypto.randomUUID();
+    const hashedSecret = await hashSecret(secret);
     const like = await prisma.commentLike.create({
       data: {
         commentId,
         userIp,
-        secret,
+        secret: hashedSecret,
       },
     });
     return { status: "success", id: like.id, secret };

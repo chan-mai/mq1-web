@@ -9,6 +9,18 @@ export default defineEventHandler(async (event) => {
     };
   }
 
+  // コメントの存在確認
+  const existingComment = await prisma.comments.findUnique({
+    where: { id: commentId },
+  });
+
+  if (!existingComment) {
+    return {
+      status: "error",
+      message: "Comment not found",
+    };
+  }
+
   try {
     const like = await prisma.commentLike.create({
       data: {

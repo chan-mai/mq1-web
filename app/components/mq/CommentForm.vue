@@ -23,6 +23,14 @@ const isFormValid = computed(() => isNameValid.value && isContentValid.value);
 
 const handleSubmit = () => {
     if (!isFormValid.value || props.isLoading) return;
+    
+    // 名前を保存
+    try {
+        localStorage.setItem('comment-name', name.value.trim());
+    } catch (e) {
+        console.warn('Failed to save name to localStorage', e);
+    }
+
     emit('submit', {
         name: name.value.trim(),
         comment: content.value.trim(),
@@ -38,12 +46,22 @@ const handleKeyDown = (e: KeyboardEvent) => {
 };
 
 const clear = () => {
-    name.value = '';
     content.value = '';
     if (turnstile.value) {
         turnstile.value.reset();
     }
 };
+
+onMounted(() => {
+    try {
+        const storedName = localStorage.getItem('comment-name');
+        if (storedName) {
+            name.value = storedName;
+        }
+    } catch (e) {
+        console.warn('Failed to load name from localStorage', e);
+    }
+});
 
 defineExpose({ clear, name, comment: content });
 </script>

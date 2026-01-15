@@ -15,11 +15,12 @@ const emit = defineEmits<{
 const name = ref('');
 const content = ref(props.initialComment || '');
 const turnstile = ref();
+const turnstileToken = ref('');
 
 // バリデーション
 const isNameValid = computed(() => name.value.trim().length > 0 && name.value.trim().length <= 50);
 const isContentValid = computed(() => content.value.trim().length > 0 && content.value.trim().length <= 1000);
-const isFormValid = computed(() => isNameValid.value && isContentValid.value);
+const isFormValid = computed(() => isNameValid.value && isContentValid.value && !!turnstile.value && !!turnstileToken.value);
 
 const handleSubmit = () => {
     if (!isFormValid.value || props.isLoading) return;
@@ -34,7 +35,7 @@ const handleSubmit = () => {
     emit('submit', {
         name: name.value.trim(),
         comment: content.value.trim(),
-        token: turnstile.value,
+        token: turnstileToken.value,
     });
 };
 
@@ -97,7 +98,7 @@ defineExpose({ clear, name, comment: content });
 
             <div class="flex flex-col gap-3 pt-2">
                 <div class="overflow-hidden">
-                    <NuxtTurnstile ref="turnstile" />
+                    <NuxtTurnstile ref="turnstile" v-model="turnstileToken" />
                 </div>
 
                 <div class="flex items-center justify-between">

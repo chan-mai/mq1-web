@@ -27,7 +27,7 @@ watch(() => props.isOpen, (newVal) => {
   } else {
     dialogRef.value?.close();
   }
-});
+}, { immediate: true });
 
 const closeModal = () => {
   emit('close');

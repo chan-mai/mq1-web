@@ -81,7 +81,7 @@ defineExpose({ clear, name, comment: content });
             <div class="flex flex-col gap-3">
                 <div>
                     <label for="name" class="text-sm font-medium text-gray-700">お名前</label>
-                    <input v-model="name" type="text" placeholder="お名前 (必須)" maxlength="50"
+                    <input id="name" v-model="name" type="text" placeholder="お名前 (必須)" maxlength="50"
                         class="w-full text-sm font-medium bg-white border border-gray-200 rounded-md p-2 focus:ring-0 placeholder:text-gray-400"
                         :disabled="isLoading" />
                 </div>

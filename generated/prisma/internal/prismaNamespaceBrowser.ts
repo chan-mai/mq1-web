@@ -104,6 +104,7 @@ export const CommentLikeScalarFieldEnum = {
   id: 'id',
   commentId: 'commentId',
   userIp: 'userIp',
+  secret: 'secret',
   createdAt: 'createdAt'
 } as const
 

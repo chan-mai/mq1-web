@@ -28,6 +28,7 @@ export type CommentLikeMinAggregateOutputType = {
   id: string | null
   commentId: string | null
   userIp: string | null
+  secret: string | null
   createdAt: Date | null
 }
 
@@ -35,6 +36,7 @@ export type CommentLikeMaxAggregateOutputType = {
   id: string | null
   commentId: string | null
   userIp: string | null
+  secret: string | null
   createdAt: Date | null
 }
 
@@ -42,6 +44,7 @@ export type CommentLikeCountAggregateOutputType = {
   id: number
   commentId: number
   userIp: number
+  secret: number
   createdAt: number
   _all: number
 }
@@ -51,6 +54,7 @@ export type CommentLikeMinAggregateInputType = {
   id?: true
   commentId?: true
   userIp?: true
+  secret?: true
   createdAt?: true
 }
 
@@ -58,6 +62,7 @@ export type CommentLikeMaxAggregateInputType = {
   id?: true
   commentId?: true
   userIp?: true
+  secret?: true
   createdAt?: true
 }
 
@@ -65,6 +70,7 @@ export type CommentLikeCountAggregateInputType = {
   id?: true
   commentId?: true
   userIp?: true
+  secret?: true
   createdAt?: true
   _all?: true
 }
@@ -145,6 +151,7 @@ export type CommentLikeGroupByOutputType = {
   id: string
   commentId: string
   userIp: string
+  secret: string | null
   createdAt: Date
   _count: CommentLikeCountAggregateOutputType | null
   _min: CommentLikeMinAggregateOutputType | null
@@ -173,6 +180,7 @@ export type CommentLikeWhereInput = {
   id?: Prisma.StringFilter<"CommentLike"> | string
   commentId?: Prisma.StringFilter<"CommentLike"> | string
   userIp?: Prisma.StringFilter<"CommentLike"> | string
+  secret?: Prisma.StringNullableFilter<"CommentLike"> | string | null
   createdAt?: Prisma.DateTimeFilter<"CommentLike"> | Date | string
   comment?: Prisma.XOR<Prisma.CommentsScalarRelationFilter, Prisma.CommentsWhereInput>
 }
@@ -181,6 +189,7 @@ export type CommentLikeOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   commentId?: Prisma.SortOrder
   userIp?: Prisma.SortOrder
+  secret?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   comment?: Prisma.CommentsOrderByWithRelationInput
 }
@@ -192,6 +201,7 @@ export type CommentLikeWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.CommentLikeWhereInput | Prisma.CommentLikeWhereInput[]
   commentId?: Prisma.StringFilter<"CommentLike"> | string
   userIp?: Prisma.StringFilter<"CommentLike"> | string
+  secret?: Prisma.StringNullableFilter<"CommentLike"> | string | null
   createdAt?: Prisma.DateTimeFilter<"CommentLike"> | Date | string
   comment?: Prisma.XOR<Prisma.CommentsScalarRelationFilter, Prisma.CommentsWhereInput>
 }, "id">
@@ -200,6 +210,7 @@ export type CommentLikeOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   commentId?: Prisma.SortOrder
   userIp?: Prisma.SortOrder
+  secret?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.CommentLikeCountOrderByAggregateInput
   _max?: Prisma.CommentLikeMaxOrderByAggregateInput
@@ -213,12 +224,14 @@ export type CommentLikeScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"CommentLike"> | string
   commentId?: Prisma.StringWithAggregatesFilter<"CommentLike"> | string
   userIp?: Prisma.StringWithAggregatesFilter<"CommentLike"> | string
+  secret?: Prisma.StringNullableWithAggregatesFilter<"CommentLike"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"CommentLike"> | Date | string
 }
 
 export type CommentLikeCreateInput = {
   id?: string
   userIp: string
+  secret?: string | null
   createdAt?: Date | string
   comment: Prisma.CommentsCreateNestedOneWithoutLikesInput
 }
@@ -227,12 +240,14 @@ export type CommentLikeUncheckedCreateInput = {
   id?: string
   commentId: string
   userIp: string
+  secret?: string | null
   createdAt?: Date | string
 }
 
 export type CommentLikeUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userIp?: Prisma.StringFieldUpdateOperationsInput | string
+  secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   comment?: Prisma.CommentsUpdateOneRequiredWithoutLikesNestedInput
 }
@@ -241,6 +256,7 @@ export type CommentLikeUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   commentId?: Prisma.StringFieldUpdateOperationsInput | string
   userIp?: Prisma.StringFieldUpdateOperationsInput | string
+  secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -248,12 +264,14 @@ export type CommentLikeCreateManyInput = {
   id?: string
   commentId: string
   userIp: string
+  secret?: string | null
   createdAt?: Date | string
 }
 
 export type CommentLikeUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userIp?: Prisma.StringFieldUpdateOperationsInput | string
+  secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -261,6 +279,7 @@ export type CommentLikeUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   commentId?: Prisma.StringFieldUpdateOperationsInput | string
   userIp?: Prisma.StringFieldUpdateOperationsInput | string
+  secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -278,6 +297,7 @@ export type CommentLikeCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   commentId?: Prisma.SortOrder
   userIp?: Prisma.SortOrder
+  secret?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -285,6 +305,7 @@ export type CommentLikeMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   commentId?: Prisma.SortOrder
   userIp?: Prisma.SortOrder
+  secret?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -292,6 +313,7 @@ export type CommentLikeMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   commentId?: Prisma.SortOrder
   userIp?: Prisma.SortOrder
+  secret?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -340,12 +362,14 @@ export type CommentLikeUncheckedUpdateManyWithoutCommentNestedInput = {
 export type CommentLikeCreateWithoutCommentInput = {
   id?: string
   userIp: string
+  secret?: string | null
   createdAt?: Date | string
 }
 
 export type CommentLikeUncheckedCreateWithoutCommentInput = {
   id?: string
   userIp: string
+  secret?: string | null
   createdAt?: Date | string
 }
 
@@ -382,30 +406,35 @@ export type CommentLikeScalarWhereInput = {
   id?: Prisma.StringFilter<"CommentLike"> | string
   commentId?: Prisma.StringFilter<"CommentLike"> | string
   userIp?: Prisma.StringFilter<"CommentLike"> | string
+  secret?: Prisma.StringNullableFilter<"CommentLike"> | string | null
   createdAt?: Prisma.DateTimeFilter<"CommentLike"> | Date | string
 }
 
 export type CommentLikeCreateManyCommentInput = {
   id?: string
   userIp: string
+  secret?: string | null
   createdAt?: Date | string
 }
 
 export type CommentLikeUpdateWithoutCommentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userIp?: Prisma.StringFieldUpdateOperationsInput | string
+  secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type CommentLikeUncheckedUpdateWithoutCommentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userIp?: Prisma.StringFieldUpdateOperationsInput | string
+  secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type CommentLikeUncheckedUpdateManyWithoutCommentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userIp?: Prisma.StringFieldUpdateOperationsInput | string
+  secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -415,6 +444,7 @@ export type CommentLikeSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   id?: boolean
   commentId?: boolean
   userIp?: boolean
+  secret?: boolean
   createdAt?: boolean
   comment?: boolean | Prisma.CommentsDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["commentLike"]>
@@ -423,6 +453,7 @@ export type CommentLikeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   id?: boolean
   commentId?: boolean
   userIp?: boolean
+  secret?: boolean
   createdAt?: boolean
   comment?: boolean | Prisma.CommentsDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["commentLike"]>
@@ -431,6 +462,7 @@ export type CommentLikeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   id?: boolean
   commentId?: boolean
   userIp?: boolean
+  secret?: boolean
   createdAt?: boolean
   comment?: boolean | Prisma.CommentsDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["commentLike"]>
@@ -439,10 +471,11 @@ export type CommentLikeSelectScalar = {
   id?: boolean
   commentId?: boolean
   userIp?: boolean
+  secret?: boolean
   createdAt?: boolean
 }
 
-export type CommentLikeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "commentId" | "userIp" | "createdAt", ExtArgs["result"]["commentLike"]>
+export type CommentLikeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "commentId" | "userIp" | "secret" | "createdAt", ExtArgs["result"]["commentLike"]>
 export type CommentLikeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   comment?: boolean | Prisma.CommentsDefaultArgs<ExtArgs>
 }
@@ -462,6 +495,7 @@ export type $CommentLikePayload<ExtArgs extends runtime.Types.Extensions.Interna
     id: string
     commentId: string
     userIp: string
+    secret: string | null
     createdAt: Date
   }, ExtArgs["result"]["commentLike"]>
   composites: {}
@@ -890,6 +924,7 @@ export interface CommentLikeFieldRefs {
   readonly id: Prisma.FieldRef<"CommentLike", 'String'>
   readonly commentId: Prisma.FieldRef<"CommentLike", 'String'>
   readonly userIp: Prisma.FieldRef<"CommentLike", 'String'>
+  readonly secret: Prisma.FieldRef<"CommentLike", 'String'>
   readonly createdAt: Prisma.FieldRef<"CommentLike", 'DateTime'>
 }
     

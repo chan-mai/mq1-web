@@ -22,13 +22,15 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
+    const secret = crypto.randomUUID();
     const like = await prisma.commentLike.create({
       data: {
         commentId,
         userIp,
+        secret,
       },
     });
-    return { status: "success", id: like.id };
+    return { status: "success", id: like.id, secret };
   } catch (error) {
     console.error("Failed to create like:", error);
     return {

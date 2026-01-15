@@ -62,6 +62,7 @@ model CommentLike {
   id        String   @id @default(uuid(7))
   commentId String   @map("comment_id")
   userIp    String   @map("user_ip")
+  secret    String?
   createdAt DateTime @default(now()) @map("created_at")
 
   comment   Comments @relation(fields: [commentId], references: [id], onDelete: Cascade)

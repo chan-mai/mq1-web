@@ -18,14 +18,21 @@ const props = defineProps<{
 
 const toast = useToast();
 const config = useRuntimeConfig();
-const { getCommentSecret, removeCommentSecret } = useCommentStorage();
+const { 
+  getCommentSecret, 
+  removeCommentSecret,
+  saveCommentLikeSecret,
+  getCommentLikeSecret,
+  removeCommentLikeSecret
+} = useCommentStorage();
 
 const isReplying = ref(false);
-const isLiked = ref(false); // 初期値false、後でクライアントストレージを確認
+const isLiked = ref(false); 
 const likesCount = ref(props.comment.likes);
-const showReplies = ref(true); // デフォルトで開く
-const visibleRepliesCount = ref(1); // 初期表示数
+const showReplies = ref(true); 
+const visibleRepliesCount = ref(1); 
 const likeId = ref<string | null>(null);
+const likeSecret = ref<string | null>(null);
 const isLoading = ref(false);
 
 const MAX_NEST_DEPTH = 1; // 0=ルート, 1=子(ネスト). それ以降はフラット化.
@@ -33,8 +40,6 @@ const REPLIES_INCREMENT = 5;
 
 const depth = props.depth || 0;
 const hasReplies = computed(() => props.comment.replies && props.comment.replies.length > 0);
-
-const storageKey = computed(() => `liked-comments-${props.comment.contentId}`);
 
 // フラット化ロジック
 interface FlatComment {
@@ -73,108 +78,88 @@ const visibleReplies = computed(() => displayReplies.value.slice(0, visibleRepli
 const hasMoreReplies = computed(() => totalReplies.value > visibleRepliesCount.value);
 const remainingReplies = computed(() => totalReplies.value - visibleRepliesCount.value);
 
-interface LikedItem {
-  commentId: string;
-  likeId: string;
-}
-
-const getLikedList = (): LikedItem[] => {
-  try {
-    const stored = JSON.parse(localStorage.getItem(storageKey.value) || '[]');
-    return Array.isArray(stored) ? stored : [];
-  } catch {
-    return [];
-  }
-};
-
-const saveLikedList = (list: LikedItem[]) => {
-  localStorage.setItem(storageKey.value, JSON.stringify(list));
-};
-
 const handleLike = async () => {
-  if (isLiked.value && !likeId.value) return;
+  if (isLiked.value && (!likeId.value || !likeSecret.value)) return;
   if (isLoading.value) return;
 
   isLoading.value = true;
   const originalIsLiked = isLiked.value;
-  const originalLikeId = likeId.value;
 
   try {
     if (originalIsLiked) {
       // 削除
+      if (!likeId.value || !likeSecret.value) return;
+
       await $fetch(`/api/comment/like/${props.comment.id}`, {
         method: 'DELETE',
-        params: { id: originalLikeId },
+        body: { 
+          id: likeId.value,
+          secret: likeSecret.value
+        },
       });
+
       // 成功時のみ更新
+      await removeCommentLikeSecret(props.comment.id);
+      
       isLiked.value = false;
       likesCount.value = Math.max(0, likesCount.value - 1);
       likeId.value = null;
+      likeSecret.value = null;
 
-      const list = getLikedList();
-      const newList = list.filter(item => item.commentId !== props.comment.id);
-      saveLikedList(newList);
       toast.success({ title: 'いいね！を取り消しました' });
     } else {
       // 作成
-      const res = await $fetch<{ status: string; id: string }>(`/api/comment/like/${props.comment.id}`, {
+      const res = await $fetch<{ status: string; id: string; secret: string }>(`/api/comment/like/${props.comment.id}`, {
         method: 'PUT',
       });
       if (res.status === 'success') {
-         // 成功時のみ更新
+         await saveCommentLikeSecret(props.comment.id, {
+            likeId: res.id,
+            secret: res.secret
+         });
+
          isLiked.value = true;
          likesCount.value = likesCount.value + 1;
          likeId.value = res.id;
+         likeSecret.value = res.secret;
 
-         const list = getLikedList();
-         const newList = list.filter(item => item.commentId !== props.comment.id);
-         newList.push({ commentId: props.comment.id, likeId: res.id });
-         saveLikedList(newList);
          toast.success({ title: 'いいね！しました' });
       }
     }
   } catch (error) {
+    console.error(error);
     toast.error({ title: 'いいねの送信に失敗しました' });
   } finally {
     isLoading.value = false;
   }
 };
 
-const checkLikeStatus = () => {
-  const list = getLikedList();
-  const storedItem = list.find(item => item.commentId === props.comment.id);
-  const storedId = storedItem?.likeId;
+const checkLikeStatus = async () => {
+  const storedData = await getCommentLikeSecret(props.comment.id);
   
-  if (storedId) {
-    // 安全性確認, 検証前にサーバーデータが利用可能か確認
+  if (storedData) {
+    const { likeId: storedId, secret: storedSecret } = storedData;
+
+    // 安全性確認
     if (!Array.isArray(props.comment.likeIds)) {
-      console.warn('Comment data missing likeIds', props.comment);
       return; 
     }
 
-    // 整合性確認, いいね数があるのにIDリストが空の場合はデータの不整合を疑い、検証をスキップ
-    if (props.comment.likes > 0 && props.comment.likeIds.length === 0) {
-       console.warn('Inconsistency: Likes count > 0 but likeIds empty. Skipping validation.', { count: props.comment.likes, ids: props.comment.likeIds });
-       return;
-    }
-
-    console.log('Validating Like:', { commentId: props.comment.id, storedId, serverIds: props.comment.likeIds });
-
-    // 保存されたいいねIDが実際にサーバー上に存在するか検証
     if (props.comment.likeIds.includes(storedId)) {
       isLiked.value = true;
       likeId.value = storedId;
+      likeSecret.value = storedSecret;
     } else {
-      console.warn('Like ID not found on server, removing local.', { storedId, serverIds: props.comment.likeIds });
       // サーバー上にIDが存在しないため、ローカルの保存済みIDを削除
-      const newList = list.filter(item => item.commentId !== props.comment.id);
-      saveLikedList(newList);
+      await removeCommentLikeSecret(props.comment.id);
       isLiked.value = false;
       likeId.value = null;
+      likeSecret.value = null;
     }
   } else {
     isLiked.value = false;
     likeId.value = null;
+    likeSecret.value = null;
   }
 };
 

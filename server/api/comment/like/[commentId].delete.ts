@@ -1,7 +1,7 @@
 export default defineEventHandler(async (event) => {
   const commentId = getRouterParam(event, "commentId");
-  const query = getQuery(event);
-  const id = query.id as string;
+  const body = await readBody(event);
+  const { id, secret } = body;
 
   if (!commentId) {
     return {
@@ -10,15 +10,15 @@ export default defineEventHandler(async (event) => {
     };
   }
 
-  if (!id) {
+  if (!id || !secret) {
     return {
       status: "error",
-      message: "Like ID is required",
+      message: "Like ID and secret are required",
     };
   }
 
   try {
-    // コメントに紐づくか確認（任意の安全性チェック）
+    // 存在確認とシークレット照合
     const existing = await prisma.commentLike.findFirst({
         where: { id, commentId }
     });
@@ -26,7 +26,14 @@ export default defineEventHandler(async (event) => {
     if (!existing) {
         return {
             status: "error",
-            message: "Like not found or mismatch",
+            message: "Like not found",
+        };
+    }
+
+    if (existing.secret !== secret) {
+        return {
+            status: "error",
+            message: "Invalid secret",
         };
     }
 

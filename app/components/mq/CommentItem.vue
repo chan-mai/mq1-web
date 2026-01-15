@@ -18,9 +18,10 @@ const props = defineProps<{
 
 const toast = useToast();
 const config = useRuntimeConfig();
-const { 
+const {
   getCommentSecret, 
   removeCommentSecret,
+  saveCommentSecret,
   saveCommentLikeSecret,
   getCommentLikeSecret,
   removeCommentLikeSecret
@@ -150,6 +151,9 @@ const checkLikeStatus = async () => {
 
     // 安全性確認
     if (!Array.isArray(props.comment.likeIds)) {
+      isLiked.value = false;
+      likeId.value = null;
+      likeSecret.value = null;
       return; 
     }
 
@@ -270,15 +274,44 @@ watch(() => props.comment, (newVal) => {
   likesCount.value = newVal.likes;
 });
 
-const handleReplySubmit = (payload: { name: string; comment: string; token: string }) => {
-  emit('reply', {
-    parentId: props.comment.id,
-    content: payload.comment,
-    name: payload.name,
-    token: payload.token
-  });
-  isReplying.value = false;
-  showReplies.value = true;
+const replyLoading = ref(false);
+
+const handleReplySubmit = async (payload: { name: string; comment: string; token: string }) => {
+  if (replyLoading.value) return;
+  replyLoading.value = true;
+
+  try {
+    const response = await $fetch<any>(`/api/entry/${props.comment.contentId}/comments`, {
+      method: 'POST',
+      body: {
+        name: payload.name,
+        comment: payload.comment,
+        token: payload.token,
+        parentCommentId: props.comment.id,
+      },
+    });
+
+    if (response.status === 'success') {
+      if (response.comment.secret) {
+        await saveCommentSecret(response.comment.id, response.comment.secret);
+      }
+      toast.success({ title: '返信を投稿しました' });
+      
+      // 成功時の状態更新
+      isReplying.value = false;
+      showReplies.value = true;
+      
+      // リスト更新をトリガー
+      emit('updated');
+    } else {
+       throw new Error(response.message || '投稿に失敗しました');
+    }
+  } catch (error: any) {
+    console.error('Reply submit error:', error);
+    toast.error({ title: error.message || '返信の投稿に失敗しました' });
+  } finally {
+    replyLoading.value = false;
+  }
 };
 
 const formatDate = (date: string | Date) => {
@@ -418,7 +451,7 @@ const formatDate = (date: string | Date) => {
 
         <div v-if="isReplying" class="mt-4 animate-in fade-in slide-in-from-top-2 duration-200">
           <MqCommentForm
-            :is-loading="false"
+            :is-loading="replyLoading"
             :reply-to-name="comment.name"
             @submit="handleReplySubmit"
             @cancel="isReplying = false"

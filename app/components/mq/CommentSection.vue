@@ -149,34 +149,7 @@ const handleRootSubmit = async (payload: { name: string; comment: string; token:
   }
 };
 
-// 返信の送信処理
-const handleReply = async (payload: { parentId: string; content: string; name: string; token: string }) => {
-  try {
-    const response = await $fetch<any>(`/api/entry/${contentId}/comments`, {
-      method: 'POST',
-      body: {
-        name: payload.name,
-        comment: payload.content,
-        token: payload.token,
-        parentCommentId: payload.parentId,
-      },
-    });
 
-    if (response.status === 'success') {
-      if (response.comment.secret) {
-        await saveCommentSecret(response.comment.id, response.comment.secret);
-      }
-      toast.success({ title: '返信を投稿しました' });
-      await new Promise(resolve => setTimeout(resolve, 500));
-      await fetchComments(false);
-    } else {
-      throw new Error(response.message || '投稿に失敗しました');
-    }
-  } catch (error: any) {
-     console.error('Reply error:', error);
-     toast.error({ title: error.message || '返信の投稿に失敗しました' });
-  }
-};
 
 onMounted(() => {
   fetchComments();
@@ -218,7 +191,6 @@ onMounted(() => {
         :key="comment.id"
         :comment="comment"
         :depth="0"
-        @reply="handleReply"
         @updated="fetchComments(false)"
         @deleted="fetchComments(false)"
       />

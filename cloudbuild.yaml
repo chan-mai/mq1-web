@@ -6,7 +6,19 @@ steps:
     args:
       - '-c'
       - |
-        docker build -t ${_AR_HOSTNAME}/$PROJECT_ID/${_AR_REPOSITORY}/${_SERVICE}:latest .
+        docker build -t ${_AR_HOSTNAME}/$PROJECT_ID/${_AR_REPOSITORY}/${_SERVICE}:latest \
+          --build-arg DATABASE_URL="$$DATABASE_URL" \
+          --build-arg DISCORD_WEBHOOK_URL="$$DISCORD_WEBHOOK_URL" \
+          --build-arg GA_TRACKING_ID="$$GA_TRACKING_ID" \
+          --build-arg GITHUB_CLIENT_ID="$$GITHUB_CLIENT_ID" \
+          --build-arg GITHUB_SECRET="$$GITHUB_SECRET" \
+          --build-arg MICROCMS_API_KEY="$$MICROCMS_API_KEY" \
+          --build-arg MICROCMS_SERVICE_DOMAIN="$$MICROCMS_SERVICE_DOMAIN" \
+          --build-arg NUXT_SESSION_PASSWORD="$$NUXT_SESSION_PASSWORD" \
+          --build-arg TURNSTILE_SECRET_KEY="$$TURNSTILE_SECRET_KEY" \
+          --build-arg TURNSTILE_SITE_KEY="$$TURNSTILE_SITE_KEY" \
+          .
+    secretEnv: ['DATABASE_URL','DISCORD_WEBHOOK_URL','GA_TRACKING_ID','GITHUB_CLIENT_ID','GITHUB_SECRET','MICROCMS_API_KEY','MICROCMS_SERVICE_DOMAIN','NUXT_SESSION_PASSWORD','TURNSTILE_SECRET_KEY','TURNSTILE_SITE_KEY']
 
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', '${_AR_HOSTNAME}/$PROJECT_ID/${_AR_REPOSITORY}/${_SERVICE}:latest']

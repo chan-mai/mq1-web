@@ -196,6 +196,13 @@ const cancelEdit = () => {
   editContent.value = '';
 };
 
+const handleEditKeyDown = (e: KeyboardEvent) => {
+  if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+    e.preventDefault();
+    saveEdit();
+  }
+};
+
 // 編集保存
 const saveEdit = async () => {
   if (!userSecret.value) return;
@@ -338,9 +345,10 @@ const formatDate = (date: string | Date) => {
             rows="3"
             class="w-full rounded-lg border-gray-200 bg-gray-50 text-sm focus:border-primary focus:ring-primary p-3"
             :disabled="isSaving"
+            @keydown="handleEditKeyDown"
           ></textarea>
           <div class="flex justify-end gap-2 mt-2">
-             <button @click="cancelEdit" class="text-xs text-gray-500 hover:text-gray-900 px-3 py-1.5" :disabled="isSaving">キャンセル</button>
+             <button @click="cancelEdit" class="text-xs text-gray-500 hover:text-gray-900 px-3 py-1.5 border-none" :disabled="isSaving">キャンセル</button>
              <button 
                @click="saveEdit" 
                class="text-xs bg-primary text-white rounded-md px-3 py-1.5 hover:bg-primary/90 disabled:opacity-50"

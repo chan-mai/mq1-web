@@ -23,12 +23,6 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', '${_AR_HOSTNAME}/$PROJECT_ID/${_AR_REPOSITORY}/${_SERVICE}:latest']
 
-  # マイグレーションを実行
-  - name: '${_AR_HOSTNAME}/$PROJECT_ID/${_AR_REPOSITORY}/${_SERVICE}:latest'
-    entrypoint: 'npx'
-    args: ['prisma', 'migrate', 'deploy']
-    secretEnv: ['DATABASE_URL']
-
   - name: 'gcr.io/cloud-builders/gcloud'
     entrypoint: 'bash'
     args: 

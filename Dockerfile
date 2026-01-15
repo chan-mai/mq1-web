@@ -34,10 +34,15 @@ ENV NUXT_SESSION_PASSWORD=$NUXT_SESSION_PASSWORD
 ENV TURNSTILE_SECRET_KEY=$TURNSTILE_SECRET_KEY
 ENV TURNSTILE_SITE_KEY=$TURNSTILE_SITE_KEY
 
-RUN pnpm nuxt prepare && pnpm prisma generate && pnpm build
+RUN pnpm nuxt prepare && pnpm prisma generate && pnpm build && pnpm prisma migrate deploy
 
 FROM base
 COPY --from=prod-deps /app/node_modules /app/node_modules
 COPY --from=build /app/.output /app/.output
+
+ENV NODE_ENV=production
+ENV NITRO_HOST=0.0.0.0
+ENV NITRO_PORT=3000
+
 EXPOSE 3000
-CMD [ "pnpm", "start" ]
+CMD [ "sh", "-c", "pnpm start" ]

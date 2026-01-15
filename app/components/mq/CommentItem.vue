@@ -421,6 +421,8 @@ const formatDate = (date: string | Date) => {
               :hide-children="shouldFlattenChildren"
               :reply-to-name="item.replyTo"
               @reply="(p) => $emit('reply', p)"
+              @updated="$emit('updated')"
+              @deleted="$emit('deleted')"
             />
          </div>
 

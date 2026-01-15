@@ -42,6 +42,7 @@ model Comments {
   userIp          String        @map("user_ip")
   status          CommentStatus @default(PENDING)
   parentCommentId String?       @map("parent_comment_id")
+  secret          String?
   createdAt       DateTime      @default(now()) @map("created_at")
   updatedAt       DateTime      @updatedAt @map("updated_at")
 

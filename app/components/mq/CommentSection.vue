@@ -2,6 +2,7 @@
 const route = useRoute();
 const contentId = route.params.contentId as string;
 const toast = useToast();
+const { saveCommentSecret } = useCommentStorage();
 
 // ステート
 const comments = ref<CommentWithReplies[]>([]);
@@ -69,7 +70,7 @@ const fetchComments = async (isLoadMore = false) => {
   }
 
   try {
-    const response = await $fetch<any>(`/api/comment/${contentId}`, {
+    const response = await $fetch<any>(`/api/entry/${contentId}/comments`, {
       params: {
         page: page.value,
         limit: 10,
@@ -110,10 +111,17 @@ const fetchComments = async (isLoadMore = false) => {
 // 新規ルートコメントの送信処理
 const handleRootSubmit = async (payload: { name: string; comment: string; token: string }) => {
   if (isSubmitting.value) return;
+  
+  if (!contentId) {
+    console.error('Content ID is missing');
+    toast.error({ title: 'エラーが発生しました' });
+    return;
+  }
+
   isSubmitting.value = true;
 
   try {
-    const response = await $fetch<any>(`/api/comment/${contentId}`, {
+    const response = await $fetch<any>(`/api/entry/${contentId}/comments`, {
       method: 'POST',
       body: {
         name: payload.name,
@@ -123,6 +131,9 @@ const handleRootSubmit = async (payload: { name: string; comment: string; token:
     });
 
     if (response.status === 'success') {
+      if (response.comment.secret) {
+        await saveCommentSecret(response.comment.id, response.comment.secret);
+      }
       toast.success({ title: 'コメントを投稿しました' });
       formRef.value?.clear();
       await new Promise(resolve => setTimeout(resolve, 500));
@@ -141,7 +152,7 @@ const handleRootSubmit = async (payload: { name: string; comment: string; token:
 // 返信の送信処理
 const handleReply = async (payload: { parentId: string; content: string; name: string; token: string }) => {
   try {
-    const response = await $fetch<any>(`/api/comment/${contentId}`, {
+    const response = await $fetch<any>(`/api/entry/${contentId}/comments`, {
       method: 'POST',
       body: {
         name: payload.name,
@@ -152,6 +163,9 @@ const handleReply = async (payload: { parentId: string; content: string; name: s
     });
 
     if (response.status === 'success') {
+      if (response.comment.secret) {
+        await saveCommentSecret(response.comment.id, response.comment.secret);
+      }
       toast.success({ title: '返信を投稿しました' });
       await new Promise(resolve => setTimeout(resolve, 500));
       await fetchComments(false);
@@ -205,6 +219,8 @@ onMounted(() => {
         :comment="comment"
         :depth="0"
         @reply="handleReply"
+        @updated="fetchComments(false)"
+        @deleted="fetchComments(false)"
       />
     </div>
 

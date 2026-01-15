@@ -1,6 +1,5 @@
 export default defineEventHandler(async (event) => {
   const contentId = getRouterParam(event, "contentId");
-  const userIp = getHeader(event, "x-forwarded-for") || "unknown";
 
   // クエリパラメータを取得
   const query = getQuery(event);

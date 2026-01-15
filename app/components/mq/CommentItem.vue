@@ -8,12 +8,15 @@ const props = defineProps<{
   replyToName?: string;
 }>();
 
-const emit = defineEmits<{
+  const emit = defineEmits<{
   (e: 'reply', payload: { parentId: string; content: string; name: string; token: string }): void;
+  (e: 'updated'): void;
+  (e: 'deleted'): void;
 }>();
 
 const toast = useToast();
 const config = useRuntimeConfig();
+const { getCommentSecret, removeCommentSecret } = useCommentStorage();
 
 const isReplying = ref(false);
 const isLiked = ref(false); // 初期値false、後でクライアントストレージを確認
@@ -173,8 +176,85 @@ const checkLikeStatus = () => {
   }
 };
 
-onMounted(() => {
+const userSecret = ref<string | undefined>(undefined);
+const showDeleteModal = ref(false);
+
+const isEditing = ref(false);
+const editContent = ref('');
+const isSaving = ref(false);
+
+// 編集ボタンクリック時
+const handleEdit = () => {
+  editContent.value = props.comment.comment;
+  isEditing.value = true;
+};
+
+// 編集キャンセル
+const cancelEdit = () => {
+  isEditing.value = false;
+  editContent.value = '';
+};
+
+// 編集保存
+const saveEdit = async () => {
+  if (!userSecret.value) return;
+  if (!editContent.value.trim()) return;
+  if (isSaving.value) return;
+
+  isSaving.value = true;
+  try {
+    const res = await $fetch<{ status: string; comment: any }>(`/api/comment/${props.comment.id}`, {
+      method: 'PATCH',
+      body: {
+        secret: userSecret.value,
+        comment: editContent.value,
+      }
+    });
+
+    if (res.status === 'success') {
+      toast.success({ title: 'コメントを更新しました' });
+      isEditing.value = false;
+      emit('updated');
+    } else {
+      throw new Error('Update failed');
+    }
+  } catch (error) {
+    console.error(error);
+    toast.error({ title: '更新に失敗しました' });
+  } finally {
+    isSaving.value = false;
+  }
+};
+
+const handleDelete = () => {
+    if (!userSecret.value) return;
+    showDeleteModal.value = true;
+};
+
+// モーダルでの確認後実行
+const executeDelete = async () => {
+    if (!userSecret.value) return;
+
+    try {
+        const res = await $fetch<{ status: string }>(`/api/comment/${props.comment.id}`, {
+            method: 'DELETE',
+            body: { secret: userSecret.value }
+        });
+
+        if (res.status === 'success') {
+            await removeCommentSecret(props.comment.id);
+            toast.success({ title: 'コメントを削除しました' });
+            emit('deleted');
+        }
+    } catch (error) {
+        console.error(error);
+        toast.error({ title: '削除に失敗しました' });
+    }
+};
+
+onMounted(async () => {
   checkLikeStatus();
+  userSecret.value = await getCommentSecret(props.comment.id);
 });
 
 watch(() => props.comment, () => {
@@ -242,10 +322,34 @@ const formatDate = (date: string | Date) => {
              {{ replyToName }}への返信
           </span>
 
-          <span class="text-xs text-gray-400 ml-1">{{ formatDate(comment.createdAt) }}</span>
+          <span class="text-xs text-gray-400 ml-1">
+            {{ formatDate(comment.createdAt) }}
+            <span v-if="comment.updatedAt && comment.updatedAt !== comment.createdAt && new Date(comment.updatedAt).getTime() - new Date(comment.createdAt).getTime() > 60000" class="ml-1 text-[10px] text-gray-300">
+              (編集済み)
+            </span>
+          </span>
         </div>
 
-        <p class="text-sm leading-relaxed text-gray-800 mb-3 whitespace-pre-wrap">{{ comment.comment }}</p>
+        <div v-if="isEditing" class="mb-3">
+          <textarea
+            v-model="editContent"
+            rows="3"
+            class="w-full rounded-lg border-gray-200 bg-gray-50 text-sm focus:border-primary focus:ring-primary p-3"
+            :disabled="isSaving"
+          ></textarea>
+          <div class="flex justify-end gap-2 mt-2">
+             <button @click="cancelEdit" class="text-xs text-gray-500 hover:text-gray-900 px-3 py-1.5" :disabled="isSaving">キャンセル</button>
+             <button 
+               @click="saveEdit" 
+               class="text-xs bg-primary text-white rounded-md px-3 py-1.5 hover:bg-primary/90 disabled:opacity-50"
+               :disabled="isSaving || !editContent.trim()"
+             >
+               {{ isSaving ? '保存中...' : '保存する' }}
+             </button>
+          </div>
+        </div>
+
+        <p v-else class="text-sm leading-relaxed text-gray-800 mb-3 whitespace-pre-wrap">{{ comment.comment }}</p>
 
         <div class="flex items-center gap-4">
           <button
@@ -269,6 +373,23 @@ const formatDate = (date: string | Date) => {
             <Icon name="lucide:reply" class="w-4 h-4" />
             <span>返信</span>
           </button>
+
+          <template v-if="userSecret">
+            <button
+              @click="handleEdit"
+              class="flex items-center gap-1.5 text-xs border-none text-gray-500 hover:text-gray-900 transition-colors duration-200 ml-2"
+            >
+               <Icon name="lucide:edit-2" class="w-4 h-4" />
+               <span>編集</span>
+            </button>
+            <button
+               @click="handleDelete"
+               class="flex items-center gap-1.5 text-xs border-none text-red-500 hover:text-red-700 transition-colors duration-200 ml-2"
+            >
+               <Icon name="lucide:trash-2" class="w-4 h-4" />
+               <span>削除</span>
+            </button>
+          </template>
         </div>
 
         <div v-if="isReplying" class="mt-4 animate-in fade-in slide-in-from-top-2 duration-200">
@@ -322,4 +443,14 @@ const formatDate = (date: string | Date) => {
        </div>
     </div>
   </article>
+
+  <MqConfirmModal
+    :is-open="showDeleteModal"
+    title="コメントの削除"
+    message="このコメントを削除しますか？"
+    confirm-text="削除する"
+    :is-danger="true"
+    @close="showDeleteModal = false"
+    @confirm="executeDelete"
+  />
 </template>

@@ -1,4 +1,5 @@
-import { articleExists } from "../../utils/article";
+import { articleExists } from "~~/server/utils/article";
+import crypto from "node:crypto";
 
 export default defineEventHandler(async (event) => {
   const contentId = getRouterParam(event, "contentId");
@@ -99,6 +100,9 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
+    // シークレットを生成
+    const secret = crypto.randomUUID();
+
     // コメントを作成（デフォルトでPENDINGステータス）
     const newComment = await prisma.comments.create({
       data: {
@@ -108,6 +112,7 @@ export default defineEventHandler(async (event) => {
         userIp,
         status: process.env.NODE_ENV === 'development' ? "APPROVED" : "PENDING", // 開発環境は承認済み、本番は承認待ち
         parentCommentId,
+        secret,
       },
     });
 
@@ -201,6 +206,7 @@ export default defineEventHandler(async (event) => {
         name: newComment.name,
         comment: newComment.comment,
         createdAt: newComment.createdAt,
+        secret: newComment.secret, // クライアント保存用
       },
     };
   } catch (error) {

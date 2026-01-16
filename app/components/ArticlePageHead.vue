@@ -88,7 +88,7 @@ const updatedDate = computed(() => (props.updated && props.updated !== props.pub
             </dl>
 
             <div class="mt-4 flex w-full justify-start">
-                <MqFavoriteButton :content-id="contentId" />
+                <MqLikeButton :content-id="contentId" />
             </div>
         </slot>
     </div>

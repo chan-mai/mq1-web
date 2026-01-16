@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Favorites } from '../../../generated/prisma/browser';
+import type { ArticleLike } from '../../../generated/prisma/browser';
 
 const props = withDefaults(defineProps<{
   contentId: string;
@@ -11,20 +11,20 @@ const props = withDefaults(defineProps<{
 const toast = useToast();
 
 // いいね数
-const likeCount = useState<number>(`favorite:${props.contentId}:count`, () => 0);
+const likeCount = useState<number>(`like:${props.contentId}:count`, () => 0);
 // いいね済みかどうか
-const isLiked = useState<boolean>(`favorite:${props.contentId}:liked`, () => false);
+const isLiked = useState<boolean>(`like:${props.contentId}:liked`, () => false);
 // いいねID
-const likeId = useState<string | null>(`favorite:${props.contentId}:id`, () => null);
+const likeId = useState<string | null>(`like:${props.contentId}:id`, () => null);
 // ローディング状態
-const isLoading = useState<boolean>(`favorite:${props.contentId}:loading`, () => false);
+const isLoading = useState<boolean>(`like:${props.contentId}:loading`, () => false);
 
 // 猫preload関連
 const catApiUrl = 'https://cataas.com/cat/says/Thnak%20You?fontSize=100&fontColor=white';
 // 事前取得URL
-const preloadedCatUrl = useState<string | null>(`favorite:${props.contentId}:preloadedCat`, () => null);
+const preloadedCatUrl = useState<string | null>(`like:${props.contentId}:preloadedCat`, () => null);
 const currentCatImageUrl = ref<string | null>(null);
-const isPreloadingCat = useState<boolean>(`favorite:${props.contentId}:preloadingCat`, () => false);
+const isPreloadingCat = useState<boolean>(`like:${props.contentId}:preloadingCat`, () => false);
 
 const preloadCatImage = async () => {
   if (isPreloadingCat.value) return;
@@ -46,13 +46,15 @@ const ensureCatPreloaded = () => {
 };
 
 // 初回の件数取得中か
-const isInitialLoading = useState<boolean>(`favorite:${props.contentId}:initLoading`, () => true);
+const isInitialLoading = useState<boolean>(`like:${props.contentId}:initLoading`, () => true);
+
+const { saveArticleLikeSecret, getArticleLikeSecret, removeArticleLikeSecret } = useClientStorage();
 
 // いいね数を取得
 const fetchLikeCount = async () => {
   isInitialLoading.value = true;
   try {
-    const response = await $fetch<{ status: string; count: number }>(`/api/favorite/${props.contentId}`);
+    const response = await $fetch<{ status: string; count: number }>(`/api/like/${props.contentId}`);
     if (response.status === 'success') {
       likeCount.value = response.count;
     }
@@ -70,18 +72,25 @@ const addLike = async () => {
   isLoading.value = true;
   
   try {
-    const response = await $fetch<{ status: string; favorite?: Favorites; message?: string }>(`/api/favorite/${props.contentId}`, {
+    const response = await $fetch<{ status: string; like?: ArticleLike; message?: string }>(`/api/like/${props.contentId}`, {
       method: 'PUT',
     });
     
-    if (response.status === 'success' && response.favorite) {
-      useTrackEvent('favorite_added', { contentId: props.contentId });
+    if (response.status === 'success' && response.like) {
+      useTrackEvent('like_added', { contentId: props.contentId });
       // 成功
       isLiked.value = true;
-      likeId.value = response.favorite.id;
+      likeId.value = response.like.id;
       likeCount.value += 1;
-      // ローカルストレージにIDを保存
-      localStorage.setItem(`liked-${props.contentId}`, response.favorite.id);
+      
+      // シークレットをIndexedDBに保存
+      if (response.like.secret) {
+        await saveArticleLikeSecret(props.contentId, {
+          secret: response.like.secret,
+          likeId: response.like.id
+        });
+      }
+      
       // ありがとう表示
       currentCatImageUrl.value = preloadedCatUrl.value || catApiUrl;
       preloadedCatUrl.value = null; // 使い切り
@@ -124,18 +133,35 @@ const removeLike = async () => {
   isLoading.value = true;
   
   try {
-    const response = await $fetch<{ status: string; message?: string }>(`/api/favorite/${props.contentId}?id=${likeId.value}`, {
+    // 保存されたシークレットを取得
+    const secretData = await getArticleLikeSecret(props.contentId);
+
+    if (!secretData) {
+      toast.error({
+        title: 'いいねの解除に失敗しました',
+        message: '認証情報が見つかりません。'
+      });
+      return;
+    }
+    
+    const response = await $fetch<{ status: string; message?: string }>(`/api/like/${props.contentId}`, {
       method: 'DELETE',
+      body: {
+        id: likeId.value,
+        secret: secretData?.secret
+      }
     });
     
     if (response.status === 'success') {
-      useTrackEvent('favorite_removed', { contentId: props.contentId });
+      useTrackEvent('like_removed', { contentId: props.contentId });
       // 成功
       isLiked.value = false;
       likeId.value = null;
       likeCount.value = Math.max(0, likeCount.value - 1);
-      // ローカルストレージから削除
-      localStorage.removeItem(`liked-${props.contentId}`);
+      
+      // IndexedDBから削除
+      await removeArticleLikeSecret(props.contentId);
+      
       toast.success({
         title: 'いいね！を解除しました',
       });
@@ -179,12 +205,12 @@ watch(isLiked, (val, oldVal) => {
 const showLikeCard = ref(false);
 
 // 初期化
-onMounted(() => {
-  // ローカルストレージからいいね状態を復元
-  const storedLikeId = localStorage.getItem(`liked-${props.contentId}`);
-  if (storedLikeId) {
+onMounted(async () => {
+  // IndexedDBからいいね状態を復元
+  const secretData = await getArticleLikeSecret(props.contentId);
+  if (secretData) {
     isLiked.value = true;
-    likeId.value = storedLikeId;
+    likeId.value = secretData.likeId;
   }
   
   // いいね数を取得

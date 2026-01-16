@@ -2,7 +2,7 @@
 const route = useRoute();
 const contentId = route.params.contentId as string;
 const toast = useToast();
-const { saveCommentSecret } = useCommentStorage();
+const { saveCommentSecret } = useClientStorage();
 
 // ステート
 const comments = ref<CommentWithReplies[]>([]);

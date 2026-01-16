@@ -475,10 +475,6 @@ export type EnumCommentStatusFieldUpdateOperationsInput = {
   set?: $Enums.CommentStatus
 }
 
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
-}
-
 export type CommentsUpdateOneWithoutRepliesNestedInput = {
   create?: Prisma.XOR<Prisma.CommentsCreateWithoutRepliesInput, Prisma.CommentsUncheckedCreateWithoutRepliesInput>
   connectOrCreate?: Prisma.CommentsCreateOrConnectWithoutRepliesInput

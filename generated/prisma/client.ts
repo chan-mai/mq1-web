@@ -29,8 +29,8 @@ export * from "./enums"
  * @example
  * ```
  * const prisma = new PrismaClient()
- * // Fetch zero or more Favorites
- * const favorites = await prisma.favorites.findMany()
+ * // Fetch zero or more ArticleLikes
+ * const articleLikes = await prisma.articleLike.findMany()
  * ```
  * 
  * Read more in our [docs](https://pris.ly/d/client).
@@ -40,10 +40,10 @@ export type PrismaClient<LogOpts extends Prisma.LogLevel = never, OmitOpts exten
 export { Prisma }
 
 /**
- * Model Favorites
+ * Model ArticleLike
  * 
  */
-export type Favorites = Prisma.FavoritesModel
+export type ArticleLike = Prisma.ArticleLikeModel
 /**
  * Model Comments
  * 

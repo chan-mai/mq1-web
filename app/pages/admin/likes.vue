@@ -2,7 +2,7 @@
 import type { MicroCMSQueries } from 'microcms-js-sdk';
 import type { MicroCMSObject } from '#shared/types/microccms';
 import type { Permission } from '../../../generated/prisma/enums';
-import type { Favorites } from '../../../generated/prisma/browser';
+import type { ArticleLike } from '../../../generated/prisma/browser';
 
 definePageMeta({
   middleware: 'admin',
@@ -27,7 +27,7 @@ interface ContentIdCount {
 }
 
 interface Statistics {
-  totalFavorites: number;
+  totalLikes: number;
   uniqueUsers: number;
   uniqueArticles: number;
 }
@@ -41,7 +41,7 @@ useHead({
 });
 
 // 状態管理
-const favorites = ref<Favorites[]>([]);
+const likes = ref<ArticleLike[]>([]);
 const pagination = ref<Pagination | null>(null);
 const contentIdCounts = ref<ContentIdCount[]>([]);
 const statistics = ref<Statistics | null>(null);
@@ -121,21 +121,27 @@ const fetchArticles = async (contentIds: string[]) => {
 };
 
 // いいね一覧を取得
-const fetchFavorites = async (page: number = 1) => {
+const fetchArticleLike = async (page: number = 1) => {
   isLoading.value = true;
   error.value = null;
 
   try {
-    let url = `/api/admin/favorite/list?page=${page}&limit=20`;
-    
+    const queryParams: Record<string, any> = {
+      page,
+      limit: 20
+    };
+
     if (filterContentId.value) {
-      url += `&contentId=${filterContentId.value}`;
+      queryParams.contentId = filterContentId.value;
     }
     if (filterUserIp.value) {
-      url += `&userIp=${filterUserIp.value}`;
+      queryParams.userIp = filterUserIp.value;
     }
 
-    const { data, error: fetchError } = await useFetch(url, { server: false });
+    const { data, error: fetchError } = await useFetch('/api/admin/like/list', {
+      server: false,
+      query: queryParams
+    });
     
     if (fetchError.value) {
       throw fetchError.value;
@@ -144,7 +150,7 @@ const fetchFavorites = async (page: number = 1) => {
     const response: any = data.value;
 
     if (response.status === 'success') {
-      favorites.value = response.favorites;
+      likes.value = response.likes || [];
       pagination.value = response.pagination;
       contentIdCounts.value = response.contentIdCounts;
       statistics.value = response.statistics;
@@ -153,14 +159,14 @@ const fetchFavorites = async (page: number = 1) => {
       // 記事情報を一括取得
       const allContentIds = [
         ...contentIdCounts.value.map(item => item.contentId),
-        ...favorites.value.map(fav => fav.contentId),
+        ...likes.value.map(like => like.contentId),
       ];
       await fetchArticles(allContentIds);
     } else {
       error.value = 'いいねの取得に失敗しました';
     }
   } catch (err: any) {
-    console.error('Failed to fetch favorites:', err);
+    console.error('Failed to fetch likes:', err);
     if (err.statusCode === 401) {
       error.value = '認証が必要です。再度ログインしてください。';
       setTimeout(() => navigateTo('/admin/signin'), 2000);
@@ -174,14 +180,14 @@ const fetchFavorites = async (page: number = 1) => {
 
 // ページ変更
 const changePage = (page: number) => {
-  fetchFavorites(page);
+  fetchArticleLike(page);
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
 // フィルター適用
 const applyFilter = () => {
   currentPage.value = 1;
-  fetchFavorites(1);
+  fetchArticleLike(1);
 };
 
 // フィルタークリア
@@ -189,7 +195,7 @@ const clearFilter = () => {
   filterContentId.value = '';
   filterUserIp.value = '';
   currentPage.value = 1;
-  fetchFavorites(1);
+  fetchArticleLike(1);
 };
 
 // 人気記事フィルター
@@ -197,7 +203,7 @@ const filterByContentId = (contentId: string) => {
   filterContentId.value = contentId;
   filterUserIp.value = '';
   currentPage.value = 1;
-  fetchFavorites(1);
+  fetchArticleLike(1);
 };
 
 // 記事情報を取得
@@ -219,12 +225,12 @@ const formatDate = (dateString: string): string => {
 };
 
 // 権限チェック（将来的な拡張用）
-const canView = computed(() => hasPermission('FAVORITE_VIEW' as Permission));
-const canAdmin = computed(() => hasPermission('FAVORITE_ADMIN' as Permission));
+const canView = computed(() => hasPermission('LIKE_VIEW' as Permission));
+const canAdmin = computed(() => hasPermission('LIKE_ADMIN' as Permission));
 
 // 初期化
 onMounted(() => {
-  fetchFavorites(1);
+  fetchArticleLike(1);
 });
 </script>
 
@@ -243,7 +249,7 @@ onMounted(() => {
           <div class="flex items-center justify-between">
             <div class="text-left">
               <p class="text-sm text-gray-600">総いいね数</p>
-              <p class="text-2xl font-bold text-gray-900">{{ statistics.totalFavorites }}</p>
+              <p class="text-2xl font-bold text-gray-900">{{ statistics.totalLikes }}</p>
             </div>
             <div class="p-3 rounded-full bg-pink-100 text-pink-800">
               <Icon name="mdi:heart" class="w-6 h-6" />
@@ -394,7 +400,7 @@ onMounted(() => {
       </div>
 
       <!-- いいね一覧 -->
-      <div v-else-if="favorites.length === 0" class="text-center py-12">
+      <div v-else-if="likes.length === 0" class="text-center py-12">
         <Icon name="mdi:heart-off-outline" class="w-16 h-16 text-gray-400 mx-auto mb-4" />
         <p class="text-gray-600">
           {{ filterContentId || filterUserIp ? 'フィルター条件に一致するいいねはありません' : 'いいねはありません' }}
@@ -411,27 +417,27 @@ onMounted(() => {
 
         <div class="space-y-4">
           <div
-            v-for="favorite in favorites"
-            :key="favorite.id"
+            v-for="like in likes"
+            :key="like.id"
             class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow duration-200"
           >
             <!-- 記事情報がある場合 -->
-            <div v-if="getArticle(favorite.contentId)" class="mb-4">
+            <div v-if="getArticle(like.contentId)" class="mb-4">
               <div class="flex gap-4">
                 <div class="w-32 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
                   <NuxtImg
-                    :src="getArticle(favorite.contentId)?.eyecatch?.url || useOgGenerator(getArticle(favorite.contentId)?.title || favorite.contentId)"
-                    :alt="getArticle(favorite.contentId)?.title || ''"
+                    :src="getArticle(like.contentId)?.eyecatch?.url || useOgGenerator(getArticle(like.contentId)?.title || like.contentId)"
+                    :alt="getArticle(like.contentId)?.title || ''"
                     class="w-full h-full object-cover"
                   />
                 </div>
                 <div class="flex-1 min-w-0">
                   <h3 class="text-lg font-bold text-gray-900 mb-2 line-clamp-2">
-                    {{ getArticle(favorite.contentId)?.title }}
+                    {{ getArticle(like.contentId)?.title }}
                   </h3>
-                  <div v-if="getArticle(favorite.contentId)?.tags" class="flex flex-wrap gap-2 mb-2">
+                  <div v-if="getArticle(like.contentId)?.tags" class="flex flex-wrap gap-2 mb-2">
                     <span
-                      v-for="tag in getArticle(favorite.contentId)?.tags?.contents || []"
+                      v-for="tag in getArticle(like.contentId)?.tags?.contents || []"
                       :key="tag.id"
                       class="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-full"
                     >
@@ -450,7 +456,7 @@ onMounted(() => {
             <!-- 記事情報がない場合のフォールバック -->
             <div v-else class="mb-4 flex items-start justify-between">
               <div class="flex-1">
-                <p class="text-lg font-bold text-gray-900 mb-2">{{ favorite.contentId }}</p>
+                <p class="text-lg font-bold text-gray-900 mb-2">{{ like.contentId }}</p>
                 <p class="text-sm text-gray-500">記事情報を取得できませんでした</p>
               </div>
               <div class="flex-shrink-0 ml-4">
@@ -467,7 +473,7 @@ onMounted(() => {
                   <Icon name="mdi:file-document-outline" class="w-4 h-4 text-gray-500" />
                   <span class="text-xs text-gray-500 font-medium">記事ID</span>
                 </div>
-                <p class="text-sm text-gray-700 ml-6 font-mono">{{ favorite.contentId }}</p>
+                <p class="text-sm text-gray-700 ml-6 font-mono">{{ like.contentId }}</p>
               </div>
 
               <!-- ユーザーIP -->
@@ -476,20 +482,20 @@ onMounted(() => {
                   <Icon name="mdi:ip" class="w-4 h-4 text-gray-500" />
                   <span class="text-xs text-gray-500 font-medium">ユーザーIP</span>
                 </div>
-                <p class="text-sm text-gray-700 ml-6 font-mono">{{ favorite.userIp }}</p>
+                <p class="text-sm text-gray-700 ml-6 font-mono">{{ like.userIp }}</p>
               </div>
 
               <!-- 日時情報 -->
               <div class="flex flex-wrap gap-4 text-xs text-gray-500 mb-4">
                 <div class="flex items-center gap-1">
                   <Icon name="mdi:clock-outline" class="w-4 h-4" />
-                  <span>作成: {{ formatDate(new Date(favorite.createdAt).toISOString()) }}</span>
+                  <span>作成: {{ formatDate(new Date(like.createdAt).toISOString()) }}</span>
                 </div>
               </div>
 
               <!-- アクションボタン -->
               <NuxtLink
-                :to="`/entry/${favorite.contentId}`"
+                :to="`/entry/${like.contentId}`"
                 target="_blank"
                 class="inline-flex items-center justify-center gap-1 px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200"
                 title="記事ページを開く"

@@ -287,7 +287,13 @@ const handleReplySubmit = async (payload: { name: string; comment: string; token
       if (response.comment.secret) {
         await saveCommentSecret(response.comment.id, response.comment.secret);
       }
-      toast.success({ title: '返信を投稿しました' });
+      if (response.comment.status === 'PENDING') {
+        toast.success({ title: 'コメントを投稿しました', message: '承認後表示されます' });
+      } else if (response.comment.status === 'REJECTED') {
+         toast.error({ title: 'コメントの投稿に失敗しました', message: '拒否されました' });
+      } else {
+        toast.success({ title: 'コメントを投稿しました' });
+      }
       
       // 成功時の状態更新
       isReplying.value = false;

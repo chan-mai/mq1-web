@@ -208,6 +208,7 @@ export default defineEventHandler(async (event) => {
         name: newComment.name,
         comment: newComment.comment,
         createdAt: newComment.createdAt,
+        status: newComment.status,
         secret: secret, // クライアント保存用 (平文を返す)
       },
     };

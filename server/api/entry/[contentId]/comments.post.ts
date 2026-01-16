@@ -112,9 +112,13 @@ export default defineEventHandler(async (event) => {
 
     // IPレピュテーションチェック
     if (userIp !== "unknown" && userIp !== "127.0.0.1" && userIp !== "::1") {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5秒でタイムアウト
+
       try {
         const ipResponse = await $fetch<any>(
-          `http://ip-api.com/json/${userIp}?fields=status,countryCode,proxy,hosting`
+          `http://ip-api.com/json/${userIp}?fields=status,countryCode,proxy,hosting`,
+          { signal: controller.signal }
         );
         
         if (ipResponse.status === "success") {
@@ -134,11 +138,17 @@ export default defineEventHandler(async (event) => {
              REJECTION_REASON.push("Hosting IP detected");
           }
         }
-      } catch (e) {
-        console.error("IP Reputation check failed:", e);
+      } catch (e: any) {
+        if (e.name === 'AbortError') {
+           console.error("IP Reputation check timed out");
+        } else {
+           console.error("IP Reputation check failed:", e);
+        }
         // PENDINGに倒す
         status = "PENDING";
-        REJECTION_REASON.push("IP Reputation check failed");
+        REJECTION_REASON.push("IP Reputation check failed/timeout");
+      } finally {
+        clearTimeout(timeoutId);
       }
     }
 

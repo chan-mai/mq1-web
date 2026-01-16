@@ -46,6 +46,7 @@ model Comments {
   secret          String?
   createdAt       DateTime      @default(now()) @map("created_at")
   updatedAt       DateTime      @updatedAt @map("updated_at")
+  isEdited        Boolean       @default(false) @map("is_edited")
 
   parent  Comments?  @relation("CommentReplies", fields: [parentCommentId], references: [id], onDelete: Cascade)
   replies Comments[] @relation("CommentReplies")

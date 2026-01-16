@@ -79,14 +79,6 @@ const visibleReplies = computed(() => displayReplies.value.slice(0, visibleRepli
 const hasMoreReplies = computed(() => totalReplies.value > visibleRepliesCount.value);
 const remainingReplies = computed(() => totalReplies.value - visibleRepliesCount.value);
 
-const isEdited = computed(() => {
-  if (!props.comment.updatedAt) return false;
-  const created = new Date(props.comment.createdAt).getTime();
-  const updated = new Date(props.comment.updatedAt).getTime();
-  // String comparison removed as requested; rely solely on > 5s diff
-  return updated - created > 5000;
-});
-
 const handleLike = async () => {
   if (isLiked.value && (!likeId.value || !likeSecret.value)) return;
   if (isLoading.value) return;
@@ -366,7 +358,7 @@ const formatDate = (date: string | Date) => {
 
           <span class="text-xs text-gray-400 ml-1">
             {{ formatDate(comment.createdAt) }}
-            <span v-if="isEdited" class="ml-1 text-[10px] text-gray-300">
+            <span v-if="comment.isEdited" class="ml-1 text-[10px] text-gray-300">
               (編集済み)
             </span>
           </span>

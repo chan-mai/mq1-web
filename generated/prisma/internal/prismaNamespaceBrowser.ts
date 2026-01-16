@@ -95,7 +95,8 @@ export const CommentsScalarFieldEnum = {
   parentCommentId: 'parentCommentId',
   secret: 'secret',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  isEdited: 'isEdited'
 } as const
 
 export type CommentsScalarFieldEnum = (typeof CommentsScalarFieldEnum)[keyof typeof CommentsScalarFieldEnum]

@@ -384,7 +384,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 
 export const ModelName = {
-  Favorites: 'Favorites',
+  ArticleLike: 'ArticleLike',
   Comments: 'Comments',
   CommentLike: 'CommentLike',
   AdminUser: 'AdminUser',
@@ -405,81 +405,81 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "favorites" | "comments" | "commentLike" | "adminUser" | "adminPermission" | "feedAccessLog"
+    modelProps: "articleLike" | "comments" | "commentLike" | "adminUser" | "adminPermission" | "feedAccessLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
-    Favorites: {
-      payload: Prisma.$FavoritesPayload<ExtArgs>
-      fields: Prisma.FavoritesFieldRefs
+    ArticleLike: {
+      payload: Prisma.$ArticleLikePayload<ExtArgs>
+      fields: Prisma.ArticleLikeFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.FavoritesFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritesPayload> | null
+          args: Prisma.ArticleLikeFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ArticleLikePayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.FavoritesFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritesPayload>
+          args: Prisma.ArticleLikeFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ArticleLikePayload>
         }
         findFirst: {
-          args: Prisma.FavoritesFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritesPayload> | null
+          args: Prisma.ArticleLikeFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ArticleLikePayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.FavoritesFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritesPayload>
+          args: Prisma.ArticleLikeFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ArticleLikePayload>
         }
         findMany: {
-          args: Prisma.FavoritesFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritesPayload>[]
+          args: Prisma.ArticleLikeFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ArticleLikePayload>[]
         }
         create: {
-          args: Prisma.FavoritesCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritesPayload>
+          args: Prisma.ArticleLikeCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ArticleLikePayload>
         }
         createMany: {
-          args: Prisma.FavoritesCreateManyArgs<ExtArgs>
+          args: Prisma.ArticleLikeCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.FavoritesCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritesPayload>[]
+          args: Prisma.ArticleLikeCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ArticleLikePayload>[]
         }
         delete: {
-          args: Prisma.FavoritesDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritesPayload>
+          args: Prisma.ArticleLikeDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ArticleLikePayload>
         }
         update: {
-          args: Prisma.FavoritesUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritesPayload>
+          args: Prisma.ArticleLikeUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ArticleLikePayload>
         }
         deleteMany: {
-          args: Prisma.FavoritesDeleteManyArgs<ExtArgs>
+          args: Prisma.ArticleLikeDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.FavoritesUpdateManyArgs<ExtArgs>
+          args: Prisma.ArticleLikeUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.FavoritesUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritesPayload>[]
+          args: Prisma.ArticleLikeUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ArticleLikePayload>[]
         }
         upsert: {
-          args: Prisma.FavoritesUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritesPayload>
+          args: Prisma.ArticleLikeUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ArticleLikePayload>
         }
         aggregate: {
-          args: Prisma.FavoritesAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateFavorites>
+          args: Prisma.ArticleLikeAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateArticleLike>
         }
         groupBy: {
-          args: Prisma.FavoritesGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.FavoritesGroupByOutputType>[]
+          args: Prisma.ArticleLikeGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ArticleLikeGroupByOutputType>[]
         }
         count: {
-          args: Prisma.FavoritesCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.FavoritesCountAggregateOutputType> | number
+          args: Prisma.ArticleLikeCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ArticleLikeCountAggregateOutputType> | number
         }
       }
     }
@@ -890,15 +890,16 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
-export const FavoritesScalarFieldEnum = {
+export const ArticleLikeScalarFieldEnum = {
   id: 'id',
   contentId: 'contentId',
   userIp: 'userIp',
+  secret: 'secret',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type FavoritesScalarFieldEnum = (typeof FavoritesScalarFieldEnum)[keyof typeof FavoritesScalarFieldEnum]
+export type ArticleLikeScalarFieldEnum = (typeof ArticleLikeScalarFieldEnum)[keyof typeof ArticleLikeScalarFieldEnum]
 
 
 export const CommentsScalarFieldEnum = {
@@ -1195,7 +1196,7 @@ export type PrismaClientOptions = ({
   comments?: runtime.SqlCommenterPlugin[]
 }
 export type GlobalOmitConfig = {
-  favorites?: Prisma.FavoritesOmit
+  articleLike?: Prisma.ArticleLikeOmit
   comments?: Prisma.CommentsOmit
   commentLike?: Prisma.CommentLikeOmit
   adminUser?: Prisma.AdminUserOmit

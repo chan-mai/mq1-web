@@ -205,7 +205,7 @@ const tableOfContents: Ref<{ id: string; text: string; level: number }[]> = ref(
         <div class="mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start mb-20">
             <!-- Left Sidebar (Social Actions) -->
             <aside class="hidden lg:flex lg:col-span-1 sticky top-32 flex-col gap-6 items-center z-20 pt-8">
-                 <MqFavoriteButton :content-id="contentId" variant="icon-only" />
+                 <MqLikeButton :content-id="contentId" variant="icon-only" />
                  <div class="h-px w-10 bg-gray-200"></div>
                  <MqShareButtons 
                     :title="article?.title || ''" 
@@ -230,7 +230,7 @@ const tableOfContents: Ref<{ id: string; text: string; level: number }[]> = ref(
                 
                 <!-- いいねボタン -->
                 <div class="mt-12 mb-8 w-full">
-                    <MqFavoriteButton :content-id="contentId" class="px-5 py-3" />
+                    <MqLikeButton :content-id="contentId" class="px-5 py-3" />
                 </div>
 
                 <!-- 共有ボタン -->

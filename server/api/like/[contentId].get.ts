@@ -3,8 +3,8 @@ export default defineEventHandler(async (event) => {
   const userIp = getHeader(event, "x-forwarded-for");
 
   try {
-    // favoritesからcontentIdが一致するものの件数を取得
-    const count = await prisma.favorites.count({
+    // likeからcontentIdが一致するものの件数を取得
+    const count = await prisma.articleLike.count({
       where: {
         contentId,
       },
@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
     console.error(error);
     return {
       status: "error",
-      message: "Failed to get favorite count",
+      message: "Failed to get like count",
       userIp,
     }
   }

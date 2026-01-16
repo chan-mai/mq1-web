@@ -24,9 +24,9 @@ const menuItems = computed(() => {
     },
     {
       name: 'いいね',
-      path: '/admin/favorites',
+      path: '/admin/likes',
       icon: 'mdi:heart',
-      requiredPermissions: ['FAVORITE_VIEW'] as string[],
+      requiredPermissions: ['LIKE_VIEW'] as string[],
     },
     {
       name: 'フィード統計',

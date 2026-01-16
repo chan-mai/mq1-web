@@ -14,16 +14,17 @@ datasource db {
 }
 
 // いいね
-model Favorites {
+model ArticleLike {
   id        String   @id @default(uuid(7))
   contentId String   @map("content_id")
   userIp    String   @map("user_ip")
+  secret    String?
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@index([contentId])
   @@index([userIp])
-  @@map("favorites")
+  @@map("article_likes")
 }
 
 // コメントステータス
@@ -76,8 +77,8 @@ model CommentLike {
 enum Permission {
   COMMENT_VIEW      // コメント閲覧
   COMMENT_ADMIN     // コメント管理
-  FAVORITE_VIEW     // お気に入り閲覧
-  FAVORITE_ADMIN    // お気に入り管理
+  LIKE_VIEW         // いいね閲覧
+  LIKE_ADMIN        // いいね管理
   ADMIN_USER_VIEW   // 管理者ユーザー閲覧
   ADMIN_USER_ADMIN  // 管理者ユーザー管理
   FEED_STATS_VIEW   // フィード統計閲覧

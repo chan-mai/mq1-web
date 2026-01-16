@@ -1,8 +1,8 @@
 import { requirePermission, Permission } from '../../../utils/auth';
 
 export default defineEventHandler(async (event) => {
-  // FAVORITE_VIEW権限チェック
-  await requirePermission(event, Permission.FAVORITE_VIEW);
+  // LIKE_VIEW権限チェック
+  await requirePermission(event, Permission.LIKE_VIEW);
 
   // クエリパラメータを取得
   const query = getQuery(event);
@@ -20,68 +20,55 @@ export default defineEventHandler(async (event) => {
     if (userIp) {
       where.userIp = userIp;
     }
-
-    // 総数を取得
-    const totalCount = await prisma.favorites.count({ where });
-
-    // ページネーション計算
-    const totalPages = Math.ceil(totalCount / limit);
-    const skip = (page - 1) * limit;
-
-    // いいね一覧を取得
-    const favorites = await prisma.favorites.findMany({
+    const totalCount = await prisma.articleLike.count({ where });
+    const likes = await prisma.articleLike.findMany({
       where,
       orderBy: {
         createdAt: "desc",
       },
-      skip,
+      skip: (page - 1) * limit,
       take: limit,
     });
 
-    // contentId別の集計情報を取得
-    const contentIdCounts = await prisma.favorites.groupBy({
-      by: ["contentId"],
+    // 統計情報の取得（全体の簡易集計）
+    // note: 本格的な統計は別途専用APIを作ると良い
+    const contentIdCounts = await prisma.articleLike.groupBy({
+      by: ['contentId'],
       _count: {
-        id: true,
+        id: true
       },
       orderBy: {
         _count: {
-          id: "desc",
-        },
+          id: 'desc'
+        }
       },
-      take: 10,
+      take: 5
     });
 
-    // 統計情報を取得
     const statistics = {
-      totalFavorites: await prisma.favorites.count(),
-      uniqueUsers: await prisma.favorites.groupBy({
-        by: ["userIp"],
-      }).then((result) => result.length),
-      uniqueArticles: await prisma.favorites.groupBy({
-        by: ["contentId"],
-      }).then((result) => result.length),
+      totalLikes: await prisma.articleLike.count(),
+      uniqueUsers: await prisma.articleLike.groupBy({
+        by: ['userIp'],
+      }).then(r => r.length),
+      uniqueArticles: await prisma.articleLike.groupBy({
+        by: ['contentId'],
+      }).then(r => r.length),
     };
 
     return {
       status: "success",
-      favorites,
-      pagination: {
-        page,
-        limit,
-        totalCount,
-        totalPages,
-        hasNext: page < totalPages,
-        hasPrev: page > 1,
-      },
+      likes,
+      totalCount,
+      page,
+      limit,
+      statistics,
       contentIdCounts: contentIdCounts.map((item) => ({
         contentId: item.contentId,
         count: item._count.id,
       })),
-      statistics,
     };
   } catch (error) {
-    console.error("Failed to fetch favorites:", error);
+    console.error("Failed to fetch likes:", error);
     throw createError({
       statusCode: 500,
       statusMessage: "Internal Server Error",

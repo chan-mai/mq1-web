@@ -25,7 +25,7 @@ const {
   saveCommentLikeSecret,
   getCommentLikeSecret,
   removeCommentLikeSecret
-} = useCommentStorage();
+} = useClientStorage();
 
 const isReplying = ref(false);
 const isLiked = ref(false); 

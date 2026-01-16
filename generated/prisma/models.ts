@@ -8,7 +8,7 @@
  *
  * 🟢 You can import this file directly.
  */
-export type * from './models/Favorites'
+export type * from './models/ArticleLike'
 export type * from './models/Comments'
 export type * from './models/CommentLike'
 export type * from './models/AdminUser'

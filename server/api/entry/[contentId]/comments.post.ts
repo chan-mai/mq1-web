@@ -164,9 +164,9 @@ export default defineEventHandler(async (event) => {
       },
     });
 
-    if (recentCommentsCount >= 3) {
+    if (recentCommentsCount + 1 > 3) {
       status = "PENDING";
-      REJECTION_REASON.push(`Rate limit exceeded (${recentCommentsCount} comments in 10m)`);
+      REJECTION_REASON.push(`Rate limit exceeded (${recentCommentsCount + 1} comments in 30m)`);
     }
 
     // 重複投稿チェック

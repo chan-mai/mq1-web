@@ -135,6 +135,14 @@ const removeLike = async () => {
   try {
     // 保存されたシークレットを取得
     const secretData = await getArticleLikeSecret(props.contentId);
+
+    if (!secretData) {
+      toast.error({
+        title: 'いいねの解除に失敗しました',
+        message: '認証情報が見つかりません。'
+      });
+      return;
+    }
     
     const response = await $fetch<{ status: string; message?: string }>(`/api/like/${props.contentId}`, {
       method: 'DELETE',

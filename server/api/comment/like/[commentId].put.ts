@@ -1,9 +1,10 @@
 import { hashSecret } from "~~/server/utils/hashing";
 import crypto from "node:crypto";
+import { getClientIP } from "~~/server/utils/ip";
 
 export default defineEventHandler(async (event) => {
   const commentId = getRouterParam(event, "commentId");
-  const userIp = getHeader(event, "x-forwarded-for") || "unknown";
+  const userIp = getClientIP(event);
 
   if (!commentId) {
     return {

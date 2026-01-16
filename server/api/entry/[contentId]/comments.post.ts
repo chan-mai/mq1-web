@@ -1,11 +1,12 @@
 import { hashSecret } from "~~/server/utils/hashing";
 import { articleExists } from "~~/server/utils/article";
 import { type CommentStatus } from "~~/generated/prisma/enums";
+import { getClientIP } from "~~/server/utils/ip";
 import crypto from "node:crypto";
 
 export default defineEventHandler(async (event) => {
   const contentId = getRouterParam(event, "contentId");
-  const userIp = getHeader(event, "x-forwarded-for") || "unknown";
+  const userIp = getClientIP(event);
 
   if (!contentId) {
     return {

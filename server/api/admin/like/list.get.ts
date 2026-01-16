@@ -42,7 +42,7 @@ export default defineEventHandler(async (event) => {
           id: 'desc'
         }
       },
-      take: 5
+      take: 10
     });
 
     const statistics = {
@@ -58,9 +58,12 @@ export default defineEventHandler(async (event) => {
     return {
       status: "success",
       likes,
-      totalCount,
-      page,
-      limit,
+      pagination: {
+        page,
+        limit,
+        totalCount,
+        totalPages: Math.ceil(totalCount / limit),
+      },
       statistics,
       contentIdCounts: contentIdCounts.map((item) => ({
         contentId: item.contentId,

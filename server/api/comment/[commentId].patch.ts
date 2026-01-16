@@ -58,7 +58,7 @@ export default defineEventHandler(async (event) => {
       where: { id: commentId },
       data: {
         comment: newContent.trim(),
-        // statusは変更しない（あるいは編集された場合に再度承認待ちにするなら PENDING に戻すが、今回は変更なしとする）
+        isEdited: true,
       },
     });
 

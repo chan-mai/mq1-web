@@ -457,10 +457,6 @@ export type BigIntFieldUpdateOperationsInput = {
   divide?: bigint | number
 }
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
-}
-
 export type AdminUserCreateNestedOneWithoutPermissionsInput = {
   create?: Prisma.XOR<Prisma.AdminUserCreateWithoutPermissionsInput, Prisma.AdminUserUncheckedCreateWithoutPermissionsInput>
   connectOrCreate?: Prisma.AdminUserCreateOrConnectWithoutPermissionsInput

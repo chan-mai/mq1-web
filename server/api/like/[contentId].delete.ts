@@ -55,6 +55,7 @@ export default defineEventHandler(async (event) => {
         return {
             status: "error",
             message: "Invalid secret",
+            userIp,
         };
     }
 

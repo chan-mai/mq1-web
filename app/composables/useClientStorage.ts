@@ -10,8 +10,8 @@ export const useClientStorage = () => {
 
 
   const VERSION = 4;
-  const DB_NAME = 'comment-secrets-db';
-  const STORE_NAME = 'comment_secrets';
+  const DB_NAME = 'secrets-db';
+  const COMMENT_STORE_NAME = 'comment_secrets';
   const LIKE_STORE_NAME = 'comment_like_secrets';
   const ARTICLE_LIKE_STORE_NAME = 'article_like_secrets';
 
@@ -19,8 +19,8 @@ export const useClientStorage = () => {
     if (!import.meta.client) return null;
     return openDB(DB_NAME, VERSION, {
       upgrade(db, oldVersion) {
-        if (!db.objectStoreNames.contains(STORE_NAME)) {
-          db.createObjectStore(STORE_NAME);
+        if (!db.objectStoreNames.contains(COMMENT_STORE_NAME)) {
+          db.createObjectStore(COMMENT_STORE_NAME);
         }
         if (oldVersion < 3 && !db.objectStoreNames.contains(LIKE_STORE_NAME)) {
           db.createObjectStore(LIKE_STORE_NAME);
@@ -35,19 +35,19 @@ export const useClientStorage = () => {
   const saveCommentSecret = async (commentId: string, secret: string) => {
     const db = await getDB();
     if (!db) return;
-    await db.put(STORE_NAME, secret, commentId);
+    await db.put(COMMENT_STORE_NAME, secret, commentId);
   };
 
   const getCommentSecret = async (commentId: string): Promise<string | undefined> => {
     const db = await getDB();
     if (!db) return undefined;
-    return db.get(STORE_NAME, commentId);
+    return db.get(COMMENT_STORE_NAME, commentId);
   };
 
   const removeCommentSecret = async (commentId: string) => {
     const db = await getDB();
     if (!db) return;
-    await db.delete(STORE_NAME, commentId);
+    await db.delete(COMMENT_STORE_NAME, commentId);
   };
   
   // コメントいいねシークレット管理

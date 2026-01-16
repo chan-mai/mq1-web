@@ -1,6 +1,14 @@
 import { openDB } from 'idb';
 
 export const useClientStorage = () => {
+  interface SecretData {
+    secret: string;
+    likeId: string;
+  }
+  type LikeSecretData = SecretData;
+  type ArticleLikeSecretData = SecretData;
+
+
   const VERSION = 4;
   const DB_NAME = 'comment-secrets-db';
   const STORE_NAME = 'comment_secrets';
@@ -42,13 +50,7 @@ export const useClientStorage = () => {
     await db.delete(STORE_NAME, commentId);
   };
   
-  // いいねシークレット管理
-  // key: commentId, value: { secret: string, likeId: string }
-  interface LikeSecretData {
-    secret: string;
-    likeId: string;
-  }
-
+  // コメントいいねシークレット管理
   const saveCommentLikeSecret = async (commentId: string, data: LikeSecretData) => {
     const db = await getDB();
     if (!db) return;
@@ -68,12 +70,6 @@ export const useClientStorage = () => {
   };
 
   // 記事いいねシークレット管理
-  // key: contentId, value: { secret: string, likeId: string }
-  interface ArticleLikeSecretData {
-    secret: string;
-    likeId: string;
-  }
-
   const saveArticleLikeSecret = async (contentId: string, data: ArticleLikeSecretData) => {
     const db = await getDB();
     if (!db) return;

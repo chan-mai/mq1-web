@@ -13,15 +13,15 @@ export default defineEventHandler(async (event) => {
     };
   }
 
-  const body = await readBody(event);
+  const body = await readBody(event) || {};
   const { id, secret } = body;
 
   if (!id || !secret) {
-    return {
-      status: "error",
-      message: "Like ID and secret are required",
-      userIp,
-    };
+    throw createError({
+        statusCode: 400,
+        statusMessage: "Bad Request",
+        message: "Like ID and secret are required",
+    });
   }
 
   const exists = await articleExists(contentId);

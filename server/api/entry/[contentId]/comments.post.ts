@@ -1,5 +1,6 @@
 import { hashSecret } from "~~/server/utils/hashing";
 import { articleExists } from "~~/server/utils/article";
+import { type CommentStatus } from "~~/generated/prisma/enums";
 import crypto from "node:crypto";
 
 export default defineEventHandler(async (event) => {
@@ -105,14 +106,89 @@ export default defineEventHandler(async (event) => {
     const secret = crypto.randomUUID();
     const hashedSecret = await hashSecret(secret);
 
-    // コメントを作成（デフォルトでPENDINGステータス）
+    let status: CommentStatus = "APPROVED"; // デフォルトは承認
+    const REJECTION_REASON: string[] = [];
+
+    // IPレピュテーションチェック
+    if (userIp !== "unknown" && userIp !== "127.0.0.1" && userIp !== "::1") {
+      try {
+        const ipResponse = await $fetch<any>(
+          `http://ip-api.com/json/${userIp}?fields=status,countryCode,proxy,hosting`
+        );
+        
+        if (ipResponse.status === "success") {
+          // 日本以外はPENDING
+          if (ipResponse.countryCode !== "JP") {
+             status = "PENDING";
+             REJECTION_REASON.push(`Region: ${ipResponse.countryCode}`);
+          }
+          // プロキシ利用はPENDING
+          if (ipResponse.proxy) {
+             status = "PENDING";
+             REJECTION_REASON.push("Proxy detected");
+          }
+          // ホスティング/データセンターはPENDING
+          if (ipResponse.hosting) {
+             status = "PENDING";
+             REJECTION_REASON.push("Hosting IP detected");
+          }
+        }
+      } catch (e) {
+        console.error("IP Reputation check failed:", e);
+        // PENDINGに倒す
+        status = "PENDING";
+        REJECTION_REASON.push("IP Reputation check failed");
+      }
+    }
+
+    // 連投チェック
+    // 直近30分間に同一IPから3件以上の投稿がある場合
+    const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
+    const recentCommentsCount = await prisma.comments.count({
+      where: {
+        userIp: userIp,
+        createdAt: {
+          gt: thirtyMinutesAgo,
+        },
+      },
+    });
+
+    if (recentCommentsCount >= 3) {
+      status = "PENDING";
+      REJECTION_REASON.push(`Rate limit exceeded (${recentCommentsCount} comments in 10m)`);
+    }
+
+    // 重複投稿チェック
+    // 直近10時間以内に同一IPから全く同じ内容の投稿がある場合
+    const tenHoursAgo = new Date(Date.now() - 10 * 60 * 60 * 1000);
+    const duplicateComment = await prisma.comments.findFirst({
+       where: {
+         userIp: userIp,
+         comment: comment.trim(),
+         createdAt: {
+            gt: tenHoursAgo,
+         }
+       }
+    });
+
+    if (duplicateComment) {
+       status = "PENDING";
+       REJECTION_REASON.push("Duplicate content detected");
+    }
+
+    // ログ出力 (デバッグ用)
+    if (status === "PENDING") {
+      console.log(`[SmartApproval] Comment set to PENDING. IP: ${userIp}, Reasons: ${REJECTION_REASON.join(", ")}`);
+    }
+
+    // コメントを作成
     const newComment = await prisma.comments.create({
       data: {
         contentId,
         name: name.trim(),
         comment: comment.trim(),
         userIp,
-        status: process.env.NODE_ENV === 'development' ? "APPROVED" : "PENDING", // 開発環境は承認済み、本番は承認待ち
+        status,
         parentCommentId,
         secret: hashedSecret,
       },
@@ -209,7 +285,7 @@ export default defineEventHandler(async (event) => {
         comment: newComment.comment,
         createdAt: newComment.createdAt,
         status: newComment.status,
-        secret: secret, // クライアント保存用 (平文を返す)
+        secret: secret,
       },
     };
   } catch (error) {

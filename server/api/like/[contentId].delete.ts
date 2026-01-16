@@ -16,11 +16,11 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event) || {};
   const { id, secret } = body;
 
-  if (!id || !secret) {
+  if (!id || !secret || typeof id !== 'string' || typeof secret !== 'string') {
     throw createError({
         statusCode: 400,
         statusMessage: "Bad Request",
-        message: "Like ID and secret are required",
+        message: "Like ID and secret are required and must be strings",
     });
   }
 

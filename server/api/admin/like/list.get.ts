@@ -6,8 +6,8 @@ export default defineEventHandler(async (event) => {
 
   // クエリパラメータを取得
   const query = getQuery(event);
-  const page = parseInt((query.page as string) || "1", 10);
-  const limit = parseInt((query.limit as string) || "20", 10);
+  const page = Math.max(1, parseInt((query.page as string) || "1", 10) || 1);
+  const limit = Math.min(100, Math.max(1, parseInt((query.limit as string) || "20", 10) || 20));
   const contentId = query.contentId as string | undefined;
   const userIp = query.userIp as string | undefined;
 

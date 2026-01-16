@@ -126,16 +126,22 @@ const fetchArticleLike = async (page: number = 1) => {
   error.value = null;
 
   try {
-    let url = `/api/admin/like/list?page=${page}&limit=20`;
-    
+    const queryParams: Record<string, any> = {
+      page,
+      limit: 20
+    };
+
     if (filterContentId.value) {
-      url += `&contentId=${filterContentId.value}`;
+      queryParams.contentId = filterContentId.value;
     }
     if (filterUserIp.value) {
-      url += `&userIp=${filterUserIp.value}`;
+      queryParams.userIp = filterUserIp.value;
     }
 
-    const { data, error: fetchError } = await useFetch(url, { server: false });
+    const { data, error: fetchError } = await useFetch('/api/admin/like/list', {
+      server: false,
+      query: queryParams
+    });
     
     if (fetchError.value) {
       throw fetchError.value;
@@ -144,7 +150,7 @@ const fetchArticleLike = async (page: number = 1) => {
     const response: any = data.value;
 
     if (response.status === 'success') {
-      likes.value = response.likes;
+      likes.value = response.likes || [];
       pagination.value = response.pagination;
       contentIdCounts.value = response.contentIdCounts;
       statistics.value = response.statistics;

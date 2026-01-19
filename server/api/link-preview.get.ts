@@ -50,14 +50,20 @@ export default defineEventHandler(async (event): Promise<LinkPreviewResponse> =>
     };
 
     const checkMisskey = async (hostname: string): Promise<boolean> => {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 3000);
         try {
-            const response = await fetch(`https://servers.misskey.ink/api/v1/check?domain=${hostname}`);
+            const response = await fetch(`https://servers.misskey.ink/api/v1/check?domain=${hostname}`, {
+                signal: controller.signal
+            });
             if (!response.ok) return false;
             const data = await response.json();
             return data.isMisskey === true;
         } catch (e) {
-            console.error('Misskey check failed:', e);
+            console.error('Misskey check failed or timed out:', e);
             return false;
+        } finally {
+            clearTimeout(timeout);
         }
     };
 

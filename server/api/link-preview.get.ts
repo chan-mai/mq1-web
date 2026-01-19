@@ -199,8 +199,11 @@ export default defineEventHandler(async (event): Promise<LinkPreviewResponse> =>
                     const [, user, repo, commit, path] = match;
                     const rawUrl = `https://raw.githubusercontent.com/${user}/${repo}/${commit}/${path}`;
                     
+                    const controller = new AbortController();
+                    const timeout = setTimeout(() => controller.abort(), 5000);
+                    
                     try {
-                        const response = await fetch(rawUrl);
+                        const response = await fetch(rawUrl, { signal: controller.signal });
                         if (response.ok) {
                             const text = await response.text();
                             const lines = text.split('\n');
@@ -231,7 +234,9 @@ export default defineEventHandler(async (event): Promise<LinkPreviewResponse> =>
                             code = extracted;
                         }
                     } catch (e) {
-                         console.error('Failed to fetch GitHub raw content:', e);
+                         console.error('Failed to fetch GitHub raw content or timed out:', e);
+                    } finally {
+                        clearTimeout(timeout);
                     }
                 }
             }

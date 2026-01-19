@@ -182,12 +182,63 @@ export default defineEventHandler(async (event): Promise<LinkPreviewResponse> =>
                 }
             }
 
+            let code: string | undefined;
+            let startLine: number | undefined;
+            let endLine: number | undefined;
+
+            if (target.hostname === 'github.com') {
+                const match = target.pathname.match(/^\/([^/]+)\/([^/]+)\/blob\/([^/]+)\/(.+)$/);
+                if (match) {
+                    type = 'GITHUB_PERMALINK';
+                    const [, user, repo, commit, path] = match;
+                    const rawUrl = `https://raw.githubusercontent.com/${user}/${repo}/${commit}/${path}`;
+                    
+                    try {
+                        const response = await fetch(rawUrl);
+                        if (response.ok) {
+                            const text = await response.text();
+                            const lines = text.split('\n');
+                            const hash = target.hash;
+                            
+                            let s = 1;
+                            let e = 10; // Default to first 10 lines
+                            
+                            const rangeMatch = hash.match(/#L(\d+)(?:-L(\d+))?/);
+                            if (rangeMatch) {
+                                const startStr = rangeMatch[1];
+                                const endStr = rangeMatch[2];
+                                if (startStr) {
+                                  s = parseInt(startStr, 10);
+                                  e = endStr ? parseInt(endStr, 10) : s;
+                                }
+                            } else {
+                                // If no hash, default to first 10 lines
+                                s = 1;
+                                e = Math.min(lines.length, 10);
+                            }
+
+                            startLine = s;
+                            endLine = e;
+
+                            // Adjust 0-based index
+                            const extracted = lines.slice(Math.max(0, s - 1), e).join('\n');
+                            code = extracted;
+                        }
+                    } catch (e) {
+                         console.error('Failed to fetch GitHub raw content:', e);
+                    }
+                }
+            }
+
             return {
                 url: target.toString(),
                 domain: target.hostname.replace(/^www\./, ''),
                 ...ogData,
                 isMisskey,
                 type,
+                code,
+                startLine: code ? startLine : undefined,
+                endLine: code ? endLine : undefined,
             };
         } finally {
             clearTimeout(timeout);

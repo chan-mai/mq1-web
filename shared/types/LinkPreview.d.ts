@@ -7,7 +7,6 @@ interface LinkPreviewResponse {
   description: string;
   image?: string;
   favicon?: string;
-  favicon?: string;
   type: LinkPreviewType;
   code?: string;
   startLine?: number;

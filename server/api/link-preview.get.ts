@@ -234,7 +234,6 @@ export default defineEventHandler(async (event): Promise<LinkPreviewResponse> =>
                 url: target.toString(),
                 domain: target.hostname.replace(/^www\./, ''),
                 ...ogData,
-                isMisskey,
                 type,
                 code,
                 startLine: code ? startLine : undefined,

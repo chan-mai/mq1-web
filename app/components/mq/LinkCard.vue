@@ -63,7 +63,7 @@ const isExternalLink = computed(() => /^https?:\/\//.test(props.url));
         <!-- Success -->
         <template v-else>
             <MisskeyEmbed 
-                v-if="preview.isMisskey && preview.type" 
+                v-if="['MISSKEY_NOTE', 'MISSKEY_HASHTAG', 'MISSKEY_USER', 'MISSKEY_CLIP'].includes(preview.type)" 
                 :preview="preview" 
             />
             

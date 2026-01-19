@@ -7,7 +7,7 @@ interface LinkPreviewResponse {
   description: string;
   image?: string;
   favicon?: string;
-  isMisskey: boolean;
+  favicon?: string;
   type: LinkPreviewType;
   code?: string;
   startLine?: number;

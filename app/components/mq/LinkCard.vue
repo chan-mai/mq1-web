@@ -1,14 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-
-type LinkCardPreview = {
-    url: string;
-    domain: string;
-    title: string;
-    description: string;
-    image?: string;
-    favicon?: string;
-};
+import { Note, Clip, Hashtag, UserTimeline } from '@misskey-dev/vue-misskey-embed';
 
 const props = defineProps<{
     url: string;
@@ -16,7 +7,7 @@ const props = defineProps<{
     rel?: string | null;
 }>();
 
-const { data: preview, status, error } = await useFetch<LinkCardPreview>('/api/link-preview', {
+const { data: preview, status, error } = await useFetch<LinkPreviewResponse>('/api/link-preview', {
     query: { url: props.url },
     lazy: true,
     server: false,
@@ -69,7 +60,31 @@ const isExternalLink = computed(() => /^https?:\/\//.test(props.url));
             </NuxtLink>
         </div>
 
-        <!-- Success State -->
+        <!-- Misskey系埋め込みリンク -->
+        <template v-else-if="preview.isMisskey && preview.type">
+            <Note
+                v-if="preview.type === 'MISSKEY_NOTE'"
+                :url="preview.url"
+                class="w-full"
+            />
+            <Hashtag
+                v-else-if="preview.type === 'MISSKEY_HASHTAG'"
+                :url="preview.url"
+                class="w-full"
+            />
+            <UserTimeline
+                v-else-if="preview.type === 'MISSKEY_USER'"
+                :url="preview.url"
+                class="w-full"
+            />
+            <Clip
+                v-else-if="preview.type === 'MISSKEY_CLIP'"
+                :url="preview.url"
+                class="w-full"
+            />
+        </template>
+
+        <!-- 他リンク -->
         <NuxtLink
             v-else
             :to="preview.url"

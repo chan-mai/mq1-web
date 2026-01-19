@@ -1,6 +1,6 @@
 import * as cheerio from 'cheerio';
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event): Promise<LinkPreviewResponse> => {
     const query = getQuery(event);
     const rawUrl = query.url as string;
 
@@ -49,6 +49,18 @@ export default defineEventHandler(async (event) => {
         }
     };
 
+    const checkMisskey = async (hostname: string): Promise<boolean> => {
+        try {
+            const response = await fetch(`https://servers.misskey.ink/api/v1/check?domain=${hostname}`);
+            if (!response.ok) return false;
+            const data = await response.json();
+            return data.isMisskey === true;
+        } catch (e) {
+            console.error('Misskey check failed:', e);
+            return false;
+        }
+    };
+
     const fetchLinkPreview = async (url: string) => {
         const normalized = normalizeUrl(url);
         let target: URL;
@@ -60,91 +72,122 @@ export default defineEventHandler(async (event) => {
                 domain: url,
                 title: FALLBACK_TITLE,
                 description: FALLBACK_DESCRIPTION,
+                isMisskey: false,
+                type: 'GENERAL' as const,
             };
         }
 
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 7000);
 
-        try {
-            const response = await fetch(normalized, {
-                headers: {
-                    'User-Agent': 'mq-link-preview/1.0',
-                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-                },
-                signal: controller.signal,
-            });
+        const fetchOgTask = async () => {
+            try {
+                 const response = await fetch(normalized, {
+                    headers: {
+                        'User-Agent': 'mq-link-preview/1.0',
+                        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                    },
+                    signal: controller.signal,
+                });
 
-            if (!response.ok) {
-                throw new Error(`Failed to fetch preview: ${response.status}`);
-            }
-
-            const html = await response.text();
-            const $ = cheerio.load(html);
-            const getMeta = (selector: string, attr: string) => $(selector).attr(attr)?.trim();
-
-            const title = pickFirst(
-                getMeta('meta[property="og:title"]', 'content'),
-                getMeta('meta[name="twitter:title"]', 'content'),
-                $('title').first().text()
-            ) ?? FALLBACK_TITLE;
-
-            const description = pickFirst(
-                getMeta('meta[property="og:description"]', 'content'),
-                getMeta('meta[name="twitter:description"]', 'content'),
-                getMeta('meta[name="description"]', 'content'),
-                $('p').first().text()
-            ) ?? FALLBACK_DESCRIPTION;
-
-            let image = resolveUrl(
-                target,
-                pickFirst(
-                    getMeta('meta[property="og:image"]', 'content'),
-                    getMeta('meta[name="twitter:image"]', 'content')
-                )
-            );
-
-            // Verify image accessibility
-            if (image) {
-                const reachable = await isImageReachable(image);
-                if (!reachable) {
-                    image = undefined;
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch preview: ${response.status}`);
                 }
+
+                const html = await response.text();
+                const $ = cheerio.load(html);
+                const getMeta = (selector: string, attr: string) => $(selector).attr(attr)?.trim();
+
+                const title = pickFirst(
+                    getMeta('meta[property="og:title"]', 'content'),
+                    getMeta('meta[name="twitter:title"]', 'content'),
+                    $('title').first().text()
+                ) ?? FALLBACK_TITLE;
+
+                const description = pickFirst(
+                    getMeta('meta[property="og:description"]', 'content'),
+                    getMeta('meta[name="twitter:description"]', 'content'),
+                    getMeta('meta[name="description"]', 'content'),
+                    $('p').first().text()
+                ) ?? FALLBACK_DESCRIPTION;
+
+                let image = resolveUrl(
+                    target,
+                    pickFirst(
+                        getMeta('meta[property="og:image"]', 'content'),
+                        getMeta('meta[name="twitter:image"]', 'content')
+                    )
+                );
+
+                // Verify image accessibility
+                if (image) {
+                    const reachable = await isImageReachable(image);
+                    if (!reachable) {
+                        image = undefined;
+                    }
+                }
+
+                const faviconSelectors = [
+                    'link[rel="icon"]',
+                    'link[rel="shortcut icon"]',
+                    'link[rel="alternate icon"]',
+                    'link[rel="apple-touch-icon"]',
+                    'link[rel="mask-icon"]',
+                ];
+
+                let favicon: string | undefined;
+                for (const selector of faviconSelectors) {
+                    const candidate = $(selector).attr('href');
+                    const resolved = resolveUrl(target, candidate);
+                    if (resolved) {
+                        favicon = resolved;
+                        break;
+                    }
+                }
+
+                return {
+                    title,
+                    description,
+                    image,
+                    favicon,
+                };
+            } catch (e) {
+                console.error('Link preview fetch failed:', e);
+                return {
+                    title: FALLBACK_TITLE,
+                    description: FALLBACK_DESCRIPTION,
+                    image: undefined,
+                    favicon: undefined,
+                };
             }
+        };
 
-            const faviconSelectors = [
-                'link[rel="icon"]',
-                'link[rel="shortcut icon"]',
-                'link[rel="alternate icon"]',
-                'link[rel="apple-touch-icon"]',
-                'link[rel="mask-icon"]',
-            ];
+        try {
+            const [ogData, isMisskey] = await Promise.all([
+                fetchOgTask(),
+                checkMisskey(target.hostname)
+            ]);
 
-            let favicon: string | undefined;
-            for (const selector of faviconSelectors) {
-                const candidate = $(selector).attr('href');
-                const resolved = resolveUrl(target, candidate);
-                if (resolved) {
-                    favicon = resolved;
-                    break;
+            let type: LinkPreviewType = 'GENERAL';
+            if (isMisskey) {
+                const pathname = target.pathname;
+                if (/\/notes\/[a-zA-Z0-9]+/.test(pathname)) {
+                    type = 'MISSKEY_NOTE';
+                } else if (/\/tags\/[^\/]+/.test(pathname)) {
+                    type = 'MISSKEY_HASHTAG';
+                } else if (/\/@[\w.]+/.test(pathname) || /\/users\/[a-zA-Z0-9]+/.test(pathname)) {
+                    type = 'MISSKEY_USER';
+                } else if (/\/clips\/[a-zA-Z0-9]+/.test(pathname)) {
+                    type = 'MISSKEY_CLIP';
                 }
             }
 
             return {
                 url: target.toString(),
                 domain: target.hostname.replace(/^www\./, ''),
-                title,
-                description,
-                image,
-                favicon,
-            };
-        } catch (e) {
-            console.error('Link preview fetch failed:', e);
-             return {
-                url: normalized,
-                domain: target.hostname.replace(/^www\./, ''),
-                title: FALLBACK_TITLE,
-                description: FALLBACK_DESCRIPTION,
+                ...ogData,
+                isMisskey,
+                type,
             };
         } finally {
             clearTimeout(timeout);

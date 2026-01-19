@@ -11,6 +11,7 @@
     "postinstall": "prisma generate && nuxt prepare"
   },
   "dependencies": {
+    "@misskey-dev/vue-misskey-embed": "github:misskey-dev/vue-misskey-embed",
     "@nuxt/icon": "2.1.0",
     "@nuxt/image": "2.0.0",
     "@nuxt/scripts": "^0.12.2",
@@ -21,6 +22,8 @@
     "@nuxtjs/turnstile": "1.1.1",
     "@prisma/adapter-pg": "^7.2.0",
     "@prisma/client": "^7.2.0",
+    "@types/uuid": "^11.0.0",
+    "@vite-pwa/nuxt": "^1.1.0",
     "@vueuse/core": "^14.1.0",
     "@vueuse/nuxt": "14.1.0",
     "bcryptjs": "^3.0.3",
@@ -38,11 +41,11 @@
     "nuxt-jsonld": "^2.2.1",
     "pg": "^8.16.3",
     "prisma": "^7.2.0",
+    "tsx": "^4.21.0",
+    "uuid": "^13.0.0",
     "vue": "^3.5.26",
     "vue-boring-avatars": "^1.4.0",
-    "vue-router": "^4.6.4",
-    "tsx": "^4.21.0",
-    "@vite-pwa/nuxt": "^1.1.0"
+    "vue-router": "^4.6.4"
   },
   "packageManager": "pnpm@10.9.0+sha512.0486e394640d3c1fb3c9d43d49cf92879ff74f8516959c235308f5a8f62e2e19528a65cdc2a3058f587cde71eba3d5b56327c8c33a97e4c4051ca48a10ca2d5f",
   "pnpm": {
@@ -59,6 +62,8 @@
     "@iconify-json/material-symbols": "^1.2.51",
     "@iconify-json/simple-icons": "^1.2.66",
     "@types/bcryptjs": "^3.0.0",
-    "@types/pg": "^8.16.0"
+    "@types/pg": "^8.16.0",
+    "typescript": "^5.9.3",
+    "vue-tsc": "^3.2.2"
   }
 }

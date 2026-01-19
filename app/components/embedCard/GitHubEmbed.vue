@@ -20,31 +20,35 @@ const highlightedCode = computed(() => {
 });
 
 const scrollContainer = ref<HTMLElement | null>(null);
+const contentRef = ref<HTMLElement | null>(null);
 const showScrollIndicator = ref(false);
 const isInteracted = ref(false);
 
 const checkScroll = () => {
     const el = scrollContainer.value;
-    if (el && el.scrollWidth > el.clientWidth) {
-        showScrollIndicator.value = true;
-    } else {
-        showScrollIndicator.value = false;
+    if (el) {
+        const isScrollable = el.scrollWidth > el.clientWidth + 1;
+        showScrollIndicator.value = isScrollable;
     }
 };
 
 const handleScroll = () => {
     if (showScrollIndicator.value && !isInteracted.value) {
         isInteracted.value = true;
-        // Fade out logic handled by CSS classes reacting to isInteracted if we wanted complex state,
-        // but simple v-if/CSS transition works.
-        // For matching ArticlerRender exactly, we'll use local state to trigger fade.
     }
 };
 
 onMounted(() => {
-    // Check initial scroll state
+    // Watch for size changes on both container and content
     useResizeObserver(scrollContainer, checkScroll);
-    nextTick(() => checkScroll());
+    useResizeObserver(contentRef, checkScroll);
+    
+    // Initial check
+    nextTick(() => {
+        checkScroll();
+        // Double check a bit later in case of font loading layout shifts
+        setTimeout(checkScroll, 500); 
+    });
 });
 </script>
 
@@ -69,7 +73,7 @@ onMounted(() => {
                 class="overflow-x-auto overflow-y-hidden w-full relative"
                 @scroll="handleScroll"
             >
-                <div class="font-mono flex items-stretch min-w-max">
+                <div ref="contentRef" class="font-mono flex items-stretch min-w-max">
                     <!-- Line Numbers (Sticky) -->
                     <div 
                         class="sticky left-0 z-10 flex flex-col text-right select-none text-muted-foreground/50 border-r border-secondary/10 pr-4 pl-4 shrink-0 min-w-[3em] text-sm bg-gray-50/90 backdrop-blur-[2px]" 

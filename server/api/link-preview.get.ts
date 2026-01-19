@@ -78,7 +78,6 @@ export default defineEventHandler(async (event): Promise<LinkPreviewResponse> =>
                 domain: url,
                 title: FALLBACK_TITLE,
                 description: FALLBACK_DESCRIPTION,
-                isMisskey: false,
                 type: 'GENERAL' as const,
             };
         }

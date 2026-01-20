@@ -1,14 +1,10 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-
-type LinkCardPreview = {
-    url: string;
-    domain: string;
-    title: string;
-    description: string;
-    image?: string;
-    favicon?: string;
-};
+import MisskeyEmbed from '~/components/embedCard/MisskeyEmbed.vue';
+import GitHubEmbed from '~/components/embedCard/GitHubEmbed.vue';
+import YouTubeEmbed from '~/components/embedCard/YouTubeEmbed.vue';
+import TwitterEmbed from '~/components/embedCard/TwitterEmbed.vue';
+import InstagramEmbed from '~/components/embedCard/InstagramEmbed.vue';
+import StandardEmbed from '~/components/embedCard/StandardEmbed.vue';
 
 const props = defineProps<{
     url: string;
@@ -16,13 +12,11 @@ const props = defineProps<{
     rel?: string | null;
 }>();
 
-const { data: preview, status, error } = await useFetch<LinkCardPreview>('/api/link-preview', {
+const { data: preview, status, error } = await useFetch<LinkPreviewResponse>('/api/link-preview', {
     query: { url: props.url },
     lazy: true,
     server: false,
 });
-
-const FALLBACK_TITLE = 'リンク';
 
 // 各属性がundefinedの場合、target="_blank" rel="noopener noreferrer"にフォールバック
 const resolvedTarget = computed(() => props.target ?? '_blank');
@@ -69,68 +63,41 @@ const isExternalLink = computed(() => /^https?:\/\//.test(props.url));
             </NuxtLink>
         </div>
 
-        <!-- Success State -->
-        <NuxtLink
-            v-else
-            :to="preview.url"
-            :external="isExternalLink"
-            :target="resolvedTarget"
-            :rel="resolvedRel"
-            class="mq-link-card__link group block w-full transition-colors duration-200"
-        >
-            <div
-                class="flex items-stretch overflow-hidden rounded-2xl bg-white border-2 border-secondary/40 transition-colors duration-200 hover:bg-primary/5 hover:border-primary/50"
-            >
-                <div
-                    v-if="preview.image"
-                    class="flex flex-shrink-0 overflow-hidden bg-secondary/20 self-stretch basis-32 sm:basis-48 lg:basis-56"
-                >
-                    <NuxtImg
-                        :src="preview.image"
-                        :alt="preview.title"
-                        :width="640"
-                        :height="360"
-                        sizes="(min-width: 1024px) 25vw, (min-width: 768px) 35vw, 45vw"
-                        class="h-full w-full object-cover"
-                        loading="lazy"
-                        decoding="async"
-                    />
-                </div>
+        <!-- Success -->
+        <template v-else>
+            <MisskeyEmbed 
+                v-if="['MISSKEY_NOTE', 'MISSKEY_HASHTAG', 'MISSKEY_USER', 'MISSKEY_CLIP'].includes(preview.type)" 
+                :preview="preview" 
+            />
+            
+            <GitHubEmbed 
+                v-else-if="preview.type === 'GITHUB_PERMALINK'" 
+                :preview="preview" 
+                :url="url" 
+            />
 
-                <div class="flex flex-1 flex-col justify-between gap-3 p-5">
-                    <div class="flex items-center gap-2 min-w-0">
-                        <NuxtImg
-                            v-if="preview.favicon"
-                            :src="preview.favicon"
-                            alt=""
-                            class="flex-shrink-0 rounded-sm size-4"
-                            loading="lazy"
-                            decoding="async"
-                        />
-                        <p class="text-xs font-medium text-muted-foreground truncate">{{ preview.domain }}</p>
-                    </div>
+            <YouTubeEmbed 
+                v-else-if="preview.type === 'YOUTUBE'" 
+                :preview="preview" 
+            />
 
-                    <div class="flex-1 min-w-0">
-                        <h3 class="font-semibold text-foreground line-clamp-2 text-base transition-colors duration-200 group-hover:text-primary">
-                            {{ preview.title || FALLBACK_TITLE }}
-                        </h3>
-                        <p
-                            v-if="preview.description"
-                            class="text-sm text-muted-foreground line-clamp-2 mt-1.5 transition-colors duration-200 group-hover:text-primary/80"
-                        >
-                            {{ preview.description }}
-                        </p>
-                    </div>
+            <TwitterEmbed 
+                v-else-if="preview.type === 'TWITTER'" 
+                :preview="preview" 
+            />
 
-                    <div class="flex items-center justify-end">
-                        <div
-                            class="flex items-center gap-1 text-secondary/60 transition-colors duration-200 group-hover:text-primary"
-                        >
-                            <Icon name="material-symbols:arrow-outward-rounded" class="h-5 w-5" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </NuxtLink>
+            <InstagramEmbed 
+                v-else-if="preview.type === 'INSTAGRAM'" 
+                :preview="preview" 
+            />
+            
+            <StandardEmbed 
+                v-else 
+                :preview="preview" 
+                :url="url" 
+                :target="target" 
+                :rel="rel" 
+            />
+        </template>
     </div>
 </template>

@@ -3,14 +3,23 @@ const props = defineProps<{
     preview: LinkPreviewResponse;
 }>();
 
+const SCRIPT_ID = 'twitter-widgets';
+
 onMounted(() => {
     const w = window as any;
+    const existing = document.getElementById(SCRIPT_ID) as HTMLScriptElement | null;
     if (!w.twttr) {
-        const script = document.createElement('script');
-        script.setAttribute('src', 'https://platform.twitter.com/widgets.js');
-        script.setAttribute('async', 'true');
-        script.setAttribute('charset', 'utf-8');
-        document.head.appendChild(script);
+        if (!existing) {
+            const script = document.createElement('script');
+            script.id = SCRIPT_ID;
+            script.src = 'https://platform.twitter.com/widgets.js';
+            script.async = true;
+            script.charset = 'utf-8';
+            script.onload = () => w.twttr?.widgets?.load();
+            document.head.appendChild(script);
+        } else {
+            existing.addEventListener('load', () => w.twttr?.widgets?.load(), { once: true });
+        }
     } else {
         w.twttr.widgets.load();
     }

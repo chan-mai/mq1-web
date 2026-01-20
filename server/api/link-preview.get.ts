@@ -48,6 +48,10 @@ export default defineEventHandler(async (event): Promise<LinkPreviewResponse> =>
                 method: 'HEAD',
                 signal: controller.signal
             });
+            if (response.status === 405) {
+                const getResponse = await fetch(url, { method: 'GET', signal: controller.signal });
+                return getResponse.ok;
+            }
             return response.ok;
         } catch {
             return false;

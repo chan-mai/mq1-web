@@ -1,4 +1,4 @@
-type LinkPreviewType = 'GENERAL' | 'MISSKEY_NOTE' | 'MISSKEY_HASHTAG' | 'MISSKEY_USER' | 'MISSKEY_CLIP' | 'GITHUB_PERMALINK';
+type LinkPreviewType = 'GENERAL' | 'MISSKEY_NOTE' | 'MISSKEY_HASHTAG' | 'MISSKEY_USER' | 'MISSKEY_CLIP' | 'GITHUB_PERMALINK' | 'TWITTER' | 'YOUTUBE' | 'INSTAGRAM';
 
 interface LinkPreviewResponse {
   url: string;
@@ -8,6 +8,7 @@ interface LinkPreviewResponse {
   image?: string;
   favicon?: string;
   type: LinkPreviewType;
+  embedId?: string;
   code?: string;
   startLine?: number;
   endLine?: number;

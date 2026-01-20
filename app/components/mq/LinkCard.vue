@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import MisskeyEmbed from '~/components/embedCard/MisskeyEmbed.vue';
 import GitHubEmbed from '~/components/embedCard/GitHubEmbed.vue';
+import YouTubeEmbed from '~/components/embedCard/YouTubeEmbed.vue';
+import TwitterEmbed from '~/components/embedCard/TwitterEmbed.vue';
+import InstagramEmbed from '~/components/embedCard/InstagramEmbed.vue';
 import StandardEmbed from '~/components/embedCard/StandardEmbed.vue';
 
 const props = defineProps<{
@@ -71,6 +74,21 @@ const isExternalLink = computed(() => /^https?:\/\//.test(props.url));
                 v-else-if="preview.type === 'GITHUB_PERMALINK'" 
                 :preview="preview" 
                 :url="url" 
+            />
+
+            <YouTubeEmbed 
+                v-else-if="preview.type === 'YOUTUBE'" 
+                :preview="preview" 
+            />
+
+            <TwitterEmbed 
+                v-else-if="preview.type === 'TWITTER'" 
+                :preview="preview" 
+            />
+
+            <InstagramEmbed 
+                v-else-if="preview.type === 'INSTAGRAM'" 
+                :preview="preview" 
             />
             
             <StandardEmbed 

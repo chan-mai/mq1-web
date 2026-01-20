@@ -190,6 +190,34 @@ export default defineEventHandler(async (event): Promise<LinkPreviewResponse> =>
             let code: string | undefined;
             let startLine: number | undefined;
             let endLine: number | undefined;
+            let embedId: string | undefined;
+
+            const pathname = target.pathname;
+
+            // Platform Detection
+            if (target.hostname.match(/(^|\.)(twitter\.com|x\.com)$/)) {
+                 const match = pathname.match(/\/status\/(\d+)/);
+                 if (match) {
+                     type = 'TWITTER';
+                     embedId = match[1];
+                 }
+            } else if (target.hostname.match(/(^|\.)(youtube\.com|youtu\.be)$/)) {
+                // Handle youtube.com/watch?v=ID and youtu.be/ID
+                if (target.hostname.includes('youtu.be')) {
+                    embedId = pathname.slice(1);
+                } else {
+                    embedId = target.searchParams.get('v') || undefined;
+                }
+                if (embedId) {
+                     type = 'YOUTUBE';
+                }
+            } else if (target.hostname.match(/(^|\.)instagram\.com$/)) {
+                const match = pathname.match(/\/p\/([\w-]+)/);
+                if (match) {
+                    type = 'INSTAGRAM';
+                    embedId = match[1];
+                }
+            }
 
             if (target.hostname === 'github.com') {
                 const match = target.pathname.match(/^\/([^/]+)\/([^/]+)\/blob\/([^/]+)\/(.+)$/);
@@ -249,6 +277,7 @@ export default defineEventHandler(async (event): Promise<LinkPreviewResponse> =>
                 domain: target.hostname.replace(/^www\./, ''),
                 ...ogData,
                 type,
+                embedId,
                 code,
                 startLine: code ? startLine : undefined,
                 endLine: code ? endLine : undefined,

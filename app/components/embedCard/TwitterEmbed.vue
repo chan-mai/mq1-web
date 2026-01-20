@@ -5,6 +5,10 @@ const props = defineProps<{
 
 const SCRIPT_ID = 'twitter-widgets';
 
+const embedUrl = computed(() => {
+    return props.preview.url.replace(/^https?:\/\/(www\.)?x\.com/, 'https://twitter.com');
+});
+
 onMounted(() => {
     const w = window as any;
     const existing = document.getElementById(SCRIPT_ID) as HTMLScriptElement | null;
@@ -29,7 +33,7 @@ onMounted(() => {
 <template>
     <div class="w-full flex justify-start">
         <blockquote class="twitter-tweet" data-dnt="true" data-theme="light">
-            <a :href="preview.url"></a>
+            <a :href="embedUrl"></a>
         </blockquote>
     </div>
 </template>

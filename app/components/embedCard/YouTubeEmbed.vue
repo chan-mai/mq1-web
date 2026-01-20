@@ -9,6 +9,7 @@ defineProps<{
         <iframe
             v-if="preview.embedId"
             :src="`https://www.youtube.com/embed/${preview.embedId}`"
+            :title="preview.title || 'YouTube video player'"
             class="w-full h-full"
             frameborder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

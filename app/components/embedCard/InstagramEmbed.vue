@@ -9,6 +9,7 @@ defineProps<{
         <iframe
             v-if="preview.embedId"
             :src="`https://www.instagram.com/p/${preview.embedId}/embed`"
+            :title="preview.title || 'Instagram post ' + preview.embedId"
             class="w-full aspect-[4/5]"
             frameborder="0"
             scrolling="no"

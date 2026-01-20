@@ -7,6 +7,15 @@ const props = defineProps<{
     url: string;
 }>();
 
+const escapeHtml = (text: string) => {
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+};
+
 const highlightedCode = computed(() => {
     if (!props.preview.code) return '';
     // Trim strictly to avoid leading/trailing newlines causing shifts
@@ -15,7 +24,7 @@ const highlightedCode = computed(() => {
         return hljs.highlightAuto(code).value;
     } catch (e) {
         console.warn('Highlight failed:', e);
-        return code;
+        return escapeHtml(code);
     }
 });
 

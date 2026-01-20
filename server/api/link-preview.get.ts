@@ -194,7 +194,6 @@ export default defineEventHandler(async (event): Promise<LinkPreviewResponse> =>
             if (target.hostname === 'github.com') {
                 const match = target.pathname.match(/^\/([^/]+)\/([^/]+)\/blob\/([^/]+)\/(.+)$/);
                 if (match) {
-                    type = 'GITHUB_PERMALINK';
                     const [, user, repo, commit, path] = match;
                     const rawUrl = `https://raw.githubusercontent.com/${user}/${repo}/${commit}/${path}`;
                     
@@ -230,10 +229,15 @@ export default defineEventHandler(async (event): Promise<LinkPreviewResponse> =>
 
                             // Adjust 0-based index
                             const extracted = lines.slice(Math.max(0, s - 1), e).join('\n');
-                            code = extracted;
+                            
+                            if (extracted.trim().length > 0) {
+                                code = extracted;
+                                type = 'GITHUB_PERMALINK';
+                            }
                         }
                     } catch (e) {
                          console.error('Failed to fetch GitHub raw content or timed out:', e);
+                         // type remains 'GENERAL' (default) if fetch fails
                     } finally {
                         clearTimeout(timeout);
                     }

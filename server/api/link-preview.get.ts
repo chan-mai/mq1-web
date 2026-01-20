@@ -41,11 +41,18 @@ export default defineEventHandler(async (event): Promise<LinkPreviewResponse> =>
     };
 
     const isImageReachable = async (url: string): Promise<boolean> => {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 3000);
         try {
-            const response = await fetch(url, { method: 'HEAD' });
+            const response = await fetch(url, { 
+                method: 'HEAD',
+                signal: controller.signal
+            });
             return response.ok;
         } catch {
             return false;
+        } finally {
+            clearTimeout(timeout);
         }
     };
 

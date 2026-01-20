@@ -44,9 +44,6 @@ importers:
       '@prisma/client':
         specifier: ^7.2.0
         version: 7.2.0(prisma@7.2.0(@types/react@19.2.7)(magicast@0.5.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.9.3))(typescript@5.9.3)
-      '@types/uuid':
-        specifier: ^11.0.0
-        version: 11.0.0
       '@vite-pwa/nuxt':
         specifier: ^1.1.0
         version: 1.1.0(magicast@0.5.1)(vite@7.3.1(@types/node@25.0.6)(jiti@2.6.1)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(workbox-build@7.4.0)(workbox-window@7.4.0)
@@ -135,6 +132,9 @@ importers:
       '@types/pg':
         specifier: ^8.16.0
         version: 8.16.0
+      '@types/uuid':
+        specifier: ^11.0.0
+        version: 11.0.0
       typescript:
         specifier: ^5.9.3
         version: 5.9.3

@@ -183,13 +183,13 @@ export default defineEventHandler(async (event): Promise<LinkPreviewResponse> =>
             let type: LinkPreviewType = 'GENERAL';
             if (isMisskey) {
                 const pathname = target.pathname;
-                if (/\/notes\/[a-zA-Z0-9]+/.test(pathname)) {
+                if (/^\/notes\/[a-zA-Z0-9]+/.test(pathname)) {
                     type = 'MISSKEY_NOTE';
-                } else if (/\/tags\/[^\/]+/.test(pathname)) {
+                } else if (/^\/tags\/[^\/]+/.test(pathname)) {
                     type = 'MISSKEY_HASHTAG';
-                } else if (/\/@[\w.]+/.test(pathname) || /\/users\/[a-zA-Z0-9]+/.test(pathname)) {
+                } else if (/^\/@[\w.]+/.test(pathname) || /^\/users\/[a-zA-Z0-9]+/.test(pathname)) {
                     type = 'MISSKEY_USER';
-                } else if (/\/clips\/[a-zA-Z0-9]+/.test(pathname)) {
+                } else if (/^\/clips\/[a-zA-Z0-9]+/.test(pathname)) {
                     type = 'MISSKEY_CLIP';
                 }
             }

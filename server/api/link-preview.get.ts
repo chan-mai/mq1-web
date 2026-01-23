@@ -60,7 +60,7 @@ export default defineEventHandler(async (event): Promise<LinkPreviewResponse> =>
         }
     };
 
-    const checkMisskey = async (hostname: string): Promise<boolean> => {
+    const checkMisskeyEmbeddable = async (hostname: string): Promise<boolean> => {
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 3000);
         try {
@@ -69,7 +69,7 @@ export default defineEventHandler(async (event): Promise<LinkPreviewResponse> =>
             });
             if (!response.ok) return false;
             const data = await response.json();
-            return data.isMisskey === true;
+            return data.is_misskey === true && data.is_embeddable === true;
         } catch (e) {
             console.error('Misskey check failed or timed out:', e);
             return false;
@@ -179,13 +179,13 @@ export default defineEventHandler(async (event): Promise<LinkPreviewResponse> =>
         };
 
         try {
-            const [ogData, isMisskey] = await Promise.all([
+            const [ogData, isMisskeyEmbeddable] = await Promise.all([
                 fetchOgTask(),
-                checkMisskey(target.hostname)
+                checkMisskeyEmbeddable(target.hostname)
             ]);
 
             let type: LinkPreviewType = 'GENERAL';
-            if (isMisskey) {
+            if (isMisskeyEmbeddable) {
                 const pathname = target.pathname;
                 if (/^\/notes\/[a-zA-Z0-9]+/.test(pathname)) {
                     type = 'MISSKEY_NOTE';

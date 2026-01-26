@@ -125,6 +125,15 @@ resource "google_cloud_run_service" "main" {
             }
           }
         }
+        env {
+          name = "ADMIN_COMMENT_CREDENTIAL"
+          value_from {
+            secret_key_ref {
+              name = google_secret_manager_secret.admin_comment_credential.secret_id
+              key  = "latest"
+            }
+          }
+        }
         
         ports {
           container_port = 3000

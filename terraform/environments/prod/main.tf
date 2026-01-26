@@ -38,6 +38,7 @@ variable "microcms_service_domain" { sensitive = true }
 variable "nuxt_session_password" { sensitive = true }
 variable "turnstile_secret_key" { sensitive = true }
 variable "turnstile_site_key" { sensitive = true }
+variable "admin_comment_credential" { sensitive = true }
 
 module "app" {
   source = "../../modules/app"
@@ -59,6 +60,7 @@ module "app" {
   nuxt_session_password   = var.nuxt_session_password
   turnstile_secret_key    = var.turnstile_secret_key
   turnstile_site_key      = var.turnstile_site_key
+  admin_comment_credential = var.admin_comment_credential
   
   artifact_registry_id    = "cloud-run-source-deploy-prod"
   cloudbuild_trigger_name = "mq1-web-prod-trigger"

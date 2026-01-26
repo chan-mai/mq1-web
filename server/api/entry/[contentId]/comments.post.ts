@@ -46,19 +46,46 @@ export default defineEventHandler(async (event) => {
     };
   }
 
+  // コメントの長さチェック（最大1000文字）
+  if (comment.trim().length > 1000) {
+    return {
+      status: "error",
+      message: "Comment must be 1000 characters or less",
+    };
+  }
+
+  // Adminクレデンシャルのチェック
+  const config = useRuntimeConfig();
+  let isAdmin = false;
+  let displayName = name.trim();
+  const adminCredential = config.adminCommentCredential;
+
+  if (adminCredential && typeof adminCredential === "string" && displayName.endsWith(adminCredential)) {
+    // クレデンシャルと一致する場合は削除してAdminに設定
+    // trim()を再度呼び出して空白を除去
+    const newName = displayName.slice(0, -adminCredential.length).trim();
+    
+    // 名前が空にならない場合のみ適用
+    if (newName.length > 0) {
+      displayName = newName;
+      isAdmin = true;
+    }
+  }
+
   // 名前の長さチェック（最大50文字）
-  if (name.trim().length > 50) {
+  // Adminクレデンシャル削除後の長さでチェックする
+  if (displayName.length > 50) {
     return {
       status: "error",
       message: "Name must be 50 characters or less",
     };
   }
 
-  // コメントの長さチェック（最大1000文字）
-  if (comment.trim().length > 1000) {
+  // 名前が空でないか再チェック (クレデンシャル削除で空になった場合など)
+  if (displayName.length === 0) {
     return {
       status: "error",
-      message: "Comment must be 1000 characters or less",
+      message: "Name is required",
     };
   }
 
@@ -196,12 +223,13 @@ export default defineEventHandler(async (event) => {
     const newComment = await prisma.comments.create({
       data: {
         contentId,
-        name: name.trim(),
+        name: displayName,
         comment: comment.trim(),
         userIp,
         status,
         parentCommentId,
         secret: hashedSecret,
+        isAdmin,
       },
     });
 
@@ -224,7 +252,7 @@ export default defineEventHandler(async (event) => {
                 },
                 {
                   name: "投稿者",
-                  value: name.trim(),
+                  value: isAdmin ? `**${displayName} (Admin)**` : displayName,
                   inline: true,
                 },
                 {

@@ -131,3 +131,16 @@ resource "google_secret_manager_secret_version" "turnstile_site_key" {
   secret      = google_secret_manager_secret.turnstile_site_key.id
   secret_data = var.turnstile_site_key
 }
+
+resource "google_secret_manager_secret" "admin_comment_credential" {
+  labels    = { managed-by-cnrm = "true" }
+  project   = data.google_project.project.number
+  secret_id = "${local.secret_prefix}ADMIN_COMMENT_CREDENTIAL"
+  replication {
+    auto {}
+  }
+}
+resource "google_secret_manager_secret_version" "admin_comment_credential" {
+  secret      = google_secret_manager_secret.admin_comment_credential.id
+  secret_data = var.admin_comment_credential
+}

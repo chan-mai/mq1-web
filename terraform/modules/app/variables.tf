@@ -90,3 +90,8 @@ variable "turnstile_site_key" {
   type      = string
   sensitive = true
 }
+
+variable "admin_comment_credential" {
+  type      = string
+  sensitive = true
+}

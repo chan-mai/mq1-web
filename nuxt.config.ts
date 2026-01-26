@@ -82,6 +82,7 @@ export default defineNuxtConfig({
     discord: {
       webhookUrl: process.env.DISCORD_WEBHOOK_URL,
     },
+    adminCommentCredential: process.env.ADMIN_COMMENT_CREDENTIAL,
   },
   turnstile: {
     siteKey: process.env.TURNSTILE_SITE_KEY,

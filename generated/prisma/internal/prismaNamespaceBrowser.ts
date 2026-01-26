@@ -96,7 +96,8 @@ export const CommentsScalarFieldEnum = {
   secret: 'secret',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  isEdited: 'isEdited'
+  isEdited: 'isEdited',
+  isAdmin: 'isAdmin'
 } as const
 
 export type CommentsScalarFieldEnum = (typeof CommentsScalarFieldEnum)[keyof typeof CommentsScalarFieldEnum]

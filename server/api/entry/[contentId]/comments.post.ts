@@ -62,6 +62,27 @@ export default defineEventHandler(async (event) => {
     };
   }
 
+  // Adminクレデンシャルのチェック
+  const config = useRuntimeConfig();
+  let isAdmin = false;
+  let displayName = name.trim();
+  const adminCredential = config.adminCommentCredential;
+
+  if (adminCredential && typeof adminCredential === "string" && displayName.endsWith(adminCredential)) {
+    // クレデンシャルと一致する場合は削除してAdminに設定
+    const newName = displayName.slice(0, -adminCredential.length);
+    // 名前が空にならない場合のみ適用
+    if (newName.length > 0) {
+      displayName = newName;
+      isAdmin = true;
+    } else {
+      return {
+        status: "error",
+        message: "Name is too short",
+      };
+    }
+  }
+
   const exists = await articleExists(contentId);
   if (!exists) {
     return {
@@ -196,12 +217,13 @@ export default defineEventHandler(async (event) => {
     const newComment = await prisma.comments.create({
       data: {
         contentId,
-        name: name.trim(),
+        name: displayName,
         comment: comment.trim(),
         userIp,
         status,
         parentCommentId,
         secret: hashedSecret,
+        isAdmin,
       },
     });
 
@@ -224,7 +246,7 @@ export default defineEventHandler(async (event) => {
                 },
                 {
                   name: "投稿者",
-                  value: name.trim(),
+                  value: isAdmin ? `**${displayName} (Admin)**` : displayName,
                   inline: true,
                 },
                 {

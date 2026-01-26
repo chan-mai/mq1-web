@@ -36,6 +36,7 @@ export type CommentsMinAggregateOutputType = {
   createdAt: Date | null
   updatedAt: Date | null
   isEdited: boolean | null
+  isAdmin: boolean | null
 }
 
 export type CommentsMaxAggregateOutputType = {
@@ -50,6 +51,7 @@ export type CommentsMaxAggregateOutputType = {
   createdAt: Date | null
   updatedAt: Date | null
   isEdited: boolean | null
+  isAdmin: boolean | null
 }
 
 export type CommentsCountAggregateOutputType = {
@@ -64,6 +66,7 @@ export type CommentsCountAggregateOutputType = {
   createdAt: number
   updatedAt: number
   isEdited: number
+  isAdmin: number
   _all: number
 }
 
@@ -80,6 +83,7 @@ export type CommentsMinAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   isEdited?: true
+  isAdmin?: true
 }
 
 export type CommentsMaxAggregateInputType = {
@@ -94,6 +98,7 @@ export type CommentsMaxAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   isEdited?: true
+  isAdmin?: true
 }
 
 export type CommentsCountAggregateInputType = {
@@ -108,6 +113,7 @@ export type CommentsCountAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   isEdited?: true
+  isAdmin?: true
   _all?: true
 }
 
@@ -195,6 +201,7 @@ export type CommentsGroupByOutputType = {
   createdAt: Date
   updatedAt: Date
   isEdited: boolean
+  isAdmin: boolean
   _count: CommentsCountAggregateOutputType | null
   _min: CommentsMinAggregateOutputType | null
   _max: CommentsMaxAggregateOutputType | null
@@ -230,6 +237,7 @@ export type CommentsWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Comments"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Comments"> | Date | string
   isEdited?: Prisma.BoolFilter<"Comments"> | boolean
+  isAdmin?: Prisma.BoolFilter<"Comments"> | boolean
   parent?: Prisma.XOR<Prisma.CommentsNullableScalarRelationFilter, Prisma.CommentsWhereInput> | null
   replies?: Prisma.CommentsListRelationFilter
   likes?: Prisma.CommentLikeListRelationFilter
@@ -247,6 +255,7 @@ export type CommentsOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   isEdited?: Prisma.SortOrder
+  isAdmin?: Prisma.SortOrder
   parent?: Prisma.CommentsOrderByWithRelationInput
   replies?: Prisma.CommentsOrderByRelationAggregateInput
   likes?: Prisma.CommentLikeOrderByRelationAggregateInput
@@ -267,6 +276,7 @@ export type CommentsWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Comments"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Comments"> | Date | string
   isEdited?: Prisma.BoolFilter<"Comments"> | boolean
+  isAdmin?: Prisma.BoolFilter<"Comments"> | boolean
   parent?: Prisma.XOR<Prisma.CommentsNullableScalarRelationFilter, Prisma.CommentsWhereInput> | null
   replies?: Prisma.CommentsListRelationFilter
   likes?: Prisma.CommentLikeListRelationFilter
@@ -284,6 +294,7 @@ export type CommentsOrderByWithAggregationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   isEdited?: Prisma.SortOrder
+  isAdmin?: Prisma.SortOrder
   _count?: Prisma.CommentsCountOrderByAggregateInput
   _max?: Prisma.CommentsMaxOrderByAggregateInput
   _min?: Prisma.CommentsMinOrderByAggregateInput
@@ -304,6 +315,7 @@ export type CommentsScalarWhereWithAggregatesInput = {
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Comments"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Comments"> | Date | string
   isEdited?: Prisma.BoolWithAggregatesFilter<"Comments"> | boolean
+  isAdmin?: Prisma.BoolWithAggregatesFilter<"Comments"> | boolean
 }
 
 export type CommentsCreateInput = {
@@ -317,6 +329,7 @@ export type CommentsCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   isEdited?: boolean
+  isAdmin?: boolean
   parent?: Prisma.CommentsCreateNestedOneWithoutRepliesInput
   replies?: Prisma.CommentsCreateNestedManyWithoutParentInput
   likes?: Prisma.CommentLikeCreateNestedManyWithoutCommentInput
@@ -334,6 +347,7 @@ export type CommentsUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   isEdited?: boolean
+  isAdmin?: boolean
   replies?: Prisma.CommentsUncheckedCreateNestedManyWithoutParentInput
   likes?: Prisma.CommentLikeUncheckedCreateNestedManyWithoutCommentInput
 }
@@ -349,6 +363,7 @@ export type CommentsUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isEdited?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   parent?: Prisma.CommentsUpdateOneWithoutRepliesNestedInput
   replies?: Prisma.CommentsUpdateManyWithoutParentNestedInput
   likes?: Prisma.CommentLikeUpdateManyWithoutCommentNestedInput
@@ -366,6 +381,7 @@ export type CommentsUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isEdited?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   replies?: Prisma.CommentsUncheckedUpdateManyWithoutParentNestedInput
   likes?: Prisma.CommentLikeUncheckedUpdateManyWithoutCommentNestedInput
 }
@@ -382,6 +398,7 @@ export type CommentsCreateManyInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   isEdited?: boolean
+  isAdmin?: boolean
 }
 
 export type CommentsUpdateManyMutationInput = {
@@ -395,6 +412,7 @@ export type CommentsUpdateManyMutationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isEdited?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type CommentsUncheckedUpdateManyInput = {
@@ -409,6 +427,7 @@ export type CommentsUncheckedUpdateManyInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isEdited?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type CommentsNullableScalarRelationFilter = {
@@ -438,6 +457,7 @@ export type CommentsCountOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   isEdited?: Prisma.SortOrder
+  isAdmin?: Prisma.SortOrder
 }
 
 export type CommentsMaxOrderByAggregateInput = {
@@ -452,6 +472,7 @@ export type CommentsMaxOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   isEdited?: Prisma.SortOrder
+  isAdmin?: Prisma.SortOrder
 }
 
 export type CommentsMinOrderByAggregateInput = {
@@ -466,6 +487,7 @@ export type CommentsMinOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   isEdited?: Prisma.SortOrder
+  isAdmin?: Prisma.SortOrder
 }
 
 export type CommentsScalarRelationFilter = {
@@ -564,6 +586,7 @@ export type CommentsCreateWithoutRepliesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   isEdited?: boolean
+  isAdmin?: boolean
   parent?: Prisma.CommentsCreateNestedOneWithoutRepliesInput
   likes?: Prisma.CommentLikeCreateNestedManyWithoutCommentInput
 }
@@ -580,6 +603,7 @@ export type CommentsUncheckedCreateWithoutRepliesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   isEdited?: boolean
+  isAdmin?: boolean
   likes?: Prisma.CommentLikeUncheckedCreateNestedManyWithoutCommentInput
 }
 
@@ -599,6 +623,7 @@ export type CommentsCreateWithoutParentInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   isEdited?: boolean
+  isAdmin?: boolean
   replies?: Prisma.CommentsCreateNestedManyWithoutParentInput
   likes?: Prisma.CommentLikeCreateNestedManyWithoutCommentInput
 }
@@ -614,6 +639,7 @@ export type CommentsUncheckedCreateWithoutParentInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   isEdited?: boolean
+  isAdmin?: boolean
   replies?: Prisma.CommentsUncheckedCreateNestedManyWithoutParentInput
   likes?: Prisma.CommentLikeUncheckedCreateNestedManyWithoutCommentInput
 }
@@ -650,6 +676,7 @@ export type CommentsUpdateWithoutRepliesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isEdited?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   parent?: Prisma.CommentsUpdateOneWithoutRepliesNestedInput
   likes?: Prisma.CommentLikeUpdateManyWithoutCommentNestedInput
 }
@@ -666,6 +693,7 @@ export type CommentsUncheckedUpdateWithoutRepliesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isEdited?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   likes?: Prisma.CommentLikeUncheckedUpdateManyWithoutCommentNestedInput
 }
 
@@ -700,6 +728,7 @@ export type CommentsScalarWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Comments"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Comments"> | Date | string
   isEdited?: Prisma.BoolFilter<"Comments"> | boolean
+  isAdmin?: Prisma.BoolFilter<"Comments"> | boolean
 }
 
 export type CommentsCreateWithoutLikesInput = {
@@ -713,6 +742,7 @@ export type CommentsCreateWithoutLikesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   isEdited?: boolean
+  isAdmin?: boolean
   parent?: Prisma.CommentsCreateNestedOneWithoutRepliesInput
   replies?: Prisma.CommentsCreateNestedManyWithoutParentInput
 }
@@ -729,6 +759,7 @@ export type CommentsUncheckedCreateWithoutLikesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   isEdited?: boolean
+  isAdmin?: boolean
   replies?: Prisma.CommentsUncheckedCreateNestedManyWithoutParentInput
 }
 
@@ -759,6 +790,7 @@ export type CommentsUpdateWithoutLikesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isEdited?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   parent?: Prisma.CommentsUpdateOneWithoutRepliesNestedInput
   replies?: Prisma.CommentsUpdateManyWithoutParentNestedInput
 }
@@ -775,6 +807,7 @@ export type CommentsUncheckedUpdateWithoutLikesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isEdited?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   replies?: Prisma.CommentsUncheckedUpdateManyWithoutParentNestedInput
 }
 
@@ -789,6 +822,7 @@ export type CommentsCreateManyParentInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   isEdited?: boolean
+  isAdmin?: boolean
 }
 
 export type CommentsUpdateWithoutParentInput = {
@@ -802,6 +836,7 @@ export type CommentsUpdateWithoutParentInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isEdited?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   replies?: Prisma.CommentsUpdateManyWithoutParentNestedInput
   likes?: Prisma.CommentLikeUpdateManyWithoutCommentNestedInput
 }
@@ -817,6 +852,7 @@ export type CommentsUncheckedUpdateWithoutParentInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isEdited?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   replies?: Prisma.CommentsUncheckedUpdateManyWithoutParentNestedInput
   likes?: Prisma.CommentLikeUncheckedUpdateManyWithoutCommentNestedInput
 }
@@ -832,6 +868,7 @@ export type CommentsUncheckedUpdateManyWithoutParentInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isEdited?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 
@@ -886,6 +923,7 @@ export type CommentsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   createdAt?: boolean
   updatedAt?: boolean
   isEdited?: boolean
+  isAdmin?: boolean
   parent?: boolean | Prisma.Comments$parentArgs<ExtArgs>
   replies?: boolean | Prisma.Comments$repliesArgs<ExtArgs>
   likes?: boolean | Prisma.Comments$likesArgs<ExtArgs>
@@ -904,6 +942,7 @@ export type CommentsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   createdAt?: boolean
   updatedAt?: boolean
   isEdited?: boolean
+  isAdmin?: boolean
   parent?: boolean | Prisma.Comments$parentArgs<ExtArgs>
 }, ExtArgs["result"]["comments"]>
 
@@ -919,6 +958,7 @@ export type CommentsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   createdAt?: boolean
   updatedAt?: boolean
   isEdited?: boolean
+  isAdmin?: boolean
   parent?: boolean | Prisma.Comments$parentArgs<ExtArgs>
 }, ExtArgs["result"]["comments"]>
 
@@ -934,9 +974,10 @@ export type CommentsSelectScalar = {
   createdAt?: boolean
   updatedAt?: boolean
   isEdited?: boolean
+  isAdmin?: boolean
 }
 
-export type CommentsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "contentId" | "name" | "comment" | "userIp" | "status" | "parentCommentId" | "secret" | "createdAt" | "updatedAt" | "isEdited", ExtArgs["result"]["comments"]>
+export type CommentsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "contentId" | "name" | "comment" | "userIp" | "status" | "parentCommentId" | "secret" | "createdAt" | "updatedAt" | "isEdited" | "isAdmin", ExtArgs["result"]["comments"]>
 export type CommentsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   parent?: boolean | Prisma.Comments$parentArgs<ExtArgs>
   replies?: boolean | Prisma.Comments$repliesArgs<ExtArgs>
@@ -969,6 +1010,7 @@ export type $CommentsPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     createdAt: Date
     updatedAt: Date
     isEdited: boolean
+    isAdmin: boolean
   }, ExtArgs["result"]["comments"]>
   composites: {}
 }
@@ -1406,6 +1448,7 @@ export interface CommentsFieldRefs {
   readonly createdAt: Prisma.FieldRef<"Comments", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Comments", 'DateTime'>
   readonly isEdited: Prisma.FieldRef<"Comments", 'Boolean'>
+  readonly isAdmin: Prisma.FieldRef<"Comments", 'Boolean'>
 }
     
 

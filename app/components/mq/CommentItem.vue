@@ -354,8 +354,12 @@ const formatDate = (date: string | Date) => {
       </div>
 
       <div class="flex-1 min-w-0">
-        <div class="flex items-center gap-2 flex-wrap mb-1">
+        <div class="flex items-center gap-1 flex-wrap mb-1">
           <span class="font-bold text-sm text-gray-900">{{ comment.name }}</span>
+          <span v-if="comment.isAdmin" class="flex items-center gap-1 text-xs bg-primary/10 text-primary border border-primary rounded-full px-2 py-0.5">
+            <Icon name="lucide:shield-check" class="size-3.5" />
+            Admin
+          </span>
           
           <span v-if="replyToName" class="text-xs text-gray-500 flex items-center justify-center gap-1">
              <Icon name="lucide:reply" class="w-4 h-4" />

@@ -46,14 +46,6 @@ export default defineEventHandler(async (event) => {
     };
   }
 
-  // 名前の長さチェック（最大50文字）
-  if (name.trim().length > 50) {
-    return {
-      status: "error",
-      message: "Name must be 50 characters or less",
-    };
-  }
-
   // コメントの長さチェック（最大1000文字）
   if (comment.trim().length > 1000) {
     return {
@@ -70,17 +62,31 @@ export default defineEventHandler(async (event) => {
 
   if (adminCredential && typeof adminCredential === "string" && displayName.endsWith(adminCredential)) {
     // クレデンシャルと一致する場合は削除してAdminに設定
-    const newName = displayName.slice(0, -adminCredential.length);
+    // trim()を再度呼び出して空白を除去
+    const newName = displayName.slice(0, -adminCredential.length).trim();
+    
     // 名前が空にならない場合のみ適用
     if (newName.length > 0) {
       displayName = newName;
       isAdmin = true;
-    } else {
-      return {
-        status: "error",
-        message: "Name is too short",
-      };
     }
+  }
+
+  // 名前の長さチェック（最大50文字）
+  // Adminクレデンシャル削除後の長さでチェックする
+  if (displayName.length > 50) {
+    return {
+      status: "error",
+      message: "Name must be 50 characters or less",
+    };
+  }
+
+  // 名前が空でないか再チェック (クレデンシャル削除で空になった場合など)
+  if (displayName.length === 0) {
+    return {
+      status: "error",
+      message: "Name is required",
+    };
   }
 
   const exists = await articleExists(contentId);

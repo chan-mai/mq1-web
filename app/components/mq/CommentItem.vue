@@ -341,7 +341,22 @@ const formatDate = (date: string | Date) => {
   <article class="group" :class="{ 'pl-0': depth === 0 }">
     <div class="flex gap-4">
       <div class="shrink-0">
-         <div class="h-9 w-9 rounded-full overflow-hidden ring-1 ring-gray-200 bg-white">
+         <div class="relative w-10 h-10 -ml-0.5" v-if="comment.isAdmin">
+            <!-- Avatar -->
+            <div class="absolute inset-0 rounded-full overflow-hidden z-0">
+               <NuxtImg src="/images/comments/admin/avatar.webp" class="w-full h-full object-cover" format="webp" alt="" />
+            </div>
+            
+            <!-- Decorations -->
+            <div class="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+                <NuxtImg src="/images/comments/admin/decoration-1.png" class="absolute w-[200%] h-[200%] max-w-none object-contain" format="webp" style="transform: translate(0%, -7.5%);" alt="" />
+                <NuxtImg src="/images/comments/admin/decoration-2.png" class="absolute w-[200%] h-[200%] max-w-none object-contain" format="webp" alt="" />
+                <NuxtImg src="/images/comments/admin/decoration-3.png" class="absolute w-[200%] h-[200%] max-w-none object-contain" format="webp" alt="" />
+                <NuxtImg src="/images/comments/admin/decoration-4.png" class="absolute w-[200%] h-[200%] max-w-none object-contain" format="webp" alt="" />
+            </div>
+         </div>
+         
+         <div v-else class="h-9 w-9 rounded-full overflow-hidden ring-1 ring-gray-200 bg-white">
             <client-only>
               <Avatar
                 :size="36"

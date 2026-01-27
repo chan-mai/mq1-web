@@ -163,7 +163,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <section class="max-w-3xl mx-auto px-4 py-8">
+  <section class="max-w-3xl px-5 py-8">
     <div class="flex items-center gap-2 mb-4">
       <div class="flex h-8 w-8 items-center justify-center rounded-full bg-primary">
         <Icon name="lucide:message-square" class="h-4 w-4 text-white" />

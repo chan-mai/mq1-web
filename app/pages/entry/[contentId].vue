@@ -193,6 +193,13 @@ const readingTime = computed(() => {
 });
 
 const tableOfContents: Ref<{ id: string; text: string; level: number }[]> = ref(article.value ? generateTableOfContents(article.value?.content!) : []);
+
+// 人気記事取得 
+const { data: popularData } = await useFetch('/api/popular-articles', {
+    query: { excludeId: contentId },
+    server: true,
+});
+const popularArticles = computed(() => popularData.value?.status === 'success' ? popularData.value.articles : []);
 </script>
 <template>
     <div v-if="draftKeyParam" class="fixed top-0 left-0 z-50 bg-sky-200 text-black px-4 py-2 shadow-md flex items-center m-2 rounded-md opacity-70">
@@ -202,7 +209,7 @@ const tableOfContents: Ref<{ id: string; text: string; level: number }[]> = ref(
     <ScrollProgressBar />
     <main
         class="min-h-screen pt-[120px] md:pt-[160px] px-4 sm:px-6">
-        <div class="mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start mb-20">
+        <div class="mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start mb-10">
             <!-- Left Sidebar (Social Actions) -->
             <aside class="hidden lg:flex lg:col-span-1 sticky top-32 flex-col gap-6 items-center z-20 pt-8">
                  <MqLikeButton :content-id="contentId" variant="icon-only" />
@@ -244,6 +251,12 @@ const tableOfContents: Ref<{ id: string; text: string; level: number }[]> = ref(
                 <!-- コメントセクション -->
                 <div class="mt-8 mb-8 w-full">
                     <MqCommentSection :content-id="contentId" />
+                </div>
+
+
+                <!-- 人気の記事 -->
+                <div class="mt-6 w-full">
+                    <PopularArticles :articles="popularArticles" />
                 </div>
             </article>
 

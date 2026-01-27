@@ -67,7 +67,7 @@ if (nextArticleResponse.value && nextArticleResponse.value.contents && nextArtic
             <div class="flex flex-col h-full">
                 <NuxtLink v-if="prevArticle" :to="`/entry/${prevArticle.id}`" class="group h-full block">
                     <div
-                        class="h-full bg-white border border-gray-100 rounded-2xl p-5 hover:border-primary hover:bg-primary/10 transition-colors duration-300 relative overflow-hidden">
+                        class="h-full bg-white border border-gray-100 rounded-xl p-5 hover:border-primary hover:bg-primary/10 transition-colors duration-300 relative overflow-hidden">
                         
                         <!-- Label & Icon -->
                         <div class="flex items-center text-gray-400 group-hover:text-primary transition-colors duration-300 mb-3">
@@ -103,7 +103,7 @@ if (nextArticleResponse.value && nextArticleResponse.value.contents && nextArtic
                 </NuxtLink>
                 
                 <!-- Empty State for Prev -->
-                <div v-else class="h-full bg-gray-50 border border-gray-100 rounded-2xl p-5 flex flex-col justify-center items-center text-center opacity-75">
+                <div v-else class="h-full bg-gray-50 border border-gray-100 rounded-xl p-5 flex flex-col justify-center items-center text-center opacity-75">
                    <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center mb-3 text-gray-400">
                         <Icon name="lucide:chevron-first" class="w-5 h-5" />
                    </div>
@@ -115,7 +115,7 @@ if (nextArticleResponse.value && nextArticleResponse.value.contents && nextArtic
             <div class="flex flex-col h-full">
                 <NuxtLink v-if="nextArticle" :to="`/entry/${nextArticle.id}`" class="group h-full block">
                     <div
-                        class="h-full bg-white border border-gray-100 rounded-2xl p-5 hover:border-primary hover:bg-primary/10 transition-colors duration-300 relative overflow-hidden">
+                        class="h-full bg-white border border-gray-100 rounded-xl p-5 hover:border-primary hover:bg-primary/10 transition-colors duration-300 relative overflow-hidden">
                         
                         <!-- Label & Icon -->
                         <div class="flex items-center justify-end text-gray-400 group-hover:text-primary transition-colors duration-300 mb-3">
@@ -151,7 +151,7 @@ if (nextArticleResponse.value && nextArticleResponse.value.contents && nextArtic
                 </NuxtLink>
 
                 <!-- Empty State for Next -->
-                <div v-else class="h-full bg-gray-50 border border-gray-100 rounded-2xl p-5 flex flex-col justify-center items-center text-center opacity-75">
+                <div v-else class="h-full bg-gray-50 border border-gray-100 rounded-xl p-5 flex flex-col justify-center items-center text-center opacity-75">
                    <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center mb-3 text-gray-400">
                         <Icon name="lucide:chevron-last" class="w-5 h-5" />
                    </div>

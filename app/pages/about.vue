@@ -241,25 +241,6 @@ useJsonld([
 </template>
 
 <style scoped>
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
 .animate-marquee {
     animation: marquee 30s linear infinite;
 }

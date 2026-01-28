@@ -32,6 +32,7 @@ const menu = config.value.footer.menu;
             :title="item.name"
             :to="item.url"
             :aria-label="`${item.name}でフォローする`"
+            rel="me"
             class="relative flex size-8 items-center justify-center rounded before:absolute before:size-full before:rounded before:bg-current before:opacity-0 before:transition-opacity hover:before:opacity-20 hover:text-primary"
             target="_blank"
           >

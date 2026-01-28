@@ -115,7 +115,7 @@ if (import.meta.client) {
                     :key="social.url" 
                     :style="{ transitionDelay: isVisible ? `${0.3 + (index as unknown as number) * 0.15}s` : '0s' }"
                 >
-                    <NuxtLink class="text-white cursor-react-sml" :to="social.url" target="_blank" :aria-label="social.name">
+                    <NuxtLink class="text-white cursor-react-sml" :to="social.url" target="_blank" :aria-label="social.name" rel="me">
                         <Icon :name="social.icon" class="size-5" />
                     </NuxtLink>
                 </li> 

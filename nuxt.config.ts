@@ -243,7 +243,7 @@ export default defineNuxtConfig({
       {
         userAgent: ["*"],
         allow: ["/"],
-        disallow: ["/admin", "/api", "/_nuxt/"],
+        disallow: ["/admin/", "/api/admin/", "/api/comment/", "/api/entry/", "/api/like/", "/api/link-preview", "/api/popular-articles", "/_nuxt/"],
       },
     ],
   },

@@ -18,9 +18,9 @@ export default defineEventHandler(async (event) => {
 
         // eyecatchがあればそれをレスポンス
         if (article.eyecatch) {
-            // Twitter用にPNG形式を強制する
+            // Twitter用にPNG形式を使用（TwitterクローラーのWebP互換性問題を回避）
             const imageUrl = new URL(article.eyecatch.url);
-            imageUrl.searchParams.set('fm', 'webp');
+            imageUrl.searchParams.set('fm', 'png');
 
             const imageResponse = await fetch(imageUrl.toString());
             if (!imageResponse.ok) {
@@ -31,7 +31,7 @@ export default defineEventHandler(async (event) => {
             }
             const arrayBuffer = await imageResponse.arrayBuffer();
             const buffer = Buffer.from(arrayBuffer);
-            setHeader(event, 'Content-Type', 'image/webp');
+            setHeader(event, 'Content-Type', 'image/png');
             setHeader(event, 'Cache-Control', 'public, max-age=31536000, immutable');
             return buffer;
         }
@@ -49,7 +49,7 @@ export default defineEventHandler(async (event) => {
         const arrayBuffer = await imageResponse.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
 
-        setHeader(event, 'Content-Type', 'image/webp');
+        setHeader(event, 'Content-Type', 'image/png');
         setHeader(event, 'Cache-Control', 'public, max-age=31536000, immutable');
         
         return buffer;

@@ -76,6 +76,7 @@ useJsonld([
                                 <div class="grid grid-cols-1 space-y-2 mb-8 relative z-30">
                                     <NuxtLink v-for="social in socials.filter(s => s.isFixed)" :key="social.name" :to="social.url"
                                         target="_blank"
+                                        rel="me"
                                         class="w-1/3 bg-white/80 text-accent rounded-full px-3 py-2 hover:bg-primary/90 hover:text-white transition-all flex items-center">
                                         <Icon :name="social.icon" class="mr-2 size-5" />
                                         <span class="text-sm">{{ social.name }}</span>
@@ -145,7 +146,12 @@ useJsonld([
                                         <p class="text-xs tracking-widest font-light text-gray-500">SOCIALS</p>
                                         <div class="flex flex-wrap gap-2">
                                             <div v-for="social in socials" :key="social.name">
-                                                <MqAppLink class="text-xs" :to="social.url" :text="social.name" />
+                                                <MqAppLink class="text-xs" :to="social.url" rel="me">
+                                                    {{ social.name }}
+                                                    <template #icon>
+                                                        <Icon :name="social.icon" class="size-3" />
+                                                    </template>
+                                                </MqAppLink>
                                             </div>
                                         </div>
                                     </div>

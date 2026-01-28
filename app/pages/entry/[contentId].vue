@@ -255,7 +255,7 @@ const popularArticles = computed(() => popularData.value?.status === 'success' ?
 
 
                 <!-- 人気の記事 -->
-                <div class="mt-6 w-full">
+                <div v-if="popularArticles.length" class="mt-6 w-full">
                     <PopularArticles :articles="popularArticles" />
                 </div>
             </article>

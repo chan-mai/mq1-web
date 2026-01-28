@@ -3,6 +3,7 @@ interface Social {
   url: string;
   icon: string;
   color: string;
+  isFixed?: boolean;
 }
 
 interface WebConfig {
@@ -78,12 +79,14 @@ export const useWebConfig = (): ComputedRef<WebConfig> => {
         url: "https://shahu.ski/@mai_llj",
         icon: "simple-icons:misskey",
         color: "lime-400",
+        isFixed: true,
       },
       github: {
         name: "GitHub",
         url: "https://github.com/chan-mai",
         icon: "simple-icons:github",
         color: "gray-900",
+        isFixed: true,
       },
       twitter: {
         name: "Twitter",

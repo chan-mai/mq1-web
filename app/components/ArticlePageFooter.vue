@@ -61,71 +61,101 @@ if (nextArticleResponse.value && nextArticleResponse.value.contents && nextArtic
 
 </script>
 <template>
-    <div class="max-w-6xl mx-auto px-4 mb-8 sm:mb-16 border-t border-gray-200 pt-4 sm:pt-8">
-        <div class="flex flex-col md:flex-row justify-between gap-4 sm:gap-6">
+    <div class="max-w-6xl mx-auto px-4 mb-12 sm:mb-20 pt-8 border-t border-gray-100">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- 前の記事 -->
-            <NuxtLink v-if="prevArticle" :to="`/entry/${prevArticle.id}`" class="slide-hover flex-1">
-                <div
-                    class="group p-3 sm:p-4 border border-gray-200 rounded-lg hover:border-primary transition-all duration-300 h-full">
-                    <div class="flex items-center text-gray-500 mb-2">
-                        <Icon name="material-symbols:arrow-back" class="mr-1 w-4 h-4 group-hover:text-primary" />
-                        <span class="text-xs sm:text-sm group-hover:text-primary">前の記事</span>
-                    </div>
-                    <h4
-                        class="text-gray-800 text-sm sm:text-base font-medium line-clamp-1 overflow-hidden text-ellipsis"
-                        :style="`view-transition-name: article-title-${prevArticle.id};`">
-                        {{ prevArticle.title }}</h4>
-                    <div class="mt-2 flex flex-col sm:flex-row items-center">
-                        <div
-                            class="w-full md:max-w-1/3 md:h-20 sm:max-h-16 mb-2 sm:mb-0 sm:mr-3 overflow-hidden rounded">
-                            <MqOgImage :url="prevArticle.eyecatch?.url" :content-id="prevArticle.id" :title="prevArticle.title"
-                                class="w-full h-full object-contain" :style="`view-transition-name: article-${prevArticle.id};`" />
+            <div class="flex flex-col h-full">
+                <NuxtLink v-if="prevArticle" :to="`/entry/${prevArticle.id}`" class="group h-full block">
+                    <div
+                        class="h-full bg-white border border-gray-100 rounded-xl p-5 hover:border-primary hover:bg-primary/10 transition-colors duration-300 relative overflow-hidden">
+                        
+                        <!-- Label & Icon -->
+                        <div class="flex items-center text-gray-400 group-hover:text-primary transition-colors duration-300 mb-3">
+                            <Icon name="lucide:chevron-left" class="w-4 h-4 mr-1.5" />
+                            <span class="text-xs font-bold tracking-wider uppercase">Previous Article</span>
                         </div>
-                        <p class="text-xs sm:text-sm text-gray-600 overflow-hidden line-clamp-2 sm:line-clamp-3">{{
-                            prevArticle.summary || '' }}</p>
+
+                        <div class="flex gap-4 items-start">
+                            <!-- Thumbnail (Desktop: Left, Mobile: Hidden or Small) -->
+                            <div class="hidden sm:block shrink-0 w-24 h-24 rounded-lg overflow-hidden bg-gray-50">
+                                <MqOgImage 
+                                    :url="prevArticle.eyecatch?.url" 
+                                    :content-id="prevArticle.id" 
+                                    :title="prevArticle.title"
+                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                                    :style="`view-transition-name: article-${prevArticle.id};`" 
+                                />
+                            </div>
+
+                            <!-- Content -->
+                            <div class="flex-1 min-w-0">
+                                <h4
+                                    class="text-gray-800 group-hover:text-primary font-bold text-base leading-snug line-clamp-2 mb-2 transition-colors duration-300"
+                                    :style="`view-transition-name: article-title-${prevArticle.id};`">
+                                    {{ prevArticle.title }}
+                                </h4>
+                                <p class="text-sm text-gray-500 line-clamp-2 leading-relaxed">
+                                    {{ prevArticle.summary || 'No summary available.' }}
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </NuxtLink>
-            <div v-else class="flex-1">
-                <div class="p-3 sm:p-4 h-full">
-                    <div class="flex items-center text-gray-400 mb-2">
-                        <Icon name="material-symbols:arrow-back" class="mr-1 w-4 h-4" />
-                        <span class="text-xs sm:text-sm">前の記事</span>
-                    </div>
-                    <p class="text-gray-400 font-medium text-sm sm:text-base">これが最も古い記事です</p>
+                </NuxtLink>
+                
+                <!-- Empty State for Prev -->
+                <div v-else class="h-full bg-gray-50 border border-gray-100 rounded-xl p-5 flex flex-col justify-center items-center text-center opacity-75">
+                   <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center mb-3 text-gray-400">
+                        <Icon name="lucide:chevron-first" class="w-5 h-5" />
+                   </div>
+                   <p class="text-sm font-medium text-gray-400">最古の記事です</p>
                 </div>
             </div>
 
             <!-- 次の記事 -->
-            <NuxtLink v-if="nextArticle" :to="`/entry/${nextArticle.id}`" class="slide-hover flex-1">
-                <div
-                    class="group p-3 sm:p-4 border border-gray-200 rounded-lg hover:border-primary transition-all duration-300 h-full">
-                    <div class="flex items-center justify-end text-gray-500 mb-2">
-                        <span class="text-xs sm:text-sm group-hover:text-primary">次の記事</span>
-                        <Icon name="material-symbols:arrow-forward" class="ml-1 w-4 h-4 group-hover:text-primary" />
-                    </div>
-                    <h4
-                        class="text-gray-800 text-sm sm:text-base font-medium line-clamp-1 overflow-hidden text-ellipsis text-right"
-                        :style="`view-transition-name: article-title-${nextArticle.id};`">
-                        {{ nextArticle.title }}</h4>
-                    <div class="mt-2 flex flex-col-reverse sm:flex-row items-center">
-                        <p
-                            class="text-xs sm:text-sm text-gray-600 overflow-hidden line-clamp-2 sm:line-clamp-3 mt-2 sm:mt-0">
-                            {{ nextArticle.summary || '' }}</p>
-                        <div class="w-full md:max-w-1/3 md:h-20 sm:max-h-16 sm:ml-3 overflow-hidden rounded">
-                            <MqOgImage :url="nextArticle.eyecatch?.url" :content-id="nextArticle.id" :title="nextArticle.title"
-                                class="w-full h-full object-contain" :style="`view-transition-name: article-${nextArticle.id};`" />
+            <div class="flex flex-col h-full">
+                <NuxtLink v-if="nextArticle" :to="`/entry/${nextArticle.id}`" class="group h-full block">
+                    <div
+                        class="h-full bg-white border border-gray-100 rounded-xl p-5 hover:border-primary hover:bg-primary/10 transition-colors duration-300 relative overflow-hidden">
+                        
+                        <!-- Label & Icon -->
+                        <div class="flex items-center justify-end text-gray-400 group-hover:text-primary transition-colors duration-300 mb-3">
+                            <span class="text-xs font-bold tracking-wider uppercase">Next Article</span>
+                            <Icon name="lucide:chevron-right" class="w-4 h-4 ml-1.5" />
+                        </div>
+
+                        <div class="flex flex-row-reverse gap-4 items-start">
+                             <!-- Thumbnail -->
+                             <div class="hidden sm:block shrink-0 w-24 h-24 rounded-lg overflow-hidden bg-gray-50">
+                                <MqOgImage 
+                                    :url="nextArticle.eyecatch?.url" 
+                                    :content-id="nextArticle.id" 
+                                    :title="nextArticle.title"
+                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                                    :style="`view-transition-name: article-${nextArticle.id};`" 
+                                />
+                            </div>
+
+                            <!-- Content -->
+                            <div class="flex-1 min-w-0 text-right">
+                                <h4
+                                    class="text-gray-800 group-hover:text-primary font-bold text-base leading-snug line-clamp-2 mb-2 transition-colors duration-300"
+                                    :style="`view-transition-name: article-title-${nextArticle.id};`">
+                                    {{ nextArticle.title }}
+                                </h4>
+                                <p class="text-sm text-gray-500 line-clamp-2 leading-relaxed">
+                                    {{ nextArticle.summary || 'No summary available.' }}
+                                </p>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </NuxtLink>
-            <div v-else class="flex-1">
-                <div class="p-3 sm:p-4 h-full">
-                    <div class="flex items-center justify-end text-gray-400 mb-2">
-                        <span class="text-xs sm:text-sm">次の記事</span>
-                        <Icon name="material-symbols:arrow-forward" class="ml-1 w-4 h-4" />
-                    </div>
-                    <p class="text-gray-400 font-medium text-right text-sm sm:text-base">これが最新の記事です</p>
+                </NuxtLink>
+
+                <!-- Empty State for Next -->
+                <div v-else class="h-full bg-gray-50 border border-gray-100 rounded-xl p-5 flex flex-col justify-center items-center text-center opacity-75">
+                   <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center mb-3 text-gray-400">
+                        <Icon name="lucide:chevron-last" class="w-5 h-5" />
+                   </div>
+                   <p class="text-sm font-medium text-gray-400">最新の記事です</p>
                 </div>
             </div>
         </div>
@@ -133,74 +163,5 @@ if (nextArticleResponse.value && nextArticleResponse.value.contents && nextArtic
     </div>
 </template>
 <style lang="css" scoped>
-.slide-hover {
-    position: relative;
-    overflow: hidden;
-}
-
-.slide-hover::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background-color: white;
-    transform: translateX(-100%);
-    opacity: 0;
-    z-index: -1;
-    border-radius: 0.5rem;
-}
-
-/* ホバー時のアニメーション */
-.slide-hover:hover::before {
-    animation: slideIn 0.3s forwards;
-}
-
-/* ホバーを外した時のアニメーション */
-.slide-hover::before {
-    animation: fadeOut 0.3s forwards;
-}
-
-@keyframes slideIn {
-    0% {
-        transform: translateX(-100%);
-        opacity: 0;
-    }
-
-    100% {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-@keyframes fadeOut {
-    0% {
-        opacity: 1;
-        transform: translateX(0);
-    }
-
-    100% {
-        opacity: 0;
-        transform: translateX(0);
-    }
-}
-
-/* スケルトン */
-.skeleton {
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-    background-size: 200% 100%;
-    animation: loading 1.5s infinite;
-    border-radius: 4px;
-}
-
-@keyframes loading {
-    0% {
-        background-position: 200% 0;
-    }
-
-    100% {
-        background-position: -200% 0;
-    }
-}
+/* Scoped styles can be minimal now as we heavily leverage Tailwind */
 </style>

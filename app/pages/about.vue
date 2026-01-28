@@ -31,7 +31,7 @@ useJsonld([
         description: config.value.author.description,
         url: config.value.siteUrl,
         image: `${config.value.siteUrl}images/about/mai.png`,
-        sameAs: socials.map((social: any) => social.url),
+        sameAs: socials.filter((social: any) => social.url).map((social: any) => social.url),
     },
     {
         '@context': 'https://schema.org',

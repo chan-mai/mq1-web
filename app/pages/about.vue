@@ -270,7 +270,8 @@ useJsonld([
 }
 @media (min-width: 768px) {
     .mobile-text-outline {
-        text-shadow: none;
+        -webkit-text-stroke: 0;
+        text-stroke: 0;
     }
 }
 </style>

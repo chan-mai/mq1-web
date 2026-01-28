@@ -182,7 +182,7 @@ useJsonld([
                                             <div class="w-10 h-10 rounded-full bg-white/80 flex items-center justify-center">
                                                  <Icon name="ph:play-fill" class="w-4 h-4 text-primary/80 ml-0.5" />
                                             </div>
-                                            <span class="text-xs font-semibold tracking-tighter text-primary">COMMING SOON...</span>
+                                            <span class="text-xs font-semibold tracking-tighter text-primary">COMING SOON...</span>
                                         </div>
                                     </div>
                                 </div>

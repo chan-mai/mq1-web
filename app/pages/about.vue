@@ -53,7 +53,7 @@ useJsonld([
         <div class="min-h-screen overflow-hidden">
 
             <div class="bg-primary text-white relative w-full max-w-none overflow-hidden md:overflow-visible dot-overlay">
-                <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none bg-[url(/images/about/bg.png)] bg-cover opacity-50 contrast-110" />
+                <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none bg-[url(/images/about/bg.png)] bg-cover opacity-90 contrast-110" />
                 <AboutHeadBackground />
                 
                 <!-- 右側のエッジ文字 -->
@@ -67,10 +67,10 @@ useJsonld([
                         <!-- ヘッダ 情報 -->
                         <div class="z-30 relative">
                             <div class="mb-32">
-                                <p class="text-sm md:text-base font-light mb-2">応用睡眠技術者</p>
+                                <p class="mobile-text-outline text-sm md:text-base font-light mb-2">応用睡眠技術者</p>
                                 <div class="w-16 h-0.5 bg-white mb-4"></div>
-                                <h1 class="text-5xl md:text-6xl font-bold mb-2">月出里 まい</h1>
-                                <p class="text-sm tracking-widest mb-16">SUDACHI MAI</p>
+                                <h1 class="mobile-text-outline text-5xl md:text-6xl font-bold mb-2">月出里 まい</h1>
+                                <p class="mobile-text-outline text-sm tracking-widest mb-16">SUDACHI MAI</p>
 
                                 <!-- Socials -->
                                 <div class="grid grid-cols-1 space-y-2 mb-8 relative z-30">
@@ -90,16 +90,16 @@ useJsonld([
                 
                 <div class="absolute w-full h-full left-0 pointer-events-none">
                     <!-- 背景画像 -->
-                    <div class="absolute top-0 z-20 w-full h-full opacity-40 -translate-y-full">
+                    <div class="absolute top-0 z-20 w-full h-full opacity-40 -translate-y-full overflow-hidden">
                         <NuxtImg src="/images/about/mai-bg.png" format="webp" alt="doted mai" fetchpriority="high"
-                            class="w-full h-full object-cover object-center" loading="eager" />
+                            class="w-full h-full object-cover object-center pointer-events-none" loading="eager" />
                     </div>
 
-                    <!-- 立ち絵後 グロー -->
+                    <!-- 立ち絵 -->
                     <div class="absolute w-full top-0 z-20 -translate-y-[75%] md:-translate-y-2/3 scale-80 md:scale-100 -right-0 md:right-[15%]">
                         <div class="character-glow absolute w-full h-full top-0 right-0 z-40 bg-white/10 blur-3xl rounded-full transform scale-150"></div>
                         <NuxtImg src="/images/about/mai.png" format="webp" alt="Mai Sudachi" fetchpriority="high"
-                            class="object-contain max-h-[800px] relative z-[60] ml-auto" loading="eager"
+                            class="object-contain max-h-[800px] relative z-[60] ml-auto drop-shadow-[10px_-5px_0_#ffbdcf]" loading="eager"
                             decoding="async" />
                     </div>
                 </div>
@@ -146,7 +146,7 @@ useJsonld([
                                         <p class="text-xs tracking-widest font-light text-gray-500">SOCIALS</p>
                                         <div class="flex flex-wrap gap-2">
                                             <div v-for="social in socials" :key="social.name">
-                                                <MqAppLink class="text-xs" :to="social.url" rel="me">
+                                                <MqAppLink class="text-xs" :to="social.url" rel="me noopener noreferrer">
                                                     {{ social.name }}
                                                     <template #icon>
                                                         <Icon :name="social.icon" class="size-3" />
@@ -258,6 +258,19 @@ useJsonld([
     height: 100%;
     background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAEElEQVR4nGP4//9/GgNlAADe/gNkBNkWTgAAAABJRU5ErkJggg==) repeat;
     background-color: rgba(0, 0, 0, 0.1);
+    background-color: rgba(0, 0, 0, 0.1);
     pointer-events: none;
+}
+
+.mobile-text-outline {
+    color: #fff;
+    -webkit-text-stroke: 2px #ff759c;
+    text-stroke: 2px #ff759c;
+    paint-order: stroke fill;
+}
+@media (min-width: 768px) {
+    .mobile-text-outline {
+        text-shadow: none;
+    }
 }
 </style>

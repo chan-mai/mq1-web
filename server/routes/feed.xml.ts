@@ -49,13 +49,14 @@ export default defineEventHandler(async (event) => {
       const url = `${siteUrl}entry/${article.id}`;
       const $ = cheerio.load(article.content ?? "");
       const textContent: string = $.text().trim();
+      const excerpt = textContent.slice(0, 100) + (textContent.length > 100 ? "…" : "");
 
       const data = {
         title: article.title ?? "No Title",
         id: url,
         link: url,
-        description: article.summary ?? textContent,
-        content: textContent,
+        description: article.summary ?? excerpt,
+        content: excerpt,
         date: new Date(article.publishedAt),
       };
 

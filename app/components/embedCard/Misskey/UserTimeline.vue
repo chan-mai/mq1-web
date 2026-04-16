@@ -14,8 +14,19 @@ watchEffect(async () => {
     if (!URL.canParse(props.url)) return;
 
     const urlObj = new URL(props.url);
-    // パスの末尾 "@username" から "@" を除去してユーザー名を取得
-    const username = (urlObj.pathname.split('/').pop() ?? '@').slice(1);
+    const segments = urlObj.pathname.split('/').filter(Boolean);
+    if (segments.length >= 2 && segments[0] === 'users') {
+        resolvedInfo.value = { domain: urlObj.hostname, userId: segments[1] };
+        return;
+    }
+
+    // パス末尾 "@username" から local username を取得
+    const rawUsername = (urlObj.pathname.split('/').pop() ?? '@').slice(1);
+    const username = rawUsername.split('@')[0];
+    if (!username) {
+        resolvedInfo.value = { domain: '', userId: '' };
+        return;
+    }
 
     try {
         const res = await fetch(`https://${urlObj.hostname}/api/users/show`, {

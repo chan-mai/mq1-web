@@ -1,5 +1,12 @@
 import * as cheerio from 'cheerio';
 
+const MISSKEY_CHECK_TIMEOUT_MS = 5000;
+const MISSKEY_CHECK_CACHE_TTL_MS = 10 * 60 * 1000;
+const misskeyNodeInfoCache = new Map<string, { value: boolean; expiresAt: number }>();
+const misskeyEmbedCheckCache = new Map<string, { value: boolean; expiresAt: number }>();
+type NodeInfoLink = { rel?: unknown; href?: unknown };
+type MisskeyEmbedType = 'MISSKEY_NOTE' | 'MISSKEY_HASHTAG' | 'MISSKEY_USER' | 'MISSKEY_CLIP';
+
 export default defineEventHandler(async (event): Promise<LinkPreviewResponse> => {
     const query = getQuery(event);
     const rawUrl = query.url as string;
@@ -44,7 +51,7 @@ export default defineEventHandler(async (event): Promise<LinkPreviewResponse> =>
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 3000);
         try {
-            const response = await fetch(url, { 
+            const response = await fetch(url, {
                 method: 'HEAD',
                 signal: controller.signal
             });
@@ -60,18 +67,212 @@ export default defineEventHandler(async (event): Promise<LinkPreviewResponse> =>
         }
     };
 
-    const checkMisskeyEmbeddable = async (hostname: string): Promise<boolean> => {
+    const getMisskeyTypeFromPath = (pathname: string): MisskeyEmbedType | undefined => {
+        if (/^\/notes\/[a-zA-Z0-9]+/.test(pathname)) {
+            return 'MISSKEY_NOTE';
+        }
+        if (/^\/tags\/[^\/]+/.test(pathname)) {
+            return 'MISSKEY_HASHTAG';
+        }
+        if (/^\/@[\w.]+/.test(pathname) || /^\/users\/[a-zA-Z0-9]+/.test(pathname)) {
+            return 'MISSKEY_USER';
+        }
+        if (/^\/clips\/[a-zA-Z0-9]+/.test(pathname)) {
+            return 'MISSKEY_CLIP';
+        }
+        return undefined;
+    };
+
+    const checkMisskeyByNodeInfo = async (hostname: string): Promise<boolean> => {
+        const now = Date.now();
+        const cached = misskeyNodeInfoCache.get(hostname);
+        if (cached && cached.expiresAt > now) {
+            return cached.value;
+        }
+
         const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 3000);
+        const timeout = setTimeout(() => controller.abort(), MISSKEY_CHECK_TIMEOUT_MS);
         try {
-            const response = await fetch(`https://servers.misskey.ink/api/v1/check?domain=${hostname}`, {
+            const nodeInfoIndexResponse = await fetch(`https://${hostname}/.well-known/nodeinfo`, {
                 signal: controller.signal
             });
-            if (!response.ok) return false;
-            const data = await response.json();
-            return data.is_misskey === true && data.is_embeddable === true;
-        } catch (e) {
-            console.error('Misskey check failed or timed out:', e);
+            if (!nodeInfoIndexResponse.ok) {
+                misskeyNodeInfoCache.set(hostname, {
+                    value: false,
+                    expiresAt: now + MISSKEY_CHECK_CACHE_TTL_MS,
+                });
+                return false;
+            }
+
+            const nodeInfoIndex = await nodeInfoIndexResponse.json();
+            const links = Array.isArray(nodeInfoIndex?.links) ? (nodeInfoIndex.links as NodeInfoLink[]) : [];
+            const link21 = links.find((link) => typeof link.rel === 'string' && link.rel.includes('/2.1'));
+            const link20 = links.find((link) => typeof link.rel === 'string' && link.rel.includes('/2.0'));
+            const href21 = typeof link21?.href === 'string' ? link21.href : undefined;
+            const href20 = typeof link20?.href === 'string' ? link20.href : undefined;
+            const href = href21 ?? href20;
+            if (!href) {
+                misskeyNodeInfoCache.set(hostname, {
+                    value: false,
+                    expiresAt: now + MISSKEY_CHECK_CACHE_TTL_MS,
+                });
+                return false;
+            }
+
+            const nodeInfoUrl = new URL(href, `https://${hostname}`).toString();
+            const nodeInfoResponse = await fetch(nodeInfoUrl, { signal: controller.signal });
+            if (!nodeInfoResponse.ok) {
+                misskeyNodeInfoCache.set(hostname, {
+                    value: false,
+                    expiresAt: now + MISSKEY_CHECK_CACHE_TTL_MS,
+                });
+                return false;
+            }
+
+            const nodeInfo = await nodeInfoResponse.json();
+            const softwareName = nodeInfo?.software?.name;
+            const isMisskey = typeof softwareName === 'string' && softwareName.toLowerCase() === 'misskey';
+            misskeyNodeInfoCache.set(hostname, {
+                value: isMisskey,
+                expiresAt: now + MISSKEY_CHECK_CACHE_TTL_MS,
+            });
+            return isMisskey;
+        } catch {
+            misskeyNodeInfoCache.set(hostname, {
+                value: false,
+                expiresAt: now + MISSKEY_CHECK_CACHE_TTL_MS,
+            });
+            return false;
+        } finally {
+            clearTimeout(timeout);
+        }
+    };
+
+    const isBlockedByFrameHeaders = (headers: Headers): boolean => {
+        const xFrameOptions = headers.get('x-frame-options')?.toLowerCase() ?? '';
+        if (xFrameOptions.includes('deny') || xFrameOptions.includes('sameorigin')) {
+            return true;
+        }
+
+        const csp = headers.get('content-security-policy')?.toLowerCase() ?? '';
+        if (!csp.includes('frame-ancestors')) {
+            return false;
+        }
+        const frameAncestorsDirective = csp
+            .split(';')
+            .find((directive) => directive.trim().startsWith('frame-ancestors'));
+        if (!frameAncestorsDirective) {
+            return false;
+        }
+        return frameAncestorsDirective.includes("'none'") || frameAncestorsDirective.includes("'self'");
+    };
+
+    const resolveMisskeyUserId = async (target: URL, signal: AbortSignal): Promise<string | undefined> => {
+        const segments = target.pathname.split('/').filter(Boolean);
+        if (segments.length >= 2 && segments[0] === 'users') {
+            return segments[1];
+        }
+        const head = segments[0] ?? '';
+        if (!head.startsWith('@')) {
+            return undefined;
+        }
+
+        const rawUsername = head.slice(1);
+        const username = rawUsername.split('@')[0];
+        if (!username) {
+            return undefined;
+        }
+
+        try {
+            const response = await fetch(`https://${target.hostname}/api/users/show`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username }),
+                signal,
+            });
+            if (!response.ok) {
+                return undefined;
+            }
+            const userInfo = await response.json();
+            return typeof userInfo?.id === 'string' ? userInfo.id : undefined;
+        } catch {
+            return undefined;
+        }
+    };
+
+    const getMisskeyEmbedProbeUrl = async (
+        target: URL,
+        misskeyType: MisskeyEmbedType,
+        signal: AbortSignal
+    ): Promise<string | undefined> => {
+        const segments = target.pathname.split('/').filter(Boolean);
+        if (misskeyType === 'MISSKEY_NOTE') {
+            return segments.length >= 2 && segments[0] === 'notes'
+                ? `https://${target.hostname}/embed/notes/${segments[1]}`
+                : undefined;
+        }
+        if (misskeyType === 'MISSKEY_HASHTAG') {
+            return segments.length >= 2 && segments[0] === 'tags'
+                ? `https://${target.hostname}/embed/tags/${segments[1]}`
+                : undefined;
+        }
+        if (misskeyType === 'MISSKEY_CLIP') {
+            return segments.length >= 2 && segments[0] === 'clips'
+                ? `https://${target.hostname}/embed/clips/${segments[1]}`
+                : undefined;
+        }
+        const userId = await resolveMisskeyUserId(target, signal);
+        return userId ? `https://${target.hostname}/embed/user-timeline/${userId}` : undefined;
+    };
+
+    const checkMisskeyEmbedReachable = async (
+        target: URL,
+        misskeyType: MisskeyEmbedType
+    ): Promise<boolean> => {
+        const cacheKey = `${target.hostname}|${misskeyType}|${target.pathname}`;
+        const now = Date.now();
+        const cached = misskeyEmbedCheckCache.get(cacheKey);
+        if (cached && cached.expiresAt > now) {
+            return cached.value;
+        }
+
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), MISSKEY_CHECK_TIMEOUT_MS);
+        try {
+            const probeUrl = await getMisskeyEmbedProbeUrl(target, misskeyType, controller.signal);
+            if (!probeUrl) {
+                misskeyEmbedCheckCache.set(cacheKey, {
+                    value: false,
+                    expiresAt: now + MISSKEY_CHECK_CACHE_TTL_MS,
+                });
+                return false;
+            }
+
+            const nonce = `r=${Date.now().toString(36)}`;
+            const probeUrlWithNonce = `${probeUrl}${probeUrl.includes('?') ? '&' : '?'}${nonce}`;
+
+            let response = await fetch(probeUrlWithNonce, {
+                method: 'HEAD',
+                signal: controller.signal
+            });
+            if (response.status === 405) {
+                response = await fetch(probeUrlWithNonce, {
+                    method: 'GET',
+                    signal: controller.signal
+                });
+            }
+
+            const embeddable = response.ok && !isBlockedByFrameHeaders(response.headers);
+            misskeyEmbedCheckCache.set(cacheKey, {
+                value: embeddable,
+                expiresAt: now + MISSKEY_CHECK_CACHE_TTL_MS,
+            });
+            return embeddable;
+        } catch {
+            misskeyEmbedCheckCache.set(cacheKey, {
+                value: false,
+                expiresAt: now + MISSKEY_CHECK_CACHE_TTL_MS,
+            });
             return false;
         } finally {
             clearTimeout(timeout);
@@ -179,31 +380,26 @@ export default defineEventHandler(async (event): Promise<LinkPreviewResponse> =>
         };
 
         try {
+            const pathname = target.pathname;
+            const misskeyType = getMisskeyTypeFromPath(pathname);
+            const misskeySupportTask = (async (): Promise<boolean> => {
+                if (!misskeyType) return false;
+                const isMisskeyByNodeInfo = await checkMisskeyByNodeInfo(target.hostname);
+                if (!isMisskeyByNodeInfo) return false;
+                return await checkMisskeyEmbedReachable(target, misskeyType);
+            })();
+
             const [ogData, isMisskeyEmbeddable] = await Promise.all([
                 fetchOgTask(),
-                checkMisskeyEmbeddable(target.hostname)
+                misskeySupportTask
             ]);
 
-            let type: LinkPreviewType = 'GENERAL';
-            if (isMisskeyEmbeddable) {
-                const pathname = target.pathname;
-                if (/^\/notes\/[a-zA-Z0-9]+/.test(pathname)) {
-                    type = 'MISSKEY_NOTE';
-                } else if (/^\/tags\/[^\/]+/.test(pathname)) {
-                    type = 'MISSKEY_HASHTAG';
-                } else if (/^\/@[\w.]+/.test(pathname) || /^\/users\/[a-zA-Z0-9]+/.test(pathname)) {
-                    type = 'MISSKEY_USER';
-                } else if (/^\/clips\/[a-zA-Z0-9]+/.test(pathname)) {
-                    type = 'MISSKEY_CLIP';
-                }
-            }
+            let type: LinkPreviewType = misskeyType && isMisskeyEmbeddable ? misskeyType : 'GENERAL';
 
             let code: string | undefined;
             let startLine: number | undefined;
             let endLine: number | undefined;
             let embedId: string | undefined;
-
-            const pathname = target.pathname;
 
             // Platform Detection
             if (target.hostname.match(/(^|\.)(twitter\.com|x\.com)$/)) {
@@ -235,20 +431,20 @@ export default defineEventHandler(async (event): Promise<LinkPreviewResponse> =>
                 if (match) {
                     const [, user, repo, commit, path] = match;
                     const rawUrl = `https://raw.githubusercontent.com/${user}/${repo}/${commit}/${path}`;
-                    
+
                     const controller = new AbortController();
                     const timeout = setTimeout(() => controller.abort(), 5000);
-                    
+
                     try {
                         const response = await fetch(rawUrl, { signal: controller.signal });
                         if (response.ok) {
                             const text = await response.text();
                             const lines = text.split('\n');
                             const hash = target.hash;
-                            
+
                             let s = 1;
                             let e = 10; // Default to first 10 lines
-                            
+
                             const rangeMatch = hash.match(/#L(\d+)(?:-L(\d+))?/);
                             if (rangeMatch) {
                                 const startStr = rangeMatch[1];
@@ -268,7 +464,7 @@ export default defineEventHandler(async (event): Promise<LinkPreviewResponse> =>
 
                             // Adjust 0-based index
                             const extracted = lines.slice(Math.max(0, s - 1), e).join('\n');
-                            
+
                             if (extracted.trim().length > 0) {
                                 code = extracted;
                                 type = 'GITHUB_PERMALINK';

@@ -4,15 +4,8 @@ const ZZZ = () => h('div', {
 }, 'MAI SUDACHI');
 
 const breakpoint = ref('md');
-const zzzCount = computed(() => {
-  switch (breakpoint.value) {
-    case 'xs': return 20;
-    case 'sm': return 130;
-    default: return 500;
-  }
-});
 
-const zzzs = computed(() => Array(zzzCount.value).fill(ZZZ));
+const zzzs = computed(() => Array(500).fill(ZZZ));
 
 const doubleZzzs = computed(() => {
   const result = [];
@@ -54,7 +47,7 @@ useEventListener('resize', updateBreakpoint);
   <ClientOnly>
     <div class="absolute z-[1] flex items-center justify-center overflow-hidden max-w-full w-full h-full max-h-[75rem]" data-header-inverse="true">
       <div class="absolute w-full h-full z-[2] bg-gradient-to-b from-transparent to-accent"></div>
-      <div class="-rotate-45 max-[640px]:-rotate-90">
+      <div class="-rotate-45">
         <div v-for="(zzzs, i) in splitZzzs" :key="`row-${i}`" class="flex flex-row">
           <div v-for="(doubleZzzs, j) in zzzs" :key="`group-${i}-${j}`" class="flex flex-row"
             :class="i % 2 === 0 ? 'animate-slide-left' : 'animate-slide-right'">

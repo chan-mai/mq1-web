@@ -17,7 +17,7 @@ const props = defineProps({
     variant: {
         type: String,
         default: 'default',
-        validator: (value: string) => ['default', 'compact'].includes(value)
+        validator: (value: string) => ['default', 'compact', 'pinned'].includes(value)
     }
 });
 
@@ -36,8 +36,8 @@ const formattedDate = computed(() => {
 const summary = computed(() => {
     const fullSummary = useSummaryTextGenerator(props.article.content!);
     // カード用に80文字に制限
-    return fullSummary.length > 50  
-        ? fullSummary.slice(0, 50) + '...' 
+    return fullSummary.length > 50
+        ? fullSummary.slice(0, 50) + '...'
         : fullSummary;
 });
 
@@ -50,81 +50,117 @@ function navigateToTag(tag: any) {
 
 <template>
     <!-- Default Layout -->
-    <NuxtLink 
+    <NuxtLink
         v-if="variant === 'default'"
-        :to="`/entry/${article.id}`" 
-        class="group flex h-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white text-gray-900 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-md focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+        :to="`/entry/${article.id}`"
+        class="group flex h-full flex-col overflow-hidden rounded-xl border border-gray-100 bg-white
+               hover:border-gray-200 transition-colors duration-200
+               focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
     >
         <!-- 画像エリア -->
-        <div class="relative aspect-video w-full bg-gray-100 overflow-hidden">
-            <div class="absolute inset-0 bg-gradient-to-br from-gray-100 to-white opacity-0 transition-opacity duration-300 group-hover:opacity-10"></div>
-            
-            <MqOgImage 
+        <div class="relative aspect-video w-full overflow-hidden bg-gray-50">
+            <MqOgImage
                 :content-id="article.id"
                 :url="article.eyecatch?.url"
-                :title="article.title" 
+                :title="article.title"
                 fill
-                class="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                :style="transition ? `view-transition-name: article-${article.id};` : ''" 
+                class="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                :style="transition ? `view-transition-name: article-${article.id};` : ''"
             />
-
             <!-- 日付バッジ -->
-            <div class="absolute bottom-3 left-3 rounded bg-white/90 px-2 py-0.5 font-mono text-xs text-gray-500 backdrop-blur border border-primary/50">
-                <time :datetime="article.publishedAt ?? article.createdAt">
-                    {{ formattedDate }}
-                </time>
-            </div>
+            <time
+                :datetime="article.publishedAt ?? article.createdAt"
+                class="absolute bottom-3 left-3 block text-[11px] font-mono text-white/90
+                       bg-black/40 backdrop-blur-sm px-2 py-0.5 rounded"
+            >
+                {{ formattedDate }}
+            </time>
         </div>
 
         <!-- コンテンツエリア -->
-        <div class="flex flex-1 flex-col p-4 md:p-5">
-            <!-- タイトル -->
-            <h3 
-                class="mb-3 text-lg transition-colors group-hover:text-primary leading-[1.5] line-clamp-1"
+        <div class="flex flex-1 flex-col p-4 gap-2.5">
+            <h3
+                class="text-sm font-semibold text-slate-800 leading-snug line-clamp-2
+                       group-hover:text-primary transition-colors"
                 :style="transition ? `view-transition-name: article-title-${article.id};` : ''"
             >
                 {{ article.title }}
             </h3>
 
-            <!-- サマリー -->
-            <p class="mb-4 flex-1 text-sm leading-relaxed text-gray-500 line-clamp-3">
+            <p class="text-xs leading-relaxed text-gray-400 line-clamp-2 flex-1">
                 {{ summary }}
             </p>
 
-            <!-- タグ -->
-            <div v-if="article.tags && article.tags.length > 0" class="mb-3 flex flex-wrap gap-2">
-                <MqTag 
-                    v-for="tag in article.tags.slice(0, 3)" 
-                    :key="tag.id"
-                    :tag="tag" 
-                    @click.stop.prevent="navigateToTag(tag)"
-                    :transition="tagTransition"
-                    class="text-[10px] px-2 py-0.5"
-                />
-            </div>
-
-            <!-- 続きを読む -->
-            <div class="mt-auto flex items-center justify-between border-t border-gray-100 pt-4">
-                <span class="text-xs text-gray-400 transition-colors group-hover:text-primary">記事を読む</span>
-                <div class="flex h-7 w-7 items-center justify-center rounded-full bg-gray-50 text-gray-600 transition-colors group-hover:bg-primary group-hover:text-white">
-                    <Icon name="lucide:chevron-right" class="h-3.5 w-3.5" />
+            <!-- タグ + 矢印 -->
+            <div class="flex items-center justify-between pt-2 border-t border-gray-50 mt-auto">
+                <div v-if="article.tags?.length" class="flex flex-wrap gap-1.5 min-w-0 overflow-hidden">
+                    <MqTag
+                        v-for="tag in article.tags.slice(0, 2)"
+                        :key="tag.id"
+                        :tag="tag"
+                        @click.stop.prevent="navigateToTag(tag)"
+                        :transition="tagTransition"
+                        class="text-[10px]"
+                    />
                 </div>
+                <Icon
+                    name="lucide:arrow-right"
+                    class="size-3.5 shrink-0 ml-auto text-gray-300 group-hover:text-primary transition-colors"
+                />
             </div>
         </div>
     </NuxtLink>
 
+    <!-- Pinned Layout -->
+    <NuxtLink
+        v-else-if="variant === 'pinned'"
+        :to="`/entry/${article.id}`"
+        class="group flex items-center gap-4 rounded-xl ring-1 ring-gray-100 bg-white px-4 py-3.5
+               hover:ring-primary/40 transition-all duration-200"
+    >
+        <!-- サムネイル -->
+        <div class="relative size-14 shrink-0 rounded-lg overflow-hidden bg-gray-50">
+            <MqOgImage
+                :content-id="article.id"
+                :url="article.eyecatch?.url"
+                :title="article.title"
+                fill
+                class="absolute inset-0 size-full object-cover"
+                :style="transition ? `view-transition-name: article-${article.id};` : ''"
+            />
+        </div>
+
+        <!-- テキスト -->
+        <div class="flex-1 min-w-0 space-y-1">
+            <h3
+                class="text-sm font-semibold text-slate-800 line-clamp-2 leading-snug
+                       group-hover:text-primary transition-colors"
+                :style="transition ? `view-transition-name: article-title-${article.id};` : ''"
+            >
+                {{ article.title }}
+            </h3>
+            <time class="block text-[11px] text-gray-400 font-mono tabular-nums">
+                {{ formattedDate }}
+            </time>
+        </div>
+
+        <!-- 矢印 -->
+        <Icon name="lucide:arrow-right"
+              class="size-4 shrink-0 text-gray-300 group-hover:text-primary transition-colors" />
+    </NuxtLink>
+
     <!-- Compact Layout -->
-    <NuxtLink 
+    <NuxtLink
         v-else-if="variant === 'compact'"
-        :to="`/entry/${article.id}`" 
-        class="group flex items-start gap-3 rounded-lg border border-gray-100 bg-white/80 p-3 transition-all duration-300 hover:bg-white hover:border-primary/30 hover:shadow-sm"
+        :to="`/entry/${article.id}`"
+        class="group flex items-start gap-3 rounded-lg border border-gray-100 bg-white/80 p-3 transition-all duration-300 hover:bg-white hover:border-primary/30"
     >
         <!-- Thumbnail -->
         <div class="relative w-28 aspect-video shrink-0 overflow-hidden rounded-md bg-gray-100">
-            <MqOgImage 
+            <MqOgImage
                 :content-id="article.id"
                 :url="article.eyecatch?.url"
-                :title="article.title" 
+                :title="article.title"
                 fill
                 class="absolute inset-0 h-full w-full object-fit transition-transform duration-500 group-hover:scale-105"
                 :style="transition ? `view-transition-name: article-${article.id};` : ''"
@@ -141,10 +177,10 @@ function navigateToTag(tag: any) {
             </p>
             <div class="mt-auto pt-1 flex items-center gap-2">
                 <div v-if="article.tags && article.tags.length > 0" class="flex flex-nowrap overflow-hidden min-w-0">
-                    <MqTag 
-                        v-for="tag in article.tags" 
+                    <MqTag
+                        v-for="tag in article.tags"
                         :key="tag.id"
-                        :tag="tag" 
+                        :tag="tag"
                         @click.stop.prevent="navigateToTag(tag)"
                         variant="compact"
                         :transition="tagTransition"

@@ -16,18 +16,18 @@ const props = withDefaults(defineProps<{
 });
 </script>
 <template>
-    <NuxtLink 
-        v-if="tag" 
-        :to="`/tag/${tag.slug}`" 
+    <NuxtLink
+        v-if="tag"
+        :to="`/tag/${tag.slug}`"
         class="group/tag inline-flex items-center transition-colors duration-200"
         :class="[
-            variant === 'default' ? 'px-3 py-1.5 rounded-full text-sm bg-white border border-primary text-gray-700 hover:bg-primary hover:text-white shadow-sm' : '',
+            variant === 'default' ? 'px-3 py-1 rounded-full text-sm bg-white border border-primary text-gray-700 hover:bg-primary hover:text-white shadow-sm' : '',
             variant === 'compact' ? 'text-[10px] px-1.5 py-0.5 text-primary/80 hover:text-accent' : ''
         ]"
         :style="transition ? `view-transition-name: tag-${tag.slug};` : ''"
     >
-        <Icon 
-            v-if="!tag.count" 
+        <Icon
+            v-if="!tag.count"
             name="material-symbols:tag-rounded"
             :class="[
                 variant === 'default' ? 'mr-0.5 size-5 text-primary group-hover/tag:text-white transition-colors duration-200' : '',

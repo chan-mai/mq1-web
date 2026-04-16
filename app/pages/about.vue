@@ -55,13 +55,13 @@ useJsonld([
             <div class="bg-primary text-white relative w-full max-w-none overflow-hidden md:overflow-visible dot-overlay">
                 <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none bg-[url(/images/about/bg.png)] bg-cover opacity-90 contrast-110" />
                 <AboutHeadBackground />
-                
+
                 <!-- 右側のエッジ文字 -->
                 <div class="absolute bottom-0 z-20 w-full h-2/3 pointer-events-none">
                     <NuxtImg src="/images/about/mai-bg-text.png" format="webp" alt="Mai Sudachi" fetchpriority="high"
                         class="w-full h-full object-contain object-right" loading="eager" />
                 </div>
-                
+
                 <div class="w-full px-8 pt-[180px] md:pt-[200px] pb-8 max-w-6xl mx-auto relative z-30">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <!-- ヘッダ 情報 -->
@@ -87,10 +87,10 @@ useJsonld([
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="absolute w-full h-full left-0 pointer-events-none">
                     <!-- 背景画像 -->
-                    <div class="absolute top-0 z-20 w-full h-full opacity-40 -translate-y-full overflow-hidden">
+                    <div class="absolute top-0 z-20 w-full h-full opacity-30 -translate-y-full contrast-120 overflow-hidden">
                         <NuxtImg src="/images/about/mai-bg.png" format="webp" alt="doted mai" fetchpriority="high"
                             class="w-full h-full object-cover object-center pointer-events-none" loading="eager" />
                     </div>
@@ -99,7 +99,7 @@ useJsonld([
                     <div class="absolute w-full top-0 z-20 -translate-y-[75%] md:-translate-y-2/3 scale-80 md:scale-100 -right-0 md:right-[15%]">
                         <div class="character-glow absolute w-full h-full top-0 right-0 z-40 bg-white/10 blur-3xl rounded-full transform scale-150"></div>
                         <NuxtImg src="/images/about/mai.png" format="webp" alt="Mai Sudachi" fetchpriority="high"
-                            class="object-contain max-h-[800px] relative z-[60] ml-auto drop-shadow-[10px_-5px_0_#ffbdcf]" loading="eager"
+                            class="object-contain max-h-[800px] relative z-[60] ml-auto character-shadow" loading="eager"
                             decoding="async" />
                     </div>
                 </div>
@@ -142,7 +142,7 @@ useJsonld([
                                                 class="text-xl hover:text-primary transition-all">しなもん</NuxtLink>
                                         </div>
                                     </div>
-                                    <div class="flex flex-col gap-2 mt-2">  
+                                    <div class="flex flex-col gap-2 mt-2">
                                         <p class="text-xs tracking-widest font-light text-gray-500">SOCIALS</p>
                                         <div class="flex flex-wrap gap-2">
                                             <div v-for="social in socials" :key="social.name">
@@ -166,10 +166,10 @@ useJsonld([
                 <div class="relative z-10 -mt-[100px]">
                     <!-- 背景要素 -->
                      <div class="absolute top-0 left-0 md:left-[calc(50%-680px)] w-full md:w-[calc(50%+680px)] h-full bg-white md:shadow-[0_16px_38px_10px_rgba(0,0,0,0.05)] -z-10"></div>
-                
+
                     <div class="max-w-[1200px] mx-auto px-4 py-12 md:py-20">
                          <div class="w-full">
-                            
+
                             <!-- Snapshots -->
                             <div class="mb-12">
                                 <p class="text-sm text-gray-500 tracking-widest mb-3 font-light">SNAPSHOTS</p>
@@ -187,7 +187,7 @@ useJsonld([
                                     </div>
                                 </div>
                             </div>
-                            
+
 
                             <p
                                 class="mb-4 max-w-2xl text-2xl leading-none md:text-3xl xl:text-4xl text-primary font-semibold">
@@ -260,6 +260,14 @@ useJsonld([
     background-color: rgba(0, 0, 0, 0.1);
     background-color: rgba(0, 0, 0, 0.1);
     pointer-events: none;
+}
+
+/* 立ち絵の影: 近い順に濃いピンク → 遠いほど薄くなる */
+.character-shadow {
+    filter:
+        drop-shadow(5px -3px 0 #ff8fb0)
+        drop-shadow(10px -5px 0 #ffcada)
+        drop-shadow(17px -9px 0 #ffe3ed)
 }
 
 .mobile-text-outline {

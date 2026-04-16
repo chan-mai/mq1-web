@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-
 const props = defineProps<{
     /** クリップページの URL（例: https://misskey.example/clips/xxxxxxxx） */
     url: string;

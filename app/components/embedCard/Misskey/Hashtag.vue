@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-
 const props = defineProps<{
     /** ハッシュタグページの URL（例: https://misskey.example/tags/vue） */
     url: string;

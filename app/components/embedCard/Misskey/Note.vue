@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-
 const props = defineProps<{
     /** Note の URL（例: https://misskey.example/notes/xxxxxxxx） */
     url: string;

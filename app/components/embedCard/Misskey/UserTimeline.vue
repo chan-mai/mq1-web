@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { computed, ref, watchEffect } from 'vue';
-
 const props = defineProps<{
     /** ユーザーページの URL（例: https://misskey.example/@username） */
     url: string;

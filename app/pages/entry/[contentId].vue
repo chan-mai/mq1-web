@@ -248,12 +248,6 @@ const popularArticles = computed(() => popularData.value?.status === 'success' ?
                     />
                 </div>
                 
-                <!-- コメントセクション -->
-                <div class="mt-8 mb-8 w-full">
-                    <MqCommentSection :content-id="contentId" />
-                </div>
-
-
                 <!-- 人気の記事 -->
                 <div v-if="popularArticles.length" class="mt-6 w-full">
                     <PopularArticles :articles="popularArticles" />

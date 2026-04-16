@@ -51,12 +51,7 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  ArticleLike: 'ArticleLike',
-  Comments: 'Comments',
-  CommentLike: 'CommentLike',
-  AdminUser: 'AdminUser',
-  AdminPermission: 'AdminPermission',
-  FeedAccessLog: 'FeedAccessLog'
+  ArticleLike: 'ArticleLike'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -83,73 +78,6 @@ export const ArticleLikeScalarFieldEnum = {
 } as const
 
 export type ArticleLikeScalarFieldEnum = (typeof ArticleLikeScalarFieldEnum)[keyof typeof ArticleLikeScalarFieldEnum]
-
-
-export const CommentsScalarFieldEnum = {
-  id: 'id',
-  contentId: 'contentId',
-  name: 'name',
-  comment: 'comment',
-  userIp: 'userIp',
-  status: 'status',
-  parentCommentId: 'parentCommentId',
-  secret: 'secret',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  isEdited: 'isEdited',
-  isAdmin: 'isAdmin'
-} as const
-
-export type CommentsScalarFieldEnum = (typeof CommentsScalarFieldEnum)[keyof typeof CommentsScalarFieldEnum]
-
-
-export const CommentLikeScalarFieldEnum = {
-  id: 'id',
-  commentId: 'commentId',
-  userIp: 'userIp',
-  secret: 'secret',
-  createdAt: 'createdAt'
-} as const
-
-export type CommentLikeScalarFieldEnum = (typeof CommentLikeScalarFieldEnum)[keyof typeof CommentLikeScalarFieldEnum]
-
-
-export const AdminUserScalarFieldEnum = {
-  id: 'id',
-  githubUsername: 'githubUsername',
-  githubUserId: 'githubUserId',
-  displayName: 'displayName',
-  email: 'email',
-  avatarUrl: 'avatarUrl',
-  isActive: 'isActive',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type AdminUserScalarFieldEnum = (typeof AdminUserScalarFieldEnum)[keyof typeof AdminUserScalarFieldEnum]
-
-
-export const AdminPermissionScalarFieldEnum = {
-  id: 'id',
-  adminId: 'adminId',
-  permission: 'permission',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type AdminPermissionScalarFieldEnum = (typeof AdminPermissionScalarFieldEnum)[keyof typeof AdminPermissionScalarFieldEnum]
-
-
-export const FeedAccessLogScalarFieldEnum = {
-  id: 'id',
-  userAgent: 'userAgent',
-  readerType: 'readerType',
-  ipAddress: 'ipAddress',
-  referer: 'referer',
-  accessedAt: 'accessedAt'
-} as const
-
-export type FeedAccessLogScalarFieldEnum = (typeof FeedAccessLogScalarFieldEnum)[keyof typeof FeedAccessLogScalarFieldEnum]
 
 
 export const SortOrder = {

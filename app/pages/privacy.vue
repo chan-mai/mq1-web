@@ -92,10 +92,10 @@ useHead({
               <div class="flex items-start gap-3">
                 <Icon name="mdi:information" class="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
                 <div class="flex-1">
-                  <p class="font-semibold text-primary mb-2">コメント・いいね機能について</p>
+                  <p class="font-semibold text-primary mb-2">いいね機能について</p>
                   <p class="text-sm leading-relaxed text-primary">
-                    本サイトでは、記事へのコメント機能およびいいね機能を提供しております。これらの機能をご利用いただく際、不正利用の防止、スパム対策、および適切なサービス提供のため、ユーザーのIPアドレスを自動的に収集し、データベースに保存いたします。
-                    コメント機能では、ユーザーが入力された名前およびコメント内容とともにIPアドレスを保存いたします。IPアドレスは管理者のみが閲覧可能であり、一般には公開されません。
+                    本サイトでは、記事へのいいね機能を提供しております。いいね機能をご利用いただく際、不正利用の防止、スパム対策、および適切なサービス提供のため、ユーザーのIPアドレスを自動的に収集し、データベースに保存いたします。
+                    収集したIPアドレスはサービス運営の目的でのみ利用し、一般には公開されません。
                   </p>
                 </div>
               </div>
@@ -127,11 +127,7 @@ useHead({
             </li>
             <li class="flex items-start gap-3 px-3">
               <Icon name="mdi:check-circle" class="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-              <span class="text-gray-700">コメント機能およびいいね機能における不正利用の防止、スパム対策、重複投稿の防止、および適切なサービス運営のため</span>
-            </li>
-            <li class="flex items-start gap-3 px-3">
-              <Icon name="mdi:check-circle" class="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-              <span class="text-gray-700">コメントの承認・管理業務において、投稿者の識別および不適切な投稿への対応を行うため</span>
+              <span class="text-gray-700">いいね機能における不正利用の防止、スパム対策、および適切なサービス運営のため</span>
             </li>
           </ul>
         </section>

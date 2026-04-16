@@ -3,9 +3,6 @@ import { createClient } from "microcms-js-sdk";
 import * as cheerio from "cheerio";
 
 export default defineEventHandler(async (event) => {
-  // 非同期でアクセスログを記録
-  logFeedAccessAsync(event);
-
   const runtimeConfig = useRuntimeConfig();
   const siteName = runtimeConfig.public.siteName as string;
   const siteDescription = runtimeConfig.public.siteDescription as string;

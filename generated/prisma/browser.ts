@@ -22,28 +22,3 @@ export * from './enums';
  * 
  */
 export type ArticleLike = Prisma.ArticleLikeModel
-/**
- * Model Comments
- * 
- */
-export type Comments = Prisma.CommentsModel
-/**
- * Model CommentLike
- * 
- */
-export type CommentLike = Prisma.CommentLikeModel
-/**
- * Model AdminUser
- * 
- */
-export type AdminUser = Prisma.AdminUserModel
-/**
- * Model AdminPermission
- * 
- */
-export type AdminPermission = Prisma.AdminPermissionModel
-/**
- * Model FeedAccessLog
- * 
- */
-export type FeedAccessLog = Prisma.FeedAccessLogModel

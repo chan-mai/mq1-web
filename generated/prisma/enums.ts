@@ -9,23 +9,7 @@
 * 🟢 You can import this file directly.
 */
 
-export const CommentStatus = {
-  PENDING: 'PENDING',
-  APPROVED: 'APPROVED',
-  REJECTED: 'REJECTED'
-} as const
-
-export type CommentStatus = (typeof CommentStatus)[keyof typeof CommentStatus]
 
 
-export const Permission = {
-  COMMENT_VIEW: 'COMMENT_VIEW',
-  COMMENT_ADMIN: 'COMMENT_ADMIN',
-  LIKE_VIEW: 'LIKE_VIEW',
-  LIKE_ADMIN: 'LIKE_ADMIN',
-  ADMIN_USER_VIEW: 'ADMIN_USER_VIEW',
-  ADMIN_USER_ADMIN: 'ADMIN_USER_ADMIN',
-  FEED_STATS_VIEW: 'FEED_STATS_VIEW'
-} as const
-
-export type Permission = (typeof Permission)[keyof typeof Permission]
+// This file is empty because there are no enums in the schema.
+export {}

@@ -32,9 +32,6 @@ importers:
       '@nuxtjs/tailwindcss':
         specifier: 6.14.0
         version: 6.14.0(magicast@0.5.1)(tsx@4.21.0)(yaml@2.8.2)
-      '@nuxtjs/turnstile':
-        specifier: 1.1.1
-        version: 1.1.1(@nuxt/scripts@0.12.2(@googlemaps/markerclusterer@2.6.2)(@unhead/vue@2.1.10(vue@3.5.29(typescript@5.9.3)))(db0@0.3.4(@electric-sql/pglite@0.3.15)(mysql2@3.15.3))(ioredis@5.10.0)(magicast@0.5.1)(typescript@5.9.3)(vue@3.5.29(typescript@5.9.3)))(magicast@0.5.1)
       '@prisma/adapter-pg':
         specifier: ^7.2.0
         version: 7.4.2
@@ -80,9 +77,6 @@ importers:
       nuxt:
         specifier: ^4.2.2
         version: 4.3.1(@electric-sql/pglite@0.3.15)(@parcel/watcher@2.5.4)(@types/node@25.0.9)(@vue/compiler-sfc@3.5.29)(cac@6.7.14)(db0@0.3.4(@electric-sql/pglite@0.3.15)(mysql2@3.15.3))(ioredis@5.10.0)(magicast@0.5.1)(mysql2@3.15.3)(rollup@4.59.0)(terser@5.46.0)(tsx@4.21.0)(typescript@5.9.3)(vite@7.3.1(@types/node@25.0.9)(jiti@2.6.1)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))(vue-tsc@3.2.5(typescript@5.9.3))(yaml@2.8.2)
-      nuxt-auth-utils:
-        specifier: ^0.5.27
-        version: 0.5.29(magicast@0.5.1)
       nuxt-gtag:
         specifier: 4.1.0
         version: 4.1.0(magicast@0.5.1)

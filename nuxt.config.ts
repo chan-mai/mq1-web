@@ -34,8 +34,6 @@ export default defineNuxtConfig({
     "nuxt-gtag",
     "@nuxtjs/sitemap",
     "@nuxt/image",
-    "@nuxtjs/turnstile",
-    "nuxt-auth-utils",
     "nuxt-jsonld",
     "@nuxtjs/critters",
     "@vite-pwa/nuxt",
@@ -70,22 +68,6 @@ export default defineNuxtConfig({
         apiKey: process.env.MICROCMS_API_KEY,
       },
     },
-    turnstile: {
-      secretKey: process.env.TURNSTILE_SECRET_KEY,
-    },
-    oauth: {
-      github: {
-        clientId: process.env.GITHUB_CLIENT_ID,
-        clientSecret: process.env.GITHUB_SECRET,
-      },
-    },
-    discord: {
-      webhookUrl: process.env.DISCORD_WEBHOOK_URL,
-    },
-    adminCommentCredential: process.env.ADMIN_COMMENT_CREDENTIAL,
-  },
-  turnstile: {
-    siteKey: process.env.TURNSTILE_SITE_KEY,
   },
   routeRules: {
     "/about": { prerender: true },

@@ -11,7 +11,6 @@
     "postinstall": "prisma generate && nuxt prepare"
   },
   "dependencies": {
-    "@misskey-dev/vue-misskey-embed": "git+https://github.com/misskey-dev/vue-misskey-embed.git#b8e64b3dda0a29b7308c2baf940553a4d8f75d3e",
     "@nuxt/icon": "2.1.0",
     "@nuxt/image": "2.0.0",
     "@nuxt/scripts": "^0.12.2",

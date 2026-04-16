@@ -6,27 +6,12 @@ RUN corepack enable
 COPY . /app
 WORKDIR /app
 
-# Build misskey embed dependency
-FROM node:24-slim AS misskey-embed-build
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-RUN apt-get update -y && apt-get install -y openssl git
-RUN corepack enable
-WORKDIR /app
-RUN git clone https://github.com/misskey-dev/vue-misskey-embed.git
-WORKDIR /app/vue-misskey-embed
-RUN git checkout b8e64b3
-RUN pnpm install && pnpm run build
 
 FROM base AS prod-deps
 RUN pnpm install --prod --frozen-lockfile
-# Copy built artifact to node_modules
-COPY --from=misskey-embed-build /app/vue-misskey-embed/dist /app/node_modules/@misskey-dev/vue-misskey-embed/dist
 
 FROM base AS build
 RUN pnpm install --frozen-lockfile
-# Copy built artifact to node_modules
-COPY --from=misskey-embed-build /app/vue-misskey-embed/dist /app/node_modules/@misskey-dev/vue-misskey-embed/dist
 
 ARG DATABASE_URL
 ARG DISCORD_WEBHOOK_URL

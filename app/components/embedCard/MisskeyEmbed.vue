@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import { Note, Clip, Hashtag, UserTimeline } from '@misskey-dev/vue-misskey-embed';
+// 各 Misskey 埋め込みコンポーネントへのディスパッチャ
+// preview.type によって適切なサブコンポーネントに委譲する
+import Note from './Misskey/Note.vue';
+import Hashtag from './Misskey/Hashtag.vue';
+import UserTimeline from './Misskey/UserTimeline.vue';
+import Clip from './Misskey/Clip.vue';
 
 defineProps<{
     preview: LinkPreviewResponse;

@@ -1,18 +1,33 @@
+import { count, eq } from "drizzle-orm";
+import { articleLikes } from "~~/server/db/schema";
+import { getD1Drizzle } from "~~/server/utils/d1";
+
 export default defineEventHandler(async (event) => {
   const contentId = getRouterParam(event, "contentId");
   const userIp = getHeader(event, "x-forwarded-for");
 
+  if (!contentId) {
+    return {
+      status: "error",
+      message: "Content ID is required",
+      userIp,
+    };
+  }
+
   try {
+    const db = getD1Drizzle(event);
+
     // likeからcontentIdが一致するものの件数を取得
-    const count = await prisma.articleLike.count({
-      where: {
-        contentId,
-      },
-    });
-  
+    const rows = await db
+      .select({ count: count(articleLikes.id) })
+      .from(articleLikes)
+      .where(eq(articleLikes.contentId, contentId))
+      .limit(1);
+    const likeCount = Number(rows[0]?.count ?? 0);
+
     return {
       status: "success",
-      count,
+      count: likeCount,
       userIp,
     }
 

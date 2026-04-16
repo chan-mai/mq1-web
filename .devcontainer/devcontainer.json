@@ -21,7 +21,6 @@
         "Vue.volar",
         "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode",
-        "Prisma.prisma",
         "bradlc.vscode-tailwindcss",
         "ms-azuretools.vscode-docker"
       ],
@@ -42,15 +41,11 @@
   },
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally
-  "forwardPorts": [3000, 26257],
+  "forwardPorts": [3000],
   "portsAttributes": {
     "3000": {
       "label": "Nuxt Dev Server",
       "onAutoForward": "notify"
-    },
-    "26257": {
-      "label": "CockroachDB",
-      "onAutoForward": "silent"
     }
   },
 
@@ -61,10 +56,5 @@
   // "postStartCommand": "",
 
   // Comment out to connect as root instead
-  "remoteUser": "node",
-
-  // Set environment variables
-  "remoteEnv": {
-    "DATABASE_URL": "postgresql://root@db:26257/defaultdb?sslmode=disable"
-  }
+  "remoteUser": "node"
 }

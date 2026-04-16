@@ -1,5 +1,8 @@
 import { createClient } from "microcms-js-sdk";
 import type { MicroCMSObject } from "#shared/types/microccms";
+import { desc, sql } from "drizzle-orm";
+import { articleLikes } from "~~/server/db/schema";
+import { getD1Drizzle } from "~~/server/utils/d1";
 
 export default defineEventHandler(async (event) => {
   try {
@@ -18,28 +21,19 @@ export default defineEventHandler(async (event) => {
     });
 
     const limit = 5;
-    // 直近30日間のいいねを集計
-    const since = new Date();
-    since.setDate(since.getDate() - 30);
-
     // 人気記事ID取得
-    const topArticles = await prisma.articleLike.groupBy({
-      by: ['contentId'],
-      _count: {
-        contentId: true,
-      },
-      where: {
-        createdAt: {
-          gte: since,
-        },
-      },
-      orderBy: {
-        _count: {
-          contentId: 'desc',
-        },
-      },
-      take: limit,
-    });
+    const db = getD1Drizzle(event);
+    const likeCountExpr = sql<number>`count(*)`;
+    const topArticles = await db
+      .select({
+        contentId: articleLikes.contentId,
+        likeCount: likeCountExpr,
+      })
+      .from(articleLikes)
+      .where(sql`${articleLikes.createdAt} >= datetime('now', '-30 days')`)
+      .groupBy(articleLikes.contentId)
+      .orderBy(desc(likeCountExpr))
+      .limit(limit);
 
     let articles: (MicroCMSObject<Article> & { likeCount: number })[] = [];
 
@@ -58,10 +52,10 @@ export default defineEventHandler(async (event) => {
          articles = ids.map((id) => {
             const article = response.contents.find(c => c.id === id);
             if (!article) return null;
-            const meta = topArticles.find(p => p.contentId === id);
+            const meta = topArticles.find((p) => p.contentId === id);
             return {
                 ...article,
-                likeCount: meta?._count.contentId || 0
+                likeCount: Number(meta?.likeCount || 0)
             };
         }).filter((item): item is (MicroCMSObject<Article> & { likeCount: number }) => item !== null);
     }

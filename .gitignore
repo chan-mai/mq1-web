@@ -28,3 +28,5 @@ logs
 
 test-temp
 articles
+
+scripts/migration-data/

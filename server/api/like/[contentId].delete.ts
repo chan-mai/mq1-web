@@ -1,10 +1,13 @@
-import { articleExists } from "~~/server/utils/article";
 import { verifySecret } from "~~/server/utils/hashing";
+import { and, eq } from "drizzle-orm";
+import { articleLikes } from "~~/server/db/schema";
+import { getD1Drizzle } from "~~/server/utils/d1";
 
 export default defineEventHandler(async (event) => {
   const contentId = getRouterParam(event, "contentId");
   const userIp = getHeader(event, "x-forwarded-for");
-  
+  let requestLikeId: string | undefined;
+
   if (!contentId) {
     return {
       status: "error",
@@ -13,34 +16,37 @@ export default defineEventHandler(async (event) => {
     };
   }
 
-  const body = await readBody(event) || {};
-  const { id, secret } = body;
-
-  if (!id || !secret || typeof id !== 'string' || typeof secret !== 'string') {
-    throw createError({
-        statusCode: 400,
-        statusMessage: "Bad Request",
-        message: "Like ID and secret are required and must be strings",
-    });
-  }
-
-  const exists = await articleExists(contentId);
-  if (!exists) {
-    return {
-      status: "error",
-      message: "Article not found",
-      userIp,
-    };
-  }
-
   try {
+    // NOTE: Nitro(v2.13)のrequestHasBodyはPOST/PUT/PATCHのみ真を返すため、Workers上ではDELETEのBodyがh3のreadBodyまで届かず、`await readBody(event)`が解決されないPromiseのまま死ぬ
+    const cfRequest = (event.context as any)?.cloudflare?.request as Request | undefined;
+    const body = cfRequest
+      ? await cfRequest.clone().json().catch(() => ({}))
+      : ((await readBody(event)) || {});
+    const { id, secret } = body as { id?: string; secret?: string };
+    requestLikeId = id;
+    if (!id || !secret || typeof id !== "string" || typeof secret !== "string") {
+      return {
+        status: "error",
+        message: "Like ID and secret are required and must be strings",
+        userIp,
+      };
+    }
+
+    const db = getD1Drizzle(event);
+
     // まず該当のいいねが存在するか確認
-    const existingLike = await prisma.articleLike.findFirst({
-      where: {
-        id,
-        contentId,
-      },
-    });
+    const existingLikeRows = await db
+      .select({
+        id: articleLikes.id,
+        contentId: articleLikes.contentId,
+        secret: articleLikes.secret,
+      })
+      .from(articleLikes)
+      .where(
+        and(eq(articleLikes.id, id), eq(articleLikes.contentId, contentId)),
+      )
+      .limit(1);
+    const existingLike = existingLikeRows[0];
 
     if (!existingLike) {
       return {
@@ -61,11 +67,9 @@ export default defineEventHandler(async (event) => {
     }
 
     // いいねを削除
-    await prisma.articleLike.delete({
-      where: {
-        id,
-      },
-    });
+    await db
+      .delete(articleLikes)
+      .where(and(eq(articleLikes.id, id), eq(articleLikes.contentId, contentId)));
 
     return {
       status: "success",
@@ -77,7 +81,7 @@ export default defineEventHandler(async (event) => {
     return {
       status: "error",
       message: "Failed to delete like",
-      id,
+      id: requestLikeId,
       userIp,
     };
   }

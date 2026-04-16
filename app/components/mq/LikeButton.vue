@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { ArticleLike } from '../../../generated/prisma/browser';
-
 const props = withDefaults(defineProps<{
   contentId: string;
   variant?: 'default' | 'icon-only';

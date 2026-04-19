@@ -78,6 +78,9 @@ export default defineNuxtConfig({
       gzip: true,
       brotli: true,
     },
+    prerender: {
+      failOnError: false,
+    },
     routeRules: {
       "/**": {
         headers: {

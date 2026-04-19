@@ -1,5 +1,4 @@
 import * as cheerio from 'cheerio';
-import dns from 'node:dns/promises';
 import { isValidPublicIp } from '~~/server/utils/ip';
 
 const MISSKEY_CHECK_TIMEOUT_MS = 5000;
@@ -94,7 +93,8 @@ export default defineEventHandler(async (event): Promise<LinkPreviewResponse> =>
         };
 
         try {
-            const addresses = await dns.lookup(hostname, { all: true });
+            const { lookup } = await import('node:dns/promises');
+            const addresses = await lookup(hostname, { all: true });
             if (!addresses.length) return set(false);
             if (!addresses.every(a => isValidPublicIp(a.address))) return set(false);
         } catch {

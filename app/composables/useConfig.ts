@@ -76,7 +76,7 @@ export const useWebConfig = (): ComputedRef<WebConfig> => {
     socials: {
       misskey: {
         name: "Misskey",
-        url: "https://shahu.ski/@mai_llj",
+        url: "https://misskey.blue/@mai_llj",
         icon: "simple-icons:misskey",
         color: "lime-400",
         isFixed: true,

@@ -108,10 +108,11 @@ useJsonld({
                 <MqLoading v-if="status === 'pending'" />
                 <template v-else>
                     <div v-if="articles?.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <ArticlesCard 
-                            v-for="article in articles" 
-                            :key="article.id" 
-                            :article="article" 
+                        <ArticlesCard
+                            v-for="article in articles"
+                            :key="article.id"
+                            :article="article"
+                            :transition="true"
                         />
                     </div>
                     <div v-else class="flex flex-col items-center justify-center gap-4">

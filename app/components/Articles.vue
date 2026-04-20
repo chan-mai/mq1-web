@@ -47,7 +47,7 @@ function navigateToTag(tag: any) {
 
             <!-- Articles -->
             <div class="space-y-8">
-                    <div v-for="(article, index) in limitedArticles" :key="index" class="relative">
+                    <div v-for="(article, index) in limitedArticles" :key="article.id" class="relative">
                         <div :class="`absolute left-0 top-0 flex items-center justify-center w-7 h-7 rounded-full z-10 
                 ${index === 0 ? 'bg-primary' : 'border-2 border-primary bg-white'}`">
                             <span class="text-xs text-gray-500"></span>

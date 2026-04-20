@@ -49,6 +49,13 @@ const { data: articlesResponse } = await useAsyncData<MicroCMSObject<Article[]>>
 });
 if (articlesResponse.value) articles.value = articlesResponse.value.contents;
 
+const regularArticles = computed(() => {
+    const pinnedIds = new Set(
+        (globalResponse.value?.pinned_articles ?? []).map((a: any) => a.id)
+    );
+    return (articles.value ?? []).filter(a => !pinnedIds.has(a.id));
+});
+
 const config = useWebConfig();
 const pageTitle = config.value.siteName;
 const pageDescription = config.value.siteDescription;
@@ -157,13 +164,13 @@ const interestTags = ['engineering', 'creative', 'cats', 'pastel'];
                             </div>
 
                             <!-- 通常記事エリア -->
-                            <div v-if="articles" class="w-full">
+                            <div v-if="regularArticles.length" class="w-full">
                                 <p class="mb-4 flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-gray-400">
                                     <Icon name="lucide:notebook-pen" class="h-3.5 w-3.5" />
                                     Archives
                                 </p>
                                 <div class="-mx-4 md:mx-0">
-                                    <Articles v-if="articles" limit="5" :articles :loading="false" :transition="true" :tag-transition="false" />
+                                    <Articles limit="5" :articles="regularArticles" :loading="false" :transition="true" :tag-transition="false" />
                                 </div>
                             </div>
                             <div v-else class="flex flex-col items-center justify-center gap-4 py-10 bg-gray-50 rounded-lg">

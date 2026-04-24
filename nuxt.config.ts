@@ -38,6 +38,7 @@ export default defineNuxtConfig({
     "@nuxtjs/critters",
     "@vite-pwa/nuxt",
     "@nuxtjs/robots",
+    "@nuxt/scripts",
   ],
   tailwindcss: {
     config: {

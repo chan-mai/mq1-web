@@ -70,8 +70,12 @@ export default defineNuxtConfig({
     },
   },
   routeRules: {
+    "/": { prerender: true },
     "/about": { prerender: true },
     "/privacy": { prerender: true },
+    "/articles": { prerender: true },
+    "/entry/**": { prerender: true },
+    "/tag/**": { prerender: true },
   },
   nitro: {
     compressPublicAssets: {
@@ -90,6 +94,25 @@ export default defineNuxtConfig({
           "Referrer-Policy": "strict-origin-when-cross-origin",
         },
       },
+    },
+  },
+  hooks: {
+    async 'nitro:config'(nitroConfig: any) {
+      if (!process.env.MICROCMS_SERVICE_DOMAIN || !process.env.MICROCMS_API_KEY) return;
+      const client = createClient({
+        serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN!,
+        apiKey: process.env.MICROCMS_API_KEY!,
+      });
+      const [articles, tags] = await Promise.all([
+        client.getAllContents({ endpoint: "articles" }),
+        client.getAllContents({ endpoint: "tags" }),
+      ]);
+      nitroConfig.prerender = nitroConfig.prerender || {};
+      nitroConfig.prerender.routes = [
+        ...((nitroConfig.prerender.routes as string[]) || []),
+        ...articles.map((a: any) => `/entry/${a.id}`),
+        ...tags.map((t: any) => `/tag/${t.slug}`),
+      ];
     },
   },
   experimental: {

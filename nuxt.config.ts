@@ -56,8 +56,15 @@ export default defineNuxtConfig({
     enabled: process.env.NODE_ENV === 'production',
     id: process.env.GA_TRACKING_ID,
   },
+  scripts: {
+    registry: {
+      clarity: {
+        id: 'wgvzak7jwb',
+        trigger: 'onNuxtReady',
+      }
+    }
+  },
   runtimeConfig: {
-    // サーバーサイドのみで使用する設定
     public: {
       siteName: "まいの雑記帳",
       siteDescription: "ちっちゃなうぇぶさいと",

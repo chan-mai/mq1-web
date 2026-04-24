@@ -169,10 +169,16 @@ useHead({
             </div>
             <h2 class="text-2xl md:text-3xl text-primary">アクセス解析ツールについて</h2>
           </div>
-          <p class="leading-relaxed text-gray-700">
-            本サイトでは、Googleによるアクセス解析ツール「Googleアナリティクス」を使用しています。このGoogleアナリティクスはデータの収集のためにCookieを使用しています。このデータは匿名で収集されており、個人を特定するものではありません。
-            この機能はCookieを無効にすることで収集を拒否することが出来ますので、お使いのブラウザの設定をご確認ください。この規約に関しての詳細は<NuxtLink class="text-primary underline hover:text-primary/80 transition-colors" to="https://marketingplatform.google.com/about/analytics/terms/jp/" target="_blank">Google アナリティクス利用規約</NuxtLink>や<NuxtLink class="text-primary underline hover:text-primary/80 transition-colors" to="https://policies.google.com/technologies/ads?hl=ja" target="_blank">Google ポリシーと規約</NuxtLink>をご覧ください。
-          </p>
+          <div class="space-y-4">
+            <p class="leading-relaxed text-gray-700">
+              本サイトでは、Googleによるアクセス解析ツール「Googleアナリティクス」を使用しています。このGoogleアナリティクスはデータの収集のためにCookieを使用しています。このデータは匿名で収集されており、個人を特定するものではありません。
+              この機能はCookieを無効にすることで収集を拒否することが出来ますので、お使いのブラウザの設定をご確認ください。この規約に関しての詳細は<NuxtLink class="text-primary underline hover:text-primary/80 transition-colors" to="https://marketingplatform.google.com/about/analytics/terms/jp/" target="_blank">Google アナリティクス利用規約</NuxtLink>や<NuxtLink class="text-primary underline hover:text-primary/80 transition-colors" to="https://policies.google.com/technologies/ads?hl=ja" target="_blank">Google ポリシーと規約</NuxtLink>をご覧ください。
+            </p>
+            <p class="leading-relaxed text-gray-700">
+              また、本サイトでは、Microsoftによる行動分析ツール「Microsoft Clarity」を使用しています。Microsoft Clarityはヒートマップやセッション録画などの機能を通じて、ユーザーが本サイトをどのように利用しているかを分析するためにCookieを使用しています。このデータは匿名で収集されており、個人を特定するものではありません。
+              この機能はCookieを無効にすることで収集を拒否することが出来ますので、お使いのブラウザの設定をご確認ください。詳細については<NuxtLink class="text-primary underline hover:text-primary/80 transition-colors" to="https://privacy.microsoft.com/ja-jp/privacystatement" target="_blank">Microsoft プライバシーに関する声明</NuxtLink>をご覧ください。
+            </p>
+          </div>
         </section>
       </div>
     </div>

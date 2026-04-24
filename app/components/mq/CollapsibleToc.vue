@@ -19,6 +19,7 @@ const props = defineProps({
 
 const isOpen = ref(props.items.length > 0);
 const expandedSections = ref({});
+const activeId = ref(null);
 
 // 初期化時にすべてのセクションを展開状態にする
 const initializeExpandedSections = () => {
@@ -91,9 +92,34 @@ function isExpanded(itemId) {
   return !!expandedSections.value[itemId];
 }
 
-// コンポーネントがマウントされた時に初期化
+function isActive(id) {
+  return activeId.value === id;
+}
+
+const updateActiveId = () => {
+  const scrollPosition = window.scrollY + 120;
+  const headingElements = props.items
+    .map(item => document.getElementById(item.id))
+    .filter(Boolean);
+
+  let active = null;
+  for (const el of headingElements) {
+    const top = el.getBoundingClientRect().top + window.scrollY;
+    if (top <= scrollPosition) {
+      active = el;
+    }
+  }
+  activeId.value = active?.id ?? (headingElements[0]?.id ?? null);
+};
+
 onMounted(() => {
   initializeExpandedSections();
+  window.addEventListener('scroll', updateActiveId, { passive: true });
+  updateActiveId();
+});
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', updateActiveId);
 });
 </script>
 
@@ -107,8 +133,8 @@ onMounted(() => {
             </div>
           <h2 class="text-sm font-bold text-gray-700 tracking-wide uppercase">目次</h2>
         </div>
-        <button 
-            class="text-gray-400 hover:text-gray-600 transition-colors p-1 flex items-center justify-center aspect-square size-8 rounded-md border-none hover:bg-gray-100" 
+        <button
+            class="text-gray-400 hover:text-gray-600 transition-colors p-1 flex items-center justify-center aspect-square size-8 rounded-md border-none hover:bg-gray-100"
             @click="isOpen = !isOpen"
             :aria-expanded="isOpen"
         >
@@ -121,24 +147,30 @@ onMounted(() => {
         <ol v-show="isOpen" class="space-y-1 list-none m-0 p-0">
           <li v-for="item in nestedItems" :key="item.id">
             <div class="flex items-center justify-center group">
-                <button 
-                    v-if="item.children.length" 
-                    @click="toggleSection(item.id)" 
+                <button
+                    v-if="item.children.length"
+                    @click="toggleSection(item.id)"
                     class="flex items-center justify-center size-6 mr-0.5 mt-[1px] rounded hover:bg-black/5 cursor-pointer border-none bg-transparent"
                     :aria-label="isExpanded(item.id) ? '目次の折りたたみ' : '目次の展開'"
                     :aria-expanded="isExpanded(item.id)"
                 >
-                  <Icon 
-                    name="lucide:chevron-right" 
+                  <Icon
+                    name="lucide:chevron-right"
                     class="h-3.5 w-3.5 text-gray-400 transition-transform duration-200"
-                    :class="{ 'rotate-90': isExpanded(item.id) }" 
+                    :class="{ 'rotate-90': isExpanded(item.id) }"
                   />
                 </button>
                 <span v-else class="w-6 shrink-0"></span> <!-- Spacer for alignment -->
-                
+
                 <NuxtLink :to="`#${item.id}`" class="flex items-start flex-1 py-1.5">
-                  <span class="font-mono text-xs text-gray-400 mr-2 shrink-0 group-hover:text-primary transition-colors mt-0.5">{{ item.counter }}</span>
-                  <span class="text-sm text-gray-700 line-clamp-1 md:line-clamp-2 group-hover:text-gray-900 group-hover:text-primary group-hover:underline decoration-1 decoration-primary underline-offset-4 transition-all">{{ item.text }}</span>
+                  <span
+                    class="font-mono text-xs mr-2 shrink-0 transition-colors mt-0.5"
+                    :class="isActive(item.id) ? 'text-primary' : 'text-gray-400 group-hover:text-primary'"
+                  >{{ item.counter }}</span>
+                  <span
+                    class="text-sm line-clamp-1 md:line-clamp-2 decoration-1 decoration-primary underline-offset-4 transition-all"
+                    :class="isActive(item.id) ? 'text-primary underline bg' : 'text-gray-700 group-hover:text-gray-900 group-hover:text-primary group-hover:underline'"
+                  >{{ item.text }}</span>
                 </NuxtLink>
             </div>
 
@@ -148,8 +180,14 @@ onMounted(() => {
                   <li v-for="child in item.children" :key="child.id">
                     <div class="flex items-center justify-center group pl-4">
                         <NuxtLink :to="`#${child.id}`" class="flex items-start flex-1 py-1">
-                            <span class="font-mono text-[10px] text-gray-300 mr-2 shrink-0 group-hover:text-primary transition-colors mt-0.5">{{ child.counter }}</span>
-                            <span class="text-sm text-gray-600 line-clamp-1 md:line-clamp-2 group-hover:text-gray-900 group-hover:text-primary group-hover:underline decoration-1 decoration-primary underline-offset-4 transition-all">{{ child.text }}</span>
+                            <span
+                              class="font-mono text-[10px] mr-2 shrink-0 transition-colors mt-0.5"
+                              :class="isActive(child.id) ? 'text-primary' : 'text-gray-300 group-hover:text-primary'"
+                            >{{ child.counter }}</span>
+                            <span
+                              class="text-sm line-clamp-1 md:line-clamp-2 decoration-1 decoration-primary underline-offset-4 transition-all"
+                              :class="isActive(child.id) ? 'text-primary font-medium underline' : 'text-gray-600 group-hover:text-gray-900 group-hover:text-primary group-hover:underline'"
+                            >{{ child.text }}</span>
                         </NuxtLink>
                     </div>
 
@@ -159,8 +197,14 @@ onMounted(() => {
                         <li v-for="grandChild in child.children" :key="grandChild.id">
                           <div class="flex items-center justify-center group pl-4">
                             <NuxtLink :to="`#${grandChild.id}`" class="flex items-start flex-1 py-1">
-                                <span class="font-mono text-[10px] text-gray-300 mr-2 shrink-0 group-hover:text-primary transition-colors mt-0.5">{{ grandChild.counter }}</span>
-                                <span class="text-xs text-gray-500 line-clamp-1 md:line-clamp-2 group-hover:text-gray-800 transition-colors">{{ grandChild.text }}</span>
+                                <span
+                                  class="font-mono text-[10px] mr-2 shrink-0 transition-colors mt-0.5"
+                                  :class="isActive(grandChild.id) ? 'text-primary' : 'text-gray-300 group-hover:text-primary'"
+                                >{{ grandChild.counter }}</span>
+                                <span
+                                  class="text-xs line-clamp-1 md:line-clamp-2 transition-colors"
+                                  :class="isActive(grandChild.id) ? 'text-primary font-medium underline decoration-1 decoration-primary underline-offset-4' : 'text-gray-500 group-hover:text-gray-800'"
+                                >{{ grandChild.text }}</span>
                             </NuxtLink>
                           </div>
                         </li>
@@ -229,4 +273,3 @@ nav:hover::-webkit-scrollbar-thumb {
 }
 
 </style>
-

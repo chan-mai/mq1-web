@@ -8,6 +8,7 @@ defineProps({
 });
 
 const config = useWebConfig();
+const { proxy } = useScriptGoogleAnalytics();
 const rss = config.value.rss;
 
 const isOpen = ref(false);
@@ -16,7 +17,7 @@ const isVisibleRssFeedCopyTooltip = ref<boolean>(false)
 const rssFeedCopy = () => {
     // RSSフィードのURLをクリップボードにコピー
     navigator.clipboard.writeText(config.value.rss.url).then(() => {
-        useTrackEvent('feed_subscribed');
+        proxy.gtag('event', 'feed_subscribed');
         useToast().success({
             title: 'RSSフィードのURLをコピーしました！',
         });

@@ -7,6 +7,7 @@ const props = withDefaults(defineProps<{
 });
 
 const toast = useToast();
+const { proxy } = useScriptGoogleAnalytics();
 
 // いいね数
 const likeCount = useState<number>(`like:${props.contentId}:count`, () => 0);
@@ -66,21 +67,21 @@ const fetchLikeCount = async () => {
 // いいねを追加
 const addLike = async () => {
   if (isLoading.value) return;
-  
+
   isLoading.value = true;
-  
+
   try {
     const response = await $fetch<{ status: string; like?: ArticleLike; message?: string }>(`/api/like/${props.contentId}`, {
       method: 'PUT',
     });
-    
+
     if (response.status === 'success' && response.like) {
-      useTrackEvent('like_added', { contentId: props.contentId });
+      proxy.gtag('event', 'like_added', { contentId: props.contentId });
       // 成功
       isLiked.value = true;
       likeId.value = response.like.id;
       likeCount.value += 1;
-      
+
       // シークレットをIndexedDBに保存
       if (response.like.secret) {
         await saveArticleLikeSecret(props.contentId, {
@@ -88,7 +89,7 @@ const addLike = async () => {
           likeId: response.like.id
         });
       }
-      
+
       // ありがとう表示
       currentCatImageUrl.value = preloadedCatUrl.value || catApiUrl;
       preloadedCatUrl.value = null; // 使い切り
@@ -106,7 +107,7 @@ const addLike = async () => {
       }, 5000);
       // 次回用に再プリロード
       preloadCatImage();
-      
+
     } else if (response.status === 'error') {
       // エラー
       toast.error({
@@ -127,9 +128,9 @@ const addLike = async () => {
 // いいねを解除
 const removeLike = async () => {
   if (isLoading.value || !likeId.value) return;
-  
+
   isLoading.value = true;
-  
+
   try {
     // 保存されたシークレットを取得
     const secretData = await getArticleLikeSecret(props.contentId);
@@ -141,7 +142,7 @@ const removeLike = async () => {
       });
       return;
     }
-    
+
     const response = await $fetch<{ status: string; message?: string }>(`/api/like/${props.contentId}`, {
       method: 'DELETE',
       body: {
@@ -149,17 +150,17 @@ const removeLike = async () => {
         secret: secretData?.secret
       }
     });
-    
+
     if (response.status === 'success') {
-      useTrackEvent('like_removed', { contentId: props.contentId });
+      proxy.gtag('event', 'like_removed', { contentId: props.contentId });
       // 成功
       isLiked.value = false;
       likeId.value = null;
       likeCount.value = Math.max(0, likeCount.value - 1);
-      
+
       // IndexedDBから削除
       await removeArticleLikeSecret(props.contentId);
-      
+
       toast.success({
         title: 'いいね！を解除しました',
       });
@@ -210,7 +211,7 @@ onMounted(async () => {
     isLiked.value = true;
     likeId.value = secretData.likeId;
   }
-  
+
   // いいね数を取得
   fetchLikeCount();
   // backgroundで猫をロード
@@ -238,7 +239,7 @@ onMounted(async () => {
         :title="isLiked ? 'クリックでいいね！を解除' : 'この記事にいいね！'"
       >
         <!-- ローディング中はスピナーを表示 -->
-        <Icon 
+        <Icon
           v-if="isLoading || isInitialLoading"
           name="mdi:loading"
           class="w-5 h-5 flex-shrink-0 animate-spin"
@@ -246,8 +247,8 @@ onMounted(async () => {
         <!-- 通常時はハートアイコン -->
         <span v-else class="relative inline-flex items-center justify-center">
           <span v-if="justLiked" class="absolute inline-flex w-6 h-6 rounded-full bg-pink-400/40 opacity-60 animate-ping"></span>
-          <Icon 
-            :name="isLiked ? 'mdi:heart' : 'mdi:heart-outline'" 
+          <Icon
+            :name="isLiked ? 'mdi:heart' : 'mdi:heart-outline'"
             :class="[
               'w-5 h-5 flex-shrink-0 transition-transform group-hover:scale-110',
               isLiked ? 'text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.35)]' : 'text-pink-500',
@@ -258,12 +259,12 @@ onMounted(async () => {
         <span v-if="variant !== 'icon-only'" class="whitespace-nowrap font-medium">
           {{ isInitialLoading ? '取得中' :  isLoading ? '処理中...' : isLiked ? 'いいね！済み' : 'いいね！する' }}
         </span>
-        <span 
+        <span
           v-if="!isInitialLoading && variant !== 'icon-only'"
           :class="[
             'ml-1 px-2 py-0.5 rounded-full text-xs font-bold',
-            isLiked 
-              ? 'bg-white/25 text-white' 
+            isLiked
+              ? 'bg-white/25 text-white'
               : 'bg-gray-100 text-gray-700 group-hover:bg-pink-100 group-hover:text-pink-700'
           ]"
         >
@@ -271,12 +272,12 @@ onMounted(async () => {
         </span>
       </button>
     </div>
-    
+
     <!-- アイコンのみモード用のカウント表示 -->
     <div v-if="variant === 'icon-only' && !isInitialLoading" class="text-xs font-bold text-gray-500 text-center w-full">
          {{ likeCount }}
     </div>
-    
+
     <!-- いいねありがとう -->
     <transition
       enter-active-class="transition duration-300 ease-out"
@@ -317,4 +318,3 @@ onMounted(async () => {
   animation: like-pop 300ms ease-out;
 }
 </style>
-

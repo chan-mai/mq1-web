@@ -74,9 +74,6 @@ importers:
       nuxt:
         specifier: ^4.2.2
         version: 4.3.1(22ada23fcc9fd1648624232a81162eb3)
-      nuxt-gtag:
-        specifier: 4.1.0
-        version: 4.1.0(magicast@0.5.1)
       nuxt-jsonld:
         specifier: ^2.2.1
         version: 2.2.1
@@ -4306,9 +4303,6 @@ packages:
 
   nth-check@2.1.1:
     resolution: {integrity: sha512-lqjrjmaOoAnWfMmBPL+XNnynZh2+swxiX3WUE0s4yEHI6m+AwrK2UZOimIRl3X/4QctVqS8AiZjFqyOGrMXb/w==}
-
-  nuxt-gtag@4.1.0:
-    resolution: {integrity: sha512-2TL7RUA8N8NYGbY4UZ9IqKyMZMgO9cCGu6yqadUU8RF+Y81PXI+k+1giIA11XXStaJoGXaXeNsBUIJXn1tUy3A==}
 
   nuxt-jsonld@2.2.1:
     resolution: {integrity: sha512-V5y8NXr+rICH+JyQl/AThYzDXMpKM/IND0NKy6k/79Q2yU9UP1AmgbNHDesjMXbMHLyPxwMVqUP2q9WpL3/zMw==}
@@ -10662,15 +10656,6 @@ snapshots:
   nth-check@2.1.1:
     dependencies:
       boolbase: 1.0.0
-
-  nuxt-gtag@4.1.0(magicast@0.5.1):
-    dependencies:
-      '@nuxt/kit': 4.2.2(magicast@0.5.1)
-      defu: 6.1.4
-      pathe: 2.0.3
-      ufo: 1.6.3
-    transitivePeerDependencies:
-      - magicast
 
   nuxt-jsonld@2.2.1:
     dependencies:

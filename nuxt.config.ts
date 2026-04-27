@@ -31,7 +31,6 @@ export default defineNuxtConfig({
     "@nuxtjs/tailwindcss",
     "@vueuse/nuxt",
     "@nuxt/icon",
-    "nuxt-gtag",
     "@nuxtjs/sitemap",
     "@nuxt/image",
     "nuxt-jsonld",
@@ -53,15 +52,11 @@ export default defineNuxtConfig({
       },
     },
   },
-  gtag: {
-    enabled: process.env.NODE_ENV === 'production',
-    id: process.env.GA_TRACKING_ID,
-  },
-  scripts: {
-    registry: {
-      clarity: {
-        id: 'wgvzak7jwb',
-        trigger: 'onNuxtReady',
+  $production: {
+    scripts: {
+      registry: {
+        clarity: [{ id: 'wgvzak7jwb' }, { trigger: 'onNuxtReady' }],
+        googleAnalytics: [{ id: 'G-ZHPDFE19FX'}, { trigger: 'onNuxtReady' }],
       }
     }
   },

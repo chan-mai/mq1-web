@@ -38,7 +38,6 @@
     "kiso.css": "^1.2.4",
     "microcms-js-sdk": "^3.2.0",
     "nuxt": "^4.2.2",
-    "nuxt-gtag": "4.1.0",
     "nuxt-jsonld": "^2.2.1",
     "pg": "^8.17.1",
     "tsx": "^4.21.0",

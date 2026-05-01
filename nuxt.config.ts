@@ -55,8 +55,8 @@ export default defineNuxtConfig({
   $production: {
     scripts: {
       registry: {
-        clarity: [id: 'wgvzak7jwb', trigger: 'onNuxtReady'],
-        googleAnalytics: [id: 'G-ZHPDFE19FX', trigger: 'onNuxtReady'],
+        clarity: { id: 'wgvzak7jwb' },
+        googleAnalytics: { id: 'G-ZHPDFE19FX' },
       }
     }
   },

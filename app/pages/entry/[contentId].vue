@@ -197,7 +197,6 @@ const tableOfContents: Ref<{ id: string; text: string; level: number }[]> = ref(
 // 人気記事取得 
 const { data: popularData } = await useFetch('/api/popular-articles', {
     query: { excludeId: contentId },
-    server: false,
 });
 const popularArticles = computed(() => popularData.value?.status === 'success' ? popularData.value.articles : []);
 </script>

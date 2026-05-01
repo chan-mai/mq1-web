@@ -14,8 +14,6 @@ const props = defineProps<{
 
 const { data: preview, status, error } = await useFetch<LinkPreviewResponse>('/api/link-preview', {
     query: { url: props.url },
-    lazy: true,
-    server: false,
 });
 
 // 各属性がundefinedの場合、target="_blank" rel="noopener noreferrer"にフォールバック

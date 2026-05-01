@@ -89,7 +89,6 @@ const buildSegments = (markup: string, linkCards: LinkCardEntry[]): ArticleSegme
 };
 
 const articleSegments = ref<ArticleSegment[]>([]);
-const isLoading = ref(true);
 
 const processContent = () => {
     // コードハイライトとリンクアイコンの追加, リンクカードの置き換え
@@ -202,8 +201,6 @@ const processContent = () => {
     } else {
         articleSegments.value = [];
     }
-    isLoading.value = false;
-
     // DOM要素が更新された後にインタラクティブ要素を初期化
     nextTick(() => {
         initInteractiveElements();
@@ -277,39 +274,34 @@ const initInteractiveElements = () => {
     });
 };
 
+processContent();
+
 onMounted(() => {
-    // メインスレッドをブロックしないように非同期で処理を実行
-    setTimeout(() => {
-        processContent();
-    }, 500);
+    nextTick(() => {
+        initInteractiveElements();
+    });
 });
 
 watch(() => props.target, () => {
-    isLoading.value = true;
-    setTimeout(() => {
-        processContent();
-    }, 500);
+    processContent();
 });
 </script>
 
 <template>
     <div v-bind="containerAttrs" :class="rootClass">
-        <MqLoading text="Loading article..." v-if="isLoading" />
-        <template v-else>
-            <template v-for="(segment, index) in articleSegments" :key="index">
-                <div
-                    v-if="segment.type === 'html'"
-                    :class="htmlSegmentClass"
-                    v-html="segment.content"
-                />
-                <MqLinkCard
-                    v-else
-                    class="px-8 pt-2"
-                    :url="segment.data.url"
-                    :target="segment.data.target"
-                    :rel="segment.data.rel"
-                />
-            </template>
+        <template v-for="(segment, index) in articleSegments" :key="index">
+            <div
+                v-if="segment.type === 'html'"
+                :class="htmlSegmentClass"
+                v-html="segment.content"
+            />
+            <MqLinkCard
+                v-else
+                class="px-8 pt-2"
+                :url="segment.data.url"
+                :target="segment.data.target"
+                :rel="segment.data.rel"
+            />
         </template>
     </div>
 </template>

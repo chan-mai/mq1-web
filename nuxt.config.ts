@@ -11,7 +11,6 @@ export default defineNuxtConfig({
   css: ["kiso.css", "~/assets/css/fonts.css", "~/assets/css/view-transitions.css"],
   app: {
     head: {
-      charset: 'utf-16',
       viewport: 'width=device-width',
       link: [
         { rel: "canonical", href: "https://mq1.dev/" },

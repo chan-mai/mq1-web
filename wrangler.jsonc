@@ -15,7 +15,8 @@
 		}
 	],
 	"assets": {
-		"directory": ".output/public"
+		"directory": ".output/public",
+		"html_handling": "drop-trailing-slash"
 	},
 	"observability": {
 		"enabled": true

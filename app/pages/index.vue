@@ -132,8 +132,8 @@ const interestTags = ['engineering', 'creative', 'cats', 'pastel'];
                 <div class="lg:col-span-9 order-2 lg:order-1 space-y-16">
                     <section class="flex flex-col gap-8">
                         <!-- セクションヘッダー -->
-                        <div class="flex items-center justify-between border-b border-gray-100 pb-4">
-                            <h2 class="font-accent text-3xl font-bold text-slate-800 md:text-4xl lg:text-5xl border-l-2 border-primary pl-3">
+                        <div class="flex items-center justify-between border-b border-border-subtle pb-4">
+                            <h2 class="font-accent text-3xl font-bold text-fg md:text-4xl lg:text-5xl border-l-2 border-primary pl-3">
                                 Articles
                             </h2>
                             <MqAppLink to="/articles/">
@@ -142,12 +142,12 @@ const interestTags = ['engineering', 'creative', 'cats', 'pastel'];
                         </div>
 
                         <div class="flex flex-col gap-10">
-                            <p class="text-sm leading-relaxed text-gray-500">
+                            <p class="text-sm leading-relaxed text-fg-muted">
                                 日常から非日常まで、書きたいことを自由に書いていく雑記帳です。</p>
 
                             <!-- 固定記事エリア -->
                             <div v-if="globalResponse?.pinned_articles" class="w-full">
-                                <p class="mb-4 flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-gray-400">
+                                <p class="mb-4 flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-fg-muted">
                                     <Icon name="lucide:pin" class="h-3.5 w-3.5" />
                                     Pinned
                                 </p>
@@ -165,7 +165,7 @@ const interestTags = ['engineering', 'creative', 'cats', 'pastel'];
 
                             <!-- 通常記事エリア -->
                             <div v-if="regularArticles.length" class="w-full">
-                                <p class="mb-4 flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-gray-400">
+                                <p class="mb-4 flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-fg-muted">
                                     <Icon name="lucide:notebook-pen" class="h-3.5 w-3.5" />
                                     Archives
                                 </p>
@@ -173,9 +173,9 @@ const interestTags = ['engineering', 'creative', 'cats', 'pastel'];
                                     <Articles limit="5" :articles="regularArticles" :loading="false" :transition="true" :tag-transition="false" />
                                 </div>
                             </div>
-                            <div v-else class="flex flex-col items-center justify-center gap-4 py-10 bg-gray-50 rounded-lg">
+                            <div v-else class="flex flex-col items-center justify-center gap-4 py-10 bg-surface-muted rounded-lg">
                                 <p class="text-lg font-bold text-accent">記事が見つかりませんでした。</p>
-                                <p class="text-sm text-slate-500">初めての投稿をお待ちください。</p>
+                                <p class="text-sm text-fg-muted">初めての投稿をお待ちください。</p>
                             </div>
                         </div>
                     </section>
@@ -187,13 +187,13 @@ const interestTags = ['engineering', 'creative', 'cats', 'pastel'];
                     <!-- プロフィールカード -->
                     <section>
                         <div class="flex items-center justify-between mb-3">
-                            <p class="text-xs font-semibold tracking-widest uppercase text-gray-400">Profile</p>
+                            <p class="text-xs font-semibold tracking-widest uppercase text-fg-muted">Profile</p>
                             <MqAppLink to="/about">
                                 <span class="text-xs">詳細</span>
                             </MqAppLink>
                         </div>
 
-                        <div class="rounded-xl border border-gray-100 bg-white overflow-hidden shadow-sm">
+                        <div class="rounded-xl border border-border-subtle bg-surface-elevated overflow-hidden shadow-sm">
                             <!-- トップアクセントライン -->
                             <div class="h-0.5 bg-primary" />
 
@@ -204,26 +204,26 @@ const interestTags = ['engineering', 'creative', 'cats', 'pastel'];
                                         <span class="text-white text-xl font-bold font-accent select-none">ま</span>
                                     </div>
                                     <div>
-                                        <h3 class="text-sm font-bold text-slate-800 leading-snug">
+                                        <h3 class="text-sm font-bold text-fg leading-snug">
                                             月出里 まい
                                             <span class="waving-hand ml-0.5">👋🏻</span>
                                         </h3>
-                                        <p class="text-[11px] text-gray-400 mt-0.5">chan-mai · SUDACHI MAI</p>
+                                        <p class="text-[11px] text-fg-muted mt-0.5">chan-mai · SUDACHI MAI</p>
                                     </div>
                                 </div>
 
                                 <!-- 区切り線 -->
-                                <div class="border-t border-gray-50" />
+                                <div class="border-t border-border-subtle" />
 
                                 <!-- 略歴 -->
-                                <p class="text-xs leading-6 text-gray-500">
+                                <p class="text-xs leading-6 text-fg-muted">
                                     コードを書いたり、絵を描いたり、映像をつくったりしている多趣味なエンジニア。猫とパステルとかわいいものがすき🐈
                                 </p>
 
                                 <!-- インタレストタグ -->
                                 <div class="flex flex-wrap gap-1.5">
                                     <span v-for="tag in interestTags" :key="tag"
-                                          class="rounded-full border border-gray-200 text-gray-500 px-2.5 py-0.5 text-[10px]">
+                                          class="rounded-full border border-border-subtle text-fg-muted px-2.5 py-0.5 text-[10px]">
                                         {{ tag }}
                                     </span>
                                 </div>
@@ -233,11 +233,11 @@ const interestTags = ['engineering', 'creative', 'cats', 'pastel'];
 
                     <!-- Tags -->
                     <section class="flex flex-col gap-4">
-                        <p class="text-xs font-semibold tracking-widest uppercase text-gray-400">Tags</p>
+                        <p class="text-xs font-semibold tracking-widest uppercase text-fg-muted">Tags</p>
                         <div v-if="tags && tags.length > 0" class="flex flex-wrap gap-2">
                             <MqTag v-for="tag in tags" :key="tag.id" :tag="tag" transition />
                         </div>
-                        <div v-else class="text-center text-gray-500 text-sm">
+                        <div v-else class="text-center text-fg-muted text-sm">
                             <p>タグがありません</p>
                         </div>
                     </section>

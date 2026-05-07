@@ -27,7 +27,7 @@ const isExternalLink = computed(() => /^https?:\/\//.test(props.url));
         class="mq-link-card__link group block w-full transition-colors duration-200"
     >
         <div
-            class="flex items-stretch overflow-hidden rounded-2xl bg-white border-2 border-secondary/40 transition-colors duration-200 hover:bg-primary/5 hover:border-primary/50"
+            class="flex items-stretch overflow-hidden rounded-2xl bg-surface-elevated border-2 border-secondary/40 transition-colors duration-200 hover:bg-primary/5 hover:border-primary/50"
         >
             <div
                 v-if="preview.image"

@@ -1,4 +1,4 @@
-import { createClient, type MicroCMSListResponse } from "microcms-js-sdk";
+import { createClient, type MicroCMSListResponse, type MicroCMSObjectContent } from "microcms-js-sdk";
 import type { MicroCMSObject } from '#shared/types/microccms';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
@@ -8,7 +8,7 @@ export default defineNuxtConfig({
   devtools: {
     enabled: true,
   },
-  css: ["kiso.css", "~/assets/css/fonts.css", "~/assets/css/view-transitions.css"],
+  css: ["kiso.css", "~/assets/css/theme.css", "~/assets/css/fonts.css", "~/assets/css/view-transitions.css"],
   app: {
     head: {
       charset: 'utf-16',
@@ -29,6 +29,7 @@ export default defineNuxtConfig({
   },
   modules: [
     "@nuxtjs/tailwindcss",
+    "@nuxtjs/color-mode",
     "@vueuse/nuxt",
     "@nuxt/icon",
     "@nuxtjs/sitemap",
@@ -39,18 +40,11 @@ export default defineNuxtConfig({
     "@nuxtjs/robots",
     "@nuxt/scripts",
   ],
-  tailwindcss: {
-    config: {
-      theme: {
-        extend: {
-          colors: {
-            primary: "#fc9fa8",
-            accent: "#f57aa5",
-            back: "#f5f3f3",
-          },
-        },
-      },
-    },
+  colorMode: {
+    classSuffix: '',
+    preference: 'system',
+    fallback: 'light',
+    storageKey: 'mq1-color-mode',
   },
   $production: {
     scripts: {

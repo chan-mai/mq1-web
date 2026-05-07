@@ -127,7 +127,7 @@ const shareButtons = [
           :key="button.name"
           @click="button.action"
           :class="[
-            'group relative flex items-center justify-center gap-2 text-sm font-medium text-gray-600 bg-white/70 backdrop-blur-sm border border-gray-200/60 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:ring-offset-2',
+            'group relative flex items-center justify-center gap-2 text-sm font-medium text-fg-muted bg-surface-elevated/70 backdrop-blur-sm border border-border-subtle rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:ring-offset-2',
             button.color,
             orientation === 'vertical' ? 'w-10 h-10 p-0 rounded-full mx-auto' : 'px-4 py-2.5'
           ]"

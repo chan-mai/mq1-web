@@ -9,7 +9,7 @@ const menu = config.value.footer.menu;
 </script>
 
 <template>
-  <footer class="mt-20 rounded-t-3xl bg-white py-20">
+  <footer class="mt-20 rounded-t-3xl bg-surface-elevated py-20">
     <div
       class="mx-auto box-content flex max-w-7xl flex-col items-start justify-between gap-8 px-4 md:flex-row md:items-center md:px-6"
     >

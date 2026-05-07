@@ -55,12 +55,12 @@ const handleClose = () => {
   <div
     v-if="type !== 'floating' || isVisible"
     :class="containerStyles[type]"
-    class="border border-2 border-back"
+    class="border-2 border-border-subtle"
     @mouseenter="isHovered = true"
     @mouseleave="isHovered = false"
   >
     <div class="relative overflow-hidden">
-      <div class="absolute inset-0 bg-white"></div>
+      <div class="absolute inset-0 bg-surface-elevated"></div>
 
       <div class="absolute top-0 left-0 w-24 h-24 rounded-full bg-pink-100 opacity-30 -translate-x-12 -translate-y-12"></div>
       <div class="absolute bottom-0 right-0 w-32 h-32 rounded-full bg-blue-100 opacity-30 translate-x-16 translate-y-16"></div>
@@ -68,7 +68,7 @@ const handleClose = () => {
       <button
         v-if="type === 'floating'"
         @click="handleClose"
-        class="absolute right-2 top-2 z-50 rounded-full bg-white bg-opacity-70 p-1 border-none text-gray-400 hover:text-gray-600 transition-colors"
+        class="absolute right-2 top-2 z-50 rounded-full bg-surface-elevated bg-opacity-70 p-1 border-none text-fg-muted hover:text-gray-600 transition-colors"
         aria-label="閉じる"
       >
         <Icon name="tabler:x" class="h-3.5 w-3.5" />
@@ -76,13 +76,13 @@ const handleClose = () => {
 
       <div class="relative p-4 md:p-5">
         <div class="flex items-top gap-3">
-          <div class="flex h-10 w-full max-h-10 max-w-10 items-center justify-center rounded-full bg-back bg-opacity-70">
+          <div class="flex h-10 w-full max-h-10 max-w-10 items-center justify-center rounded-full bg-surface-muted">
             <Icon :name="config.rss.icon" class="h-5 w-5 text-primary" />
           </div>
 
           <div>
             <h3 class="text-lg text-accent">ブログの更新をお知らせ</h3>
-            <p class="text-sm text-gray-500">RSSで購読すると新しい記事の投稿を知ることができます。</p>
+            <p class="text-sm text-fg-muted">RSSで購読すると新しい記事の投稿を知ることができます。</p>
           </div>
         </div>
 

@@ -43,13 +43,13 @@ function navigateToTag(tag: any) {
 <template>
     <div class="max-w-6xl p-4">
         <div class="relative">
-            <div class="absolute left-[14px] top-0 bottom-0 w-[1px] bg-gray-300"></div>
+            <div class="absolute left-[14px] top-0 bottom-0 w-[1px] bg-border-subtle"></div>
 
             <!-- Articles -->
             <div class="space-y-8">
                     <div v-for="(article, index) in limitedArticles" :key="article.id" class="relative">
-                        <div :class="`absolute left-0 top-0 flex items-center justify-center w-7 h-7 rounded-full z-10 
-                ${index === 0 ? 'bg-primary' : 'border-2 border-primary bg-white'}`">
+                        <div :class="`absolute left-0 top-0 flex items-center justify-center w-7 h-7 rounded-full z-10
+                ${index === 0 ? 'bg-primary' : 'border-2 border-primary bg-surface'}`">
                             <span class="text-xs text-gray-500"></span>
                         </div>
 
@@ -57,7 +57,7 @@ function navigateToTag(tag: any) {
                     <NuxtLink :to="`/entry/${article.id}`">
                         <div class="flex flex-col md:flex-row md:items-start pl-10 pb-8">
                             <div
-                                class="text-sm text-gray-600 mb-2 md:mb-0 md:mr-4 md:w-24 md:flex-shrink-0 md:text-right">
+                                class="text-sm text-fg-muted mb-2 md:mb-0 md:mr-4 md:w-24 md:flex-shrink-0 md:text-right">
                                 {{
                                     new Date(article.publishedAt! ?? article.createdAt!).toLocaleString('ja-JP', {
                                         year: 'numeric',
@@ -83,10 +83,10 @@ function navigateToTag(tag: any) {
                                     <!-- テキストコンテンツ -->
                                     <div class="w-full flex flex-col justify-between h-full md:flex-1 md:min-w-0">
                                         <div>
-                                            <h3 class="text-lg font-medium text-gray-800 mb-2 whitespace-nowrap overflow-hidden text-ellipsis"
+                                            <h3 class="text-lg font-medium text-fg mb-2 whitespace-nowrap overflow-hidden text-ellipsis"
                                                 :style="transition ? `view-transition-name: article-title-${article.id};` : ''">{{
                                                 article.title }}</h3>
-                                            <p class="text-gray-600 text-sm mb-2 overflow-hidden line-clamp-3">{{ article.summary }}</p>
+                                            <p class="text-fg-muted text-sm mb-2 overflow-hidden line-clamp-3">{{ article.summary }}</p>
 
                                             <div class="flex flex-wrap gap-2 mt-4">
                                                 <MqTag v-for="tag in article.tags!.slice(0, 5)" :key="tag.id"
@@ -128,7 +128,7 @@ function navigateToTag(tag: any) {
     right: 0;
     bottom: 0;
     left: 0;
-    background-color: white;
+    background-color: rgb(var(--color-surface-elevated));
     transform: translateX(-100%);
     opacity: 0;
     z-index: -1;

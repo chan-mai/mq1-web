@@ -29,6 +29,13 @@ const selectedIndex = ref(-1);
 // microCMS Client
 const client = useMicroCMSClient();
 
+const colorMode = useColorMode();
+const microCMSLogoSrc = computed(() =>
+    colorMode.value === 'dark'
+        ? '/images/logos/microCMS_logo_white.png'
+        : '/images/logos/microCMS_logo_black.png'
+);
+
 const open = () => {
     isOpen.value = true;
     nextTick(() => {
@@ -321,10 +328,10 @@ onUnmounted(() => {
                     role="dialog"
                     aria-modal="true"
                     aria-label="検索"
-                    class="pointer-events-auto relative flex w-full max-w-2xl flex-col overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black/5">
+                    class="pointer-events-auto relative flex w-full max-w-2xl flex-col overflow-hidden rounded-xl bg-surface-elevated shadow-2xl ring-1 ring-black/5">
                     
                     <!-- 検索 -->
-                    <div class="relative flex items-center border-b border-gray-100 px-4 py-3">
+                    <div class="relative flex items-center border-b border-border-subtle px-4 py-3">
                         <Icon name="material-symbols:search" class="mr-3 h-6 w-6 shrink-0 text-primary" />
                         
                         <div class="flex flex-1 flex-wrap items-center gap-2">
@@ -340,7 +347,7 @@ onUnmounted(() => {
                              <input type="text"
                                  ref="searchInputRef"
                                  v-model="searchInput"
-                                 class="min-w-[50px] flex-1 border-0 bg-transparent p-0 text-lg text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm outline-none ring-0 border-none focus:outline-none focus:border-none"
+                                 class="min-w-[50px] flex-1 border-0 bg-transparent p-0 text-lg text-fg placeholder:text-fg-muted focus:ring-0 sm:text-sm outline-none ring-0 border-none focus:outline-none focus:border-none"
                                  :placeholder="searchOptions.length === 0 ? '検索' : ''"
                                  aria-label="検索キーワード"
                                  autofocus
@@ -358,21 +365,21 @@ onUnmounted(() => {
                         </div>
 
                         <div v-else-if="results.length > 0">
-                            <div class="mb-2 text-xs font-semibold text-gray-500">Results: ({{ results.length }})</div>
+                            <div class="mb-2 text-xs font-semibold text-fg-muted">Results: ({{ results.length }})</div>
                             <ul class="space-y-2">
                                 <li v-for="(result, index) in results" :key="result.id">
                                     <NuxtLink 
                                         :to="result.to" 
                                         @click="close" 
                                         class="group flex cursor-pointer items-center justify-between rounded-lg p-3 transition-colors"
-                                        :class="index === selectedIndex ? 'bg-primary/10 text-primary ring-1 ring-primary' : 'bg-gray-50/50 hover:bg-primary/10 hover:text-primary hover:ring-1 hover:ring-primary'"
+                                        :class="index === selectedIndex ? 'bg-primary/10 text-primary ring-1 ring-primary' : 'bg-surface-muted/50 hover:bg-primary/10 hover:text-primary hover:ring-1 hover:ring-primary'"
                                         @mouseover="selectedIndex = index"
                                     >
                                         <div class="flex items-center gap-3">
-                                            <Icon v-if="result.type === 'tag'" name="lucide:tag" class="h-5 w-5" :class="index === selectedIndex ? 'text-primary' : 'text-gray-400 group-hover:text-primary'" />
-                                            <Icon v-if="result.type === 'article'" name="lucide:file-pen-line" class="h-5 w-5" :class="index === selectedIndex ? 'text-primary' : 'text-gray-400 group-hover:text-primary'" />
+                                            <Icon v-if="result.type === 'tag'" name="lucide:tag" class="h-5 w-5" :class="index === selectedIndex ? 'text-primary' : 'text-fg-muted group-hover:text-primary'" />
+                                            <Icon v-if="result.type === 'article'" name="lucide:file-pen-line" class="h-5 w-5" :class="index === selectedIndex ? 'text-primary' : 'text-fg-muted group-hover:text-primary'" />
                                             <div class="flex flex-col">
-                                                <span class="text-sm font-medium" :class="index === selectedIndex ? 'text-primary' : 'text-gray-700 group-hover:text-primary'">
+                                                <span class="text-sm font-medium" :class="index === selectedIndex ? 'text-primary' : 'text-fg group-hover:text-primary'">
                                                     {{ result.title }}
                                                 </span>
                                                 
@@ -382,7 +389,7 @@ onUnmounted(() => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <Icon name="material-symbols:chevron-right" class="h-5 w-5" :class="index === selectedIndex ? 'text-primary' : 'text-gray-400 group-hover:text-primary'" />
+                                        <Icon name="material-symbols:chevron-right" class="h-5 w-5" :class="index === selectedIndex ? 'text-primary' : 'text-fg-muted group-hover:text-primary'" />
                                     </NuxtLink>
                                 </li>
                             </ul>
@@ -391,13 +398,13 @@ onUnmounted(() => {
                         <!-- 初期 -->
                         <div v-else class="py-4">
                             <!-- 検索条件があり、検索完了後で結果なし -->
-                            <div v-if="searchInput || searchOptions.length > 0" class="text-center text-gray-500">
+                            <div v-if="searchInput || searchOptions.length > 0" class="text-center text-fg-muted">
                                 <p>検索結果が見つかりませんでした。</p>
                             </div>
 
                              <!-- 初期状態 -->
                              <div v-else>
-                                <div class="text-center py-10 text-gray-400 text-sm">
+                                <div class="text-center py-10 text-fg-muted text-sm">
                                     <p>キーワードを入力して検索</p>
                                     <p>タグ(tag:slug)や日付(since:yyyy-mm-dd, until:yyyy-mm-dd)が利用できます</p>
                                 </div>
@@ -405,25 +412,25 @@ onUnmounted(() => {
                         </div>
                     </div>
 
-                    <div class="flex items-center justify-end border-t border-gray-100 bg-gray-50 px-4 py-2.5 md:justify-between">
-                         <div class="hidden text-xs text-gray-500 md:flex flex-1 gap-4">
-                             <button type="button" @click="triggerSelect" class="flex items-center gap-1 hover:bg-gray-100 rounded px-1 -ml-1 transition-colors cursor-pointer border-none outline-none">
-                                 <kbd class="flex h-5 items-center justify-center rounded border border-gray-200 bg-white px-1.5 font-sans text-[10px] font-medium text-gray-500 shadow-[0px_2px_0px_0px_rgba(0,0,0,0.08)]">↵</kbd>
+                    <div class="flex items-center justify-end border-t border-border-subtle bg-surface-muted px-4 py-2.5 md:justify-between">
+                         <div class="hidden text-xs text-fg-muted md:flex flex-1 gap-4">
+                             <button type="button" @click="triggerSelect" class="flex items-center gap-1 hover:bg-surface-muted rounded px-1 -ml-1 transition-colors cursor-pointer border-none outline-none">
+                                 <kbd class="flex h-5 items-center justify-center rounded border border-border-subtle bg-surface-elevated px-1.5 font-sans text-[10px] font-medium text-fg-muted shadow-[0px_2px_0px_0px_rgba(0,0,0,0.08)]">↵</kbd>
                                  <span class="">to select</span>
                              </button>
                              <div class="flex items-center gap-1">
-                                 <button type="button" @click="navigateDown" class="flex h-5 items-center justify-center rounded border border-gray-200 bg-white px-1.5 font-sans text-[10px] font-medium text-gray-500 shadow-[0px_2px_0px_0px_rgba(0,0,0,0.08)] hover:bg-gray-50 hover:border-gray-300 transition-colors cursor-pointer outline-none">↓</button>
-                                 <button type="button" @click="navigateUp" class="flex h-5 items-center justify-center rounded border border-gray-200 bg-white px-1.5 font-sans text-[10px] font-medium text-gray-500 shadow-[0px_2px_0px_0px_rgba(0,0,0,0.08)] hover:bg-gray-50 hover:border-gray-300 transition-colors cursor-pointer outline-none">↑</button>
+                                 <button type="button" @click="navigateDown" class="flex h-5 items-center justify-center rounded border border-border-subtle bg-surface-elevated px-1.5 font-sans text-[10px] font-medium text-fg-muted shadow-[0px_2px_0px_0px_rgba(0,0,0,0.08)] hover:bg-gray-50 hover:border-gray-300 transition-colors cursor-pointer outline-none">↓</button>
+                                 <button type="button" @click="navigateUp" class="flex h-5 items-center justify-center rounded border border-border-subtle bg-surface-elevated px-1.5 font-sans text-[10px] font-medium text-fg-muted shadow-[0px_2px_0px_0px_rgba(0,0,0,0.08)] hover:bg-gray-50 hover:border-gray-300 transition-colors cursor-pointer outline-none">↑</button>
                                  <span class="">to navigate</span>
                              </div>
-                             <button type="button" @click="close" class="flex items-center gap-1 hover:bg-gray-100 rounded px-1 -ml-1 transition-colors cursor-pointer border-none outline-none">
-                                 <kbd class="flex h-5 items-center justify-center rounded border border-gray-200 bg-white px-1.5 font-sans text-[10px] font-medium text-gray-500 shadow-[0px_2px_0px_0px_rgba(0,0,0,0.08)]">esc</kbd>
+                             <button type="button" @click="close" class="flex items-center gap-1 hover:bg-surface-muted rounded px-1 -ml-1 transition-colors cursor-pointer border-none outline-none">
+                                 <kbd class="flex h-5 items-center justify-center rounded border border-border-subtle bg-surface-elevated px-1.5 font-sans text-[10px] font-medium text-fg-muted shadow-[0px_2px_0px_0px_rgba(0,0,0,0.08)]">esc</kbd>
                                  <span class="">to close</span>
                              </button>
                          </div>
                          <div class="flex items-center gap-2">
                             <span class="text-xs text-gray-400">Search by</span>
-                            <NuxtImg src="https://microcms.io/download/logo/microCMS_logo_black.png" format="webp" alt="microCMS Logo" class="h-4 w-auto" loading="eager" decoding="async" />
+                            <NuxtImg :src="microCMSLogoSrc" alt="microCMS Logo" class="h-4 w-auto" loading="eager" decoding="async" />
                          </div>
                     </div>
                 </div>

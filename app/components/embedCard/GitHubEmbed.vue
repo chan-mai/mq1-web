@@ -62,8 +62,8 @@ onMounted(() => {
 </script>
 
 <template>
-    <div v-if="preview.code" class="rounded-2xl border-2 border-secondary/20 bg-gray-50 overflow-hidden w-full">
-        <div class="flex items-center gap-2 px-4 py-2 border-b border-secondary/10 bg-white">
+    <div v-if="preview.code" class="rounded-2xl border-2 border-secondary/20 bg-surface-muted overflow-hidden w-full">
+        <div class="flex items-center gap-2 px-4 py-2 border-b border-secondary/10 bg-surface-elevated">
             <Icon name="simple-icons:github" class="w-5 h-5" />
             <span class="text-xs font-mono text-muted-foreground truncate">{{ preview.title || 'GitHub' }}</span>
         </div>
@@ -85,7 +85,7 @@ onMounted(() => {
                 <div ref="contentRef" class="font-mono flex items-stretch min-w-max">
                     <!-- Line Numbers (Sticky) -->
                     <div 
-                        class="sticky left-0 z-10 flex flex-col text-right select-none text-muted-foreground/50 border-r border-secondary/10 pr-4 pl-4 shrink-0 min-w-[3em] text-sm bg-gray-50/90 backdrop-blur-[2px]" 
+                        class="sticky left-0 z-10 flex flex-col text-right select-none text-muted-foreground/50 border-r border-secondary/10 pr-4 pl-4 shrink-0 min-w-[3em] text-sm bg-surface-muted/90 backdrop-blur-[2px]" 
                         style="line-height: 1.5rem;"
                     >
                         <span v-for="i in ((preview.endLine ?? 1) - (preview.startLine ?? 1) + 1)" :key="i">
@@ -101,7 +101,7 @@ onMounted(() => {
             </div>
         </div>
 
-        <div class="px-4 py-2 bg-white border-t border-secondary/10 flex justify-end">
+        <div class="px-4 py-2 bg-surface-elevated border-t border-secondary/10 flex justify-end">
             <NuxtLink 
                 :to="url" 
                 target="_blank" 

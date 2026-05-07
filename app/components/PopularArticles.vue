@@ -24,18 +24,18 @@ const props = defineProps<{
             >
                 <div class="flex justify-between items-start gap-4">
                     <div class="flex-1 min-w-0 py-1">
-                        <h4 class="text-gray-800 group-hover:text-primary font-bold text-base leading-snug mb-2 transition-colors duration-300">
+                        <h4 class="text-fg group-hover:text-primary font-bold text-base leading-snug mb-2 transition-colors duration-300">
                             {{ article.title }}
                         </h4>
                         
-                        <div class="flex items-center text-sm text-gray-400">
+                        <div class="flex items-center text-sm text-fg-muted">
                              <!-- Using a static heart icon to match the visual style requested, even if count isn't real/dynamic yet -->
                             <Icon name="ph:heart-fill" class="w-4 h-4 text-primary/60 mr-1" />
                             <span>{{ article.likeCount }}</span> 
                         </div>
                     </div>
 
-                    <div class="shrink-0 w-28 h-20 sm:w-32 sm:h-24 rounded-xl overflow-hidden bg-gray-50 border border-gray-100">
+                    <div class="shrink-0 w-28 h-20 sm:w-32 sm:h-24 rounded-xl overflow-hidden bg-surface-muted border border-border-subtle">
                         <MqOgImage 
                             :url="article.eyecatch?.url" 
                             :content-id="article.id" 

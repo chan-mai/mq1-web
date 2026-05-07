@@ -212,7 +212,7 @@ const popularArticles = computed(() => popularData.value?.status === 'success' ?
             <!-- Left Sidebar (Social Actions) -->
             <aside class="hidden lg:flex lg:col-span-1 sticky top-32 flex-col gap-6 items-center z-20 pt-8">
                  <MqLikeButton :content-id="contentId" variant="icon-only" />
-                 <div class="h-px w-10 bg-gray-200"></div>
+                 <div class="h-px w-10 bg-border-subtle"></div>
                  <MqShareButtons 
                     :title="article?.title || ''" 
                     :url="`/entry/${contentId}`"

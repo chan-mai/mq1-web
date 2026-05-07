@@ -6,7 +6,7 @@
           v-for="toast in toasts"
           :key="toast.id"
           :class="[
-            'pointer-events-auto flex items-start gap-3 p-4 rounded-xl bg-white shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1),0_8px_10px_-6px_rgba(0,0,0,0.1)] border border-black/5 cursor-pointer transition-all duration-200 backdrop-blur-[10px] min-h-[60px] hover:-translate-y-0.5 hover:shadow-[0_15px_30px_-5px_rgba(0,0,0,0.15),0_10px_15px_-6px_rgba(0,0,0,0.15)]',
+            'pointer-events-auto flex items-start gap-3 p-4 rounded-xl bg-surface-elevated shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1),0_8px_10px_-6px_rgba(0,0,0,0.1)] border border-black/5 cursor-pointer transition-all duration-200 backdrop-blur-[10px] min-h-[60px] hover:-translate-y-0.5 hover:shadow-[0_15px_30px_-5px_rgba(0,0,0,0.15),0_10px_15px_-6px_rgba(0,0,0,0.15)]',
             {
               'border-l-4 border-l-green-500': toast.type === 'success',
               'border-l-4 border-l-red-500': toast.type === 'error',
@@ -33,11 +33,11 @@
             <Icon v-else name="mdi:information" />
           </div>
           <div class="flex-1 min-w-0 overflow-hidden">
-            <div class="font-semibold text-[0.9375rem] leading-[1.4] text-gray-800 mb-0.5 break-words">{{ toast.title }}</div>
-            <div v-if="toast.message" class="text-sm leading-[1.4] text-gray-500 mt-1 break-words">{{ toast.message }}</div>
+            <div class="font-semibold text-[0.9375rem] leading-[1.4] text-fg mb-0.5 break-words">{{ toast.title }}</div>
+            <div v-if="toast.message" class="text-sm leading-[1.4] text-fg-muted mt-1 break-words">{{ toast.message }}</div>
           </div>
           <button 
-            class="flex-shrink-0 w-5 h-5 flex items-center justify-center border-none bg-transparent text-gray-400 cursor-pointer transition-colors duration-200 p-0 text-[20px] hover:text-gray-600" 
+            class="flex-shrink-0 w-5 h-5 flex items-center justify-center border-none bg-transparent text-fg-muted cursor-pointer transition-colors duration-200 p-0 text-[20px] hover:text-fg" 
             @click.stop="removeToast(toast.id)"
           >
             <Icon name="mdi:close" />

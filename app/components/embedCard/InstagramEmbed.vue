@@ -5,7 +5,7 @@ defineProps<{
 </script>
 
 <template>
-    <div class="w-full flex justify-start max-w-[500px] border-2 border-secondary/20 rounded-2xl overflow-hidden bg-white">
+    <div class="w-full flex justify-start max-w-[500px] border-2 border-secondary/20 rounded-2xl overflow-hidden bg-surface-elevated">
         <iframe
             v-if="preview.embedId"
             :src="`https://www.instagram.com/p/${preview.embedId}/embed`"

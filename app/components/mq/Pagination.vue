@@ -73,10 +73,10 @@ const onNextClick = () => {
     <button
       @click="onPrevClick"
       :disabled="currentPage === 1"
-      class="p-2 flex items-center justify-center border-none rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      class="p-2 flex items-center justify-center border-none rounded-lg hover:bg-surface-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       aria-label="Previous page"
     >
-      <Icon name="material-symbols:chevron-left" class="w-6 h-6 text-gray-600" />
+      <Icon name="material-symbols:chevron-left" class="w-6 h-6 text-fg-muted" />
     </button>
 
     <!-- ページ番号 -->
@@ -89,7 +89,7 @@ const onNextClick = () => {
             'flex items-center justify-center border-none w-10 h-10 rounded-lg text-sm font-medium transition-colors',
             currentPage === page
               ? 'bg-primary text-white'
-              : 'text-gray-600 hover:bg-gray-100'
+              : 'text-fg-muted hover:bg-surface-muted'
           ]"
           :aria-current="currentPage === page ? 'page' : undefined"
         >
@@ -97,7 +97,7 @@ const onNextClick = () => {
         </button>
         <span
           v-else
-          class="w-10 h-10 flex items-center justify-center text-gray-400"
+          class="w-10 h-10 flex items-center justify-center text-fg-muted"
         >
           ...
         </span>
@@ -108,10 +108,10 @@ const onNextClick = () => {
     <button
       @click="onNextClick"
       :disabled="currentPage === totalPages"
-      class="p-2 flex items-center justify-center border-none rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      class="p-2 flex items-center justify-center border-none rounded-lg hover:bg-surface-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       aria-label="Next page"
     >
-      <Icon name="material-symbols:chevron-right" class="w-6 h-6 text-gray-600" />
+      <Icon name="material-symbols:chevron-right" class="w-6 h-6 text-fg-muted" />
     </button>
   </nav>
 </template>

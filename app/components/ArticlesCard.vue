@@ -53,12 +53,12 @@ function navigateToTag(tag: any) {
     <NuxtLink
         v-if="variant === 'default'"
         :to="`/entry/${article.id}`"
-        class="group flex h-full flex-col overflow-hidden rounded-xl border border-gray-100 bg-white
-               hover:border-gray-200 transition-colors duration-200
+        class="group flex h-full flex-col overflow-hidden rounded-xl border border-border-subtle/60 bg-surface-elevated
+               hover:border-primary/40 transition-colors duration-200
                focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
     >
         <!-- 画像エリア -->
-        <div class="relative aspect-video w-full overflow-hidden bg-gray-50">
+        <div class="relative aspect-video w-full overflow-hidden bg-surface-muted">
             <MqOgImage
                 :content-id="article.id"
                 :url="article.eyecatch?.url"
@@ -80,19 +80,19 @@ function navigateToTag(tag: any) {
         <!-- コンテンツエリア -->
         <div class="flex flex-1 flex-col p-4 gap-2.5">
             <h3
-                class="text-sm font-semibold text-slate-800 leading-snug line-clamp-2
+                class="text-sm font-semibold text-fg leading-snug line-clamp-2
                        group-hover:text-primary transition-colors"
                 :style="transition ? `view-transition-name: article-title-${article.id};` : ''"
             >
                 {{ article.title }}
             </h3>
 
-            <p class="text-xs leading-relaxed text-gray-400 line-clamp-2 flex-1">
+            <p class="text-xs leading-relaxed text-fg-muted line-clamp-2 flex-1">
                 {{ summary }}
             </p>
 
             <!-- タグ + 矢印 -->
-            <div class="flex items-center justify-between pt-2 border-t border-gray-50 mt-auto">
+            <div class="flex items-center justify-between pt-2 border-t border-border-subtle mt-auto">
                 <div v-if="article.tags?.length" class="flex flex-wrap gap-1.5 min-w-0 overflow-hidden">
                     <MqTag
                         v-for="tag in article.tags.slice(0, 2)"
@@ -105,7 +105,7 @@ function navigateToTag(tag: any) {
                 </div>
                 <Icon
                     name="lucide:arrow-right"
-                    class="size-3.5 shrink-0 ml-auto text-gray-300 group-hover:text-primary transition-colors"
+                    class="size-3.5 shrink-0 ml-auto text-fg-muted/60 group-hover:text-primary transition-colors"
                 />
             </div>
         </div>
@@ -115,11 +115,11 @@ function navigateToTag(tag: any) {
     <NuxtLink
         v-else-if="variant === 'pinned'"
         :to="`/entry/${article.id}`"
-        class="group flex items-center gap-4 rounded-xl ring-1 ring-gray-100 bg-white px-4 py-3.5
+        class="group flex items-center gap-4 rounded-xl ring-1 ring-border-subtle/60 bg-surface-elevated px-4 py-3.5
                hover:ring-primary/40 transition-all duration-200"
     >
         <!-- サムネイル -->
-        <div class="relative size-14 shrink-0 rounded-lg overflow-hidden bg-gray-50">
+        <div class="relative size-14 shrink-0 rounded-lg overflow-hidden bg-surface-muted">
             <MqOgImage
                 :content-id="article.id"
                 :url="article.eyecatch?.url"
@@ -133,30 +133,30 @@ function navigateToTag(tag: any) {
         <!-- テキスト -->
         <div class="flex-1 min-w-0 space-y-1">
             <h3
-                class="text-sm font-semibold text-slate-800 line-clamp-2 leading-snug
+                class="text-sm font-semibold text-fg line-clamp-2 leading-snug
                        group-hover:text-primary transition-colors"
                 :style="transition ? `view-transition-name: article-title-${article.id};` : ''"
             >
                 {{ article.title }}
             </h3>
-            <time class="block text-[11px] text-gray-400 font-mono tabular-nums">
+            <time class="block text-[11px] text-fg-muted font-mono tabular-nums">
                 {{ formattedDate }}
             </time>
         </div>
 
         <!-- 矢印 -->
         <Icon name="lucide:arrow-right"
-              class="size-4 shrink-0 text-gray-300 group-hover:text-primary transition-colors" />
+              class="size-4 shrink-0 text-fg-muted/60 group-hover:text-primary transition-colors" />
     </NuxtLink>
 
     <!-- Compact Layout -->
     <NuxtLink
         v-else-if="variant === 'compact'"
         :to="`/entry/${article.id}`"
-        class="group flex items-start gap-3 rounded-lg border border-gray-100 bg-white/80 p-3 transition-all duration-300 hover:bg-white hover:border-primary/30"
+        class="group flex items-start gap-3 rounded-lg border border-border-subtle/60 bg-surface-elevated/80 p-3 transition-all duration-300 hover:bg-surface-elevated hover:border-primary/30"
     >
         <!-- Thumbnail -->
-        <div class="relative w-28 aspect-video shrink-0 overflow-hidden rounded-md bg-gray-100">
+        <div class="relative w-28 aspect-video shrink-0 overflow-hidden rounded-md bg-surface-muted">
             <MqOgImage
                 :content-id="article.id"
                 :url="article.eyecatch?.url"
@@ -172,7 +172,7 @@ function navigateToTag(tag: any) {
             <h3 class="line-clamp-1 text-sm leading-snug transition-colors group-hover:text-primary" :style="transition ? `view-transition-name: article-title-${article.id};` : ''">
                 {{ article.title }}
             </h3>
-            <p class="line-clamp-2 text-xs leading-snug text-gray-500 transition-colors group-hover:text-primary">
+            <p class="line-clamp-2 text-xs leading-snug text-fg-muted transition-colors group-hover:text-primary">
                 {{ summary }}
             </p>
             <div class="mt-auto pt-1 flex items-center gap-2">

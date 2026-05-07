@@ -325,11 +325,11 @@ watch(() => props.target, () => {
 }
 
 .micro-cms img {
-    @apply mx-3 md:mx-8 w-auto h-auto max-w-full md:max-w-[80%] lg:max-w-[70%] max-h-[600px] object-contain block bg-white rounded-lg;
+    @apply mx-3 md:mx-8 w-auto h-auto max-w-full md:max-w-[80%] lg:max-w-[70%] max-h-[600px] object-contain block bg-surface-elevated rounded-lg;
 }
 
 .micro-cms figure figcaption {
-    @apply max-w-full text-sm text-gray-400 text-center mt-2;
+    @apply max-w-full text-sm text-fg-muted text-center mt-2;
 }
 
 .micro-cms figure {
@@ -381,7 +381,7 @@ watch(() => props.target, () => {
 }
 
 .micro-cms a .link-icon {
-    @apply ml-0.5 inline-block text-xs relative text-gray-400;
+    @apply ml-0.5 inline-block text-xs relative text-fg-muted;
     vertical-align: baseline;
     opacity: 0.7;
     transition: opacity 0.2s;
@@ -405,15 +405,15 @@ watch(() => props.target, () => {
 }
 
 .micro-cms ul {
-    @apply list-disc list-inside mx-5 my-6 space-y-2 text-gray-800 leading-relaxed;
+    @apply list-disc list-inside mx-5 my-6 space-y-2 text-fg leading-relaxed;
 }
 
 .micro-cms ol {
-    @apply list-decimal list-inside mx-5 my-6 space-y-2 text-gray-800 leading-relaxed;
+    @apply list-decimal list-inside mx-5 my-6 space-y-2 text-fg leading-relaxed;
 }
 
 .micro-cms blockquote {
-    @apply border-l-4 border-primary/50 bg-gray-50/50 py-4 pr-4 m-8 rounded-r-lg text-gray-600 italic;
+    @apply border-l-4 border-primary/50 bg-surface-muted/50 py-4 pr-4 m-8 rounded-r-lg text-fg-muted italic;
 }
 
 .micro-cms blockquote p {
@@ -440,11 +440,11 @@ watch(() => props.target, () => {
 }
 
 .micro-cms th {
-    @apply p-2 border border-gray-300;
+    @apply p-2 border border-border-subtle;
 }
 
 .micro-cms td {
-    @apply p-2 border border-gray-300 space-y-0;
+    @apply p-2 border border-border-subtle space-y-0;
 }
 
 .micro-cms pre code {
@@ -459,7 +459,7 @@ watch(() => props.target, () => {
 
 /* コードブロックのファイル名表示 (Mac-Light Theme) */
 .code-header {
-    @apply bg-gray-100 text-gray-700 px-4 py-3 rounded-t-xl text-sm font-mono mb-0 mx-6 flex items-center gap-4;
+    @apply bg-surface-muted text-fg px-4 py-3 rounded-t-xl text-sm font-mono mb-0 mx-6 flex items-center gap-4;
     border: 1px solid #e5e7eb;
     border-bottom: 1px solid #e5e7eb;
 }
@@ -486,7 +486,7 @@ watch(() => props.target, () => {
 }
 
 .code-header .filename {
-    @apply text-gray-600 text-xs font-medium tracking-wide;
+    @apply text-fg-muted text-xs font-medium tracking-wide;
     font-family: "fira-code", monospace;
 }
 
@@ -515,13 +515,13 @@ watch(() => props.target, () => {
 }
 
 .micro-cms pre {
-    @apply mx-6 my-8 bg-gray-50 border border-gray-200 rounded-xl text-gray-800;
+    @apply mx-6 my-8 bg-surface-muted border border-border-subtle rounded-xl text-fg;
     overflow-x: auto;
     max-width: 100%;
 }
 
 .micro-cms p code {
-    @apply rounded-lg px-1 mx-1 py-0.5 bg-gray-100 text-gray-800 text-sm border border-gray-300;
+    @apply rounded-lg px-1 mx-1 py-0.5 bg-surface-muted text-fg text-sm border border-border-subtle;
     font-family: "fira-code", monospace;
     font-weight: 400;
     font-style: normal;

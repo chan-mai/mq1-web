@@ -98,11 +98,11 @@ useJsonld({
         <!-- 直近記事 -->
         <section class="mx-auto flex w-full max-w-6xl flex-col gap-10 px-2 md:px-6">
             <div class="flex items-center justify-between">
-                <h2 class="font-accent text-3xl text-slate-800 md:text-4xl">
+                <h2 class="font-accent text-3xl text-fg md:text-4xl">
                     記事一覧
                 </h2>
 
-                <span class="text-slate-500 text-sm">全{{ totalCount }}記事</span>
+                <span class="text-fg-muted text-sm">全{{ totalCount }}記事</span>
             </div>
             <div class="flex flex-col gap-8">
                 <MqLoading v-if="status === 'pending'" />
@@ -117,7 +117,7 @@ useJsonld({
                     </div>
                     <div v-else class="flex flex-col items-center justify-center gap-4">
                         <p class="text-lg font-bold text-accent">記事が見つかりませんでした。</p>
-                        <p class="text-sm text-slate-500">初めての投稿をお待ちください。</p>
+                        <p class="text-sm text-fg-muted">初めての投稿をお待ちください。</p>
                     </div>
 
                     <MqPagination

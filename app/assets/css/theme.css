@@ -1,0 +1,17 @@
+:root {
+  --color-surface: 245 243 243;
+  --color-surface-elevated: 255 255 255;
+  --color-surface-muted: 249 250 251;
+  --color-fg: 71 85 105;
+  --color-fg-muted: 107 114 128;
+  --color-border-subtle: 243 244 246;
+}
+
+.dark {
+  --color-surface: 15 17 21;
+  --color-surface-elevated: 26 29 36;
+  --color-surface-muted: 34 37 46;
+  --color-fg: 226 232 240;
+  --color-fg-muted: 156 163 175;
+  --color-border-subtle: 51 65 85;
+}

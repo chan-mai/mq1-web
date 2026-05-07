@@ -144,14 +144,14 @@ useJsonld({
                 <div class="w-full">
                     <MqPageBack class="mb-3" />
                     <div class="flex items-center justify-between">
-                        <h2 class="font-accent text-3xl text-slate-800 md:text-4xl" :style="`view-transition-name: tag-${slug};`">
+                        <h2 class="font-accent text-3xl text-fg md:text-4xl" :style="`view-transition-name: tag-${slug};`">
                                 <span class="bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-indigo-400">
                                     #{{ tag?.name }}
                                 </span>
                                 の記事一覧
                             </h2>
 
-                        <span class="text-slate-500 text-sm">全{{ totalCount }}記事</span>
+                        <span class="text-fg-muted text-sm">全{{ totalCount }}記事</span>
                     </div>
                 </div>
             </div>
@@ -167,7 +167,7 @@ useJsonld({
                     </div>
                     <div v-else class="flex flex-col items-center justify-center gap-4 py-16">
                         <p class="text-lg font-bold text-accent">記事が見つかりませんでした。</p>
-                        <p class="text-sm text-slate-500">他のタグを試してみてください。</p>
+                        <p class="text-sm text-fg-muted">他のタグを試してみてください。</p>
                     </div>
 
                     <MqPagination

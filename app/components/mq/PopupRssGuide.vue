@@ -72,35 +72,35 @@ whenever(
                                 <Icon :name="rss.icon" class="size-6 bg-primary" />
                             </div>
                             <h2 class="text-xl font-semibold text-primary">RSSって？</h2>
-                            <p class="mt-2 text-gray-500">ブログの更新をカンタンにチェックする方法です</p>
+                            <p class="mt-2 text-fg-muted">ブログの更新をカンタンにチェックする方法です</p>
                         </div>
 
                         <div class="my-6 space-y-4 text-sm">
-                            <div class="flex items-start gap-3 rounded-lg bg-white bg-opacity-60 p-3">
+                            <div class="flex items-start gap-3 rounded-lg bg-surface-elevated bg-opacity-60 p-3">
                                 <Icon name="akar-icons:bell" class="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
                                 <div>
                                     <p class="font-medium text-primary">更新をお知らせ</p>
-                                    <p class="text-gray-500">
+                                    <p class="text-fg-muted">
                                         新しい記事が公開されたら自動的にお知らせします。いちいちサイトをチェックする必要はありません。
                                     </p>
                                 </div>
                             </div>
 
-                            <div class="flex items-start gap-3 rounded-lg bg-white bg-opacity-60 p-3">
+                            <div class="flex items-start gap-3 rounded-lg bg-surface-elevated bg-opacity-60 p-3">
                                 <Icon name="iconamoon:clock" class="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
                                 <div>
                                     <p class="font-medium text-primary">時間を節約</p>
-                                    <p class="text-gray-500">
+                                    <p class="text-fg-muted">
                                         RSSリーダーで複数のブログやニュースをまとめて読めるので、効率的に情報収集できます。
                                     </p>
                                 </div>
                             </div>
 
-                            <div class="flex items-start gap-3 rounded-lg bg-white bg-opacity-60 p-3">
+                            <div class="flex items-start gap-3 rounded-lg bg-surface-elevated bg-opacity-60 p-3">
                                 <Icon name="stash:smartphone" class="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
                                 <div>
                                     <p class="font-medium text-primary">どこでも読める</p>
-                                    <p class="text-gray-500">
+                                    <p class="text-fg-muted">
                                         スマホやパソコンのRSSリーダーアプリで、いつでもどこでも最新情報をチェックできます。
                                     </p>
                                 </div>

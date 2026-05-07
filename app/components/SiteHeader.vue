@@ -139,6 +139,10 @@ if (import.meta.client) {
       </ul>
       <!-- ショップリンク（検索、RSS） -->
       <ul class="flex justify-start items-center list-none p-0 min-[801px]:ml-[40px] max-[800px]:ml-0">
+        <!-- カラーモードトグル -->
+        <li class="ml-[1rem]">
+          <MqColorModeToggle variant="header" />
+        </li>
         <!-- 検索ボタン -->
         <li class="ml-[1rem]">
           <button type="button" aria-label="検索を開く"

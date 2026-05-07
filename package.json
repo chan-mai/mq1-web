@@ -57,6 +57,7 @@
     "@iconify-json/lucide": "^1.2.86",
     "@iconify-json/material-symbols": "^1.2.52",
     "@iconify-json/simple-icons": "^1.2.67",
+    "@nuxtjs/color-mode": "^4.0.0",
     "@types/bcryptjs": "^3.0.0",
     "@types/pg": "^8.16.0",
     "@types/uuid": "^11.0.0",

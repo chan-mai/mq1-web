@@ -232,7 +232,7 @@ onMounted(async () => {
           variant === 'icon-only' ? 'w-10 h-10 p-0 rounded-full' : 'px-5 py-3 text-sm min-w-[132px]',
             isLiked
               ? 'bg-gradient-to-r from-pink-400 to-rose-400 text-white shadow-lg shadow-pink-200/40 hover:shadow-pink-300/50 hover:-translate-y-[1px]'
-              : 'text-gray-700 dark:text-gray-200 bg-white/80 dark:bg-white/10 border border-gray-200/30 dark:border-white/10 backdrop-blur-md hover:bg-gradient-to-r hover:from-pink-50 hover:to-rose-50 dark:hover:from-pink-950/30 dark:hover:to-rose-950/30 hover:border-pink-200/60 hover:shadow-lg hover:shadow-pink-200/40 hover:-translate-y-[1px]',
+              : 'text-fg bg-surface-elevated/80 border border-border-subtle/30 backdrop-blur-md hover:bg-gradient-to-r hover:from-pink-50 hover:to-rose-50 hover:border-pink-200/60 hover:shadow-lg hover:shadow-pink-200/40 hover:-translate-y-[1px]',
           (isLoading || isInitialLoading) && 'opacity-75 cursor-wait hover:translate-y-0'
         ]"
         :aria-label="isLiked ? 'いいね！を解除' : 'いいね！する'"
@@ -265,7 +265,7 @@ onMounted(async () => {
             'ml-1 px-2 py-0.5 rounded-full text-xs font-bold',
             isLiked
               ? 'bg-white/25 text-white'
-              : 'bg-gray-100 text-gray-700 group-hover:bg-pink-100 group-hover:text-pink-700'
+              : 'bg-surface-muted text-fg group-hover:bg-pink-100 group-hover:text-pink-700'
           ]"
         >
           {{ likeCount }}
@@ -274,7 +274,7 @@ onMounted(async () => {
     </div>
 
     <!-- アイコンのみモード用のカウント表示 -->
-    <div v-if="variant === 'icon-only' && !isInitialLoading" class="text-xs font-bold text-gray-500 text-center w-full">
+    <div v-if="variant === 'icon-only' && !isInitialLoading" class="text-xs font-bold text-fg-muted text-center w-full">
          {{ likeCount }}
     </div>
 
@@ -289,17 +289,17 @@ onMounted(async () => {
     >
       <div
         v-if="showLikeCard"
-        class="z-50 absolute top-14 left-0 mt-2 bg-white/95 dark:bg-gray-900/95 backdrop-blur rounded-2xl p-4 border border-gray-200/70 dark:border-white/10"
+        class="z-50 absolute top-14 left-0 mt-2 bg-surface-elevated/95 backdrop-blur rounded-2xl p-4 border border-border-subtle/70"
         :class="variant === 'icon-only' ? 'w-80' : 'w-full max-w-sm'"
         role="status" aria-live="polite"
       >
         <!-- 吹き出しの矢印 -->
-        <div class="pointer-events-none absolute -top-2 left-6 h-4 w-4 rotate-45 bg-white/95 dark:bg-gray-900/95 border-l border-t border-gray-200/70 dark:border-white/10"></div>
-        <div class="overflow-hidden rounded-xl border border-gray-200/70 dark:border-white/10">
+        <div class="pointer-events-none absolute -top-2 left-6 h-4 w-4 rotate-45 bg-surface-elevated/95 border-l border-t border-gray-200/70 dark:border-white/10"></div>
+        <div class="overflow-hidden rounded-xl border border-border-subtle/70">
           <img :src="currentCatImageUrl || catApiUrl" alt="Thank you cat" class="w-full object-cover" />
         </div>
         <div class="mt-3 flex items-center gap-3">
-          <p class="text-base font-normal text-gray-700">
+          <p class="text-base font-normal text-fg">
             ありがとう‼️
           </p>
         </div>

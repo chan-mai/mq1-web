@@ -106,7 +106,7 @@ useJsonld([
             </div>
 
             <!-- ループテキスト -->
-            <div class="w-full bg-white border-t-2 border-b-2 border-accent overflow-hidden py-1">
+            <div class="w-full bg-surface-elevated border-t-2 border-b-2 border-accent overflow-hidden py-1">
                 <div class="flex whitespace-nowrap">
                     <div v-for="i in 30" :key="i" class="animate-marquee flex gap-12 items-center pr-12 select-none shrink-0">
                         <span class="text-xs font-semibold tracking-tighter text-accent">SUDACHI MAI</span>
@@ -124,7 +124,7 @@ useJsonld([
                     <h2 class="md:absolute px-4 md:px-0 mt-4 md:mt-0 left-0 text-4xl md:text-5xl font-bold tracking-tighter text-accent/80 uppercase md:[writing-mode:vertical-rl] select-none whitespace-nowrap">Introduction</h2>
                     <!-- 背景要素 -->
                     <!-- 下に拡張するためにbottom-0をbottom-[-180px]に変更 -->
-                    <div class="absolute top-[130px] bottom-[-180px] left-0 w-full md:w-[calc(50%+600px)] bg-[#f2e6e7] -z-10"></div>
+                    <div class="absolute top-[130px] bottom-[-180px] left-0 w-full md:w-[calc(50%+600px)] bg-[#f2e6e7] dark:bg-primary/5 -z-10"></div>
 
                     <div class="max-w-[1200px] mx-auto px-4 relative">
                         <!-- ヘッダーコンテンツwrapper -->
@@ -133,17 +133,17 @@ useJsonld([
                                 <div class="flex flex-col gap-6 my-4 md:my-8">
                                     <div class="flex items-center gap-8">
                                         <div>
-                                            <p class="text-xs tracking-widest font-light text-gray-500">ROLE</p>
+                                            <p class="text-xs tracking-widest font-light text-fg-muted">ROLE</p>
                                             <p class="text-xl">Engineer?</p>
                                         </div>
                                         <div>
-                                            <p class="text-xs tracking-widest font-light text-gray-500">CHARACTER DESIGN</p>
+                                            <p class="text-xs tracking-widest font-light text-fg-muted">CHARACTER DESIGN</p>
                                             <NuxtLink to="https://x.com/CSea2073" target="_blank"
                                                 class="text-xl hover:text-primary transition-all">しなもん</NuxtLink>
                                         </div>
                                     </div>
                                     <div class="flex flex-col gap-2 mt-2">
-                                        <p class="text-xs tracking-widest font-light text-gray-500">SOCIALS</p>
+                                        <p class="text-xs tracking-widest font-light text-fg-muted">SOCIALS</p>
                                         <div class="flex flex-wrap gap-2">
                                             <div v-for="social in socials" :key="social.name">
                                                 <MqAppLink class="text-xs" :to="social.url" rel="me noopener noreferrer">
@@ -165,21 +165,21 @@ useJsonld([
                 <!-- 上に引き上げるために-mt-[100px]を追加 -->
                 <div class="relative z-10 -mt-[100px]">
                     <!-- 背景要素 -->
-                     <div class="absolute top-0 left-0 md:left-[calc(50%-680px)] w-full md:w-[calc(50%+680px)] h-full bg-white md:shadow-[0_16px_38px_10px_rgba(0,0,0,0.05)] -z-10"></div>
+                     <div class="absolute top-0 left-0 md:left-[calc(50%-680px)] w-full md:w-[calc(50%+680px)] h-full bg-surface-elevated md:shadow-[0_16px_38px_10px_rgba(0,0,0,0.05)] -z-10"></div>
 
                     <div class="max-w-[1200px] mx-auto px-4 py-12 md:py-20">
                          <div class="w-full">
 
                             <!-- Snapshots -->
                             <div class="mb-12">
-                                <p class="text-sm text-gray-500 tracking-widest mb-3 font-light">SNAPSHOTS</p>
+                                <p class="text-sm text-fg-muted tracking-widest mb-3 font-light">SNAPSHOTS</p>
                                 <div class="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-                                    <div v-for="i in 5" :key="i" class="w-[200px] h-[112px] bg-gray-50 border border-gray-100 rounded-xl overflow-hidden relative flex-shrink-0 group cursor-pointer transition-transform hover:scale-[1.02]">
-                                        <div class="absolute inset-0 bg-gray-100">
-                                            <div class="w-full h-full opacity-10 bg-[radial-gradient(#ccc_1px,transparent_1px)] [background-size:16px_16px]"></div>
+                                    <div v-for="i in 5" :key="i" class="w-[200px] h-[112px] bg-surface-muted border border-border-subtle rounded-xl overflow-hidden relative flex-shrink-0 group cursor-pointer transition-transform hover:scale-[1.02]">
+                                        <div class="absolute inset-0 bg-surface-muted">
+                                            <div class="w-full h-full bg-[radial-gradient(rgb(var(--color-fg)/0.15)_1px,transparent_1px)] [background-size:16px_16px]"></div>
                                         </div>
                                         <div class="absolute inset-0 flex flex-col items-center justify-center gap-2">
-                                            <div class="w-10 h-10 rounded-full bg-white/80 flex items-center justify-center">
+                                            <div class="w-10 h-10 rounded-full bg-surface-elevated/80 flex items-center justify-center">
                                                  <Icon name="ph:play-fill" class="w-4 h-4 text-primary/80 ml-0.5" />
                                             </div>
                                             <span class="text-xs font-semibold tracking-tighter text-primary">COMING SOON...</span>
@@ -197,7 +197,7 @@ useJsonld([
                                 <span class="waving-hand">👋🏻</span>
                             </p>
 
-                            <p class="text-base md:text-[16px] leading-[2.2] mb-12 text-gray-700 font-light tracking-wide text-justify">
+                            <p class="text-base md:text-[16px] leading-[2.2] mb-12 text-fg-muted font-light tracking-wide text-justify">
                                 九州を根城に生息している、ひとのふりをした自称フルスタックエンジニア。<br />
                                 たまにクリエイティブなことにも手を出します。
                                 普段はMisskeyで鯖缶をしています。<br />
@@ -206,7 +206,7 @@ useJsonld([
 
                             <!-- Profile -->
                             <div class="profile mt-12 w-full">
-                                <p class="text-sm text-gray-500 tracking-widest mb-3 font-light">PROFILE</p>
+                                <p class="text-sm text-fg-muted tracking-widest mb-3 font-light">PROFILE</p>
                                 <div class="flex flex-wrap justify-between mt-3">
                                     <dl v-for="(item, index) in [
                                         { label: '誕生日', value: '2006/04/04' },
@@ -215,9 +215,9 @@ useJsonld([
                                         { label: '言語', value: 'Go / Dart' },
                                         { label: '生息地', value: '九州' },
                                     ]" :key="item.label"
-                                    class="w-[48%] flex py-4 border-b border-dotted border-gray-400 items-baseline"
+                                    class="w-[48%] flex py-4 border-b border-dotted border-border-subtle items-baseline"
                                     :class="{ 'border-t': index < 2 }">
-                                        <dt class="w-[36%] md:w-[110px] text-gray-500 text-base font-light tracking-wide">{{ item.label }}</dt>
+                                        <dt class="w-[36%] md:w-[110px] text-fg-muted text-base font-light tracking-wide">{{ item.label }}</dt>
                                         <dd class="flex-1 text-base font-medium">
                                             <span>{{ item.value }}</span>
                                         </dd>
@@ -232,7 +232,7 @@ useJsonld([
 
                 <!-- background pattern -->
                 <div class="absolute top-0 left-0 w-full h-full">
-                    <div class="absolute inset-0 bg-[radial-gradient(#ccc_1px,transparent_1px)] [background-size:16px_16px]"></div>
+                    <div class="absolute inset-0 bg-[radial-gradient(rgb(var(--color-fg)/0.12)_1px,transparent_1px)] [background-size:16px_16px]"></div>
                 </div>
 
             </div>

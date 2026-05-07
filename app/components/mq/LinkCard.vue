@@ -31,18 +31,18 @@ const isExternalLink = computed(() => /^https?:\/\//.test(props.url));
     <div class="mq-link-card">
         <!-- Loading State (Skeleton) -->
         <div v-if="status === 'pending'" class="block w-full">
-             <div class="flex items-stretch overflow-hidden rounded-2xl bg-white border-2 border-secondary/20 h-[140px] animate-pulse">
+             <div class="flex items-stretch overflow-hidden rounded-2xl bg-surface-elevated border-2 border-secondary/20 h-[140px] animate-pulse">
                 <!-- Image Skeleton -->
-                <div class="flex-shrink-0 bg-gray-200 self-stretch basis-32 sm:basis-48 lg:basis-56"></div>
+                <div class="flex-shrink-0 bg-surface-muted self-stretch basis-32 sm:basis-48 lg:basis-56"></div>
                 <!-- Content Skeleton -->
                 <div class="flex flex-1 flex-col justify-between gap-3 p-5">
                     <div class="flex items-center gap-2">
-                        <div class="h-4 w-4 bg-gray-200 rounded-sm"></div>
-                        <div class="h-3 w-24 bg-gray-200 rounded"></div>
+                        <div class="h-4 w-4 bg-surface-muted rounded-sm"></div>
+                        <div class="h-3 w-24 bg-surface-muted rounded"></div>
                     </div>
                     <div class="flex-1 space-y-2">
-                        <div class="h-5 w-3/4 bg-gray-200 rounded"></div>
-                        <div class="h-4 w-full bg-gray-200 rounded"></div>
+                        <div class="h-5 w-3/4 bg-surface-muted rounded"></div>
+                        <div class="h-4 w-full bg-surface-muted rounded"></div>
                     </div>
                 </div>
             </div>

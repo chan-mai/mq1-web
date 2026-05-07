@@ -13,7 +13,6 @@ const rss = config.value.rss;
 
 const isOpen = ref(false);
 
-const isVisibleRssFeedCopyTooltip = ref<boolean>(false)
 const rssFeedCopy = () => {
     // RSSフィードのURLをクリップボードにコピー
     navigator.clipboard.writeText(config.value.rss.url).then(() => {
@@ -21,28 +20,28 @@ const rssFeedCopy = () => {
         useToast().success({
             title: 'RSSフィードのURLをコピーしました！',
         });
-        }).catch((err) => {
+    }).catch(() => {
         useToast().error({
             title: 'コピーに失敗しました',
         });
     });
-    isVisibleRssFeedCopyTooltip.value = true;
 };
 
-whenever(
-    () => isVisibleRssFeedCopyTooltip.value,
-    () =>
-        useTimeoutFn(() => {
-            isVisibleRssFeedCopyTooltip.value = false;
-        }, 3000),
-);
+const close = () => { isOpen.value = false; };
+
+const onKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'Escape' && isOpen.value) close();
+};
+
+onMounted(() => document.addEventListener('keydown', onKeyDown));
+onUnmounted(() => document.removeEventListener('keydown', onKeyDown));
 </script>
 
 <template>
     <div>
         <!-- トリガー -->
         <button v-if="type === 'button'" @click="isOpen = true" title="RSSで購読する" aria-label="RSSで購読する"
-            class="flex items-center gap-2 rounded-full border-none bg-pink-50 px-4 py-2 text-primary hover:bg-pink-100">
+            class="inline-flex items-center gap-2 rounded-md border border-border-subtle bg-surface-elevated px-3 py-1.5 text-sm text-fg transition-colors hover:border-primary hover:text-primary">
             <Icon :name="rss.icon" class="size-4" />
             RSSで購読
         </button>
@@ -60,68 +59,64 @@ whenever(
         </button>
 
         <teleport to="body">
+            <!-- バックドロップ -->
             <transition name="fade">
-                <div v-if="isOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-                    <div class="fixed inset-0 bg-black bg-opacity-50" @click="isOpen = false"></div>
+                <div v-if="isOpen" class="fixed inset-0 z-50 bg-gray-500/25 backdrop-blur-sm" @click="close" />
+            </transition>
 
+            <!-- モーダル -->
+            <transition name="modal">
+                <div v-if="isOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
                     <div
-                        class="relative max-w-md rounded-xl border-pink-200 bg-gradient-to-br from-rose-50 to-sky-50 p-6 shadow-lg">
-                        <div class="text-center">
-                            <div
-                                class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary bg-opacity-20">
-                                <Icon :name="rss.icon" class="size-6 bg-primary" />
-                            </div>
-                            <h2 class="text-xl font-semibold text-primary">RSSって？</h2>
-                            <p class="mt-2 text-fg-muted">ブログの更新をカンタンにチェックする方法です</p>
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="rss-popup-title"
+                        class="pointer-events-auto relative w-full max-w-sm rounded-xl bg-surface-elevated shadow-2xl ring-1 ring-black/5">
+
+                        <!-- ヘッダー -->
+                        <div class="px-8 pt-8 pb-6">
+                            <p class="mb-3 text-[11px] tracking-[0.2em] uppercase text-primary">RSS</p>
+                            <h2 id="rss-popup-title" class="text-2xl font-semibold text-fg">RSSって？</h2>
+                            <p class="mt-2 text-sm leading-relaxed text-fg-muted">ブログの更新をカンタンにチェックする方法です</p>
                         </div>
 
-                        <div class="my-6 space-y-4 text-sm">
-                            <div class="flex items-start gap-3 rounded-lg bg-surface-elevated bg-opacity-60 p-3">
-                                <Icon name="akar-icons:bell" class="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
-                                <div>
-                                    <p class="font-medium text-primary">更新をお知らせ</p>
-                                    <p class="text-fg-muted">
-                                        新しい記事が公開されたら自動的にお知らせします。いちいちサイトをチェックする必要はありません。
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div class="flex items-start gap-3 rounded-lg bg-surface-elevated bg-opacity-60 p-3">
-                                <Icon name="iconamoon:clock" class="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
-                                <div>
-                                    <p class="font-medium text-primary">時間を節約</p>
-                                    <p class="text-fg-muted">
-                                        RSSリーダーで複数のブログやニュースをまとめて読めるので、効率的に情報収集できます。
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div class="flex items-start gap-3 rounded-lg bg-surface-elevated bg-opacity-60 p-3">
-                                <Icon name="stash:smartphone" class="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
-                                <div>
-                                    <p class="font-medium text-primary">どこでも読める</p>
-                                    <p class="text-fg-muted">
-                                        スマホやパソコンのRSSリーダーアプリで、いつでもどこでも最新情報をチェックできます。
-                                    </p>
-                                </div>
-                            </div>
+                        <!-- メリット一覧 -->
+                        <div class="border-t border-border-subtle px-8">
+                            <ul class="divide-y divide-border-subtle">
+                                <li class="flex items-start gap-4 py-4">
+                                    <Icon name="akar-icons:bell" class="mt-0.5 size-5 shrink-0 text-primary" />
+                                    <div>
+                                        <p class="text-sm font-medium text-fg">更新をお知らせ</p>
+                                        <p class="mt-1 text-sm leading-relaxed text-fg-muted">新しい記事が公開されたら自動的にお知らせします。いちいちサイトをチェックする必要はありません。</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start gap-4 py-4">
+                                    <Icon name="iconamoon:clock" class="mt-0.5 size-5 shrink-0 text-primary" />
+                                    <div>
+                                        <p class="text-sm font-medium text-fg">時間を節約</p>
+                                        <p class="mt-1 text-sm leading-relaxed text-fg-muted">RSSリーダーで複数のブログやニュースをまとめて読めるので、効率的に情報収集できます。</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start gap-4 py-4">
+                                    <Icon name="stash:smartphone" class="mt-0.5 size-5 shrink-0 text-primary" />
+                                    <div>
+                                        <p class="text-sm font-medium text-fg">どこでも読める</p>
+                                        <p class="mt-1 text-sm leading-relaxed text-fg-muted">スマホやパソコンのRSSリーダーアプリで、いつでもどこでも最新情報をチェックできます。</p>
+                                    </div>
+                                </li>
+                            </ul>
                         </div>
 
-                        <div class="flex flex-col sm:flex-row sm:justify-center sm:space-x-2">
-                            <button @click="rssFeedCopy()"
-                                class="relative flex items-center justify-center rounded-md bg-primary text-white hover:bg-primary/90 px-4 py-2">
-                                <Icon :name="rss.icon" class="size-4 mr-2" />
-                                RSSで購読する
-                                <span :class="[
-                                    isVisibleRssFeedCopyTooltip ? 'opacity-100' : 'opacity-0',
-                                ]"
-                                    class="pointer-events-none absolute left-1/2 -translate-x-1/2 -top-8 whitespace-nowrap rounded bg-black/70 px-2 py-1 text-xs text-white transition-opacity">
-                                    URLをコピーしました
-                                </span>
-                            </button>
-                            <button @click="isOpen = false"
-                                class="mt-2 rounded-md border border-primary px-4 py-2 text-center text-primary hover:bg-primary/20 sm:mt-0">
+                        <!-- アクション -->
+                        <div class="flex items-center justify-end gap-2 border-t border-border-subtle px-8 py-5">
+                            <button @click="close"
+                                class="border-none bg-transparent px-3 py-2 text-sm text-fg-muted transition-colors hover:text-fg">
                                 閉じる
+                            </button>
+                            <button @click="rssFeedCopy()"
+                                class="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm text-white transition-colors hover:bg-primary/90 border-none">
+                                <Icon :name="rss.icon" class="size-4" />
+                                RSSで購読する
                             </button>
                         </div>
                     </div>
@@ -134,11 +129,22 @@ whenever(
 <style scoped>
 .fade-enter-active,
 .fade-leave-active {
-    transition: opacity 0.2s ease;
+    transition: opacity 0.3s ease;
 }
 
 .fade-enter-from,
 .fade-leave-to {
     opacity: 0;
+}
+
+.modal-enter-active,
+.modal-leave-active {
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+    opacity: 0;
+    transform: scale(0.98);
 }
 </style>

@@ -61,7 +61,7 @@ onUnmounted(() => document.removeEventListener('keydown', onKeyDown));
         <teleport to="body">
             <!-- バックドロップ -->
             <transition name="fade">
-                <div v-if="isOpen" class="fixed inset-0 z-50 bg-gray-500/25 backdrop-blur-sm" @click="close" />
+                <div v-if="isOpen" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm" @click="close" />
             </transition>
 
             <!-- モーダル -->

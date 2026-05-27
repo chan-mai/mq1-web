@@ -254,22 +254,4 @@ onUnmounted(() => {
   margin-bottom: 0;
   overflow: hidden;
 }
-
-
-nav::-webkit-scrollbar {
-  width: 6px;
-}
-nav::-webkit-scrollbar-track {
-  background: transparent;
-}
-nav::-webkit-scrollbar-thumb {
-  background-color: rgba(209, 213, 219, 0.8);
-  border-radius: 9999px;
-  border: 2px solid transparent;
-  background-clip: content-box;
-}
-nav:hover::-webkit-scrollbar-thumb {
-  background-color: rgba(156, 163, 175, 0.8);
-}
-
 </style>

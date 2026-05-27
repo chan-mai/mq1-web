@@ -27,11 +27,11 @@ const isExternalLink = computed(() => /^https?:\/\//.test(props.url));
         class="mq-link-card__link group block w-full transition-colors duration-200"
     >
         <div
-            class="flex items-stretch overflow-hidden rounded-2xl bg-surface-elevated border-2 border-secondary/40 transition-colors duration-200 hover:bg-primary/5 hover:border-primary/50"
+            class="flex items-stretch overflow-hidden rounded-2xl bg-surface-elevated border-2 border-border-subtle transition-colors duration-200 hover:bg-primary/5 hover:border-primary/50"
         >
             <div
                 v-if="preview.image"
-                class="flex flex-shrink-0 overflow-hidden bg-secondary/20 self-stretch basis-32 sm:basis-48 lg:basis-56"
+                class="flex flex-shrink-0 overflow-hidden bg-surface-muted self-stretch basis-32 sm:basis-48 lg:basis-56"
             >
                 <NuxtImg
                     :src="preview.image"
@@ -55,16 +55,16 @@ const isExternalLink = computed(() => /^https?:\/\//.test(props.url));
                         loading="lazy"
                         decoding="async"
                     />
-                    <p class="text-xs font-medium text-muted-foreground truncate">{{ preview.domain }}</p>
+                    <p class="text-xs font-medium text-fg-muted truncate">{{ preview.domain }}</p>
                 </div>
 
                 <div class="flex-1 min-w-0">
-                    <h3 class="font-semibold text-foreground line-clamp-2 text-base transition-colors duration-200 group-hover:text-primary">
+                    <h3 class="font-semibold text-fg line-clamp-2 text-base transition-colors duration-200 group-hover:text-primary">
                         {{ preview.title || FALLBACK_TITLE }}
                     </h3>
                     <p
                         v-if="preview.description"
-                        class="text-sm text-muted-foreground line-clamp-2 mt-1.5 transition-colors duration-200 group-hover:text-primary/80"
+                        class="text-sm text-fg-muted line-clamp-2 mt-1.5 transition-colors duration-200 group-hover:text-primary/80"
                     >
                         {{ preview.description }}
                     </p>
@@ -72,7 +72,7 @@ const isExternalLink = computed(() => /^https?:\/\//.test(props.url));
 
                 <div class="flex items-center justify-end">
                     <div
-                        class="flex items-center gap-1 text-secondary/60 transition-colors duration-200 group-hover:text-primary"
+                        class="flex items-center gap-1 text-fg-muted transition-colors duration-200 group-hover:text-primary"
                     >
                         <Icon name="material-symbols:arrow-outward-rounded" class="h-5 w-5" />
                     </div>

@@ -8,7 +8,7 @@ export default defineNuxtConfig({
   devtools: {
     enabled: true,
   },
-  css: ["kiso.css", "~/assets/css/theme.css", "~/assets/css/fonts.css", "~/assets/css/view-transitions.css"],
+  css: ["kiso.css", "~/assets/css/theme.css", "~/assets/css/fonts.css", "~/assets/css/view-transitions.css", "~/assets/css/hljs-theme.css", "~/assets/css/scrollbar.css"],
   app: {
     head: {
       viewport: 'width=device-width',

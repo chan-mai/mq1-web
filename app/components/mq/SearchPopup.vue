@@ -317,7 +317,7 @@ onUnmounted(() => {
     <teleport to="body">
         <!-- Backdrop -->
         <transition name="fade">
-            <div v-if="isOpen" class="fixed inset-0 z-50 bg-gray-500/25 backdrop-blur-sm" @click="close"></div>
+            <div v-if="isOpen" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm" @click="close"></div>
         </transition>
 
         <!-- Modal -->
@@ -419,8 +419,8 @@ onUnmounted(() => {
                                  <span class="">to select</span>
                              </button>
                              <div class="flex items-center gap-1">
-                                 <button type="button" @click="navigateDown" class="flex h-5 items-center justify-center rounded border border-border-subtle bg-surface-elevated px-1.5 font-sans text-[10px] font-medium text-fg-muted shadow-[0px_2px_0px_0px_rgba(0,0,0,0.08)] hover:bg-gray-50 hover:border-gray-300 transition-colors cursor-pointer outline-none">↓</button>
-                                 <button type="button" @click="navigateUp" class="flex h-5 items-center justify-center rounded border border-border-subtle bg-surface-elevated px-1.5 font-sans text-[10px] font-medium text-fg-muted shadow-[0px_2px_0px_0px_rgba(0,0,0,0.08)] hover:bg-gray-50 hover:border-gray-300 transition-colors cursor-pointer outline-none">↑</button>
+                                 <button type="button" @click="navigateDown" class="flex h-5 items-center justify-center rounded border border-border-subtle bg-surface-elevated px-1.5 font-sans text-[10px] font-medium text-fg-muted shadow-[0px_2px_0px_0px_rgba(0,0,0,0.08)] hover:bg-surface-muted hover:border-primary/40 transition-colors cursor-pointer outline-none">↓</button>
+                                 <button type="button" @click="navigateUp" class="flex h-5 items-center justify-center rounded border border-border-subtle bg-surface-elevated px-1.5 font-sans text-[10px] font-medium text-fg-muted shadow-[0px_2px_0px_0px_rgba(0,0,0,0.08)] hover:bg-surface-muted hover:border-primary/40 transition-colors cursor-pointer outline-none">↑</button>
                                  <span class="">to navigate</span>
                              </div>
                              <button type="button" @click="close" class="flex items-center gap-1 hover:bg-surface-muted rounded px-1 -ml-1 transition-colors cursor-pointer border-none outline-none">
@@ -429,7 +429,7 @@ onUnmounted(() => {
                              </button>
                          </div>
                          <div class="flex items-center gap-2">
-                            <span class="text-xs text-gray-400">Search by</span>
+                            <span class="text-xs text-fg-muted">Search by</span>
                             <NuxtImg :src="microCMSLogoSrc" alt="microCMS Logo" class="h-4 w-auto" loading="eager" decoding="async" />
                          </div>
                     </div>

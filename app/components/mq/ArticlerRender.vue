@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import * as cheerio from 'cheerio';
 import hljs from 'highlight.js'
-import 'highlight.js/styles/atom-one-light.css';
 
 defineOptions({ inheritAttrs: false });
 
@@ -459,9 +458,7 @@ watch(() => props.target, () => {
 
 /* コードブロックのファイル名表示 (Mac-Light Theme) */
 .code-header {
-    @apply bg-surface-muted text-fg px-4 py-3 rounded-t-xl text-sm font-mono mb-0 mx-6 flex items-center gap-4;
-    border: 1px solid #e5e7eb;
-    border-bottom: 1px solid #e5e7eb;
+    @apply bg-surface-muted text-fg px-4 py-3 rounded-t-xl text-sm font-mono mb-0 mx-6 flex items-center gap-4 border border-border-subtle;
 }
 
 .code-header .mac-dots {

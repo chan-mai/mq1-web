@@ -104,7 +104,7 @@ if (nextArticleResponse.value && nextArticleResponse.value.contents && nextArtic
                 
                 <!-- Empty State for Prev -->
                 <div v-else class="h-full bg-surface-muted border border-border-subtle rounded-xl p-5 flex flex-col justify-center items-center text-center opacity-75">
-                   <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center mb-3 text-fg-muted">
+                   <div class="w-10 h-10 rounded-full bg-surface-elevated border border-border-subtle flex items-center justify-center mb-3 text-fg-muted">
                         <Icon name="lucide:chevron-first" class="w-5 h-5" />
                    </div>
                    <p class="text-sm font-medium text-fg-muted">最古の記事です</p>
@@ -152,7 +152,7 @@ if (nextArticleResponse.value && nextArticleResponse.value.contents && nextArtic
 
                 <!-- Empty State for Next -->
                 <div v-else class="h-full bg-surface-muted border border-border-subtle rounded-xl p-5 flex flex-col justify-center items-center text-center opacity-75">
-                   <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center mb-3 text-fg-muted">
+                   <div class="w-10 h-10 rounded-full bg-surface-elevated border border-border-subtle flex items-center justify-center mb-3 text-fg-muted">
                         <Icon name="lucide:chevron-last" class="w-5 h-5" />
                    </div>
                    <p class="text-sm font-medium text-fg-muted">最新の記事です</p>

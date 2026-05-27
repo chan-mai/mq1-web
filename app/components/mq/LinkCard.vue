@@ -31,7 +31,7 @@ const isExternalLink = computed(() => /^https?:\/\//.test(props.url));
     <div class="mq-link-card">
         <!-- Loading State (Skeleton) -->
         <div v-if="status === 'pending'" class="block w-full">
-             <div class="flex items-stretch overflow-hidden rounded-2xl bg-surface-elevated border-2 border-secondary/20 h-[140px] animate-pulse">
+             <div class="flex items-stretch overflow-hidden rounded-2xl bg-surface-elevated border-2 border-border-subtle h-[140px] animate-pulse">
                 <!-- Image Skeleton -->
                 <div class="flex-shrink-0 bg-surface-muted self-stretch basis-32 sm:basis-48 lg:basis-56"></div>
                 <!-- Content Skeleton -->

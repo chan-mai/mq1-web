@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import hljs from 'highlight.js';
-import 'highlight.js/styles/atom-one-light.css';
 
 const props = defineProps<{
     preview: LinkPreviewResponse;
@@ -62,10 +61,10 @@ onMounted(() => {
 </script>
 
 <template>
-    <div v-if="preview.code" class="rounded-2xl border-2 border-secondary/20 bg-surface-muted overflow-hidden w-full">
-        <div class="flex items-center gap-2 px-4 py-2 border-b border-secondary/10 bg-surface-elevated">
+    <div v-if="preview.code" class="rounded-2xl border-2 border-border-subtle bg-surface-muted overflow-hidden w-full">
+        <div class="flex items-center gap-2 px-4 py-2 border-b border-border-subtle bg-surface-elevated">
             <Icon name="simple-icons:github" class="w-5 h-5" />
-            <span class="text-xs font-mono text-muted-foreground truncate">{{ preview.title || 'GitHub' }}</span>
+            <span class="text-xs font-mono text-fg-muted truncate">{{ preview.title || 'GitHub' }}</span>
         </div>
         
         <div class="relative w-full">
@@ -77,15 +76,15 @@ onMounted(() => {
                 スクロール可能です →
             </div>
 
-            <div 
-                ref="scrollContainer" 
+            <div
+                ref="scrollContainer"
                 class="overflow-x-auto overflow-y-hidden w-full relative"
                 @scroll="handleScroll"
             >
                 <div ref="contentRef" class="font-mono flex items-stretch min-w-max">
                     <!-- Line Numbers (Sticky) -->
-                    <div 
-                        class="sticky left-0 z-10 flex flex-col text-right select-none text-muted-foreground/50 border-r border-secondary/10 pr-4 pl-4 shrink-0 min-w-[3em] text-sm bg-surface-muted/90 backdrop-blur-[2px]" 
+                    <div
+                        class="sticky left-0 z-10 flex flex-col text-right select-none text-fg-muted/50 border-r border-border-subtle pr-4 pl-4 shrink-0 min-w-[3em] text-sm bg-surface-muted/90 backdrop-blur-[2px]"
                         style="line-height: 1.5rem;"
                     >
                         <span v-for="i in ((preview.endLine ?? 1) - (preview.startLine ?? 1) + 1)" :key="i">
@@ -95,13 +94,13 @@ onMounted(() => {
                     
                     <!-- Code Content -->
                     <div class="pr-4 pl-4 grow">
-                         <pre class="whitespace-pre text-gray-800 m-0 p-0 bg-transparent" style="line-height: 1.5rem;"><code class="hljs !p-0 !bg-transparent !overflow-y-hidden code-content" v-html="highlightedCode"></code></pre>
+                         <pre class="whitespace-pre text-fg m-0 p-0 bg-transparent" style="line-height: 1.5rem;"><code class="hljs !p-0 !bg-transparent !overflow-y-hidden code-content" v-html="highlightedCode"></code></pre>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="px-4 py-2 bg-surface-elevated border-t border-secondary/10 flex justify-end">
+        <div class="px-4 py-2 bg-surface-elevated border-t border-border-subtle flex justify-end">
             <NuxtLink 
                 :to="url" 
                 target="_blank" 

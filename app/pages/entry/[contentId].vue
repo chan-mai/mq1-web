@@ -255,7 +255,7 @@ const popularArticles = computed(() => popularData.value?.status === 'success' ?
 
             <!-- PC, サイド目次 -->
             <aside class="hidden lg:block lg:col-span-3 sticky top-32 pt-8">
-                 <MqCollapsibleToc class="max-h-[calc(100vh-9rem)] overflow-y-auto custom-scrollbar" :items="tableOfContents" :title="article?.title" />
+                 <MqCollapsibleToc class="max-h-[calc(100vh-9rem)] overflow-y-auto" :items="tableOfContents" :title="article?.title" />
             </aside>
         </div>
     </main>

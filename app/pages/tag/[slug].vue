@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { MicroCMSQueries } from 'microcms-js-sdk';
-import type { MicroCMSObject } from '#shared/types/microccms';
 
 definePageMeta({
     middleware: ['tag-compatibility-redirect'],
@@ -15,13 +13,13 @@ const page = computed(() => Number(route.query.page) || 1);
 const limit = 12;
 
 
-const articles: Ref<MicroCMSObject<Article>[] | null> = ref(null);
+const articles: Ref<Article[] | null> = ref(null);
 const totalCount: Ref<number> = ref(0);
-const tag: Ref<MicroCMSObject<Tag> | null> = ref(null);
+const tag: Ref<Tag | null> = ref(null);
 
 // slugからtagを取得
-const { data: tagResponse } = await useAsyncData<MicroCMSObject<Tag>>(`tag-${slug}`, async () => {
-    return await client.getList<MicroCMSObject<Tag>>({
+const { data: tagResponse } = await useAsyncData(`tag-${slug}`, async () => {
+    return await client.getList<Tag>({
         endpoint: 'tags',
         queries: {
             limit: 1,
@@ -41,11 +39,12 @@ if (!tagResponse.value || tagResponse.value.contents.length === 0) {
     });
 }
 
-tag.value = tagResponse.value.contents[0];
+const currentTag = tagResponse.value.contents[0]!;
+tag.value = currentTag;
 
 // slugが存在し、かつ現在のパスがslugでない場合はリダイレクト
-if (tag.value.slug && tag.value.slug !== slug) {
-    await navigateTo(`/tag/${tag.value.slug}`, {
+if (currentTag.slug && currentTag.slug !== slug) {
+    await navigateTo(`/tag/${currentTag.slug}`, {
         redirectCode: 301,
       // tip: external指定なしではコケることがある
       external: true,
@@ -60,7 +59,7 @@ const { data: articlesResponse, status } = await useAsyncData(
             queries: {
                 limit: limit,
                 offset: (page.value - 1) * limit,
-                filters: `tags[contains]${tag.value.id}`,
+                filters: `tags[contains]${currentTag.id}`,
             } satisfies MicroCMSQueries,
         });
     },
@@ -72,7 +71,7 @@ const { data: articlesResponse, status } = await useAsyncData(
 
 watch(articlesResponse, (newVal) => {
     if (newVal) {
-        articles.value = newVal.contents as unknown as MicroCMSObject<Article>[];
+        articles.value = newVal.contents as unknown as Article[];
         totalCount.value = newVal.totalCount;
     } else {
         // 記事がなければ空配列を設定しておく
@@ -87,10 +86,10 @@ const onPageChange = (newPage: number) => {
 };
 
 const config = useWebConfig();
-const pageTitle = `#${tag.value?.name} - ${config.value.siteName}`;
-const pageDescription = `#${tag.value?.name}の記事一覧`;
-const ogImageUrl = useTagOgGenerator(tag.value?.id);
-const pageUrl = `${config.value.siteUrl}tag/${tag.value?.slug}`;
+const pageTitle = `#${currentTag.name} - ${config.value.siteName}`;
+const pageDescription = `#${currentTag.name}の記事一覧`;
+const ogImageUrl = useTagOgGenerator(currentTag.id);
+const pageUrl = `${config.value.siteUrl}tag/${currentTag.slug}`;
 
 useHead({
     title: pageTitle,
@@ -121,7 +120,7 @@ useJsonld({
         name: config.value.author.name,
         url: pageUrl,
     },
-    blogPost: articles.value?.map((article: MicroCMSObject<Article>) => ({
+    blogPost: articles.value?.map((article: Article) => ({
         '@type': 'BlogPosting',
         headline: article.title,
         url: `${config.value.siteUrl}entry/${article.id}`,

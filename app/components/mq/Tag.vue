@@ -1,15 +1,17 @@
 <script setup lang="ts">
-import type { MicroCMSObject } from '#shared/types/microccms';
 
 // デフォルト値を指定
 const props = withDefaults(defineProps<{
-    tag?: MicroCMSObject<Tag>;
+    tag?: Tag;
     transition?: boolean;
     variant?: 'default' | 'compact';
 }>(), {
     tag: () => ({
         id: 'uncategorized',
         name: '未分類',
+        slug: 'uncategorized',
+        createdAt: '',
+        updatedAt: '',
     }),
     transition: () => false,
     variant: () => 'default',

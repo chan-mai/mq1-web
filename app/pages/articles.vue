@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import type { MicroCMSQueries } from 'microcms-js-sdk';
-import type { MicroCMSObject } from '#shared/types/microccms';
 
 const route = useRoute();
 const router = useRouter();
 const page = computed(() => Number(route.query.page) || 1);
 const limit = 12;
 
-const articles: Ref<MicroCMSObject<Article>[] | null> = ref(null);
+const articles: Ref<Article[] | null> = ref(null);
 const totalCount: Ref<number> = ref(0);
 
 const client = useMicroCMSClient();
@@ -32,7 +30,7 @@ const { data: articlesResponse, status } = await useAsyncData(
 
 watch(articlesResponse, (newVal) => {
     if (newVal) {
-        articles.value = newVal.contents as unknown as MicroCMSObject<Article>[];
+        articles.value = newVal.contents as unknown as Article[];
         totalCount.value = newVal.totalCount;
     }
 }, { immediate: true });
@@ -78,7 +76,7 @@ useJsonld({
         name: config.value.author.name,
         url: pageUrl,
     },
-    blogPost: articles.value?.map((article: MicroCMSObject<Article>) => ({
+    blogPost: articles.value?.map((article: Article) => ({
         '@type': 'BlogPosting',
         headline: article.title,
         url: `${config.value.siteUrl}entry/${article.id}`,

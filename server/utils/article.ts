@@ -1,5 +1,4 @@
 import { createClient } from "microcms-js-sdk";
-import type { MicroCMSObject } from "#shared/types/microccms";
 
 const getMicroCMSClient = () => {
   const config = useRuntimeConfig();
@@ -24,7 +23,7 @@ export const fetchArticleByContentId = async (contentId?: string | null) => {
   if (!contentId) return null;
 
   const client = getMicroCMSClient();
-  const response = await client.getList<MicroCMSObject<Article>>({
+  const response = await client.getList<Article>({
     endpoint: "articles",
     queries: {
       limit: 1,

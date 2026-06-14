@@ -1,17 +1,15 @@
 <script setup lang="ts">
-import type { MicroCMSQueries } from 'microcms-js-sdk';
-import type { MicroCMSObject } from '#shared/types/microccms';
 
 
-const tags: Ref<MicroCMSObject<Tag>[] | null> = ref(null);
-const articles: Ref<MicroCMSObject<Article>[] | null> = ref(null);
-const pinnedArticles: Ref<MicroCMSObject<Article>[] | null> = ref(null);
+const tags: Ref<Tag[] | null> = ref(null);
+const articles: Ref<Article[] | null> = ref(null);
+const pinnedArticles: Ref<Article[] | null> = ref(null);
 
 const client = useMicroCMSClient();
 
 // globalから固定記事を取得
-const { data: globalResponse } = await useAsyncData<MicroCMSObject<Global>>('global', async () => {
-    return await client.getObject<MicroCMSObject<Global>>({
+const { data: globalResponse } = await useAsyncData<Global>('global', async () => {
+    return await client.getObject<Global>({
         endpoint: 'global',
         queries: {
             depth: 2,
@@ -22,8 +20,8 @@ const { data: globalResponse } = await useAsyncData<MicroCMSObject<Global>>('glo
 });
 
 // 50件のタグを取得
-const { data: tagsResponse } = await useAsyncData<MicroCMSObject<Tag[]>>('index-tags', async () => {
-    return await client.getList<MicroCMSObject<Tag[]>>({
+const { data: tagsResponse } = await useAsyncData('index-tags', async () => {
+    return await client.getList<Tag>({
         endpoint: 'tags',
         queries: {
             limit: 50,
@@ -36,8 +34,8 @@ const { data: tagsResponse } = await useAsyncData<MicroCMSObject<Tag[]>>('index-
 if (tagsResponse.value) tags.value = tagsResponse.value.contents;
 
 // 直近15件の記事を取得
-const { data: articlesResponse } = await useAsyncData<MicroCMSObject<Article[]>>('index-articles', async () => {
-    return await client.getList<MicroCMSObject<Article[]>>({
+const { data: articlesResponse } = await useAsyncData('index-articles', async () => {
+    return await client.getList<Article>({
         endpoint: 'articles',
         queries: {
             limit: 15,
@@ -103,7 +101,7 @@ useJsonld([
             name: config.value.author.name,
             url: pageUrl,
         },
-        blogPost: articles.value?.map((article: MicroCMSObject<Article>) => ({
+        blogPost: articles.value?.map((article: Article) => ({
             '@type': 'BlogPosting',
             headline: article.title,
             url: `${config.value.siteUrl}entry/${article.id}`,

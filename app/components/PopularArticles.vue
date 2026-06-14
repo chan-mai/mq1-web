@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import type { MicroCMSObject } from '#shared/types/microccms';
 
 const props = defineProps<{
-    articles: (MicroCMSObject<Article> & { likeCount: number })[];
+    articles: (Article & { likeCount: number })[];
 }>();
 </script>
 

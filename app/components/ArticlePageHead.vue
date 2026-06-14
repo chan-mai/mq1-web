@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import type { MicroCMSObject } from '#shared/types/microccms';
 
 type PageHeaderProps = {
     title?: string
@@ -9,7 +8,7 @@ type PageHeaderProps = {
         name: string
         icon: string
     } | null,
-    tags?: MicroCMSObject<Tag[]>,
+    tags?: Tag[],
     readingTime?: { charCount: number, minutes: number }
     contentId: string
 }

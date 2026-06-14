@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import type { MicroCMSObject } from '#shared/types/microccms';
 
 const props = defineProps({
     article: {
-        type: Object as () => MicroCMSObject<Article>,
+        type: Object as () => Article,
         required: true,
     },
     transition: {

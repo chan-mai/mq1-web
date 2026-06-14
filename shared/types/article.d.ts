@@ -1,8 +1,11 @@
-interface Article  {
-    title?: string;
-    summary?: string;
-    content?: string;
-    eyecatch?: MicroCMSImage;
-    tags?: MicroCMSObject<Tag[]>;
-    is_no_index?: boolean;
+type MicroCMSArticle = MicroCMSObject<{
+  title: string;
+  content: string;
+  eyecatch?: MicroCMSImage;
+  tags?: Tag[];
+  is_no_index: boolean;
+}>;
+
+type Article = MicroCMSArticle & {
+  summary?: string;
 };

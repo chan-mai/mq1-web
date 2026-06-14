@@ -1,5 +1,4 @@
-import { createClient, type MicroCMSListResponse, type MicroCMSObjectContent } from "microcms-js-sdk";
-import type { MicroCMSObject } from '#shared/types/microccms';
+import { createClient } from "microcms-js-sdk";
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({

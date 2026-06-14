@@ -1,19 +1,17 @@
 <script setup lang="ts">
 import * as cheerio from 'cheerio';
-import type { MicroCMSQueries } from 'microcms-js-sdk';
-import type { MicroCMSObject } from '#shared/types/microccms';
 
 const route = useRoute();
 const { contentId } = route.params as { contentId: string };
 // クエリパラメータにdraft_keyがあれば取得
 const draftKeyParam: string | null = route.query.draft_key as string | null;
 
-const article: Ref<MicroCMSObject<Article> | null> = ref(null);
+const article: Ref<Article | null> = ref(null);
 
 // 記事を取得
 const client = useMicroCMSClient();
-const { data: articleResponse } = await useAsyncData<MicroCMSObject<Article>>(`article-${contentId}`, async () => {
-    return await client.getList<MicroCMSObject<Article>>({
+const { data: articleResponse } = await useAsyncData(`article-${contentId}`, async () => {
+    return await client.getList<Article>({
         endpoint: 'articles',
         queries: {
             limit: 1,
@@ -34,7 +32,7 @@ if (!articleResponse.value || articleResponse.value.contents.length === 0) {
     });
 }
 
-article.value = articleResponse.value.contents[0];
+article.value = articleResponse.value.contents[0] ?? null;
 
 // --- OGP Setup ---
 const config = useWebConfig();

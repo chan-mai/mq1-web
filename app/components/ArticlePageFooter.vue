@@ -1,23 +1,21 @@
 <script setup lang="ts">
-import type { MicroCMSQueries } from 'microcms-js-sdk';
-import type { MicroCMSObject } from '#shared/types/microccms';
 
 const props = defineProps({
     currentArticle: {
-        type: Object as () => MicroCMSObject<Article>,
+        type: Object as () => Article,
         required: true,
     },
 });
 
 
-const prevArticle: Ref<MicroCMSObject<Article> | null> = ref(null);
-const nextArticle: Ref<MicroCMSObject<Article> | null> = ref(null);
+const prevArticle: Ref<Article | null> = ref(null);
+const nextArticle: Ref<Article | null> = ref(null);
 
 // 前と次の記事を並列で取得
 const client = useMicroCMSClient();
 
-const { data: prevArticleResponse } = await useAsyncData<MicroCMSObject<Article[]>>(`prev-article-${props.currentArticle.id}`, async () => {
-    return await client.getList<MicroCMSObject<Article[]>>({
+const { data: prevArticleResponse } = await useAsyncData(`prev-article-${props.currentArticle.id}`, async () => {
+    return await client.getList<Article>({
         endpoint: 'articles',
         queries: {
             limit: 1,
@@ -31,14 +29,14 @@ const { data: prevArticleResponse } = await useAsyncData<MicroCMSObject<Article[
 });
 
 if (prevArticleResponse.value && prevArticleResponse.value.contents && prevArticleResponse.value.contents.length > 0) {
-    prevArticle.value = prevArticleResponse.value.contents[0];
+    prevArticle.value = prevArticleResponse.value.contents[0] ?? null;
     if (prevArticle.value && prevArticle.value.content) {
         prevArticle.value.summary = useSummaryTextGenerator(prevArticle.value.content);
     }
 }
 
-const { data: nextArticleResponse } = await useAsyncData<MicroCMSObject<Article>>(`next-article-${props.currentArticle.id}`, async () => {
-    return await client.getList<MicroCMSObject<Article>>({
+const { data: nextArticleResponse } = await useAsyncData(`next-article-${props.currentArticle.id}`, async () => {
+    return await client.getList<Article>({
         endpoint: 'articles',
         queries: {
             limit: 1,
@@ -53,7 +51,7 @@ const { data: nextArticleResponse } = await useAsyncData<MicroCMSObject<Article>
 });
 
 if (nextArticleResponse.value && nextArticleResponse.value.contents && nextArticleResponse.value.contents.length > 0) {
-    nextArticle.value = nextArticleResponse.value.contents[0];
+    nextArticle.value = nextArticleResponse.value.contents[0] ?? null;
     if (nextArticle.value && nextArticle.value.content) {
         nextArticle.value.summary = useSummaryTextGenerator(nextArticle.value.content);
     }

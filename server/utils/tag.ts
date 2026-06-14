@@ -1,5 +1,4 @@
 import { createClient } from "microcms-js-sdk";
-import type { MicroCMSObject } from "../../shared/types/microccms";
 
 const getMicroCMSClient = () => {
   const config = useRuntimeConfig();
@@ -26,7 +25,7 @@ export const fetchTagById = async (tagId?: string | null) => {
   const client = getMicroCMSClient();
   
   try {
-      const response = await client.getList<MicroCMSObject<Tag>>({
+      const response = await client.getList<Tag>({
         endpoint: "tags",
         queries: {
           limit: 1,

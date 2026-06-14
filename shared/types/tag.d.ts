@@ -1,5 +1,8 @@
-interface Tag {
-    name: string;
-    slug: string;
-    count?: number;
-}
+type MicroCMSTag = MicroCMSObject<{
+  name: string;
+  slug: string;
+}>;
+
+type Tag = MicroCMSTag & {
+  count?: number;
+};

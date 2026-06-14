@@ -1,6 +1,5 @@
-```
 <script setup lang="ts">
-import type { MicroCMSQueries, MicroCMSListResponse } from 'microcms-js-sdk';
+import type { MicroCMSListResponse } from 'microcms-js-sdk';
 
 const isOpen = ref(false);
 
@@ -15,7 +14,7 @@ interface SearchResult {
     id: string;
     type: 'article' | 'tag';
     title: string;
-    hasTags?: MicroCMSObject<Tag>;
+    hasTags?: Tag[];
     to: string;
 }
 

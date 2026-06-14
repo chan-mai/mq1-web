@@ -1,5 +1,4 @@
 import { createClient } from "microcms-js-sdk";
-import type { MicroCMSObject } from "#shared/types/microccms";
 import { desc, sql } from "drizzle-orm";
 import { articleLikes } from "~~/server/db/schema";
 import { getD1Drizzle } from "~~/server/utils/d1";
@@ -35,12 +34,12 @@ export default defineEventHandler(async (event) => {
       .orderBy(desc(likeCountExpr))
       .limit(limit);
 
-    let articles: (MicroCMSObject<Article> & { likeCount: number })[] = [];
+    let articles: (Article & { likeCount: number })[] = [];
 
     //  記事取得
     if (topArticles.length > 0) {
         const ids = topArticles.map(t => t.contentId);
-        const response = await client.getList<MicroCMSObject<Article>>({
+        const response = await client.getList<Article>({
             endpoint: 'articles',
             queries: {
                 ids: ids.join(','), // filters: `id[in]...` の代わりに ids パラメータを使用可能 (SDK仕様によるが基本はids推奨) 
@@ -57,7 +56,7 @@ export default defineEventHandler(async (event) => {
                 ...article,
                 likeCount: Number(meta?.likeCount || 0)
             };
-        }).filter((item): item is (MicroCMSObject<Article> & { likeCount: number }) => item !== null);
+        }).filter((item): item is (Article & { likeCount: number }) => item !== null);
     }
 
     // 不足分を最新記事で埋める (ターゲット数: 3 + 除外分余裕)
@@ -68,7 +67,7 @@ export default defineEventHandler(async (event) => {
         if(excludeId && !currentIds.includes(excludeId)) currentIds.push(excludeId);
 
         const fallbackLimit = 5;
-        const fallback = await client.getList<MicroCMSObject<Article>>({
+        const fallback = await client.getList<Article>({
             endpoint: 'articles',
             queries: {
                 limit: fallbackLimit,

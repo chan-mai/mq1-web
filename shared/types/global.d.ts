@@ -1,3 +1,3 @@
-interface Global  {
-    pinned_articles: MicroCMSObject<Article[]>;
-};
+type Global = MicroCMSObject<{
+    pinned_articles: Article[];
+}>;

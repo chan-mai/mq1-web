@@ -1,6 +1,15 @@
-type LinkPreviewType = 'GENERAL' | 'MISSKEY_NOTE' | 'MISSKEY_HASHTAG' | 'MISSKEY_USER' | 'MISSKEY_CLIP' | 'GITHUB_PERMALINK' | 'TWITTER' | 'YOUTUBE' | 'INSTAGRAM';
+type LinkPreviewType =
+  | "GENERAL"
+  | "MISSKEY_NOTE"
+  | "MISSKEY_HASHTAG"
+  | "MISSKEY_USER"
+  | "MISSKEY_CLIP"
+  | "GITHUB_PERMALINK"
+  | "TWITTER"
+  | "YOUTUBE"
+  | "INSTAGRAM";
 
-interface LinkPreviewResponse {
+type LinkPreviewResponse = {
   url: string;
   domain: string;
   title: string;
@@ -12,4 +21,4 @@ interface LinkPreviewResponse {
   code?: string;
   startLine?: number;
   endLine?: number;
-}
+};

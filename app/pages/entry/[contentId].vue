@@ -39,7 +39,7 @@ const config = useWebConfig();
 
 if (article.value && article.value.content) {
     const pageTitle = `${article.value?.title || ''} - ${config.value.siteName}`;
-    const pageDescription = useSummaryTextGenerator(article.value?.content ) || config.value.siteDescription;
+    const pageDescription = useSummaryTextGenerator(article.value?.content) || config.value.siteDescription;
     const ogImageUrl = article.value?.eyecatch?.url || useArticleOgGenerator(contentId);
     const pageUrl = `${config.value.siteUrl}entry/${contentId}`;
     const publishedTime = article.value?.publishedAt || article.value?.createdAt;
@@ -191,47 +191,35 @@ const readingTime = computed(() => {
 });
 
 const tableOfContents: Ref<{ id: string; text: string; level: number }[]> = ref(article.value ? generateTableOfContents(article.value?.content!) : []);
-
-// 人気記事取得 
-const { data: popularData } = await useFetch('/api/popular-articles', {
-    query: { excludeId: contentId },
-});
-const popularArticles = computed(() => popularData.value?.status === 'success' ? popularData.value.articles : []);
 </script>
 <template>
-    <div v-if="draftKeyParam" class="fixed top-0 left-0 z-50 bg-sky-200 text-black px-4 py-2 shadow-md flex items-center m-2 rounded-md opacity-70">
+    <div v-if="draftKeyParam"
+        class="fixed top-0 left-0 z-50 bg-sky-200 text-black px-4 py-2 shadow-md flex items-center m-2 rounded-md opacity-70">
         <Icon name="iconoir:warning-window" class="size-5 mr-2" />
         <span class="font-bold">下書きを表示しています</span>
     </div>
     <ScrollProgressBar />
-    <main
-        class="min-h-screen pt-[120px] md:pt-[160px] px-4 sm:px-6">
+    <main class="min-h-screen pt-[120px] md:pt-[160px] px-4 sm:px-6">
         <div class="mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start mb-10">
             <!-- Left Sidebar (Social Actions) -->
             <aside class="hidden lg:flex lg:col-span-1 sticky top-32 flex-col gap-6 items-center z-20 pt-8">
-                 <MqLikeButton :content-id="contentId" variant="icon-only" />
-                 <div class="h-px w-10 bg-border-subtle"></div>
-                 <MqShareButtons 
-                    :title="article?.title || ''" 
-                    :url="`/entry/${contentId}`"
-                    orientation="vertical"
-                />
+                <MqLikeButton :content-id="contentId" variant="icon-only" />
+                <div class="h-px w-10 bg-border-subtle"></div>
+                <MqShareButtons :title="article?.title || ''" :url="`/entry/${contentId}`" orientation="vertical" />
             </aside>
 
             <!-- Main Content -->
             <article class="lg:col-span-8 w-full min-w-0">
                 <ArticlePageHead :title="article?.title" :published="article?.publishedAt ?? article?.createdAt"
-                    :updated="article?.updatedAt" :tags="article?.tags"
-                    :readingTime :contentId />
+                    :updated="article?.updatedAt" :tags="article?.tags" :readingTime :contentId />
 
                 <!-- Mobile 目次 -->
-                <MqCollapsibleToc :items="tableOfContents" :title="article?.title"
-                    class="mt-8 lg:hidden" />
+                <MqCollapsibleToc :items="tableOfContents" :title="article?.title" class="mt-8 lg:hidden" />
 
                 <div class="content prose max-w-none">
                     <MqArticlerRender :target="article?.content!" class="micro-cms mt-8 md:mt-12" />
                 </div>
-                
+
                 <!-- いいねボタン -->
                 <div class="mt-12 mb-8 w-full">
                     <MqLikeButton :content-id="contentId" class="px-5 py-3" />
@@ -239,21 +227,19 @@ const popularArticles = computed(() => popularData.value?.status === 'success' ?
 
                 <!-- 共有ボタン -->
                 <div class="mt-6 mb-8 w-full">
-                    <MqShareButtons 
-                        :title="article?.title || ''" 
-                        :url="`/entry/${contentId}`"
-                    />
+                    <MqShareButtons :title="article?.title || ''" :url="`/entry/${contentId}`" />
                 </div>
-                
+
                 <!-- 人気の記事 -->
-                <div v-if="popularArticles.length" class="mt-6 w-full">
-                    <PopularArticles :articles="popularArticles" />
+                <div class="mt-6 w-full">
+                    <PopularArticles :exclude-id="contentId" />
                 </div>
             </article>
 
             <!-- PC, サイド目次 -->
             <aside class="hidden lg:block lg:col-span-3 sticky top-32 pt-8">
-                 <MqCollapsibleToc class="max-h-[calc(100vh-9rem)] overflow-y-auto" :items="tableOfContents" :title="article?.title" />
+                <MqCollapsibleToc class="max-h-[calc(100vh-9rem)] overflow-y-auto" :items="tableOfContents"
+                    :title="article?.title" />
             </aside>
         </div>
     </main>

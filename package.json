@@ -36,6 +36,7 @@
     "highlight.js": "^11.11.2",
     "idb": "^8.0.3",
     "kiso.css": "^1.2.4",
+    "mermaid": "^11.16.1",
     "microcms-js-sdk": "^3.4.0",
     "nuxt": "^4.5.2",
     "nuxt-jsonld": "^2.2.1",

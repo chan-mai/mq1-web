@@ -13,6 +13,7 @@ const props = defineProps({
 
 const route = useRoute();
 const config = useWebConfig();
+const articleRoot = useTemplateRef<HTMLElement>('articleRoot');
 
 type LinkCardEntry = {
     url: string;
@@ -20,7 +21,15 @@ type LinkCardEntry = {
     rel?: string;
 };
 
-type ArticleSegment = { type: 'html'; content: string } | { type: 'link-card'; data: LinkCardEntry };
+type MermaidEntry = {
+    source: string;
+    filename?: string;
+};
+
+type ArticleSegment =
+    | { type: 'html'; content: string }
+    | { type: 'link-card'; data: LinkCardEntry }
+    | { type: 'mermaid'; data: MermaidEntry };
 
 const attrs = useAttrs();
 
@@ -56,8 +65,8 @@ const htmlSegmentClass = computed(() =>
 );
 
 
-const buildSegments = (markup: string, linkCards: LinkCardEntry[]): ArticleSegment[] => {
-    const placeholderRegex = /\[\[MQ_LINK_CARD:(\d+)]]/g;
+const buildSegments = (markup: string, linkCards: LinkCardEntry[], mermaidBlocks: MermaidEntry[]): ArticleSegment[] => {
+    const placeholderRegex = /\[\[MQ_(LINK_CARD|MERMAID):(\d+)]]/g;
     const segments: ArticleSegment[] = [];
     let lastIndex = 0;
     let match: RegExpExecArray | null;
@@ -67,10 +76,17 @@ const buildSegments = (markup: string, linkCards: LinkCardEntry[]): ArticleSegme
         if (preceding.trim().length > 0) {
             segments.push({ type: 'html', content: preceding });
         }
-        const placeholderIdx = Number(match[1]);
-        const linkCard = linkCards[placeholderIdx];
-        if (linkCard) {
-            segments.push({ type: 'link-card', data: linkCard });
+        const placeholderIdx = Number(match[2]);
+        if (match[1] === 'LINK_CARD') {
+            const linkCard = linkCards[placeholderIdx];
+            if (linkCard) {
+                segments.push({ type: 'link-card', data: linkCard });
+            }
+        } else {
+            const mermaidBlock = mermaidBlocks[placeholderIdx];
+            if (mermaidBlock) {
+                segments.push({ type: 'mermaid', data: mermaidBlock });
+            }
         }
         lastIndex = match.index + match[0].length;
     }
@@ -89,23 +105,33 @@ const buildSegments = (markup: string, linkCards: LinkCardEntry[]): ArticleSegme
 
 const articleSegments = ref<ArticleSegment[]>([]);
 
+const getCodeLanguage = ($: cheerio.CheerioAPI, elem: Parameters<cheerio.CheerioAPI>[0]) => {
+    const className = $(elem).attr('class') ?? '';
+    const classMatch = className.match(/(?:language|lang)-([\w-]+)/);
+    return classMatch?.[1] ?? $(elem).attr('data-language') ?? $(elem).parent('pre').attr('data-language') ?? null;
+};
+
 const processContent = () => {
     // コードハイライトとリンクアイコンの追加, リンクカードの置き換え
     if (props.target) {
         const $ = cheerio.load(props.target);
         const linkCardEntries: LinkCardEntry[] = [];
+        const mermaidEntries: MermaidEntry[] = [];
 
         // コードハイライト
         $('pre code').each((_, elem) => {
-            const className = $(elem).attr('class');
             const $pre = $(elem).parent('pre');
             const $div = $pre.parent('div');
+            const language = getCodeLanguage($, elem)?.toLowerCase();
+            const filename = $div.attr('data-filename') || $pre.attr('data-filename');
 
-            // 言語部分を正確に抽出するように改善
-            let language = null;
-            if (className) {
-                const match = className.match(/language-(\w+)/);
-                language = match ? match[1] : null;
+            if (language === 'mermaid' || $(elem).hasClass('mermaid')) {
+                const placeholderIndex = mermaidEntries.push({
+                    source: $(elem).text(),
+                    filename,
+                }) - 1;
+                $pre.replaceWith(`[[MQ_MERMAID:${placeholderIndex}]]`);
+                return;
             }
 
             let result;
@@ -124,7 +150,6 @@ const processContent = () => {
 
             // data-filename属性がある場合、ファイル名を表示
             // div要素またはpre要素のどちらかにdata-filename属性があるかをチェック
-            const filename = $div.attr('data-filename') || $pre.attr('data-filename');
             if (filename) {
                 // ファイル名表示用のヘッダーを作成
                 const header = $(`
@@ -137,7 +162,7 @@ const processContent = () => {
                         <span class="filename">${filename}</span>
                     </div>
                 `);
-                
+
                 // div要素にdata-filenameがある場合は、div要素の中にヘッダーを挿入
                 if ($div.attr('data-filename')) {
                     $div.prepend(header);
@@ -174,7 +199,7 @@ const processContent = () => {
                     $link.append('<span class="link-icon">&#128279;</span>');
                 }
             }
-            
+
         });
 
         // 見出しの先頭にタグレベルに応じた#を追加
@@ -188,15 +213,15 @@ const processContent = () => {
                     return;
                 }
                 $el.prepend(`<span class="heading-level-${level} text-primary/60">${'#'.repeat(level)}</span>&nbsp;`);
-                
+
                 // クリック可能なクラスを追加
                 $el.addClass('clickable-heading');
             });
         }
 
-    // ... (rest of processContent logic) ...
+        // ... (rest of processContent logic) ...
         const htmlOutput = $.html();
-        articleSegments.value = buildSegments(htmlOutput, linkCardEntries);
+        articleSegments.value = buildSegments(htmlOutput, linkCardEntries, mermaidEntries);
     } else {
         articleSegments.value = [];
     }
@@ -210,7 +235,7 @@ const processContent = () => {
 const copyHeadingPermalink = (headingId: string) => {
     const baseUrl = `${config.value.siteUrl.endsWith('/') ? config.value.siteUrl.slice(0, -1) : config.value.siteUrl}${route.path}`;
     const url = `${baseUrl}#${headingId}`;
-    
+
     try {
         navigator.clipboard.writeText(url);
         useToast().success({
@@ -225,9 +250,11 @@ const copyHeadingPermalink = (headingId: string) => {
 };
 
 const initInteractiveElements = () => {
-    const tables = document.querySelectorAll('.micro-cms table');
-    const codeBlocks = document.querySelectorAll('code');
-    
+    if (!import.meta.client) return;
+
+    const tables = articleRoot.value?.querySelectorAll('.micro-cms table') ?? [];
+    const codeBlocks = articleRoot.value?.querySelectorAll('code') ?? [];
+
     // スクロール可能な要素にインジケーターを追加
     function addScrollIndicator(elements: any) {
         elements.forEach((element: any) => {
@@ -236,19 +263,19 @@ const initInteractiveElements = () => {
                 const indicator = document.createElement('div');
                 indicator.className = 'scroll-indicator';
                 indicator.innerHTML = 'スクロール可能です →';
-                
+
                 // 要素をラップする
                 const wrapper = document.createElement('div');
                 wrapper.className = 'scrollable-wrapper';
                 element.parentNode.insertBefore(wrapper, element);
                 wrapper.appendChild(element);
                 wrapper.appendChild(indicator);
-                
+
                 // スクロールイベントを検知したら点滅を止める
                 element.addEventListener('scroll', () => {
                     indicator.classList.remove('blink');
                     indicator.classList.add('fade-out');
-                    
+
                     // 少し時間を置いてから非表示に
                     setTimeout(() => {
                         indicator.style.display = 'none';
@@ -257,13 +284,15 @@ const initInteractiveElements = () => {
             }
         });
     }
-    
+
     addScrollIndicator(tables);
     addScrollIndicator(codeBlocks);
-    
+
     // 見出しにクリックイベントを追加
-    const headings = document.querySelectorAll('.micro-cms .clickable-heading');
+    const headings = articleRoot.value?.querySelectorAll<HTMLElement>('.micro-cms .clickable-heading') ?? [];
     headings.forEach((heading) => {
+        if (heading.dataset.permalinkInitialized === 'true') return;
+        heading.dataset.permalinkInitialized = 'true';
         heading.addEventListener('click', () => {
             const id = heading.getAttribute('id');
             if (id) {
@@ -284,23 +313,16 @@ onMounted(() => {
 watch(() => props.target, () => {
     processContent();
 });
+
 </script>
 
 <template>
-    <div v-bind="containerAttrs" :class="rootClass">
+    <div ref="articleRoot" v-bind="containerAttrs" :class="rootClass">
         <template v-for="(segment, index) in articleSegments" :key="index">
-            <div
-                v-if="segment.type === 'html'"
-                :class="htmlSegmentClass"
-                v-html="segment.content"
-            />
-            <MqLinkCard
-                v-else
-                class="px-8 pt-2"
-                :url="segment.data.url"
-                :target="segment.data.target"
-                :rel="segment.data.rel"
-            />
+            <div v-if="segment.type === 'html'" :class="htmlSegmentClass" v-html="segment.content" />
+            <MqLinkCard v-else-if="segment.type === 'link-card'" class="px-8 pt-2" :url="segment.data.url" :target="segment.data.target"
+                :rel="segment.data.rel" />
+            <MqMermaidBlock v-else :source="segment.data.source" :filename="segment.data.filename" />
         </template>
     </div>
 </template>
@@ -345,7 +367,7 @@ watch(() => props.target, () => {
 }
 
 .micro-cms h3 {
-    @apply mt-8 text-xl  font-semibold;
+    @apply mt-8 text-xl font-semibold;
 }
 
 /* クリック可能な見出し */
@@ -467,7 +489,7 @@ watch(() => props.target, () => {
 
 .code-header .mac-dots span {
     @apply w-3 h-3 rounded-full block;
-    border: 1px solid rgba(0,0,0,0.1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .code-header .mac-dots span:nth-child(1) {
@@ -549,9 +571,17 @@ watch(() => props.target, () => {
 }
 
 @keyframes blink {
-    0% { opacity: 0.4; }
-    50% { opacity: 1; }
-    100% { opacity: 0.4; }
+    0% {
+        opacity: 0.4;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.4;
+    }
 }
 
 /* フェードアウトアニメーション */

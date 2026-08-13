@@ -14,6 +14,46 @@ const diagramId = useId().replaceAll(':', '-');
 let renderVersion = 0;
 let mermaidPromise: Promise<typeof import('mermaid')['default']> | null = null;
 
+const getThemeVariables = () => {
+    const styles = getComputedStyle(diagram.value!);
+    const color = (name: string) => styles.getPropertyValue(`--mermaid-${name}`).trim();
+
+    return {
+        darkMode: colorMode.value === 'dark',
+        background: color('background'),
+        primaryColor: color('primary'),
+        primaryBorderColor: color('primary-border'),
+        primaryTextColor: color('text'),
+        secondaryColor: color('secondary'),
+        secondaryBorderColor: color('secondary-border'),
+        secondaryTextColor: color('text'),
+        tertiaryColor: color('tertiary'),
+        tertiaryBorderColor: color('tertiary-border'),
+        tertiaryTextColor: color('text'),
+        lineColor: color('line'),
+        textColor: color('text'),
+        noteBkgColor: color('note'),
+        noteBorderColor: color('note-border'),
+        noteTextColor: color('text'),
+        clusterBkg: color('cluster'),
+        clusterBorder: color('cluster-border'),
+        edgeLabelBackground: color('background'),
+        cScale0: color('primary'),
+        cScale1: color('secondary'),
+        cScale2: color('tertiary'),
+        cScale3: color('quaternary'),
+        cScale4: color('note'),
+        pie1: color('primary'),
+        pie2: color('secondary'),
+        pie3: color('tertiary'),
+        pie4: color('quaternary'),
+        pie5: color('note'),
+        pieTitleTextColor: color('text'),
+        pieLegendTextColor: color('text'),
+        fontFamily: '"futura-pt", "Noto Sans JP", sans-serif',
+    };
+};
+
 const renderDiagram = async () => {
     if (!import.meta.client || !diagram.value) return;
 
@@ -30,7 +70,8 @@ const renderDiagram = async () => {
             securityLevel: 'strict',
             secure: ['securityLevel', 'startOnLoad', 'maxTextSize'],
             suppressErrorRendering: true,
-            theme: colorMode.value === 'dark' ? 'dark' : 'default',
+            theme: 'base',
+            themeVariables: getThemeVariables(),
         });
         const id = `mermaid-${diagramId}-${currentVersion}`;
         const { svg, bindFunctions } = await mermaid.render(id, props.source);
@@ -59,7 +100,7 @@ watch([() => props.source, () => colorMode.value], () => {
 </script>
 
 <template>
-    <div class="mermaid-block">
+    <div class="mermaid-block" :class="{ 'mermaid-block--dark': colorMode.value === 'dark' }">
         <div class="mermaid-toolbar">
             <span class="mermaid-label">{{ filename || 'Mermaid' }}</span>
             <div class="mermaid-controls" role="group" aria-label="表示形式">
@@ -90,6 +131,37 @@ watch([() => props.source, () => colorMode.value], () => {
 <style scoped lang="css">
 .mermaid-block {
     @apply mx-6 my-8 overflow-hidden rounded-xl border border-border-subtle bg-surface-elevated;
+    --mermaid-background: #ffffff;
+    --mermaid-primary: #fde7ea;
+    --mermaid-primary-border: #fc9fa8;
+    --mermaid-secondary: #eeeafa;
+    --mermaid-secondary-border: #b9a7e8;
+    --mermaid-tertiary: #e5f4ee;
+    --mermaid-tertiary-border: #82c4a6;
+    --mermaid-quaternary: #e7f1fb;
+    --mermaid-line: #b8798a;
+    --mermaid-text: #475569;
+    --mermaid-note: #fff4d6;
+    --mermaid-note-border: #dfc46e;
+    --mermaid-cluster: #f9fafb;
+    --mermaid-cluster-border: #e5e7eb;
+}
+
+.mermaid-block--dark {
+    --mermaid-background: #1a1d24;
+    --mermaid-primary: #4a3038;
+    --mermaid-primary-border: #fc9fa8;
+    --mermaid-secondary: #38334c;
+    --mermaid-secondary-border: #b9a7e8;
+    --mermaid-tertiary: #263f38;
+    --mermaid-tertiary-border: #82c4a6;
+    --mermaid-quaternary: #293b50;
+    --mermaid-line: #d294a3;
+    --mermaid-text: #e2e8f0;
+    --mermaid-note: #4a4128;
+    --mermaid-note-border: #dfc46e;
+    --mermaid-cluster: #22252e;
+    --mermaid-cluster-border: #334155;
 }
 
 .mermaid-toolbar {

@@ -82,7 +82,7 @@ watch([() => props.source, () => colorMode.value], () => {
             {{ renderFailed ? 'Mermaidを表示できませんでした' : 'Mermaidを読み込んでいます' }}
         </div>
         <div v-show="view === 'code'" class="mermaid-code">
-            <pre><code class="hljs language-mermaid">{{ source }}</code></pre>
+            <MqCodeBlock :source="source" language="mermaid" embedded />
         </div>
     </div>
 </template>
@@ -121,7 +121,4 @@ watch([() => props.source, () => colorMode.value], () => {
     @apply mx-auto h-auto max-w-full;
 }
 
-.mermaid-code pre {
-    @apply m-0 rounded-none border-0;
-}
 </style>

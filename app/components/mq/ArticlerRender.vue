@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import * as cheerio from 'cheerio';
-import hljs from 'highlight.js'
 
 defineOptions({ inheritAttrs: false });
 
@@ -26,9 +25,16 @@ type MermaidEntry = {
     filename?: string;
 };
 
+type CodeEntry = {
+    source: string;
+    language?: string;
+    filename?: string;
+};
+
 type ArticleSegment =
     | { type: 'html'; content: string }
     | { type: 'link-card'; data: LinkCardEntry }
+    | { type: 'code'; data: CodeEntry }
     | { type: 'mermaid'; data: MermaidEntry };
 
 const attrs = useAttrs();
@@ -65,8 +71,13 @@ const htmlSegmentClass = computed(() =>
 );
 
 
-const buildSegments = (markup: string, linkCards: LinkCardEntry[], mermaidBlocks: MermaidEntry[]): ArticleSegment[] => {
-    const placeholderRegex = /\[\[MQ_(LINK_CARD|MERMAID):(\d+)]]/g;
+const buildSegments = (
+    markup: string,
+    linkCards: LinkCardEntry[],
+    codeBlocks: CodeEntry[],
+    mermaidBlocks: MermaidEntry[],
+): ArticleSegment[] => {
+    const placeholderRegex = /\[\[MQ_(LINK_CARD|CODE|MERMAID):(\d+)]]/g;
     const segments: ArticleSegment[] = [];
     let lastIndex = 0;
     let match: RegExpExecArray | null;
@@ -81,6 +92,11 @@ const buildSegments = (markup: string, linkCards: LinkCardEntry[], mermaidBlocks
             const linkCard = linkCards[placeholderIdx];
             if (linkCard) {
                 segments.push({ type: 'link-card', data: linkCard });
+            }
+        } else if (match[1] === 'CODE') {
+            const codeBlock = codeBlocks[placeholderIdx];
+            if (codeBlock) {
+                segments.push({ type: 'code', data: codeBlock });
             }
         } else {
             const mermaidBlock = mermaidBlocks[placeholderIdx];
@@ -116,6 +132,7 @@ const processContent = () => {
     if (props.target) {
         const $ = cheerio.load(props.target);
         const linkCardEntries: LinkCardEntry[] = [];
+        const codeEntries: CodeEntry[] = [];
         const mermaidEntries: MermaidEntry[] = [];
 
         // コードハイライト
@@ -124,55 +141,23 @@ const processContent = () => {
             const $div = $pre.parent('div');
             const language = getCodeLanguage($, elem)?.toLowerCase();
             const filename = $div.attr('data-filename') || $pre.attr('data-filename');
+            const $replacementTarget = $div.attr('data-filename') ? $div : $pre;
 
             if (language === 'mermaid' || $(elem).hasClass('mermaid')) {
                 const placeholderIndex = mermaidEntries.push({
                     source: $(elem).text(),
                     filename,
                 }) - 1;
-                $pre.replaceWith(`[[MQ_MERMAID:${placeholderIndex}]]`);
+                $replacementTarget.replaceWith(`[[MQ_MERMAID:${placeholderIndex}]]`);
                 return;
             }
 
-            let result;
-            if (language) {
-                try {
-                    result = hljs.highlight($(elem).text(), { language });
-                } catch (error) {
-                    console.warn(`言語'${language}'のハイライトに失敗しました:`, error);
-                    result = hljs.highlightAuto($(elem).text());
-                }
-            } else {
-                result = hljs.highlightAuto($(elem).text());
-            }
-            $(elem).html(result.value);
-            $(elem).addClass('hljs');
-
-            // data-filename属性がある場合、ファイル名を表示
-            // div要素またはpre要素のどちらかにdata-filename属性があるかをチェック
-            if (filename) {
-                // ファイル名表示用のヘッダーを作成
-                const header = $(`
-                    <div class="code-header">
-                        <div class="mac-dots">
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                        </div>
-                        <span class="filename">${filename}</span>
-                    </div>
-                `);
-
-                // div要素にdata-filenameがある場合は、div要素の中にヘッダーを挿入
-                if ($div.attr('data-filename')) {
-                    $div.prepend(header);
-                    $div.addClass('has-filename');
-                } else {
-                    // pre要素にdata-filenameがある場合は、pre要素の前にヘッダーを挿入
-                    $pre.before(header);
-                    $pre.addClass('has-filename');
-                }
-            }
+            const placeholderIndex = codeEntries.push({
+                source: $(elem).text(),
+                language: language ?? undefined,
+                filename,
+            }) - 1;
+            $replacementTarget.replaceWith(`[[MQ_CODE:${placeholderIndex}]]`);
         });
 
         // リンクにアイコンを追加
@@ -221,7 +206,7 @@ const processContent = () => {
 
         // ... (rest of processContent logic) ...
         const htmlOutput = $.html();
-        articleSegments.value = buildSegments(htmlOutput, linkCardEntries, mermaidEntries);
+        articleSegments.value = buildSegments(htmlOutput, linkCardEntries, codeEntries, mermaidEntries);
     } else {
         articleSegments.value = [];
     }
@@ -253,7 +238,6 @@ const initInteractiveElements = () => {
     if (!import.meta.client) return;
 
     const tables = articleRoot.value?.querySelectorAll('.micro-cms table') ?? [];
-    const codeBlocks = articleRoot.value?.querySelectorAll('code') ?? [];
 
     // スクロール可能な要素にインジケーターを追加
     function addScrollIndicator(elements: any) {
@@ -286,7 +270,6 @@ const initInteractiveElements = () => {
     }
 
     addScrollIndicator(tables);
-    addScrollIndicator(codeBlocks);
 
     // 見出しにクリックイベントを追加
     const headings = articleRoot.value?.querySelectorAll<HTMLElement>('.micro-cms .clickable-heading') ?? [];
@@ -322,6 +305,8 @@ watch(() => props.target, () => {
             <div v-if="segment.type === 'html'" :class="htmlSegmentClass" v-html="segment.content" />
             <MqLinkCard v-else-if="segment.type === 'link-card'" class="px-8 pt-2" :url="segment.data.url" :target="segment.data.target"
                 :rel="segment.data.rel" />
+            <MqCodeBlock v-else-if="segment.type === 'code'" :source="segment.data.source" :language="segment.data.language"
+                :filename="segment.data.filename" />
             <MqMermaidBlock v-else :source="segment.data.source" :filename="segment.data.filename" />
         </template>
     </div>
@@ -441,12 +426,6 @@ watch(() => props.target, () => {
     @apply pl-4 my-0;
 }
 
-.micro-cms pre {
-    @apply px-6 my-8;
-    overflow-x: auto;
-    max-width: 100%;
-}
-
 .micro-cms li {
     @apply mb-1 pl-1;
 }
@@ -466,77 +445,6 @@ watch(() => props.target, () => {
 
 .micro-cms td {
     @apply p-2 border border-border-subtle space-y-0;
-}
-
-.micro-cms pre code {
-    @apply rounded-lg;
-}
-
-.micro-cms pre code span {
-    font-family: "fira-code", monospace;
-    font-weight: 400;
-    font-style: normal;
-}
-
-/* コードブロックのファイル名表示 (Mac-Light Theme) */
-.code-header {
-    @apply bg-surface-muted text-fg px-4 py-3 rounded-t-xl text-sm font-mono mb-0 mx-6 flex items-center gap-4 border border-border-subtle;
-}
-
-.code-header .mac-dots {
-    @apply flex gap-1.5;
-}
-
-.code-header .mac-dots span {
-    @apply w-3 h-3 rounded-full block;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.code-header .mac-dots span:nth-child(1) {
-    background-color: #ff5f56;
-}
-
-.code-header .mac-dots span:nth-child(2) {
-    background-color: #ffbd2e;
-}
-
-.code-header .mac-dots span:nth-child(3) {
-    background-color: #27c93f;
-}
-
-.code-header .filename {
-    @apply text-fg-muted text-xs font-medium tracking-wide;
-    font-family: "fira-code", monospace;
-}
-
-.micro-cms pre.has-filename {
-    @apply rounded-t-none border-t-0 mt-0;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-}
-
-.micro-cms div.has-filename pre {
-    @apply rounded-t-none border-t-0 mt-0;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-}
-
-.micro-cms pre.has-filename code {
-    @apply rounded-t-none;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-}
-
-.micro-cms div.has-filename pre code {
-    @apply rounded-t-none;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-}
-
-.micro-cms pre {
-    @apply mx-6 my-8 bg-surface-muted border border-border-subtle rounded-xl text-fg;
-    overflow-x: auto;
-    max-width: 100%;
 }
 
 .micro-cms p code {

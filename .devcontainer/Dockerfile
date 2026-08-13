@@ -1,7 +1,7 @@
 FROM mcr.microsoft.com/devcontainers/typescript-node:22
 
 # Install pnpm
-RUN corepack enable && corepack prepare pnpm@10.9.0 --activate
+RUN corepack enable && corepack prepare pnpm@11.21.0 --activate
 
 # Set working directory
 WORKDIR /workspace

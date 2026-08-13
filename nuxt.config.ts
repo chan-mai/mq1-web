@@ -221,11 +221,19 @@ export default defineNuxtConfig({
       chunkSizeWarningLimit: 1000,
       rollupOptions: {
         output: {
-          manualChunks: {
-            vendor: ["vue", "vue-router"],
-            microcms: ["microcms-js-sdk"],
-            cheerio: ["cheerio"],
-            hljs: ["highlight.js"],
+          manualChunks(id) {
+            if (id.includes("/node_modules/vue/") || id.includes("/node_modules/vue-router/")) {
+              return "vendor";
+            }
+            if (id.includes("/node_modules/microcms-js-sdk/")) {
+              return "microcms";
+            }
+            if (id.includes("/node_modules/cheerio/")) {
+              return "cheerio";
+            }
+            if (id.includes("/node_modules/highlight.js/")) {
+              return "hljs";
+            }
           },
         },
       },

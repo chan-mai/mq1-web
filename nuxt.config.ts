@@ -1,4 +1,9 @@
 import { createClient } from "microcms-js-sdk";
+import { unwasm } from "unwasm/plugin";
+
+const useWasmModuleImport =
+  process.env.NITRO_PRESET === "cloudflare-module" ||
+  process.argv.includes("--preset=cloudflare-module");
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -7,10 +12,17 @@ export default defineNuxtConfig({
   devtools: {
     enabled: true,
   },
-  css: ["kiso.css", "~/assets/css/theme.css", "~/assets/css/fonts.css", "~/assets/css/view-transitions.css", "~/assets/css/hljs-theme.css", "~/assets/css/scrollbar.css"],
+  css: [
+    "kiso.css",
+    "~/assets/css/theme.css",
+    "~/assets/css/fonts.css",
+    "~/assets/css/view-transitions.css",
+    "~/assets/css/hljs-theme.css",
+    "~/assets/css/scrollbar.css",
+  ],
   app: {
     head: {
-      viewport: 'width=device-width',
+      viewport: "width=device-width",
       link: [
         { rel: "canonical", href: "https://mq1.dev/" },
         { rel: "stylesheet", href: "https://use.typekit.net/knf0bwf.css" },
@@ -39,25 +51,31 @@ export default defineNuxtConfig({
     "@nuxt/scripts",
   ],
   colorMode: {
-    classSuffix: '',
-    preference: 'system',
-    fallback: 'light',
-    storageKey: 'mq1-color-mode',
+    classSuffix: "",
+    preference: "system",
+    fallback: "light",
+    storageKey: "mq1-color-mode",
   },
   $production: {
     scripts: {
       registry: {
-        clarity: { id: 'wgvzak7jwb' },
-        googleAnalytics: { id: 'G-ZHPDFE19FX' },
-      }
-    }
+        clarity: { id: "wgvzak7jwb" },
+        googleAnalytics: { id: "G-ZHPDFE19FX" },
+      },
+    },
   },
   runtimeConfig: {
     public: {
       siteName: "まいの雑記帳",
       siteDescription: "ちっちゃなうぇぶさいと",
-      siteUrl: process.env.NODE_ENV === "production" ? "https://mq1.dev/" : "http://localhost:3000/",
-      siteOgpUrl: process.env.NODE_ENV === "production" ? "https://mq1.dev/images/ogp/ogp.png" : "http://localhost:3000/images/ogp/ogp.png",
+      siteUrl:
+        process.env.NODE_ENV === "production"
+          ? "https://mq1.dev/"
+          : "http://localhost:3000/",
+      siteOgpUrl:
+        process.env.NODE_ENV === "production"
+          ? "https://mq1.dev/images/ogp/ogp.png"
+          : "http://localhost:3000/images/ogp/ogp.png",
       microcms: {
         serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN,
         apiKey: process.env.MICROCMS_API_KEY,
@@ -73,6 +91,9 @@ export default defineNuxtConfig({
     "/tag/**": { prerender: true },
   },
   nitro: {
+    rollupConfig: {
+      plugins: [unwasm({ esmImport: useWasmModuleImport, silent: true })],
+    },
     compressPublicAssets: {
       gzip: true,
       brotli: true,
@@ -92,8 +113,9 @@ export default defineNuxtConfig({
     },
   },
   hooks: {
-    async 'nitro:config'(nitroConfig: any) {
-      if (!process.env.MICROCMS_SERVICE_DOMAIN || !process.env.MICROCMS_API_KEY) return;
+    async "nitro:config"(nitroConfig: any) {
+      if (!process.env.MICROCMS_SERVICE_DOMAIN || !process.env.MICROCMS_API_KEY)
+        return;
       const client = createClient({
         serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN!,
         apiKey: process.env.MICROCMS_API_KEY!,
@@ -222,7 +244,10 @@ export default defineNuxtConfig({
       rollupOptions: {
         output: {
           manualChunks(id) {
-            if (id.includes("/node_modules/vue/") || id.includes("/node_modules/vue-router/")) {
+            if (
+              id.includes("/node_modules/vue/") ||
+              id.includes("/node_modules/vue-router/")
+            ) {
               return "vendor";
             }
             if (id.includes("/node_modules/microcms-js-sdk/")) {
@@ -254,7 +279,16 @@ export default defineNuxtConfig({
       {
         userAgent: ["*"],
         allow: ["/"],
-        disallow: ["/admin/", "/api/admin/", "/api/comment/", "/api/entry/", "/api/like/", "/api/link-preview", "/api/popular-articles", "/_nuxt/"],
+        disallow: [
+          "/admin/",
+          "/api/admin/",
+          "/api/comment/",
+          "/api/entry/",
+          "/api/like/",
+          "/api/link-preview",
+          "/api/popular-articles",
+          "/_nuxt/",
+        ],
       },
     ],
   },

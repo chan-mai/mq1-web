@@ -15,6 +15,7 @@
 		}
 	],
 	"assets": {
+		"binding": "ASSETS",
 		"directory": ".output/public",
 		"html_handling": "drop-trailing-slash"
 	},

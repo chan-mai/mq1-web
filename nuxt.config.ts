@@ -1,9 +1,7 @@
 import { createClient } from "microcms-js-sdk";
 import { unwasm } from "unwasm/plugin";
 
-const useWasmModuleImport =
-  process.env.NITRO_PRESET === "cloudflare-module" ||
-  process.argv.includes("--preset=cloudflare-module");
+const isProductionBuild = process.env.NODE_ENV === "production";
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -91,8 +89,11 @@ export default defineNuxtConfig({
     "/tag/**": { prerender: true },
   },
   nitro: {
+    preset:
+      process.env.NITRO_PRESET ??
+      (isProductionBuild ? "cloudflare-module" : undefined),
     rollupConfig: {
-      plugins: [unwasm({ esmImport: useWasmModuleImport, silent: true })],
+      plugins: [unwasm({ esmImport: isProductionBuild, silent: true })],
     },
     compressPublicAssets: {
       gzip: true,

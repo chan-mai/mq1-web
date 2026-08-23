@@ -147,6 +147,8 @@ type DiffMode = "" | "ins" | "del";
 const renderRun = (text: string, marks: string, mode: DiffMode) => {
   let html = escapeHtml(text);
   const markSet = new Set(marks.split(","));
+  if (markSet.has("dpgk"))
+    html = `<span class="dpgk-text">${html}</span>`;
   if (markSet.has("code")) html = `<code>${html}</code>`;
   if (markSet.has("strike")) html = `<s>${html}</s>`;
   if (markSet.has("underline")) html = `<u>${html}</u>`;

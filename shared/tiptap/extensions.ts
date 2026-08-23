@@ -1,4 +1,4 @@
-import { Node, mergeAttributes } from "@tiptap/core";
+import { Mark, Node, mergeAttributes } from "@tiptap/core";
 import { CodeBlock } from "@tiptap/extension-code-block";
 import { Heading } from "@tiptap/extension-heading";
 import { TableKit } from "@tiptap/extension-table";
@@ -121,6 +121,19 @@ export const CmsImage = Node.create({
   },
 });
 
+// ドパガキグラデーション装飾
+export const Dpgk = Mark.create({
+  name: "dpgk",
+
+  parseHTML() {
+    return [{ tag: "span[data-dpgk]" }];
+  },
+
+  renderHTML() {
+    return ["span", { "data-dpgk": "", class: "dpgk-text" }, 0];
+  },
+});
+
 // URL単独行のリンクカード
 export const LinkCard = Node.create({
   name: "linkCard",
@@ -182,5 +195,6 @@ export const createCmsExtensions = () => [
   CmsCodeBlock,
   CmsImage,
   LinkCard,
+  Dpgk,
   cmsTableKit,
 ];

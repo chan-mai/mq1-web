@@ -15,3 +15,33 @@
   --color-fg-muted: 156 163 175;
   --color-border-subtle: 51 65 85;
 }
+
+/* ドパガキグラデーション装飾 */
+.dpgk-text {
+  background-image: linear-gradient(
+    90deg,
+    #ff0000,
+    #ff9900,
+    #ffee00,
+    #33ff33,
+    #00ccff,
+    #6633ff,
+    #ff33cc,
+    #ff0000
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: dpgk-flow 1.5s linear infinite;
+}
+
+@keyframes dpgk-flow {
+  0% {
+    background-position: 200% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}

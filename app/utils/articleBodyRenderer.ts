@@ -48,6 +48,10 @@ const renderTextWithMarks = (
   let rendered: VNodeChild = node.text ?? "";
   for (const mark of node.marks ?? []) {
     if (mark.type === "link" && options.skipLink) continue;
+    if (mark.type === "dpgk") {
+      rendered = h("span", { class: "dpgk-text" }, [rendered]);
+      continue;
+    }
     const tag = MARK_TAGS[mark.type];
     if (tag) rendered = h(tag, [rendered]);
   }

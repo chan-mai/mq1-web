@@ -10,6 +10,7 @@ import {
   CmsHeading,
   CmsImage,
   LinkCard,
+  Dpgk,
   cmsStarterKit,
   cmsTableKit,
 } from "~~/shared/tiptap/extensions";
@@ -42,6 +43,7 @@ const editor = useEditor({
     LinkCard.extend({
       addNodeView: () => VueNodeViewRenderer(LinkCardView),
     }),
+    Dpgk,
     cmsTableKit,
     Placeholder.configure({ placeholder: "本文を書く…" }),
     LinkCardPaste,
@@ -358,7 +360,7 @@ onBeforeUnmount(() => {
         <div
           class="flex items-center gap-0.5 border border-solid border-border-subtle bg-surface-elevated px-1.5 py-1 shadow-lg"
           :class="aiState !== 'idle' ? 'rounded-xl' : 'rounded-full'">
-          <!-- AI校正の結果表示 -->
+          <!-- 校正の結果表示 -->
           <div v-if="aiState !== 'idle'" class="max-w-md px-2 py-1.5">
             <p v-if="aiState === 'loading'" class="text-xs text-fg-muted">
               校正中…
@@ -366,10 +368,10 @@ onBeforeUnmount(() => {
             <template v-else>
               <p class="max-h-40 overflow-y-auto whitespace-pre-wrap text-xs leading-relaxed text-fg">
                 <span v-for="(part, index) in aiDiffParts" :key="index" :class="part.added
-                  ? 'rounded bg-green-500/15 text-green-800'
-                  : part.removed
-                    ? 'rounded bg-red-500/15 text-red-600 line-through'
-                    : ''
+                    ? 'rounded bg-green-500/15 text-green-800'
+                    : part.removed
+                      ? 'rounded bg-red-500/15 text-red-600 line-through'
+                      : ''
                   ">{{ part.value }}</span>
               </p>
               <div class="mt-1.5 flex justify-end gap-1">
@@ -404,6 +406,11 @@ onBeforeUnmount(() => {
               :class="{ 'text-primary': editor.isActive('strike') }"
               @click="editor.chain().focus().toggleStrike().run()">
               <Icon name="lucide:strikethrough" class="size-4" />
+            </button>
+            <button type="button" class="cursor-pointer rounded border-none bg-transparent p-1.5 hover:bg-surface-muted"
+              :class="{ 'text-primary': editor.isActive('dpgk') }"
+              @click="editor.chain().focus().toggleMark('dpgk').run()">
+              <Icon name="lucide:pill" class="size-4" />
             </button>
             <button type="button" class="cursor-pointer rounded border-none bg-transparent p-1.5 hover:bg-surface-muted"
               :class="{ 'text-primary': editor.isActive('code') }" @click="editor.chain().focus().toggleCode().run()">
@@ -486,8 +493,8 @@ onBeforeUnmount(() => {
         }">
           <button v-for="index in TABLE_PICKER_MAX * TABLE_PICKER_MAX" :key="index" type="button"
             class="aspect-square w-full cursor-pointer rounded-sm border border-solid p-0 transition-colors" :class="isTablePickerCellActive(index)
-              ? 'border-primary bg-primary/20'
-              : 'border-border-subtle bg-surface-muted'
+                ? 'border-primary bg-primary/20'
+                : 'border-border-subtle bg-surface-muted'
               " @mouseenter="tablePickerHover = tablePickerCellFor(index)" @click="insertTableFromMenu(index)" />
         </div>
         <p class="mb-0 mt-2 text-center text-xs text-fg-muted">

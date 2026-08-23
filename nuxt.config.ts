@@ -91,7 +91,7 @@ export default defineNuxtConfig({
       process.env.NITRO_PRESET ??
       (isProductionBuild ? "cloudflare-module" : undefined),
     cloudflareDev: {
-      environment: "dev",
+      configPath: "wrangler.dev.jsonc",
     },
     rollupConfig: {
       plugins: [unwasm({ esmImport: isProductionBuild, silent: true })],

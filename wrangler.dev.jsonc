@@ -1,9 +1,13 @@
+// nuxt dev(nitro-cloudflare-dev)用binding定義
+// NOTE: deploy対象のwrangler.jsoncはenvを含められないため分離
 {
   "name": "mq1-web-prod",
-  "main": ".output/server/index.mjs",
   "compatibility_date": "2026-04-16",
   "compatibility_flags": ["nodejs_compat"],
-  "workers_dev": true,
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "public",
+  },
   "r2_buckets": [
     {
       "binding": "IMAGES",
@@ -18,12 +22,4 @@
       "database_id": "dba7688a-17b7-49d1-907f-53f0ccba2d0c",
     },
   ],
-  "assets": {
-    "binding": "ASSETS",
-    "directory": ".output/public",
-    "html_handling": "drop-trailing-slash",
-  },
-  "observability": {
-    "enabled": true,
-  },
 }

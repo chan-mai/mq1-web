@@ -142,8 +142,11 @@ const shouldShowBubble = ({ editor: instance, state }: any) => {
 // リンク入力
 const linkInputOpen = ref(false);
 const linkUrl = ref("");
+const linkNofollow = ref(false);
 const openLinkInput = () => {
-  linkUrl.value = editor.value?.getAttributes("link").href ?? "";
+  const attrs = editor.value?.getAttributes("link") ?? {};
+  linkUrl.value = attrs.href ?? "";
+  linkNofollow.value = /\bnofollow\b/.test(String(attrs.rel ?? ""));
   linkInputOpen.value = true;
 };
 const applyLink = () => {
@@ -156,7 +159,10 @@ const applyLink = () => {
       .chain()
       .focus()
       .extendMarkRange("link")
-      .setLink({ href: url })
+      .setLink({
+        href: url,
+        rel: linkNofollow.value ? "noopener noreferrer nofollow" : null,
+      })
       .run();
   }
   linkInputOpen.value = false;
@@ -411,6 +417,10 @@ onBeforeUnmount(() => {
           <form v-else class="flex items-center gap-1" @submit.prevent="applyLink">
             <input v-model="linkUrl" placeholder="https://"
               class="w-52 border-none bg-transparent px-2 py-1 text-sm outline-none" />
+            <label class="flex shrink-0 cursor-pointer select-none items-center gap-1 px-1 text-xs text-fg-muted">
+              <input v-model="linkNofollow" type="checkbox" class="cursor-pointer accent-current" />
+              nofollow
+            </label>
             <button type="submit"
               class="cursor-pointer rounded border-none bg-transparent p-1.5 hover:bg-surface-muted">
               <Icon name="lucide:check" class="size-4" />

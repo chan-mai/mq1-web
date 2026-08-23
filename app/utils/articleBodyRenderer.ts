@@ -8,7 +8,17 @@ import MqScrollableTable from "~/components/mq/ScrollableTable.vue";
 export interface ArticleRenderContext {
   headingIdFor: (node: TiptapNode) => string;
   onHeadingClick: (id: string) => void;
+  siteHosts: string[];
 }
+
+const isExternalHref = (href: string, siteHosts: string[]): boolean => {
+  if (!/^https?:\/\//.test(href)) return false;
+  try {
+    return !siteHosts.includes(new URL(href).host);
+  } catch {
+    return false;
+  }
+};
 
 const MARK_TAGS: Record<string, string> = {
   bold: "strong",
@@ -75,16 +85,17 @@ const renderInlineNodes = (
       );
       children.push(h("span", { class: "link-icon" }, "\u{1F517}"));
 
-      const target = (linkMark.attrs?.target as string | null) ?? "_blank";
+      // 自サイト以外は別タブで表示
+      const external = isExternalHref(href, ctx.siteHosts);
       out.push(
         h(
           "a",
           {
             href,
-            target,
+            target: external ? "_blank" : undefined,
             rel:
               (linkMark.attrs?.rel as string | null) ??
-              (target === "_blank" ? "noopener noreferrer" : undefined),
+              (external ? "noopener noreferrer" : undefined),
             class: "link-with-icon",
           },
           children,

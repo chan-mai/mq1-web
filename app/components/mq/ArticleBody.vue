@@ -47,6 +47,8 @@ const copyHeadingPermalink = (headingId: string) => {
 const renderContext = computed<ArticleRenderContext>(() => ({
   headingIdFor: (node) => headingIdMap.value.get(node) ?? "",
   onHeadingClick: copyHeadingPermalink,
+  // dev時もCanonical Hostnameを自サイト扱い
+  siteHosts: [...new Set([new URL(config.value.siteUrl).host, "mq1.dev"])],
 }));
 
 // コードブロックとリンクカードは.article-bodyの外側に配置

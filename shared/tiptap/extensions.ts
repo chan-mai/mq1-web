@@ -163,6 +163,11 @@ export const cmsStarterKit = StarterKit.configure({
     openOnClick: false,
     autolink: true,
     linkOnPaste: true,
+    // rel/targetは保存せず表示時に決定(relのnofollowのみ選択制)
+    HTMLAttributes: {
+      rel: null,
+      target: null,
+    },
   },
 });
 

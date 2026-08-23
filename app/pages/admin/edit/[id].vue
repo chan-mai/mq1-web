@@ -239,11 +239,14 @@ const onTitleEnter = (event: KeyboardEvent) => {
 
         <div class="flex items-center justify-end gap-2">
           <AdminUiButton
-            v-if="status === 'published'"
-            :to="`/entry/${articleId}`"
+            :to="
+              status === 'published'
+                ? `/entry/${articleId}`
+                : `/entry/${articleId}?preview=1`
+            "
             target="_blank"
             variant="icon"
-            title="記事を表示"
+            :title="status === 'published' ? '記事を表示' : 'プレビュー'"
           >
             <Icon name="lucide:external-link" class="size-4" />
           </AdminUiButton>
@@ -292,7 +295,9 @@ const onTitleEnter = (event: KeyboardEvent) => {
                   class="size-4 text-fg-muted"
                 />
                 <span class="flex-1">{{
-                  option === "published" ? "公開" : ARTICLE_STATUS_LABELS[option]
+                  option === "published"
+                    ? "公開"
+                    : ARTICLE_STATUS_LABELS[option]
                 }}</span>
                 <Icon
                   v-if="status === option"

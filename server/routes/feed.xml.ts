@@ -1,9 +1,8 @@
 import { Feed } from "feed";
-import { createClient } from "microcms-js-sdk";
-import * as cheerio from "cheerio";
+import { queryPublishedArticles } from "~~/server/utils/article";
 
 export default defineEventHandler(async (event) => {
-  const runtimeConfig = useRuntimeConfig();
+  const runtimeConfig = useRuntimeConfig(event);
   const siteName = runtimeConfig.public.siteName as string;
   const siteDescription = runtimeConfig.public.siteDescription as string;
   const siteUrl = runtimeConfig.public.siteUrl as string;
@@ -29,43 +28,29 @@ export default defineEventHandler(async (event) => {
 
   feed.addCategory("blog");
 
-  const client = createClient({
-    serviceDomain: runtimeConfig.public.microcms.serviceDomain,
-    apiKey: runtimeConfig.public.microcms.apiKey,
-  });
-
   try {
-    const res = await client.getAllContents({
-      endpoint: "articles",
-      queries: {
-        orders: "-publishedAt",
-      },
-    });
+    const { contents } = await queryPublishedArticles(event);
 
-    res?.forEach((article: any) => {
+    for (const article of contents) {
       const url = `${siteUrl}entry/${article.id}`;
-      const $ = cheerio.load(article.content ?? "");
-      const textContent: string = $.text().trim();
-      const excerpt = textContent.slice(0, 100) + (textContent.length > 100 ? "…" : "");
+      const excerpt =
+        article.summary.slice(0, 100) +
+        (article.summary.length > 100 ? "…" : "");
 
-      const data = {
-        title: article.title ?? "No Title",
+      feed.addItem({
+        title: article.title || "No Title",
         id: url,
         link: url,
-        description: article.summary ?? excerpt,
+        description: excerpt,
         content: excerpt,
         date: new Date(article.publishedAt),
-      };
+      });
+    }
 
-      feed.addItem(data);
-    });
-
-    // レスポンスヘッダーを設定
     setResponseHeaders(event, {
       "Content-Type": "application/xml; charset=utf-8",
     });
 
-    // XMLをそのままストリームとして返す
     const xmlContent = feed.rss2();
     return new Response(xmlContent, {
       headers: { "Content-Type": "application/xml; charset=utf-8" },

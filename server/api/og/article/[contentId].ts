@@ -1,3 +1,7 @@
+import { getR2Bucket } from "~~/server/utils/r2";
+
+const R2_URL_PREFIX = "/images/r2/";
+
 export default defineEventHandler(async (event) => {
   const contentId = getRouterParam(event, "contentId");
   if (!contentId) {
@@ -8,7 +12,7 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const article = await fetchArticle(contentId);
+    const article = await fetchArticle(event, contentId);
     if (!article) {
       throw createError({
         statusCode: 404,
@@ -16,22 +20,22 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    // eyecatchがあればそれをレスポンス
-    if (article.eyecatch) {
-      // Twitter用にPNG形式を使用（TwitterクローラーのWebP互換性問題を回避）
-      const imageUrl = new URL(article.eyecatch.url);
-      imageUrl.searchParams.set("fm", "png");
-
-      const imageResponse = await fetch(imageUrl.toString());
-      if (!imageResponse.ok) {
+    // eyecatchがあればR2から取得してレスポンス
+    if (article.eyecatch?.url?.startsWith(R2_URL_PREFIX)) {
+      const key = article.eyecatch.url.slice(R2_URL_PREFIX.length);
+      const object = await getR2Bucket(event).get(key);
+      if (!object) {
         throw createError({
           statusCode: 500,
           statusMessage: "Failed to fetch OG image",
         });
       }
-      const arrayBuffer = await imageResponse.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
-      setHeader(event, "Content-Type", "image/png");
+      const buffer = Buffer.from(await object.arrayBuffer());
+      setHeader(
+        event,
+        "Content-Type",
+        object.httpMetadata?.contentType ?? "image/png",
+      );
       setHeader(event, "Cache-Control", "public, max-age=31536000, immutable");
       return buffer;
     }

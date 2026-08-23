@@ -1,4 +1,3 @@
-import { createClient } from "microcms-js-sdk";
 import { unwasm } from "unwasm/plugin";
 
 const isProductionBuild = process.env.NODE_ENV === "production";
@@ -25,8 +24,6 @@ export default defineNuxtConfig({
         { rel: "canonical", href: "https://mq1.dev/" },
         { rel: "stylesheet", href: "https://use.typekit.net/knf0bwf.css" },
         { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
-        { rel: "dns-prefetch", href: "https://images.microcms-assets.io" },
-        { rel: "preconnect", href: "https://images.microcms-assets.io" },
         { rel: "preconnect", href: "https://www.googletagmanager.com" },
       ],
       htmlAttrs: {
@@ -47,6 +44,7 @@ export default defineNuxtConfig({
     "@vite-pwa/nuxt",
     "@nuxtjs/robots",
     "@nuxt/scripts",
+    "nitro-cloudflare-dev",
   ],
   colorMode: {
     classSuffix: "",
@@ -63,6 +61,13 @@ export default defineNuxtConfig({
     },
   },
   runtimeConfig: {
+    sessionPassword: "",
+    zitadel: {
+      issuer: "",
+      clientId: "",
+    },
+    openaiApiKey: "",
+    openaiModel: "gpt-4o-mini",
     public: {
       siteName: "まいの雑記帳",
       siteDescription: "ちっちゃなうぇぶさいと",
@@ -74,24 +79,20 @@ export default defineNuxtConfig({
         process.env.NODE_ENV === "production"
           ? "https://mq1.dev/images/ogp/ogp.png"
           : "http://localhost:3000/images/ogp/ogp.png",
-      microcms: {
-        serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN,
-        apiKey: process.env.MICROCMS_API_KEY,
-      },
     },
   },
   routeRules: {
-    "/": { prerender: true },
     "/about": { prerender: true },
     "/privacy": { prerender: true },
-    "/articles": { prerender: true },
-    "/entry/**": { prerender: true },
-    "/tag/**": { prerender: true },
+    "/admin/**": { ssr: false },
   },
   nitro: {
     preset:
       process.env.NITRO_PRESET ??
       (isProductionBuild ? "cloudflare-module" : undefined),
+    cloudflareDev: {
+      environment: "dev",
+    },
     rollupConfig: {
       plugins: [unwasm({ esmImport: isProductionBuild, silent: true })],
     },
@@ -113,26 +114,6 @@ export default defineNuxtConfig({
       },
     },
   },
-  hooks: {
-    async "nitro:config"(nitroConfig: any) {
-      if (!process.env.MICROCMS_SERVICE_DOMAIN || !process.env.MICROCMS_API_KEY)
-        return;
-      const client = createClient({
-        serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN!,
-        apiKey: process.env.MICROCMS_API_KEY!,
-      });
-      const [articles, tags] = await Promise.all([
-        client.getAllContents({ endpoint: "articles" }),
-        client.getAllContents({ endpoint: "tags" }),
-      ]);
-      nitroConfig.prerender = nitroConfig.prerender || {};
-      nitroConfig.prerender.routes = [
-        ...((nitroConfig.prerender.routes as string[]) || []),
-        ...articles.map((a: any) => `/entry/${a.id}`),
-        ...tags.map((t: any) => `/tag/${t.slug}`),
-      ];
-    },
-  },
   experimental: {
     viewTransition: true,
     payloadExtraction: true,
@@ -145,49 +126,22 @@ export default defineNuxtConfig({
     defaultLocale: "ja",
   },
   sitemap: {
+    exclude: ["/admin", "/admin/**"],
     sitemaps: {
       pages: {
         includeAppSources: true,
       },
       articles: {
-        urls: async () => {
-          const client = createClient({
-            serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN!,
-            apiKey: process.env.MICROCMS_API_KEY!,
-          });
-
-          const articles = await client.getAllContents({
-            endpoint: "articles",
-          });
-
-          return articles.map((article: any) => ({
-            loc: `/entry/${article.id}`,
-            lastmod: article.updatedAt || article.publishedAt,
-          }));
-        },
+        sources: ["/api/__sitemap__/articles"],
       },
       tags: {
-        urls: async () => {
-          const client = createClient({
-            serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN!,
-            apiKey: process.env.MICROCMS_API_KEY!,
-          });
-
-          const tags = await client.getAllContents({
-            endpoint: "tags",
-          });
-
-          return tags.map((tag: any) => ({
-            loc: `/tag/${tag.slug}`,
-            lastmod: tag.updatedAt || tag.publishedAt,
-          }));
-        },
+        sources: ["/api/__sitemap__/tags"],
       },
     },
   },
   image: {
-    domains: ["images.microcms-assets.io"],
-    provider: "ipx",
+    // Workers上でipx(sharp)が動作しないため本番は変換なし配信
+    provider: isProductionBuild ? "none" : "ipx",
     ipx: {
       maxAge: 31536000,
     },
@@ -230,6 +184,7 @@ export default defineNuxtConfig({
     },
     workbox: {
       navigateFallback: "/",
+      navigateFallbackDenylist: [/^\/admin/, /^\/api\//, /^\/images\/r2\//],
     },
     devOptions: {
       enabled: true,
@@ -251,9 +206,6 @@ export default defineNuxtConfig({
             ) {
               return "vendor";
             }
-            if (id.includes("/node_modules/microcms-js-sdk/")) {
-              return "microcms";
-            }
             if (id.includes("/node_modules/cheerio/")) {
               return "cheerio";
             }
@@ -265,7 +217,7 @@ export default defineNuxtConfig({
       },
     },
     optimizeDeps: {
-      include: ["cheerio", "microcms-js-sdk"],
+      include: ["cheerio"],
     },
   },
   webpack: {

@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
     };
   }
 
-  const exists = await articleExists(contentId);
+  const exists = await articleExists(event, contentId);
   if (!exists) {
     return {
       status: "error",

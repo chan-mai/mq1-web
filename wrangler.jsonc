@@ -1,25 +1,51 @@
 {
-	"name": "mq1-web-prod",
-	"main": ".output/server/index.mjs",
-	"compatibility_date": "2026-04-16",
-	"compatibility_flags": [
-		"nodejs_compat"
-	],
-	"workers_dev": true,
-	"d1_databases": [
-		{
-			"binding": "DB",
-			"database_name": "mq1-web-prod",
-			"migrations_dir": "d1/migrations",
-			"database_id": "dba7688a-17b7-49d1-907f-53f0ccba2d0c"
-		}
-	],
-	"assets": {
-		"binding": "ASSETS",
-		"directory": ".output/public",
-		"html_handling": "drop-trailing-slash"
-	},
-	"observability": {
-		"enabled": true
-	}
+  "name": "mq1-web-prod",
+  "main": ".output/server/index.mjs",
+  "compatibility_date": "2026-04-16",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "r2_buckets": [
+    {
+      "binding": "IMAGES",
+      "bucket_name": "mq1-web-prod",
+    },
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "mq1-web-prod",
+      "migrations_dir": "d1/migrations",
+      "database_id": "dba7688a-17b7-49d1-907f-53f0ccba2d0c",
+    },
+  ],
+  "assets": {
+    "binding": "ASSETS",
+    "directory": ".output/public",
+    "html_handling": "drop-trailing-slash",
+  },
+  "observability": {
+    "enabled": true,
+  },
+  "env": {
+    "dev": {
+      "assets": {
+        "binding": "ASSETS",
+        "directory": "public",
+      },
+      "r2_buckets": [
+        {
+          "binding": "IMAGES",
+          "bucket_name": "mq1-web-prod",
+        },
+      ],
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "mq1-web-prod",
+          "migrations_dir": "d1/migrations",
+          "database_id": "dba7688a-17b7-49d1-907f-53f0ccba2d0c",
+        },
+      ],
+    },
+  },
 }

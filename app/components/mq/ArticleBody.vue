@@ -104,7 +104,7 @@ const segments = computed<ArticleSegment[]>(() => {
 }
 
 .article-body img {
-  @apply mx-3 md:mx-8 w-auto h-auto max-w-full md:max-w-[80%] lg:max-w-[70%] max-h-[600px] object-contain block bg-surface-elevated rounded-lg;
+  @apply mx-auto w-auto h-auto max-w-full md:max-w-[80%] lg:max-w-[70%] max-h-[600px] object-contain block bg-surface-elevated rounded-lg;
 }
 
 .article-body figure figcaption {

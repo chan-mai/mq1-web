@@ -76,12 +76,9 @@ const segments = computed<ArticleSegment[]>(() => {
 </script>
 
 <template>
-  <div>
+  <div class="space-y-3">
     <template v-for="(segment, index) in segments" :key="index">
-      <div
-        v-if="segment.type === 'html'"
-        class="article-body article-body-html-segment"
-      >
+      <div v-if="segment.type === 'html'" class="article-body">
         <ArticleBodyNodes :nodes="segment.nodes" :ctx="renderContext" />
       </div>
       <ArticleBodyNodes v-else :nodes="segment.nodes" :ctx="renderContext" />
@@ -90,12 +87,9 @@ const segments = computed<ArticleSegment[]>(() => {
 </template>
 
 <style lang="css">
-.article-body-html-segment {
-  display: contents;
-}
-
+/* ブロック間隔・行間はエディタ(.cms-editor-content)と同値 */
 .article-body {
-  @apply space-y-4;
+  @apply space-y-3;
   overflow-x: hidden;
   overflow-y: hidden;
   overflow-wrap: break-word;
@@ -119,16 +113,21 @@ const segments = computed<ArticleSegment[]>(() => {
   @apply w-full m-0;
 }
 
+/* space-yより詳細度を上げるため!importantを付与 */
 .article-body h1 {
-  @apply pt-10 mt-10 text-3xl font-semibold;
+  @apply !mt-12 scroll-mt-10 text-3xl font-semibold;
 }
 
 .article-body h2 {
-  @apply pt-5 mt-12 text-2xl font-semibold;
+  @apply !mt-12 scroll-mt-10 text-2xl font-semibold;
 }
 
 .article-body h3 {
-  @apply mt-8 text-xl font-semibold;
+  @apply !mt-8 scroll-mt-10 text-xl font-semibold;
+}
+
+.article-body h4 {
+  @apply !mt-6 scroll-mt-10 text-lg font-semibold;
 }
 
 /* クリック可能な見出し */
@@ -142,7 +141,7 @@ const segments = computed<ArticleSegment[]>(() => {
 }
 
 .article-body p {
-  @apply mx-3 md:mx-8 mb-6 leading-loose tracking-wide text-base;
+  @apply mx-3 md:mx-8 leading-[1.9] text-base;
 }
 
 .article-body a {
@@ -150,7 +149,7 @@ const segments = computed<ArticleSegment[]>(() => {
 }
 
 .article-body .mq-link-card {
-  @apply my-8;
+  @apply my-0;
 }
 
 .article-body .mq-link-card__link {
@@ -187,15 +186,15 @@ const segments = computed<ArticleSegment[]>(() => {
 }
 
 .article-body ul {
-  @apply list-disc list-inside mx-5 my-6 space-y-2 text-fg leading-relaxed;
+  @apply list-disc list-inside mx-5 text-fg leading-[1.9];
 }
 
 .article-body ol {
-  @apply list-decimal list-inside mx-5 my-6 space-y-2 text-fg leading-relaxed;
+  @apply list-decimal list-inside mx-5 text-fg leading-[1.9];
 }
 
 .article-body blockquote {
-  @apply border-l-4 border-primary/50 bg-surface-muted/50 py-4 pr-4 m-8 rounded-r-lg text-fg-muted italic;
+  @apply border-l-4 border-primary/50 bg-surface-muted/50 py-4 pr-4 mx-8 rounded-r-lg text-fg-muted italic;
 }
 
 .article-body blockquote p {
@@ -203,7 +202,7 @@ const segments = computed<ArticleSegment[]>(() => {
 }
 
 .article-body li {
-  @apply mb-1 pl-1;
+  @apply pl-1;
 }
 
 /* テーブル */

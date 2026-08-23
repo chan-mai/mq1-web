@@ -1,0 +1,4 @@
+# wrangler dev用
+NUXT_SESSION_PASSWORD=NJ7xFPYWvtVgjp2PX4tLSM24Xosj61kS
+NUXT_ZITADEL_ISSUER=https://rimely-xepglr.ch1.zitadel.cloud/
+NUXT_ZITADEL_CLIENT_ID=

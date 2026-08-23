@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const tag = await fetchTag(tagId);
+    const tag = await fetchTag(event, tagId);
     return await renderOgImageResponse(event, `「#${tag.name}」が含まれる記事`);
   } catch (e: any) {
     console.error(e);

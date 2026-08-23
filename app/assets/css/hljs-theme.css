@@ -2,7 +2,7 @@
  * highlight.js theme — light/dark 両対応
  * light: atom-one-light (https://github.com/atom/one-light-syntax)
  * dark : atom-one-dark  (https://github.com/atom/one-dark-syntax)
- * 背景色は親要素 (.micro-cms pre 等) の bg-surface-muted を透過させるため transparent
+ * 背景色はtransparent, 親要素のbg-surface-mutedを透過
  */
 
 pre code.hljs {

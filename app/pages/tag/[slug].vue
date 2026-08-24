@@ -6,8 +6,13 @@ definePageMeta({
 const route = useRoute();
 const router = useRouter();
 const { slug } = route.params as { slug: string };
-const page = computed(() => Number(route.query.page) || 1);
 const limit = 12;
+// APIのoffset上限(100000)内へクランプ
+const maxPage = Math.floor(100000 / limit) + 1;
+const page = computed(() => {
+  const parsed = Math.floor(Number(route.query.page) || 1);
+  return Math.min(Math.max(parsed, 1), maxPage);
+});
 
 // slugからtagを取得
 const { data: tagResponse, error: tagError } = await useFetch(
@@ -104,8 +109,13 @@ useJsonld({
         <div class="w-full">
           <MqPageBack class="mb-3" />
           <div class="flex items-center justify-between">
-            <h2 class="font-accent text-3xl text-fg md:text-4xl" :style="`view-transition-name: tag-${slug};`">
-              <span class="bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-indigo-400">
+            <h2
+              class="font-accent text-3xl text-fg md:text-4xl"
+              :style="`view-transition-name: tag-${slug};`"
+            >
+              <span
+                class="bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-indigo-400"
+              >
                 #{{ tag?.name }}
               </span>
               の記事一覧
@@ -118,18 +128,33 @@ useJsonld({
       <div class="flex flex-col gap-8">
         <MqLoading v-if="status === 'pending'" />
         <template v-else>
-          <div v-if="articles?.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <ArticlesCard v-for="article in articles" :key="article.id" :article="article" />
+          <div
+            v-if="articles?.length"
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            <ArticlesCard
+              v-for="article in articles"
+              :key="article.id"
+              :article="article"
+            />
           </div>
-          <div v-else class="flex flex-col items-center justify-center gap-4 py-16">
+          <div
+            v-else
+            class="flex flex-col items-center justify-center gap-4 py-16"
+          >
             <p class="text-lg font-bold text-accent">
               記事が見つかりませんでした。
             </p>
             <p class="text-sm text-fg-muted">他のタグを試してみてください。</p>
           </div>
 
-          <MqPagination v-if="totalCount > limit" :total-count="totalCount" :current-page="page" :limit="limit"
-            @change="onPageChange" />
+          <MqPagination
+            v-if="totalCount > limit"
+            :total-count="totalCount"
+            :current-page="page"
+            :limit="limit"
+            @change="onPageChange"
+          />
         </template>
       </div>
     </section>

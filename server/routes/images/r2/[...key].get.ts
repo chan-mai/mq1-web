@@ -1,12 +1,9 @@
 import { getR2Bucket } from "~~/server/utils/r2";
-
-const KEY_PATTERN = /^[a-zA-Z0-9/_-]+\.[a-z0-9]+$/;
+import { imageKeyParamsSchema } from "#shared/schemas/image";
 
 export default defineEventHandler(async (event) => {
-  const key = getRouterParam(event, "key");
-  if (!key || key.includes("..") || !KEY_PATTERN.test(key)) {
-    throw createError({ statusCode: 404, statusMessage: "Not found" });
-  }
+  // キー形式不正は存在を示唆しない404
+  const { key } = validateParams(event, imageKeyParamsSchema, 404);
 
   const bucket = getR2Bucket(event);
   const object = await bucket.get(key);

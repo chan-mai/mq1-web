@@ -2,12 +2,10 @@ import {
   fetchAdjacentArticles,
   fetchArticleByContentId,
 } from "~~/server/utils/article";
+import { articleIdParamsSchema } from "#shared/schemas/article";
 
 export default defineEventHandler(async (event) => {
-  const id = getRouterParam(event, "id");
-  if (!id) {
-    throw createError({ statusCode: 400, statusMessage: "Id is required" });
-  }
+  const { id } = validateParams(event, articleIdParamsSchema);
 
   const article = await fetchArticleByContentId(event, id);
   if (!article) {

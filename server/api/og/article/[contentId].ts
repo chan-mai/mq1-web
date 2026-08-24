@@ -1,15 +1,10 @@
 import { getR2Bucket } from "~~/server/utils/r2";
+import { contentIdParamsSchema } from "#shared/schemas/article";
 
 const R2_URL_PREFIX = "/images/r2/";
 
 export default defineEventHandler(async (event) => {
-  const contentId = getRouterParam(event, "contentId");
-  if (!contentId) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "Content ID is required",
-    });
-  }
+  const { contentId } = validateParams(event, contentIdParamsSchema);
 
   try {
     const article = await fetchArticle(event, contentId);

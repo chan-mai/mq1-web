@@ -1,8 +1,13 @@
 <script setup lang="ts">
 const route = useRoute();
 const router = useRouter();
-const page = computed(() => Number(route.query.page) || 1);
 const limit = 12;
+// APIのoffset上限(100000)内へクランプ
+const maxPage = Math.floor(100000 / limit) + 1;
+const page = computed(() => {
+  const parsed = Math.floor(Number(route.query.page) || 1);
+  return Math.min(Math.max(parsed, 1), maxPage);
+});
 
 const { data: articlesResponse, status } = await useFetch("/api/articles", {
   key: () => `articles-${page.value}`,

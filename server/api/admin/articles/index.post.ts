@@ -1,22 +1,14 @@
 import { eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { articles } from "~~/server/db/schema";
-import {
-  ARTICLE_ID_PATTERN,
-  serializeAdminArticle,
-} from "~~/server/utils/admin-article";
+import { serializeAdminArticle } from "~~/server/utils/admin-article";
 import { getD1Drizzle } from "~~/server/utils/d1";
+import { createArticleBodySchema } from "#shared/schemas/article";
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody<{ id?: string; title?: string }>(event);
+  const body = await validateBody(event, createArticleBodySchema);
 
-  const id = body?.id?.trim() || nanoid(12);
-  if (!ARTICLE_ID_PATTERN.test(id)) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "Invalid article id",
-    });
-  }
+  const id = body?.id || nanoid(12);
 
   const db = getD1Drizzle(event);
 
@@ -35,7 +27,7 @@ export default defineEventHandler(async (event) => {
   const now = new Date().toISOString();
   const row = {
     id,
-    title: body?.title?.trim() ?? "",
+    title: body?.title ?? "",
     content: JSON.stringify(emptyTiptapDoc()),
     plainText: "",
     summary: null,

@@ -5,12 +5,10 @@ import {
   serializeAdminArticle,
 } from "~~/server/utils/admin-article";
 import { getD1Drizzle } from "~~/server/utils/d1";
+import { articleIdParamsSchema } from "#shared/schemas/article";
 
 export default defineEventHandler(async (event) => {
-  const id = getRouterParam(event, "id");
-  if (!id) {
-    throw createError({ statusCode: 400, statusMessage: "Id is required" });
-  }
+  const { id } = validateParams(event, articleIdParamsSchema);
 
   const db = getD1Drizzle(event);
   const rows = await db

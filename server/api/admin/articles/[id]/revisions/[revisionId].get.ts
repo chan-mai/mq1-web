@@ -1,13 +1,10 @@
 import { and, eq } from "drizzle-orm";
 import { articleRevisions } from "~~/server/db/schema";
 import { getD1Drizzle } from "~~/server/utils/d1";
+import { articleRevisionParamsSchema } from "#shared/schemas/article";
 
 export default defineEventHandler(async (event) => {
-  const id = getRouterParam(event, "id");
-  const revisionId = getRouterParam(event, "revisionId");
-  if (!id || !revisionId) {
-    throw createError({ statusCode: 400, statusMessage: "Id is required" });
-  }
+  const { id, revisionId } = validateParams(event, articleRevisionParamsSchema);
 
   const db = getD1Drizzle(event);
   const rows = await db

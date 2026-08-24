@@ -1,11 +1,7 @@
+import { tagOgParamsSchema } from "#shared/schemas/tag";
+
 export default defineEventHandler(async (event) => {
-  const tagId = getRouterParam(event, "tagId");
-  if (!tagId) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "Tag ID is required",
-    });
-  }
+  const { tagId } = validateParams(event, tagOgParamsSchema);
 
   try {
     const tag = await fetchTag(event, tagId);

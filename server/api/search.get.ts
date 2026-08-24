@@ -3,18 +3,15 @@ import { articleTags, articles, tags } from "~~/server/db/schema";
 import { serializePublicArticle } from "~~/server/utils/article";
 import { fetchTagsForArticles } from "~~/server/utils/admin-article";
 import { getD1Drizzle } from "~~/server/utils/d1";
+import { searchQuerySchema } from "#shared/schemas/search";
 
 const escapeLike = (value: string) => value.replace(/[\\%_]/g, "\\$&");
 
 export default defineEventHandler(async (event) => {
-  const query = getQuery(event);
-  const q = typeof query.q === "string" ? query.q.trim() : "";
-  const tagSlugs =
-    typeof query.tags === "string" && query.tags
-      ? query.tags.split(",").filter(Boolean)
-      : [];
-  const since = typeof query.since === "string" ? query.since : "";
-  const until = typeof query.until === "string" ? query.until : "";
+  const query = validateQuery(event, searchQuerySchema);
+  const q = query.q ?? "";
+  const tagSlugs = query.tags ?? [];
+  const { since, until } = query;
 
   if (!q && tagSlugs.length === 0 && !since && !until) {
     return { contents: [], totalCount: 0 };
@@ -46,16 +43,10 @@ export default defineEventHandler(async (event) => {
   }
 
   if (since) {
-    const date = new Date(since);
-    if (!Number.isNaN(date.getTime())) {
-      conditions.push(gt(articles.publishedAt, date.toISOString()));
-    }
+    conditions.push(gt(articles.publishedAt, new Date(since).toISOString()));
   }
   if (until) {
-    const date = new Date(until);
-    if (!Number.isNaN(date.getTime())) {
-      conditions.push(lt(articles.publishedAt, date.toISOString()));
-    }
+    conditions.push(lt(articles.publishedAt, new Date(until).toISOString()));
   }
 
   if (q) {

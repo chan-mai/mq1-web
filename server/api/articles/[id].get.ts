@@ -1,15 +1,17 @@
 import { fetchArticleByContentId } from "~~/server/utils/article";
 import { isAuthenticated } from "~~/server/utils/session";
+import {
+  articleDetailQuerySchema,
+  articleIdParamsSchema,
+} from "#shared/schemas/article";
 
 export default defineEventHandler(async (event) => {
-  const id = getRouterParam(event, "id");
-  if (!id) {
-    throw createError({ statusCode: 400, statusMessage: "Id is required" });
-  }
+  const { id } = validateParams(event, articleIdParamsSchema);
 
   // preview=1 + adminセッションで下書き閲覧可
   const preview =
-    getQuery(event).preview === "1" && (await isAuthenticated(event));
+    validateQuery(event, articleDetailQuerySchema).preview === "1" &&
+    (await isAuthenticated(event));
 
   const article = await fetchArticleByContentId(event, id, {
     includeDraft: preview,

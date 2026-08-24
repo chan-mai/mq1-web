@@ -1,23 +1,11 @@
 import { and, eq, ne } from "drizzle-orm";
 import { tags } from "~~/server/db/schema";
-import { TAG_SLUG_PATTERN } from "~~/server/utils/admin-article";
 import { getD1Drizzle } from "~~/server/utils/d1";
+import { tagIdParamsSchema, tagUpsertBodySchema } from "#shared/schemas/tag";
 
 export default defineEventHandler(async (event) => {
-  const id = getRouterParam(event, "id");
-  if (!id) {
-    throw createError({ statusCode: 400, statusMessage: "Id is required" });
-  }
-
-  const body = await readBody<{ name?: string; slug?: string }>(event);
-  const name = body?.name?.trim();
-  const slug = body?.slug?.trim();
-  if (!name || !slug || !TAG_SLUG_PATTERN.test(slug)) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "Invalid tag name or slug",
-    });
-  }
+  const { id } = validateParams(event, tagIdParamsSchema);
+  const { name, slug } = await validateBody(event, tagUpsertBodySchema);
 
   const db = getD1Drizzle(event);
   const rows = await db.select().from(tags).where(eq(tags.id, id)).limit(1);

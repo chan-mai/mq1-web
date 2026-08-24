@@ -1,20 +1,10 @@
 import { inArray } from "drizzle-orm";
 import { articles, siteSettings } from "~~/server/db/schema";
 import { getD1Drizzle } from "~~/server/utils/d1";
+import { settingsPutBodySchema } from "#shared/schemas/settings";
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody<{ pinnedArticleIds?: string[] }>(event);
-  const pinnedArticleIds = body?.pinnedArticleIds;
-
-  if (
-    !Array.isArray(pinnedArticleIds) ||
-    pinnedArticleIds.some((id) => typeof id !== "string")
-  ) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "Invalid pinnedArticleIds",
-    });
-  }
+  const { pinnedArticleIds } = await validateBody(event, settingsPutBodySchema);
 
   const uniqueIds = [...new Set(pinnedArticleIds)];
   const db = getD1Drizzle(event);

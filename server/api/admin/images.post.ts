@@ -3,8 +3,13 @@ import { images } from "~~/server/db/schema";
 import { getD1Drizzle } from "~~/server/utils/d1";
 import { getR2Bucket } from "~~/server/utils/r2";
 import { stripImageMetadata } from "~~/server/utils/strip-image-metadata";
+import {
+  imageDimensionSchema,
+  imageMimeSchema,
+  type ImageMime,
+} from "#shared/schemas/image";
 
-const EXTENSION_BY_MIME: Record<string, string> = {
+const EXTENSION_BY_MIME: Record<ImageMime, string> = {
   "image/jpeg": "jpg",
   "image/png": "png",
   "image/gif": "gif",
@@ -28,13 +33,8 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: "File is required" });
   }
 
-  const extension = EXTENSION_BY_MIME[filePart.type ?? ""];
-  if (!extension) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "Unsupported image type",
-    });
-  }
+  const mime = parseOrThrow(imageMimeSchema, filePart.type ?? "");
+  const extension = EXTENSION_BY_MIME[mime];
 
   if (filePart.data.length > MAX_FILE_SIZE) {
     throw createError({ statusCode: 413, statusMessage: "File too large" });
@@ -42,8 +42,7 @@ export default defineEventHandler(async (event) => {
 
   const readDimension = (name: string) => {
     const raw = parts.find((part) => part.name === name)?.data?.toString();
-    const value = Number(raw);
-    return Number.isInteger(value) && value > 0 ? value : null;
+    return parseOrThrow(imageDimensionSchema, raw) ?? null;
   };
 
   const now = new Date();
@@ -51,12 +50,9 @@ export default defineEventHandler(async (event) => {
 
   const bucket = getR2Bucket(event);
   // PNG/WebPのmetadata排除
-  const body = stripImageMetadata(
-    new Uint8Array(filePart.data),
-    filePart.type!,
-  );
+  const body = stripImageMetadata(new Uint8Array(filePart.data), mime);
   await bucket.put(key, body, {
-    httpMetadata: { contentType: filePart.type },
+    httpMetadata: { contentType: mime },
   });
 
   const width = readDimension("width");
@@ -67,7 +63,7 @@ export default defineEventHandler(async (event) => {
     size: body.byteLength,
     width,
     height,
-    contentType: filePart.type!,
+    contentType: mime,
     uploadedAt: now.toISOString(),
   });
 

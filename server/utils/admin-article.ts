@@ -5,9 +5,6 @@ import { getD1Drizzle } from "~~/server/utils/d1";
 export type ArticleRow = typeof articles.$inferSelect;
 export type TagRow = typeof tags.$inferSelect;
 
-export const ARTICLE_ID_PATTERN = /^[a-zA-Z0-9_-]{3,64}$/;
-export const TAG_SLUG_PATTERN = /^[a-z0-9-]{1,64}$/;
-
 export const eyecatchUrlFromKey = (key: string | null) =>
   key ? `/images/r2/${key}` : null;
 

@@ -1,12 +1,10 @@
 import { eq } from "drizzle-orm";
 import { tags } from "~~/server/db/schema";
 import { getD1Drizzle } from "~~/server/utils/d1";
+import { tagIdParamsSchema } from "#shared/schemas/tag";
 
 export default defineEventHandler(async (event) => {
-  const id = getRouterParam(event, "id");
-  if (!id) {
-    throw createError({ statusCode: 400, statusMessage: "Id is required" });
-  }
+  const { id } = validateParams(event, tagIdParamsSchema);
 
   const db = getD1Drizzle(event);
   const rows = await db

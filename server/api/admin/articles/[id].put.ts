@@ -6,26 +6,14 @@ import {
   serializeAdminArticle,
 } from "~~/server/utils/admin-article";
 import { getD1Drizzle } from "~~/server/utils/d1";
-
-interface UpdateArticleBody {
-  title?: string;
-  content?: TiptapDoc;
-  tagIds?: string[];
-  eyecatch?: { key: string; width?: number; height?: number } | null;
-  isNoIndex?: boolean;
-  publishedAt?: string | null;
-}
+import {
+  articleIdParamsSchema,
+  updateArticleBodySchema,
+} from "#shared/schemas/article";
 
 export default defineEventHandler(async (event) => {
-  const id = getRouterParam(event, "id");
-  if (!id) {
-    throw createError({ statusCode: 400, statusMessage: "Id is required" });
-  }
-
-  const body = await readBody<UpdateArticleBody>(event);
-  if (!body || typeof body !== "object") {
-    throw createError({ statusCode: 400, statusMessage: "Invalid body" });
-  }
+  const { id } = validateParams(event, articleIdParamsSchema);
+  const body = await validateBody(event, updateArticleBodySchema);
 
   const db = getD1Drizzle(event);
   const rows = await db
@@ -42,26 +30,17 @@ export default defineEventHandler(async (event) => {
     updatedAt: new Date().toISOString(),
   };
 
-  if (typeof body.title === "string") {
+  if (body.title !== undefined) {
     update.title = body.title;
   }
 
   if (body.content !== undefined) {
-    if (
-      !body.content ||
-      typeof body.content !== "object" ||
-      body.content.type !== "doc"
-    ) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: "Invalid content document",
-      });
-    }
-    update.content = JSON.stringify(body.content);
-    update.plainText = extractPlainText(body.content);
-    update.charCount = countContentCharacters(body.content);
+    const content = body.content as TiptapDoc;
+    update.content = JSON.stringify(content);
+    update.plainText = extractPlainText(content);
+    update.charCount = countContentCharacters(content);
     // 概要は本文先頭からの自動生成のみ
-    update.summary = generateSummary(body.content);
+    update.summary = generateSummary(content);
   }
 
   if (body.eyecatch !== undefined) {
@@ -69,40 +48,22 @@ export default defineEventHandler(async (event) => {
       update.eyecatchKey = null;
       update.eyecatchWidth = null;
       update.eyecatchHeight = null;
-    } else if (typeof body.eyecatch.key === "string" && body.eyecatch.key) {
+    } else {
       update.eyecatchKey = body.eyecatch.key;
       update.eyecatchWidth = body.eyecatch.width ?? null;
       update.eyecatchHeight = body.eyecatch.height ?? null;
-    } else {
-      throw createError({
-        statusCode: 400,
-        statusMessage: "Invalid eyecatch",
-      });
     }
   }
 
-  if (typeof body.isNoIndex === "boolean") {
+  if (body.isNoIndex !== undefined) {
     update.isNoIndex = body.isNoIndex;
   }
 
-  if (typeof body.publishedAt === "string" && body.publishedAt) {
-    const date = new Date(body.publishedAt);
-    if (Number.isNaN(date.getTime())) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: "Invalid publishedAt",
-      });
-    }
-    update.publishedAt = date.toISOString();
+  if (typeof body.publishedAt === "string") {
+    update.publishedAt = new Date(body.publishedAt).toISOString();
   }
 
   if (body.tagIds !== undefined) {
-    if (
-      !Array.isArray(body.tagIds) ||
-      body.tagIds.some((tagId) => typeof tagId !== "string")
-    ) {
-      throw createError({ statusCode: 400, statusMessage: "Invalid tagIds" });
-    }
     const uniqueTagIds = [...new Set(body.tagIds)];
     if (uniqueTagIds.length > 0) {
       const found = await db
@@ -121,10 +82,7 @@ export default defineEventHandler(async (event) => {
   // タイトルか本文の変更時のみリビジョンを記録(最新50件を保持)
   const revisionTitle = update.title ?? current.title;
   const revisionContent = update.content ?? current.content;
-  if (
-    revisionTitle !== current.title ||
-    revisionContent !== current.content
-  ) {
+  if (revisionTitle !== current.title || revisionContent !== current.content) {
     await db.insert(articleRevisions).values({
       id: crypto.randomUUID(),
       articleId: id,

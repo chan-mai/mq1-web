@@ -1,20 +1,11 @@
 import { eq, or } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { tags } from "~~/server/db/schema";
-import { TAG_SLUG_PATTERN } from "~~/server/utils/admin-article";
 import { getD1Drizzle } from "~~/server/utils/d1";
+import { tagUpsertBodySchema } from "#shared/schemas/tag";
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody<{ name?: string; slug?: string }>(event);
-
-  const name = body?.name?.trim();
-  const slug = body?.slug?.trim();
-  if (!name || !slug || !TAG_SLUG_PATTERN.test(slug)) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "Invalid tag name or slug",
-    });
-  }
+  const { name, slug } = await validateBody(event, tagUpsertBodySchema);
 
   const db = getD1Drizzle(event);
   const id = nanoid(12);

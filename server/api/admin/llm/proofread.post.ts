@@ -1,14 +1,11 @@
 import { chatComplete } from "~~/server/utils/openai";
+import { proofreadBodySchema } from "#shared/schemas/llm";
 
 const MAX_TEXT_LENGTH = 8000;
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody<{ text?: string }>(event);
-  const text = body?.text?.trim();
+  const { text } = await validateBody(event, proofreadBodySchema);
 
-  if (!text) {
-    throw createError({ statusCode: 400, statusMessage: "Text is required" });
-  }
   if (text.length > MAX_TEXT_LENGTH) {
     throw createError({ statusCode: 413, statusMessage: "Text too long" });
   }

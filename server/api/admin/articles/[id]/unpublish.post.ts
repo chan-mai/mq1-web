@@ -1,20 +1,16 @@
 import { eq } from "drizzle-orm";
 import { articles } from "~~/server/db/schema";
 import { getD1Drizzle } from "~~/server/utils/d1";
+import {
+  articleIdParamsSchema,
+  unpublishBodySchema,
+} from "#shared/schemas/article";
 
 export default defineEventHandler(async (event) => {
-  const id = getRouterParam(event, "id");
-  if (!id) {
-    throw createError({ statusCode: 400, statusMessage: "Id is required" });
-  }
+  const { id } = validateParams(event, articleIdParamsSchema);
 
-  const body = await readBody<{ status?: string } | undefined>(event).catch(
-    () => undefined,
-  );
+  const body = await validateBody(event, unpublishBodySchema);
   const target = body?.status ?? "draft";
-  if (target !== "draft" && target !== "private") {
-    throw createError({ statusCode: 400, statusMessage: "Invalid status" });
-  }
 
   const db = getD1Drizzle(event);
   const rows = await db

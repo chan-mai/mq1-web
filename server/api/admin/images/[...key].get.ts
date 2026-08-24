@@ -1,16 +1,12 @@
 import { eq, or, sql } from "drizzle-orm";
 import { articles, images } from "~~/server/db/schema";
 import { getD1Drizzle } from "~~/server/utils/d1";
-
-const KEY_PATTERN = /^[a-zA-Z0-9/_-]+\.[a-z0-9]+$/;
+import { imageKeyParamsSchema } from "#shared/schemas/image";
 
 const escapeLike = (value: string) => value.replace(/[\\%_]/g, "\\$&");
 
 export default defineEventHandler(async (event) => {
-  const key = getRouterParam(event, "key");
-  if (!key || key.includes("..") || !KEY_PATTERN.test(key)) {
-    throw createError({ statusCode: 400, statusMessage: "Invalid key" });
-  }
+  const { key } = validateParams(event, imageKeyParamsSchema);
 
   const db = getD1Drizzle(event);
   const rows = await db

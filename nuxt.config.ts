@@ -52,6 +52,9 @@ export default defineNuxtConfig({
     fallback: 'light',
     storageKey: 'mq1-color-mode',
   },
+  icon: {
+    serverBundle: 'local',
+  },
   $production: {
     scripts: {
       registry: {

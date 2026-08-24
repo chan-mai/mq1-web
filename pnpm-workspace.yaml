@@ -2,6 +2,11 @@ ignoreScripts: true
 
 minimumReleaseAge: 2880
 
+# NOTE: 2026-08-26 11:21 JST以降に削除
+minimumReleaseAgeExclude:
+  - '@nuxt/icon'
+  - '@nuxt/devtools-kit'
+
 overrides:
   '@hono/node-server': '>=1.19.15'
   c12: ^3.3.2

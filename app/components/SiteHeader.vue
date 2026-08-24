@@ -1,6 +1,8 @@
 <script setup lang="ts">
 const config = useWebConfig();
 const route = useRoute();
+const colorMode = useColorMode();
+const nuxtApp = useNuxtApp();
 
 const isActivePage = (url: string) => {
   // 末尾の/を除去して比較
@@ -97,20 +99,39 @@ if (import.meta.client) {
   useEventListener('scroll', updateHeaderTheme, { passive: true });
   useEventListener('resize', updateHeaderTheme, { passive: true });
 
+  // カラーモード変更
+  watch(
+    () => colorMode.value,
+    async () => {
+      await nextTick();
+      updateHeaderTheme();
+    },
+  );
+
+  // ページ遷移完了
+  const unhookPageFinish = nuxtApp.hook('page:finish', async () => {
+    await nextTick();
+    updateHeaderTheme();
+  });
+
+  // View Transition完了後に再判定
+  const unhookViewTransition = nuxtApp.hook(
+    'page:view-transition:start',
+    (transition) => {
+      transition.finished.catch(() => {}).finally(updateHeaderTheme);
+    },
+  );
+
+  onUnmounted(() => {
+    unhookPageFinish();
+    unhookViewTransition();
+  });
+
   onMounted(() => {
     updateHeaderTheme();
     // レイアウトシフト対策
     setTimeout(updateHeaderTheme, 100);
     setTimeout(updateHeaderTheme, 500);
-
-    // ページ遷移
-    watch(
-      () => route.path,
-      () => {
-        setTimeout(updateHeaderTheme, 100);
-        setTimeout(updateHeaderTheme, 500);
-      },
-    );
   });
 }
 </script>

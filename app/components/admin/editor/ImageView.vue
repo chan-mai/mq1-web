@@ -11,13 +11,13 @@ const caption = computed({
 
 <template>
   <NodeViewWrapper class="my-5" data-drag-handle>
-    <figure>
+    <figure class="w-fit max-w-full md:max-w-[80%] lg:max-w-[70%]">
       <img
         :src="node.attrs.src"
         :alt="node.attrs.alt ?? node.attrs.caption ?? ''"
         :width="node.attrs.width ?? undefined"
         :height="node.attrs.height ?? undefined"
-        class="mx-auto rounded-lg"
+        class="max-w-full rounded-lg"
         :class="{ 'ring-2 ring-primary': selected }"
       />
       <input

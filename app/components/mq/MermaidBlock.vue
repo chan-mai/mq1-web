@@ -163,7 +163,7 @@ watch([() => props.source, () => colorMode.value], () => {
 
 <style scoped lang="css">
 .mermaid-block {
-  @apply mx-6 my-8 overflow-hidden rounded-xl border border-border-subtle bg-surface-elevated;
+  @apply mx-3 my-8 overflow-hidden rounded-xl border border-border-subtle bg-surface-elevated md:mx-6;
   --mermaid-background: #ffffff;
   --mermaid-primary: #fde7ea;
   --mermaid-primary-border: #fc9fa8;

@@ -197,7 +197,7 @@ export const renderArticleNode = (
     case 'linkCard':
       return h(MqLinkCard, {
         url: String(node.attrs?.url ?? ''),
-        class: 'px-8 my-5',
+        class: 'px-3 my-5 md:px-8',
       });
     case 'table':
       return h(MqScrollableTable, null, {

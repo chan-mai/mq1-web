@@ -104,7 +104,7 @@ const segments = computed<ArticleSegment[]>(() => {
 }
 
 .article-body img {
-  @apply mx-auto w-auto h-auto max-w-full md:max-w-[80%] lg:max-w-[70%] max-h-[600px] object-contain block bg-surface-elevated rounded-lg;
+  @apply w-auto h-auto max-w-full max-h-[600px] object-contain block bg-surface-elevated rounded-lg;
 }
 
 .article-body figure figcaption {
@@ -112,7 +112,7 @@ const segments = computed<ArticleSegment[]>(() => {
 }
 
 .article-body figure {
-  @apply w-full m-0;
+  @apply w-fit max-w-full mx-3 my-0 md:max-w-[80%] md:mx-8 lg:max-w-[70%];
 }
 
 /* space-yより詳細度を上げるため!importantを付与 */
@@ -188,15 +188,15 @@ const segments = computed<ArticleSegment[]>(() => {
 }
 
 .article-body ul {
-  @apply list-disc list-inside mx-5 text-fg leading-[1.9];
+  @apply list-disc list-inside mx-3 text-fg leading-[1.9] md:mx-5;
 }
 
 .article-body ol {
-  @apply list-decimal list-inside mx-5 text-fg leading-[1.9];
+  @apply list-decimal list-inside mx-3 text-fg leading-[1.9] md:mx-5;
 }
 
 .article-body blockquote {
-  @apply border-l-4 border-primary/50 bg-surface-muted/50 py-4 pr-4 mx-8 rounded-r-lg text-fg-muted italic;
+  @apply border-l-4 border-primary/50 bg-surface-muted/50 py-4 pr-4 mx-3 rounded-r-lg text-fg-muted italic md:mx-8;
 }
 
 .article-body blockquote p {

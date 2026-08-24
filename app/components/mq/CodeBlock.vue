@@ -107,7 +107,7 @@ watch([() => props.source, () => props.language], () => {
 
 <style scoped lang="css">
 .mq-code-block {
-  @apply mx-6 my-8 overflow-hidden rounded-xl border border-border-subtle bg-surface-muted text-fg;
+  @apply mx-3 my-8 overflow-hidden rounded-xl border border-border-subtle bg-surface-muted text-fg md:mx-6;
 }
 
 .mq-code-block--embedded {

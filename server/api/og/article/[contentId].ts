@@ -1,7 +1,7 @@
-import { getR2Bucket } from "~~/server/utils/r2";
-import { contentIdParamsSchema } from "#shared/schemas/article";
+import { getR2Bucket } from '~~/server/utils/r2';
+import { contentIdParamsSchema } from '#shared/schemas/article';
 
-const R2_URL_PREFIX = "/images/r2/";
+const R2_URL_PREFIX = '/images/r2/';
 
 export default defineEventHandler(async (event) => {
   const { contentId } = validateParams(event, contentIdParamsSchema);
@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
     if (!article) {
       throw createError({
         statusCode: 404,
-        statusMessage: "Article not found",
+        statusMessage: 'Article not found',
       });
     }
 
@@ -22,25 +22,26 @@ export default defineEventHandler(async (event) => {
       if (!object) {
         throw createError({
           statusCode: 500,
-          statusMessage: "Failed to fetch OG image",
+          statusMessage: 'Failed to fetch OG image',
         });
       }
       const buffer = Buffer.from(await object.arrayBuffer());
       setHeader(
         event,
-        "Content-Type",
-        object.httpMetadata?.contentType ?? "image/png",
+        'Content-Type',
+        object.httpMetadata?.contentType ?? 'image/png',
       );
-      setHeader(event, "Cache-Control", "public, max-age=31536000, immutable");
+      setHeader(event, 'Cache-Control', 'public, max-age=31536000, immutable');
       return buffer;
     }
 
     return await renderOgImageResponse(event, article.title);
-  } catch (e: any) {
+  } catch (e) {
     console.error(e);
+    const err = e as { statusCode?: number; statusMessage?: string };
     throw createError({
-      statusCode: e.statusCode || 500,
-      statusMessage: e.statusMessage || "Internal Server Error",
+      statusCode: err.statusCode || 500,
+      statusMessage: err.statusMessage || 'Internal Server Error',
     });
   }
 });

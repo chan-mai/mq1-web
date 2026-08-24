@@ -1,13 +1,13 @@
 type LinkPreviewType =
-  | "GENERAL"
-  | "MISSKEY_NOTE"
-  | "MISSKEY_HASHTAG"
-  | "MISSKEY_USER"
-  | "MISSKEY_CLIP"
-  | "GITHUB_PERMALINK"
-  | "TWITTER"
-  | "YOUTUBE"
-  | "INSTAGRAM";
+  | 'GENERAL'
+  | 'MISSKEY_NOTE'
+  | 'MISSKEY_HASHTAG'
+  | 'MISSKEY_USER'
+  | 'MISSKEY_CLIP'
+  | 'GITHUB_PERMALINK'
+  | 'TWITTER'
+  | 'YOUTUBE'
+  | 'INSTAGRAM';
 
 type LinkPreviewResponse = {
   url: string;

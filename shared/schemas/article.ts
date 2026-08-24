@@ -1,14 +1,14 @@
-import * as v from "valibot";
+import * as v from 'valibot';
 import {
   ARTICLE_ID_PATTERN,
   nonEmptyId,
   parseableDate,
   queryInt,
-} from "./common";
+} from './common';
 
 // type確認のみ, 内部構造は非検証
 export const tiptapDocSchema = v.looseObject({
-  type: v.literal("doc"),
+  type: v.literal('doc'),
   content: v.optional(v.array(v.unknown())),
 });
 
@@ -37,8 +37,8 @@ export const createArticleBodySchema = v.nullish(
         v.string(),
         v.trim(),
         v.check(
-          (id) => id === "" || ARTICLE_ID_PATTERN.test(id),
-          "Invalid article id",
+          (id) => id === '' || ARTICLE_ID_PATTERN.test(id),
+          'Invalid article id',
         ),
       ),
     ),
@@ -66,5 +66,5 @@ export const articleDetailQuerySchema = v.object({
 });
 
 export const unpublishBodySchema = v.nullish(
-  v.object({ status: v.optional(v.picklist(["draft", "private"])) }),
+  v.object({ status: v.optional(v.picklist(['draft', 'private'])) }),
 );

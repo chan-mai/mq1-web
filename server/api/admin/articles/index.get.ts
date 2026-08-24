@@ -1,10 +1,10 @@
-import { desc } from "drizzle-orm";
-import { articles } from "~~/server/db/schema";
+import { desc } from 'drizzle-orm';
+import { articles } from '~~/server/db/schema';
 import {
   fetchTagsForArticles,
   serializeAdminArticle,
-} from "~~/server/utils/admin-article";
-import { getD1Drizzle } from "~~/server/utils/d1";
+} from '~~/server/utils/admin-article';
+import { getD1Drizzle } from '~~/server/utils/d1';
 
 export default defineEventHandler(async (event) => {
   const db = getD1Drizzle(event);

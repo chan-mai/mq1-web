@@ -2,7 +2,7 @@
 const props = defineProps({
   limit: {
     type: String,
-    default: "0",
+    default: '0',
   },
   articles: {
     type: Array as () => Article[],
@@ -25,7 +25,7 @@ const limitedArticles = computed(() => {
 
 // タグをクリックした時の処理
 const router = useRouter();
-function navigateToTag(tag: any) {
+function navigateToTag(tag: Tag) {
   // タグページへ遷移(タグでフィルタリングされた一覧ページなど)
   router.push(`/tag/${tag.id}`);
 }
@@ -61,11 +61,11 @@ function navigateToTag(tag: any) {
                 {{
                   new Date(
                     article.publishedAt! ?? article.createdAt!,
-                  ).toLocaleString("ja-JP", {
-                    year: "numeric",
-                    month: "2-digit",
-                    day: "2-digit",
-                    timeZone: "Asia/Tokyo",
+                  ).toLocaleString('ja-JP', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    timeZone: 'Asia/Tokyo',
                   })
                 }}
               </div>
@@ -156,7 +156,7 @@ function navigateToTag(tag: any) {
 }
 
 .slide-hover::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   right: 0;

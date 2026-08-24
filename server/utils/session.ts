@@ -1,4 +1,4 @@
-import type { H3Event } from "h3";
+import type { H3Event } from 'h3';
 
 export interface AdminSessionData {
   sub?: string;
@@ -16,19 +16,19 @@ export const useAdminSession = (event: H3Event) => {
   if (!password || password.length < 32) {
     throw createError({
       statusCode: 500,
-      statusMessage: "Session password is not configured",
+      statusMessage: 'Session password is not configured',
     });
   }
 
   return useSession<AdminSessionData>(event, {
     password,
-    name: "mq1_admin",
+    name: 'mq1_admin',
     maxAge: 60 * 60 * 24 * 30,
     cookie: {
       httpOnly: true,
       secure: !import.meta.dev,
-      sameSite: "lax",
-      path: "/",
+      sameSite: 'lax',
+      path: '/',
     },
   });
 };

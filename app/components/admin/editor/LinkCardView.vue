@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { NodeViewWrapper, nodeViewProps } from "@tiptap/vue-3";
-import MqLinkCard from "~/components/mq/LinkCard.vue";
+import { NodeViewWrapper, nodeViewProps } from '@tiptap/vue-3';
+import MqLinkCard from '~/components/mq/LinkCard.vue';
 
 const props = defineProps(nodeViewProps);
 const url = computed(() => props.node.attrs.url as string);

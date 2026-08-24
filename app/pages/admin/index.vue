@@ -1,37 +1,37 @@
 <script setup lang="ts">
-definePageMeta({ layout: "admin" });
-useHead({ title: "記事の管理" });
+definePageMeta({ layout: 'admin' });
+useHead({ title: '記事の管理' });
 
 const toast = useToast();
 const {
   data,
   refresh,
   status: fetchStatus,
-} = await useFetch("/api/admin/articles");
+} = await useFetch('/api/admin/articles');
 
 const articles = computed(() => data.value?.articles ?? []);
 const publishedCount = computed(
   () =>
-    articles.value.filter((article) => article.status === "published").length,
+    articles.value.filter((article) => article.status === 'published').length,
 );
 const draftCount = computed(
-  () => articles.value.filter((article) => article.status === "draft").length,
+  () => articles.value.filter((article) => article.status === 'draft').length,
 );
 const privateCount = computed(
-  () => articles.value.filter((article) => article.status === "private").length,
+  () => articles.value.filter((article) => article.status === 'private').length,
 );
 
 // 検索・フィルタ・並び替え
-const search = ref("");
-const statusFilter = ref<"all" | ArticleStatus>("all");
-const sortKey = ref<"updated-desc" | "published-desc" | "title">(
-  "updated-desc",
+const search = ref('');
+const statusFilter = ref<'all' | ArticleStatus>('all');
+const sortKey = ref<'updated-desc' | 'published-desc' | 'title'>(
+  'updated-desc',
 );
 
 const filteredArticles = computed(() => {
   const keyword = search.value.trim().toLowerCase();
   let filtered = articles.value.filter((article) => {
-    if (statusFilter.value !== "all" && article.status !== statusFilter.value) {
+    if (statusFilter.value !== 'all' && article.status !== statusFilter.value) {
       return false;
     }
     if (!keyword) return true;
@@ -41,16 +41,16 @@ const filteredArticles = computed(() => {
     );
   });
   switch (sortKey.value) {
-    case "published-desc":
+    case 'published-desc':
       filtered = [...filtered].sort(
         (a, b) =>
           Date.parse(b.publishedAt ?? b.updatedAt) -
           Date.parse(a.publishedAt ?? a.updatedAt),
       );
       break;
-    case "title":
+    case 'title':
       filtered = [...filtered].sort((a, b) =>
-        (a.title || "無題").localeCompare(b.title || "無題", "ja"),
+        (a.title || '無題').localeCompare(b.title || '無題', 'ja'),
       );
       break;
     default:
@@ -67,13 +67,13 @@ const createArticle = async () => {
   if (creating.value) return;
   creating.value = true;
   try {
-    const article = await $fetch("/api/admin/articles", {
-      method: "POST",
+    const article = await $fetch('/api/admin/articles', {
+      method: 'POST',
       body: {},
     });
     await navigateTo(`/admin/edit/${article.id}`);
   } catch {
-    toast.error({ title: "記事の作成に失敗しました" });
+    toast.error({ title: '記事の作成に失敗しました' });
   } finally {
     creating.value = false;
   }
@@ -87,8 +87,8 @@ const toggleMenu = (id: string) => {
 const closeMenu = () => {
   menuOpenId.value = null;
 };
-onMounted(() => document.addEventListener("click", closeMenu));
-onBeforeUnmount(() => document.removeEventListener("click", closeMenu));
+onMounted(() => document.addEventListener('click', closeMenu));
+onBeforeUnmount(() => document.removeEventListener('click', closeMenu));
 
 // 削除
 const deleteTarget = ref<{ id: string; title: string } | null>(null);
@@ -102,23 +102,23 @@ const deleteArticle = async () => {
   if (!deleteTarget.value) return;
   try {
     await $fetch(`/api/admin/articles/${deleteTarget.value.id}`, {
-      method: "DELETE",
+      method: 'DELETE',
     });
     await refresh();
-    toast.success({ title: "記事を削除しました" });
+    toast.success({ title: '記事を削除しました' });
   } catch {
-    toast.error({ title: "削除に失敗しました" });
+    toast.error({ title: '削除に失敗しました' });
   } finally {
     deleteTarget.value = null;
   }
 };
 
 const formatDate = (value?: string | null) => {
-  if (!value) return "—";
-  return new Date(value).toLocaleDateString("ja-JP", {
-    year: "numeric",
-    month: "numeric",
-    day: "numeric",
+  if (!value) return '—';
+  return new Date(value).toLocaleDateString('ja-JP', {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
   });
 };
 </script>
@@ -196,9 +196,9 @@ const formatDate = (value?: string | null) => {
       class="py-16 text-center text-sm text-fg-muted"
     >
       {{
-        search || statusFilter !== "all"
-          ? "一致する記事がありません"
-          : "記事はまだありません"
+        search || statusFilter !== 'all'
+          ? '一致する記事がありません'
+          : '記事はまだありません'
       }}
     </p>
 
@@ -265,7 +265,7 @@ const formatDate = (value?: string | null) => {
             </td>
             <td class="max-w-0 px-2 py-2.5">
               <p class="truncate" :class="{ 'text-fg-muted': !article.title }">
-                {{ article.title || "無題" }}
+                {{ article.title || '無題' }}
               </p>
               <p class="truncate font-mono text-[10px] text-fg-muted">
                 {{ article.id }}
@@ -286,7 +286,7 @@ const formatDate = (value?: string | null) => {
             <td class="hidden max-w-0 px-2 py-2.5 md:table-cell">
               <p class="truncate text-xs text-fg-muted">
                 <template v-if="article.tags.length > 0">
-                  {{ article.tags.map((tag) => `#${tag.name}`).join(" ") }}
+                  {{ article.tags.map((tag) => `#${tag.name}`).join(' ') }}
                 </template>
                 <template v-else>—</template>
               </p>
@@ -299,7 +299,7 @@ const formatDate = (value?: string | null) => {
             <td class="hidden px-2 py-2.5 text-xs text-fg-muted sm:table-cell">
               {{
                 formatDate(
-                  article.status === "published" ? article.publishedAt : null,
+                  article.status === 'published' ? article.publishedAt : null,
                 )
               }}
             </td>

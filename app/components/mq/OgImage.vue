@@ -17,16 +17,15 @@ const props = defineProps({
     required: false,
   },
 });
-const config = useWebConfig();
 
 const ogUrl = computed(() => {
-  if (!props.url || typeof props.url !== "string" || props.url.length === 0) {
+  if (!props.url || typeof props.url !== 'string' || props.url.length === 0) {
     if (props.contentId) {
       return useArticleOgGenerator(props.contentId);
     } else if (props.tagId) {
       return useTagOgGenerator(props.tagId);
     } else {
-      return "/images/ogp/ogp.png";
+      return '/images/ogp/ogp.png';
     }
   } else {
     return props.url;

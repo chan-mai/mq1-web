@@ -1,5 +1,5 @@
 <script setup lang="ts">
-definePageMeta({ layout: "admin" });
+definePageMeta({ layout: 'admin' });
 
 const route = useRoute();
 const articleId = route.params.id as string;
@@ -9,9 +9,9 @@ const { data: article, error } = await useFetch(
   `/api/admin/articles/${articleId}`,
 );
 
-useHead(() => ({ title: article.value?.title || "無題" }));
+useHead(() => ({ title: article.value?.title || '無題' }));
 
-const title = ref(article.value?.title ?? "");
+const title = ref(article.value?.title ?? '');
 const contentDoc = shallowRef<TiptapDoc>(
   article.value?.content ?? emptyTiptapDoc(),
 );
@@ -19,9 +19,9 @@ const tagIds = ref<string[]>(article.value?.tags.map((tag) => tag.id) ?? []);
 const eyecatch = ref(article.value?.eyecatch ?? null);
 const isNoIndex = ref(article.value?.isNoIndex ?? false);
 const publishedAt = ref<string | null>(article.value?.publishedAt ?? null);
-const status = ref<ArticleStatus>(article.value?.status ?? "draft");
+const status = ref<ArticleStatus>(article.value?.status ?? 'draft');
 
-const saveState = ref<"saved" | "dirty" | "saving" | "error">("saved");
+const saveState = ref<'saved' | 'dirty' | 'saving' | 'error'>('saved');
 const settingsOpen = ref(false);
 
 const payload = computed(() => ({
@@ -41,26 +41,26 @@ const payload = computed(() => ({
 
 const save = async () => {
   if (!article.value) return;
-  saveState.value = "saving";
+  saveState.value = 'saving';
   try {
     await $fetch(`/api/admin/articles/${articleId}`, {
-      method: "PUT",
+      method: 'PUT',
       body: payload.value,
     });
-    saveState.value = "saved";
+    saveState.value = 'saved';
   } catch {
-    saveState.value = "error";
-    toast.error({ title: "保存に失敗しました" });
+    saveState.value = 'error';
+    toast.error({ title: '保存に失敗しました' });
   }
 };
 
 watch(payload, () => {
-  saveState.value = "dirty";
+  saveState.value = 'dirty';
 });
 
 // 未保存のままの離脱を警告
 const hasUnsavedChanges = () =>
-  saveState.value === "dirty" || saveState.value === "saving";
+  saveState.value === 'dirty' || saveState.value === 'saving';
 
 const onBeforeUnload = (event: BeforeUnloadEvent) => {
   if (hasUnsavedChanges()) {
@@ -70,19 +70,19 @@ const onBeforeUnload = (event: BeforeUnloadEvent) => {
 
 // Cmd/Ctrl+Sで保存
 const onKeydown = (event: KeyboardEvent) => {
-  if ((event.metaKey || event.ctrlKey) && event.key === "s") {
+  if ((event.metaKey || event.ctrlKey) && event.key === 's') {
     event.preventDefault();
-    if (saveState.value === "dirty" || saveState.value === "error") save();
+    if (saveState.value === 'dirty' || saveState.value === 'error') save();
   }
 };
 
 onMounted(() => {
-  window.addEventListener("beforeunload", onBeforeUnload);
-  window.addEventListener("keydown", onKeydown);
+  window.addEventListener('beforeunload', onBeforeUnload);
+  window.addEventListener('keydown', onKeydown);
 });
 onBeforeUnmount(() => {
-  window.removeEventListener("beforeunload", onBeforeUnload);
-  window.removeEventListener("keydown", onKeydown);
+  window.removeEventListener('beforeunload', onBeforeUnload);
+  window.removeEventListener('keydown', onKeydown);
 });
 
 // アプリ内遷移は確認モーダルを表示
@@ -109,45 +109,45 @@ const publish = async () => {
   try {
     await save();
     const result = await $fetch(`/api/admin/articles/${articleId}/publish`, {
-      method: "POST",
+      method: 'POST',
     });
-    status.value = "published";
+    status.value = 'published';
     publishedAt.value = result.publishedAt;
-    toast.success({ title: "公開しました" });
+    toast.success({ title: '公開しました' });
   } catch {
-    toast.error({ title: "公開に失敗しました" });
+    toast.error({ title: '公開に失敗しました' });
   } finally {
     publishing.value = false;
   }
 };
 
-const unpublish = async (target: "draft" | "private" = "draft") => {
+const unpublish = async (target: 'draft' | 'private' = 'draft') => {
   try {
     await $fetch(`/api/admin/articles/${articleId}/unpublish`, {
-      method: "POST",
+      method: 'POST',
       body: { status: target },
     });
     status.value = target;
     toast.success({
-      title: target === "draft" ? "下書きに戻しました" : "非公開にしました",
+      title: target === 'draft' ? '下書きに戻しました' : '非公開にしました',
     });
   } catch {
-    toast.error({ title: "操作に失敗しました" });
+    toast.error({ title: '操作に失敗しました' });
   }
 };
 
 const deleteArticle = async () => {
   try {
-    await $fetch(`/api/admin/articles/${articleId}`, { method: "DELETE" });
-    await navigateTo("/admin");
+    await $fetch(`/api/admin/articles/${articleId}`, { method: 'DELETE' });
+    await navigateTo('/admin');
   } catch {
-    toast.error({ title: "削除に失敗しました" });
+    toast.error({ title: '削除に失敗しました' });
   }
 };
 
 // 公開範囲ポップオーバ
 const publishMenuOpen = ref(false);
-const publishMenu = useTemplateRef<HTMLElement>("publishMenu");
+const publishMenu = useTemplateRef<HTMLElement>('publishMenu');
 onClickOutside(publishMenu, () => {
   publishMenuOpen.value = false;
 });
@@ -155,7 +155,7 @@ onClickOutside(publishMenu, () => {
 const setStatus = async (target: ArticleStatus) => {
   publishMenuOpen.value = false;
   if (target === status.value) return;
-  if (target === "published") {
+  if (target === 'published') {
     await publish();
   } else {
     await unpublish(target);
@@ -170,8 +170,8 @@ const restoreRevision = (payload: { title: string; content: TiptapDoc }) => {
   title.value = payload.title;
   contentDoc.value = payload.content;
   editorRef.value?.setContent(payload.content);
-  saveState.value = "dirty";
-  toast.info({ title: "履歴を復元しました。保存で確定されます" });
+  saveState.value = 'dirty';
+  toast.info({ title: '履歴を復元しました。保存で確定されます' });
 };
 
 // タイトルは単一行、Enterで本文へ
@@ -180,12 +180,12 @@ const editorRef = useTemplateRef<{
   openImagePicker: () => void;
   setContent: (doc: TiptapDoc) => void;
   insertHardBreak: () => void;
-}>("editorRef");
-const titleArea = useTemplateRef<HTMLTextAreaElement>("titleArea");
+}>('editorRef');
+const titleArea = useTemplateRef<HTMLTextAreaElement>('titleArea');
 const resizeTitle = () => {
   const element = titleArea.value;
   if (!element) return;
-  element.style.height = "auto";
+  element.style.height = 'auto';
   element.style.height = `${element.scrollHeight}px`;
 };
 watch(title, () => nextTick(resizeTitle));
@@ -222,7 +222,7 @@ const onTitleEnter = (event: KeyboardEvent) => {
             class="inline-flex h-8 cursor-pointer items-center gap-1 rounded-full border-none bg-fg px-4 text-xs font-bold text-surface transition-opacity hover:opacity-80"
             @click="save"
           >
-            {{ saveState === "error" ? "保存に失敗(再試行)" : "保存する" }}
+            {{ saveState === 'error' ? '保存に失敗(再試行)' : '保存する' }}
           </button>
           <span
             v-else
@@ -233,7 +233,7 @@ const onTitleEnter = (event: KeyboardEvent) => {
               name="lucide:check"
               class="size-3.5"
             />
-            {{ saveState === "saving" ? "保存中…" : "保存済み" }}
+            {{ saveState === 'saving' ? '保存中…' : '保存済み' }}
           </span>
         </div>
 
@@ -295,8 +295,8 @@ const onTitleEnter = (event: KeyboardEvent) => {
                   class="size-4 text-fg-muted"
                 />
                 <span class="flex-1">{{
-                  option === "published"
-                    ? "公開"
+                  option === 'published'
+                    ? '公開'
                     : ARTICLE_STATUS_LABELS[option]
                 }}</span>
                 <Icon

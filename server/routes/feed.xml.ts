@@ -1,5 +1,5 @@
-import { Feed } from "feed";
-import { queryPublishedArticles } from "~~/server/utils/article";
+import { Feed } from 'feed';
+import { queryPublishedArticles } from '~~/server/utils/article';
 
 export default defineEventHandler(async (event) => {
   const runtimeConfig = useRuntimeConfig(event);
@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
     description: siteDescription,
     id: siteUrl,
     link: siteUrl,
-    language: "ja",
+    language: 'ja',
     copyright: `All rights reserved ${new Date().getFullYear()}, ${siteName}`,
     image: siteOgpUrl,
   });
@@ -26,7 +26,7 @@ export default defineEventHandler(async (event) => {
     description: siteDescription,
   };
 
-  feed.addCategory("blog");
+  feed.addCategory('blog');
 
   try {
     const { contents } = await queryPublishedArticles(event);
@@ -35,10 +35,10 @@ export default defineEventHandler(async (event) => {
       const url = `${siteUrl}entry/${article.id}`;
       const excerpt =
         article.summary.slice(0, 100) +
-        (article.summary.length > 100 ? "…" : "");
+        (article.summary.length > 100 ? '…' : '');
 
       feed.addItem({
-        title: article.title || "No Title",
+        title: article.title || 'No Title',
         id: url,
         link: url,
         description: excerpt,
@@ -48,18 +48,18 @@ export default defineEventHandler(async (event) => {
     }
 
     setResponseHeaders(event, {
-      "Content-Type": "application/xml; charset=utf-8",
+      'Content-Type': 'application/xml; charset=utf-8',
     });
 
     const xmlContent = feed.rss2();
     return new Response(xmlContent, {
-      headers: { "Content-Type": "application/xml; charset=utf-8" },
+      headers: { 'Content-Type': 'application/xml; charset=utf-8' },
     });
   } catch (err) {
     console.error(err);
     throw createError({
       statusCode: 500,
-      statusMessage: "Failed to generate RSS feed",
+      statusMessage: 'Failed to generate RSS feed',
     });
   }
 });

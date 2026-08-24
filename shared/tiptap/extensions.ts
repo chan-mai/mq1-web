@@ -1,8 +1,8 @@
-import { Mark, Node, mergeAttributes } from "@tiptap/core";
-import { CodeBlock } from "@tiptap/extension-code-block";
-import { Heading } from "@tiptap/extension-heading";
-import { TableKit } from "@tiptap/extension-table";
-import { StarterKit } from "@tiptap/starter-kit";
+import { Mark, Node, mergeAttributes } from '@tiptap/core';
+import { CodeBlock } from '@tiptap/extension-code-block';
+import { Heading } from '@tiptap/extension-heading';
+import { TableKit } from '@tiptap/extension-table';
+import { StarterKit } from '@tiptap/starter-kit';
 
 // 既存記事のアンカ互換のためid属性を保持
 export const CmsHeading = Heading.extend({
@@ -11,7 +11,7 @@ export const CmsHeading = Heading.extend({
       ...this.parent?.(),
       id: {
         default: null,
-        parseHTML: (element: HTMLElement) => element.getAttribute("id"),
+        parseHTML: (element: HTMLElement) => element.getAttribute('id'),
         renderHTML: (attributes: Record<string, unknown>) =>
           attributes.id ? { id: attributes.id } : {},
       },
@@ -21,18 +21,18 @@ export const CmsHeading = Heading.extend({
 
 // zeed-dom(@tiptap/html)互換のためclass属性文字列を直接解析
 const readClassNames = (element: Element | null): string[] =>
-  (element?.getAttribute("class") ?? "").split(/\s+/).filter(Boolean);
+  (element?.getAttribute('class') ?? '').split(/\s+/).filter(Boolean);
 
 const parseCodeLanguage = (element: HTMLElement): string | null => {
-  const code = element.querySelector("code");
+  const code = element.querySelector('code');
   const classNames = [...readClassNames(code), ...readClassNames(element)];
   for (const className of classNames) {
-    if (className.startsWith("language-")) return className.slice(9);
-    if (className.startsWith("lang-")) return className.slice(5);
+    if (className.startsWith('language-')) return className.slice(9);
+    if (className.startsWith('lang-')) return className.slice(5);
   }
   return (
-    code?.getAttribute("data-language") ??
-    element.getAttribute("data-language") ??
+    code?.getAttribute('data-language') ??
+    element.getAttribute('data-language') ??
     null
   );
 };
@@ -53,17 +53,17 @@ export const CmsCodeBlock = CodeBlock.extend({
       filename: {
         default: null,
         parseHTML: (element: HTMLElement) =>
-          element.getAttribute("data-filename"),
+          element.getAttribute('data-filename'),
         renderHTML: (attributes: Record<string, unknown>) =>
-          attributes.filename ? { "data-filename": attributes.filename } : {},
+          attributes.filename ? { 'data-filename': attributes.filename } : {},
       },
     };
   },
 });
 
 export const CmsImage = Node.create({
-  name: "image",
-  group: "block",
+  name: 'image',
+  group: 'block',
   atom: true,
   draggable: true,
 
@@ -80,27 +80,27 @@ export const CmsImage = Node.create({
   parseHTML() {
     return [
       {
-        tag: "figure",
+        tag: 'figure',
         getAttrs: (element: HTMLElement) => {
-          const img = element.querySelector("img");
-          if (!img?.getAttribute("src")) return false;
+          const img = element.querySelector('img');
+          if (!img?.getAttribute('src')) return false;
           return {
-            src: img.getAttribute("src"),
-            alt: img.getAttribute("alt"),
+            src: img.getAttribute('src'),
+            alt: img.getAttribute('alt'),
             caption:
-              element.querySelector("figcaption")?.textContent?.trim() || null,
-            width: img.getAttribute("width"),
-            height: img.getAttribute("height"),
+              element.querySelector('figcaption')?.textContent?.trim() || null,
+            width: img.getAttribute('width'),
+            height: img.getAttribute('height'),
           };
         },
       },
       {
-        tag: "img[src]",
+        tag: 'img[src]',
         getAttrs: (element: HTMLElement) => ({
-          src: element.getAttribute("src"),
-          alt: element.getAttribute("alt"),
-          width: element.getAttribute("width"),
-          height: element.getAttribute("height"),
+          src: element.getAttribute('src'),
+          alt: element.getAttribute('alt'),
+          width: element.getAttribute('width'),
+          height: element.getAttribute('height'),
         }),
       },
     ];
@@ -108,7 +108,7 @@ export const CmsImage = Node.create({
 
   renderHTML({ node }) {
     const img = [
-      "img",
+      'img',
       mergeAttributes({
         src: node.attrs.src,
         alt: node.attrs.alt,
@@ -116,28 +116,28 @@ export const CmsImage = Node.create({
         height: node.attrs.height,
       }),
     ];
-    if (!node.attrs.caption) return ["figure", img];
-    return ["figure", img, ["figcaption", {}, String(node.attrs.caption)]];
+    if (!node.attrs.caption) return ['figure', img];
+    return ['figure', img, ['figcaption', {}, String(node.attrs.caption)]];
   },
 });
 
 // ドパガキグラデーション装飾
 export const Dpgk = Mark.create({
-  name: "dpgk",
+  name: 'dpgk',
 
   parseHTML() {
-    return [{ tag: "span[data-dpgk]" }];
+    return [{ tag: 'span[data-dpgk]' }];
   },
 
   renderHTML() {
-    return ["span", { "data-dpgk": "", class: "dpgk-text" }, 0];
+    return ['span', { 'data-dpgk': '', class: 'dpgk-text' }, 0];
   },
 });
 
 // URL単独行のリンクカード
 export const LinkCard = Node.create({
-  name: "linkCard",
-  group: "block",
+  name: 'linkCard',
+  group: 'block',
   atom: true,
   draggable: true,
 
@@ -150,9 +150,9 @@ export const LinkCard = Node.create({
   parseHTML() {
     return [
       {
-        tag: "div[data-link-card]",
+        tag: 'div[data-link-card]',
         getAttrs: (element: HTMLElement) => {
-          const url = element.getAttribute("data-url");
+          const url = element.getAttribute('data-url');
           if (!url) return false;
           return { url };
         },
@@ -162,9 +162,9 @@ export const LinkCard = Node.create({
 
   renderHTML({ node }) {
     return [
-      "div",
-      { "data-link-card": "", "data-url": node.attrs.url },
-      ["a", { href: node.attrs.url }, String(node.attrs.url)],
+      'div',
+      { 'data-link-card': '', 'data-url': node.attrs.url },
+      ['a', { href: node.attrs.url }, String(node.attrs.url)],
     ];
   },
 });

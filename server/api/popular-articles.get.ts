@@ -1,8 +1,8 @@
-import { desc, sql } from "drizzle-orm";
-import { articleLikes } from "~~/server/db/schema";
-import { queryPublishedArticles } from "~~/server/utils/article";
-import { getD1Drizzle } from "~~/server/utils/d1";
-import { popularArticlesQuerySchema } from "#shared/schemas/search";
+import { desc, sql } from 'drizzle-orm';
+import { articleLikes } from '~~/server/db/schema';
+import { queryPublishedArticles } from '~~/server/utils/article';
+import { getD1Drizzle } from '~~/server/utils/d1';
+import { popularArticlesQuerySchema } from '#shared/schemas/search';
 
 export default defineEventHandler(async (event) => {
   const { excludeId } = validateQuery(event, popularArticlesQuerySchema);
@@ -66,7 +66,7 @@ export default defineEventHandler(async (event) => {
   }
 
   return {
-    status: "success",
+    status: 'success',
     articles: articles.slice(0, 3),
   };
 });

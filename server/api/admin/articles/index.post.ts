@@ -1,9 +1,9 @@
-import { eq } from "drizzle-orm";
-import { nanoid } from "nanoid";
-import { articles } from "~~/server/db/schema";
-import { serializeAdminArticle } from "~~/server/utils/admin-article";
-import { getD1Drizzle } from "~~/server/utils/d1";
-import { createArticleBodySchema } from "#shared/schemas/article";
+import { eq } from 'drizzle-orm';
+import { nanoid } from 'nanoid';
+import { articles } from '~~/server/db/schema';
+import { serializeAdminArticle } from '~~/server/utils/admin-article';
+import { getD1Drizzle } from '~~/server/utils/d1';
+import { createArticleBodySchema } from '#shared/schemas/article';
 
 export default defineEventHandler(async (event) => {
   const body = await validateBody(event, createArticleBodySchema);
@@ -20,23 +20,23 @@ export default defineEventHandler(async (event) => {
   if (existing.length > 0) {
     throw createError({
       statusCode: 409,
-      statusMessage: "Article id already exists",
+      statusMessage: 'Article id already exists',
     });
   }
 
   const now = new Date().toISOString();
   const row = {
     id,
-    title: body?.title ?? "",
+    title: body?.title ?? '',
     content: JSON.stringify(emptyTiptapDoc()),
-    plainText: "",
+    plainText: '',
     summary: null,
     charCount: 0,
     eyecatchKey: null,
     eyecatchWidth: null,
     eyecatchHeight: null,
     isNoIndex: false,
-    status: "draft" as const,
+    status: 'draft' as const,
     publishedAt: null,
     createdAt: now,
     updatedAt: now,

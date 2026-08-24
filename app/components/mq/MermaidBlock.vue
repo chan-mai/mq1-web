@@ -17,14 +17,14 @@ const props = defineProps<{
 }>();
 
 const colorMode = useColorMode();
-const diagram = useTemplateRef<HTMLElement>("diagram");
-const view = ref<"diagram" | "code">("diagram");
+const diagram = useTemplateRef<HTMLElement>('diagram');
+const view = ref<'diagram' | 'code'>('diagram');
 const isRendering = ref(true);
 const renderFailed = ref(false);
-const diagramId = `${useId().replaceAll(":", "-")}-i${++instanceCounter}`;
+const diagramId = `${useId().replaceAll(':', '-')}-i${++instanceCounter}`;
 
 let renderVersion = 0;
-let mermaidPromise: Promise<(typeof import("mermaid"))["default"]> | null =
+let mermaidPromise: Promise<(typeof import('mermaid'))['default']> | null =
   null;
 
 const getThemeVariables = () => {
@@ -33,37 +33,37 @@ const getThemeVariables = () => {
     styles.getPropertyValue(`--mermaid-${name}`).trim();
 
   return {
-    darkMode: colorMode.value === "dark",
-    background: color("background"),
-    primaryColor: color("primary"),
-    primaryBorderColor: color("primary-border"),
-    primaryTextColor: color("text"),
-    secondaryColor: color("secondary"),
-    secondaryBorderColor: color("secondary-border"),
-    secondaryTextColor: color("text"),
-    tertiaryColor: color("tertiary"),
-    tertiaryBorderColor: color("tertiary-border"),
-    tertiaryTextColor: color("text"),
-    lineColor: color("line"),
-    textColor: color("text"),
-    noteBkgColor: color("note"),
-    noteBorderColor: color("note-border"),
-    noteTextColor: color("text"),
-    clusterBkg: color("cluster"),
-    clusterBorder: color("cluster-border"),
-    edgeLabelBackground: color("background"),
-    cScale0: color("primary"),
-    cScale1: color("secondary"),
-    cScale2: color("tertiary"),
-    cScale3: color("quaternary"),
-    cScale4: color("note"),
-    pie1: color("primary"),
-    pie2: color("secondary"),
-    pie3: color("tertiary"),
-    pie4: color("quaternary"),
-    pie5: color("note"),
-    pieTitleTextColor: color("text"),
-    pieLegendTextColor: color("text"),
+    darkMode: colorMode.value === 'dark',
+    background: color('background'),
+    primaryColor: color('primary'),
+    primaryBorderColor: color('primary-border'),
+    primaryTextColor: color('text'),
+    secondaryColor: color('secondary'),
+    secondaryBorderColor: color('secondary-border'),
+    secondaryTextColor: color('text'),
+    tertiaryColor: color('tertiary'),
+    tertiaryBorderColor: color('tertiary-border'),
+    tertiaryTextColor: color('text'),
+    lineColor: color('line'),
+    textColor: color('text'),
+    noteBkgColor: color('note'),
+    noteBorderColor: color('note-border'),
+    noteTextColor: color('text'),
+    clusterBkg: color('cluster'),
+    clusterBorder: color('cluster-border'),
+    edgeLabelBackground: color('background'),
+    cScale0: color('primary'),
+    cScale1: color('secondary'),
+    cScale2: color('tertiary'),
+    cScale3: color('quaternary'),
+    cScale4: color('note'),
+    pie1: color('primary'),
+    pie2: color('secondary'),
+    pie3: color('tertiary'),
+    pie4: color('quaternary'),
+    pie5: color('note'),
+    pieTitleTextColor: color('text'),
+    pieLegendTextColor: color('text'),
     fontFamily: '"futura-pt", "Noto Sans JP", sans-serif',
   };
 };
@@ -74,10 +74,10 @@ const renderDiagram = async () => {
   const currentVersion = ++renderVersion;
   isRendering.value = true;
   renderFailed.value = false;
-  diagram.value.textContent = "Mermaidを読み込んでいます";
+  diagram.value.textContent = 'Mermaidを読み込んでいます';
 
   try {
-    mermaidPromise ??= import("mermaid").then(
+    mermaidPromise ??= import('mermaid').then(
       ({ default: mermaid }) => mermaid,
     );
     const id = `mermaid-${diagramId}-${currentVersion}`;
@@ -85,10 +85,10 @@ const renderDiagram = async () => {
       const mermaid = await mermaidPromise!;
       mermaid.initialize({
         startOnLoad: false,
-        securityLevel: "strict",
-        secure: ["securityLevel", "startOnLoad", "maxTextSize"],
+        securityLevel: 'strict',
+        secure: ['securityLevel', 'startOnLoad', 'maxTextSize'],
         suppressErrorRendering: true,
-        theme: "base",
+        theme: 'base',
         themeVariables: getThemeVariables(),
       });
       return mermaid.render(id, props.source);
@@ -99,10 +99,10 @@ const renderDiagram = async () => {
   } catch {
     if (currentVersion !== renderVersion) return;
     if (diagram.value) {
-      diagram.value.textContent = "Mermaidを表示できませんでした";
+      diagram.value.textContent = 'Mermaidを表示できませんでした';
     }
     renderFailed.value = true;
-    view.value = "code";
+    view.value = 'code';
   } finally {
     if (currentVersion === renderVersion) {
       isRendering.value = false;
@@ -118,24 +118,41 @@ watch([() => props.source, () => colorMode.value], () => {
 </script>
 
 <template>
-  <div class="mermaid-block" :class="{ 'mermaid-block--dark': colorMode.value === 'dark' }">
+  <div
+    class="mermaid-block"
+    :class="{ 'mermaid-block--dark': colorMode.value === 'dark' }"
+  >
     <div class="mermaid-toolbar">
-      <span class="mermaid-label">{{ filename || "Mermaid" }}</span>
+      <span class="mermaid-label">{{ filename || 'Mermaid' }}</span>
       <div class="mermaid-controls" role="group" aria-label="表示形式">
-        <button type="button" :aria-pressed="view === 'diagram'" @click="view = 'diagram'">
+        <button
+          type="button"
+          :aria-pressed="view === 'diagram'"
+          @click="view = 'diagram'"
+        >
           Mermaid
         </button>
-        <button type="button" :aria-pressed="view === 'code'" @click="view = 'code'">
+        <button
+          type="button"
+          :aria-pressed="view === 'code'"
+          @click="view = 'code'"
+        >
           Code
         </button>
       </div>
     </div>
-    <div v-show="view === 'diagram'" ref="diagram" class="mermaid-diagram" role="img" aria-label="Mermaid図"
-      :aria-busy="isRendering">
+    <div
+      v-show="view === 'diagram'"
+      ref="diagram"
+      class="mermaid-diagram"
+      role="img"
+      aria-label="Mermaid図"
+      :aria-busy="isRendering"
+    >
       {{
         renderFailed
-          ? "Mermaidを表示できませんでした"
-          : "Mermaidを読み込んでいます"
+          ? 'Mermaidを表示できませんでした'
+          : 'Mermaidを読み込んでいます'
       }}
     </div>
     <div v-show="view === 'code'" class="mermaid-code">
@@ -186,7 +203,7 @@ watch([() => props.source, () => colorMode.value], () => {
 
 .mermaid-label {
   @apply truncate text-xs font-medium text-fg-muted;
-  font-family: "fira-code", monospace;
+  font-family: 'fira-code', monospace;
 }
 
 .mermaid-controls {
@@ -197,7 +214,7 @@ watch([() => props.source, () => colorMode.value], () => {
   @apply cursor-pointer rounded-md border-0 bg-transparent px-3 py-1 text-xs text-fg-muted transition-colors;
 }
 
-.mermaid-controls button[aria-pressed="true"] {
+.mermaid-controls button[aria-pressed='true'] {
   @apply bg-primary text-white;
 }
 

@@ -1,20 +1,20 @@
-import { nanoid } from "nanoid";
-import { images } from "~~/server/db/schema";
-import { getD1Drizzle } from "~~/server/utils/d1";
-import { getR2Bucket } from "~~/server/utils/r2";
-import { stripImageMetadata } from "~~/server/utils/strip-image-metadata";
+import { nanoid } from 'nanoid';
+import { images } from '~~/server/db/schema';
+import { getD1Drizzle } from '~~/server/utils/d1';
+import { getR2Bucket } from '~~/server/utils/r2';
+import { stripImageMetadata } from '~~/server/utils/strip-image-metadata';
 import {
   imageDimensionSchema,
   imageMimeSchema,
   type ImageMime,
-} from "#shared/schemas/image";
+} from '#shared/schemas/image';
 
 const EXTENSION_BY_MIME: Record<ImageMime, string> = {
-  "image/jpeg": "jpg",
-  "image/png": "png",
-  "image/gif": "gif",
-  "image/webp": "webp",
-  "image/avif": "avif",
+  'image/jpeg': 'jpg',
+  'image/png': 'png',
+  'image/gif': 'gif',
+  'image/webp': 'webp',
+  'image/avif': 'avif',
 };
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
@@ -24,20 +24,20 @@ export default defineEventHandler(async (event) => {
   if (!parts) {
     throw createError({
       statusCode: 400,
-      statusMessage: "Multipart body is required",
+      statusMessage: 'Multipart body is required',
     });
   }
 
-  const filePart = parts.find((part) => part.name === "file");
+  const filePart = parts.find((part) => part.name === 'file');
   if (!filePart || !filePart.data || filePart.data.length === 0) {
-    throw createError({ statusCode: 400, statusMessage: "File is required" });
+    throw createError({ statusCode: 400, statusMessage: 'File is required' });
   }
 
-  const mime = parseOrThrow(imageMimeSchema, filePart.type ?? "");
+  const mime = parseOrThrow(imageMimeSchema, filePart.type ?? '');
   const extension = EXTENSION_BY_MIME[mime];
 
   if (filePart.data.length > MAX_FILE_SIZE) {
-    throw createError({ statusCode: 413, statusMessage: "File too large" });
+    throw createError({ statusCode: 413, statusMessage: 'File too large' });
   }
 
   const readDimension = (name: string) => {
@@ -55,8 +55,8 @@ export default defineEventHandler(async (event) => {
     httpMetadata: { contentType: mime },
   });
 
-  const width = readDimension("width");
-  const height = readDimension("height");
+  const width = readDimension('width');
+  const height = readDimension('height');
 
   await getD1Drizzle(event).insert(images).values({
     key,

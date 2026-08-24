@@ -1,6 +1,6 @@
-import * as cheerio from "cheerio";
-import { isValidPublicIp } from "~~/server/utils/ip";
-import { linkPreviewQuerySchema } from "#shared/schemas/search";
+import * as cheerio from 'cheerio';
+import { isValidPublicIp } from '~~/server/utils/ip';
+import { linkPreviewQuerySchema } from '#shared/schemas/search';
 
 const MISSKEY_CHECK_TIMEOUT_MS = 5000;
 const MISSKEY_CHECK_CACHE_TTL_MS = 10 * 60 * 1000;
@@ -9,21 +9,21 @@ const misskeyEmbedCheckCache = new Map<
   { value: boolean; expiresAt: number }
 >();
 type MisskeyEmbedType =
-  | "MISSKEY_NOTE"
-  | "MISSKEY_HASHTAG"
-  | "MISSKEY_USER"
-  | "MISSKEY_CLIP";
+  | 'MISSKEY_NOTE'
+  | 'MISSKEY_HASHTAG'
+  | 'MISSKEY_USER'
+  | 'MISSKEY_CLIP';
 
 export default defineEventHandler(
   async (event): Promise<LinkPreviewResponse> => {
     const { url: rawUrl } = validateQuery(event, linkPreviewQuerySchema);
 
-    const FALLBACK_TITLE = "リンク";
-    const FALLBACK_DESCRIPTION = "このサイトをチェック";
+    const FALLBACK_TITLE = 'リンク';
+    const FALLBACK_DESCRIPTION = 'このサイトをチェック';
 
     const normalizeUrl = (u: string): string => {
       const trimmed = u.trim();
-      if (!trimmed.startsWith("http://") && !trimmed.startsWith("https://")) {
+      if (!trimmed.startsWith('http://') && !trimmed.startsWith('https://')) {
         return `https://${trimmed}`;
       }
       return trimmed;
@@ -45,7 +45,7 @@ export default defineEventHandler(
       ...values: Array<string | undefined | null>
     ): string | undefined => {
       for (const value of values) {
-        if (typeof value === "string" && value.trim().length > 0) {
+        if (typeof value === 'string' && value.trim().length > 0) {
           return value.trim();
         }
       }
@@ -57,12 +57,12 @@ export default defineEventHandler(
       const timeout = setTimeout(() => controller.abort(), 3000);
       try {
         const response = await fetch(url, {
-          method: "HEAD",
+          method: 'HEAD',
           signal: controller.signal,
         });
         if (response.status === 405) {
           const getResponse = await fetch(url, {
-            method: "GET",
+            method: 'GET',
             signal: controller.signal,
           });
           return getResponse.ok;
@@ -79,19 +79,19 @@ export default defineEventHandler(
       pathname: string,
     ): MisskeyEmbedType | undefined => {
       if (/^\/notes\/[a-zA-Z0-9]+/.test(pathname)) {
-        return "MISSKEY_NOTE";
+        return 'MISSKEY_NOTE';
       }
-      if (/^\/tags\/[^\/]+/.test(pathname)) {
-        return "MISSKEY_HASHTAG";
+      if (/^\/tags\/[^/]+/.test(pathname)) {
+        return 'MISSKEY_HASHTAG';
       }
       if (
         /^\/@[\w.]+/.test(pathname) ||
         /^\/users\/[a-zA-Z0-9]+/.test(pathname)
       ) {
-        return "MISSKEY_USER";
+        return 'MISSKEY_USER';
       }
       if (/^\/clips\/[a-zA-Z0-9]+/.test(pathname)) {
-        return "MISSKEY_CLIP";
+        return 'MISSKEY_CLIP';
       }
       return undefined;
     };
@@ -110,7 +110,7 @@ export default defineEventHandler(
       };
 
       try {
-        const { lookup } = await import("node:dns/promises");
+        const { lookup } = await import('node:dns/promises');
         const addresses = await lookup(hostname, { all: true });
         if (!addresses.length) return set(false);
         if (!addresses.every((a) => isValidPublicIp(a.address)))
@@ -127,21 +127,21 @@ export default defineEventHandler(
 
       try {
         const res = await fetch(`https://${hostname}/api/users/show`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username: "instance.actor" }),
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: 'instance.actor' }),
           signal: controller.signal,
         });
         if (res.status !== 200) return set(false);
-        const data = (await res.json()) as any;
-        if (!data || typeof data.id !== "string") return set(false);
+        const data = (await res.json()) as { id?: unknown } | null;
+        if (!data || typeof data.id !== 'string') return set(false);
 
         const embedUrl = `https://${hostname}/embed/user-timeline/${data.id}`;
-        const check = async (method: "HEAD" | "GET"): Promise<boolean> => {
+        const check = async (method: 'HEAD' | 'GET'): Promise<boolean> => {
           try {
             const r = await fetch(embedUrl, {
               method,
-              redirect: "follow",
+              redirect: 'follow',
               signal: controller.signal,
             });
             return r.status >= 200 && r.status < 300;
@@ -150,7 +150,7 @@ export default defineEventHandler(
           }
         };
 
-        return set((await check("HEAD")) || (await check("GET")));
+        return set((await check('HEAD')) || (await check('GET')));
       } catch {
         return set(false);
       } finally {
@@ -169,7 +169,7 @@ export default defineEventHandler(
           domain: url,
           title: FALLBACK_TITLE,
           description: FALLBACK_DESCRIPTION,
-          type: "GENERAL" as const,
+          type: 'GENERAL' as const,
         };
       }
 
@@ -180,9 +180,9 @@ export default defineEventHandler(
         try {
           const response = await fetch(normalized, {
             headers: {
-              "User-Agent": "mq-link-preview/1.0",
+              'User-Agent': 'mq-link-preview/1.0',
               Accept:
-                "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
             },
             signal: controller.signal,
           });
@@ -198,24 +198,24 @@ export default defineEventHandler(
 
           const title =
             pickFirst(
-              getMeta('meta[property="og:title"]', "content"),
-              getMeta('meta[name="twitter:title"]', "content"),
-              $("title").first().text(),
+              getMeta('meta[property="og:title"]', 'content'),
+              getMeta('meta[name="twitter:title"]', 'content'),
+              $('title').first().text(),
             ) ?? FALLBACK_TITLE;
 
           const description =
             pickFirst(
-              getMeta('meta[property="og:description"]', "content"),
-              getMeta('meta[name="twitter:description"]', "content"),
-              getMeta('meta[name="description"]', "content"),
-              $("p").first().text(),
+              getMeta('meta[property="og:description"]', 'content'),
+              getMeta('meta[name="twitter:description"]', 'content'),
+              getMeta('meta[name="description"]', 'content'),
+              $('p').first().text(),
             ) ?? FALLBACK_DESCRIPTION;
 
           let image = resolveUrl(
             target,
             pickFirst(
-              getMeta('meta[property="og:image"]', "content"),
-              getMeta('meta[name="twitter:image"]', "content"),
+              getMeta('meta[property="og:image"]', 'content'),
+              getMeta('meta[name="twitter:image"]', 'content'),
             ),
           );
 
@@ -237,7 +237,7 @@ export default defineEventHandler(
 
           let favicon: string | undefined;
           for (const selector of faviconSelectors) {
-            const candidate = $(selector).attr("href");
+            const candidate = $(selector).attr('href');
             const resolved = resolveUrl(target, candidate);
             if (resolved) {
               favicon = resolved;
@@ -252,7 +252,7 @@ export default defineEventHandler(
             favicon,
           };
         } catch (e) {
-          console.error("Link preview fetch failed:", e);
+          console.error('Link preview fetch failed:', e);
           return {
             title: FALLBACK_TITLE,
             description: FALLBACK_DESCRIPTION,
@@ -276,7 +276,7 @@ export default defineEventHandler(
         ]);
 
         let type: LinkPreviewType =
-          misskeyType && isMisskeyEmbeddable ? misskeyType : "GENERAL";
+          misskeyType && isMisskeyEmbeddable ? misskeyType : 'GENERAL';
 
         let code: string | undefined;
         let startLine: number | undefined;
@@ -287,28 +287,28 @@ export default defineEventHandler(
         if (target.hostname.match(/(^|\.)(twitter\.com|x\.com)$/)) {
           const match = pathname.match(/\/status\/(\d+)/);
           if (match) {
-            type = "TWITTER";
+            type = 'TWITTER';
             embedId = match[1];
           }
         } else if (target.hostname.match(/(^|\.)(youtube\.com|youtu\.be)$/)) {
           // Handle youtube.com/watch?v=ID and youtu.be/ID
-          if (target.hostname.includes("youtu.be")) {
+          if (target.hostname.includes('youtu.be')) {
             embedId = pathname.slice(1);
           } else {
-            embedId = target.searchParams.get("v") || undefined;
+            embedId = target.searchParams.get('v') || undefined;
           }
           if (embedId) {
-            type = "YOUTUBE";
+            type = 'YOUTUBE';
           }
         } else if (target.hostname.match(/(^|\.)instagram\.com$/)) {
           const match = pathname.match(/\/p\/([\w-]+)/);
           if (match) {
-            type = "INSTAGRAM";
+            type = 'INSTAGRAM';
             embedId = match[1];
           }
         }
 
-        if (target.hostname === "github.com") {
+        if (target.hostname === 'github.com') {
           const match = target.pathname.match(
             /^\/([^/]+)\/([^/]+)\/blob\/([^/]+)\/(.+)$/,
           );
@@ -325,7 +325,7 @@ export default defineEventHandler(
               });
               if (response.ok) {
                 const text = await response.text();
-                const lines = text.split("\n");
+                const lines = text.split('\n');
                 const hash = target.hash;
 
                 let s = 1;
@@ -349,16 +349,16 @@ export default defineEventHandler(
                 endLine = e;
 
                 // Adjust 0-based index
-                const extracted = lines.slice(Math.max(0, s - 1), e).join("\n");
+                const extracted = lines.slice(Math.max(0, s - 1), e).join('\n');
 
                 if (extracted.trim().length > 0) {
                   code = extracted;
-                  type = "GITHUB_PERMALINK";
+                  type = 'GITHUB_PERMALINK';
                 }
               }
             } catch (e) {
               console.error(
-                "Failed to fetch GitHub raw content or timed out:",
+                'Failed to fetch GitHub raw content or timed out:',
                 e,
               );
               // type remains 'GENERAL' (default) if fetch fails
@@ -370,7 +370,7 @@ export default defineEventHandler(
 
         return {
           url: target.toString(),
-          domain: target.hostname.replace(/^www\./, ""),
+          domain: target.hostname.replace(/^www\./, ''),
           ...ogData,
           type,
           embedId,

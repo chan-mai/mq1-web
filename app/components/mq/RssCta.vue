@@ -10,20 +10,21 @@ const props = defineProps({
   type: {
     type: String as PropType<VariantType>,
     default: 'card',
-    validator: (value: string) => ['card', 'inline', 'floating'].includes(value)
+    validator: (value: string) =>
+      ['card', 'inline', 'floating'].includes(value),
   },
   storageKey: {
     type: String,
-    default: 'rss-cta-dismissed'
-  }
+    default: 'rss-cta-dismissed',
+  },
 });
 
-
 const containerStyles: Record<VariantType, string> = {
-  card: "w-full max-w-xl rounded-xl overflow-hidden",
-  inline: "w-full max-w-6xl mx-auto rounded-xl overflow-hidden my-6",
-  floating: "fixed bottom-4 right-4 z-50 rounded-xl overflow-hidden w-72 md:w-80"
-}
+  card: 'w-full max-w-xl rounded-xl overflow-hidden',
+  inline: 'w-full max-w-6xl mx-auto rounded-xl overflow-hidden my-6',
+  floating:
+    'fixed bottom-4 right-4 z-50 rounded-xl overflow-hidden w-72 md:w-80',
+};
 
 onMounted(() => {
   try {
@@ -33,7 +34,7 @@ onMounted(() => {
         isVisible.value = true;
       }
     } else {
-        isVisible.value = true; // localStorageが使用できない場合は表示
+      isVisible.value = true; // localStorageが使用できない場合は表示
     }
   } catch (error) {
     console.error('localStorage access error:', error);
@@ -49,7 +50,7 @@ const handleClose = () => {
   } catch (error) {
     console.error('localStorage write error:', error);
   }
-}
+};
 </script>
 <template>
   <div
@@ -62,8 +63,12 @@ const handleClose = () => {
     <div class="relative overflow-hidden">
       <div class="absolute inset-0 bg-surface-elevated"></div>
 
-      <div class="absolute top-0 left-0 w-24 h-24 rounded-full bg-pink-100 opacity-30 -translate-x-12 -translate-y-12"></div>
-      <div class="absolute bottom-0 right-0 w-32 h-32 rounded-full bg-blue-100 opacity-30 translate-x-16 translate-y-16"></div>
+      <div
+        class="absolute top-0 left-0 w-24 h-24 rounded-full bg-pink-100 opacity-30 -translate-x-12 -translate-y-12"
+      ></div>
+      <div
+        class="absolute bottom-0 right-0 w-32 h-32 rounded-full bg-blue-100 opacity-30 translate-x-16 translate-y-16"
+      ></div>
 
       <button
         v-if="type === 'floating'"
@@ -76,13 +81,17 @@ const handleClose = () => {
 
       <div class="relative p-4 md:p-5">
         <div class="flex items-top gap-3">
-          <div class="flex h-10 w-full max-h-10 max-w-10 items-center justify-center rounded-full bg-surface-muted">
+          <div
+            class="flex h-10 w-full max-h-10 max-w-10 items-center justify-center rounded-full bg-surface-muted"
+          >
             <Icon :name="config.rss.icon" class="h-5 w-5 text-primary" />
           </div>
 
           <div>
             <h3 class="text-lg text-accent">ブログの更新をお知らせ</h3>
-            <p class="text-sm text-fg-muted">RSSで購読すると新しい記事の投稿を知ることができます。</p>
+            <p class="text-sm text-fg-muted">
+              RSSで購読すると新しい記事の投稿を知ることができます。
+            </p>
           </div>
         </div>
 
@@ -93,4 +102,3 @@ const handleClose = () => {
     </div>
   </div>
 </template>
-

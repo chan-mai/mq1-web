@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const route = useRoute();
-const { data: me } = await useFetch("/api/auth/me");
+const { data: me } = await useFetch('/api/auth/me');
 
 watchEffect(() => {
   if (me.value && !me.value.authenticated) {

@@ -1,10 +1,10 @@
-import { articleExists } from "~~/server/utils/article";
-import crypto from "node:crypto";
-import { hashSecret } from "~~/server/utils/hashing";
-import { getClientIP } from "~~/server/utils/ip";
-import { getD1Drizzle } from "~~/server/utils/d1";
-import { articleLikes } from "~~/server/db/schema";
-import { likeParamsSchema } from "#shared/schemas/like";
+import { articleExists } from '~~/server/utils/article';
+import crypto from 'node:crypto';
+import { hashSecret } from '~~/server/utils/hashing';
+import { getClientIP } from '~~/server/utils/ip';
+import { getD1Drizzle } from '~~/server/utils/d1';
+import { articleLikes } from '~~/server/db/schema';
+import { likeParamsSchema } from '#shared/schemas/like';
 
 export default defineEventHandler(async (event) => {
   const { contentId } = validateParams(event, likeParamsSchema);
@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
 
   const exists = await articleExists(event, contentId);
   if (!exists) {
-    throw createError({ statusCode: 404, statusMessage: "Article not found" });
+    throw createError({ statusCode: 404, statusMessage: 'Article not found' });
   }
 
   const db = getD1Drizzle(event);
@@ -35,7 +35,7 @@ export default defineEventHandler(async (event) => {
   });
 
   return {
-    status: "success",
+    status: 'success',
     like: {
       id,
       contentId,

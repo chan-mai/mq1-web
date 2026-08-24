@@ -6,7 +6,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  orientation: 'horizontal'
+  orientation: 'horizontal',
 });
 
 const config = useWebConfig();
@@ -17,7 +17,11 @@ const shareText = computed(() => {
 });
 
 const shareUrl = computed(() => {
-  return props.url.startsWith('http') ? props.url : props.url.startsWith('/') ? `${config.value.siteUrl}${props.url.slice(1)}` : `${config.value.siteUrl}${props.url}`;
+  return props.url.startsWith('http')
+    ? props.url
+    : props.url.startsWith('/')
+      ? `${config.value.siteUrl}${props.url.slice(1)}`
+      : `${config.value.siteUrl}${props.url}`;
 });
 
 // Twitter共有
@@ -70,55 +74,67 @@ const shareButtons = [
   {
     name: 'Twitter',
     icon: 'simple-icons:twitter',
-    color: 'hover:bg-gradient-to-br hover:from-sky-400 hover:to-blue-500 hover:text-white hover:shadow-sky-200/50',
-    action: shareToTwitter
+    color:
+      'hover:bg-gradient-to-br hover:from-sky-400 hover:to-blue-500 hover:text-white hover:shadow-sky-200/50',
+    action: shareToTwitter,
   },
   {
     name: 'Misskey',
     icon: 'simple-icons:misskey',
-    color: 'hover:bg-gradient-to-br hover:from-lime-400 hover:to-green-500 hover:text-white hover:shadow-lime-200/50',
-    action: shareToMisskey
+    color:
+      'hover:bg-gradient-to-br hover:from-lime-400 hover:to-green-500 hover:text-white hover:shadow-lime-200/50',
+    action: shareToMisskey,
   },
   {
     name: 'Facebook',
     icon: 'simple-icons:facebook',
-    color: 'hover:bg-gradient-to-br hover:from-blue-500 hover:to-blue-600 hover:text-white hover:shadow-blue-200/50',
-    action: shareToFacebook
+    color:
+      'hover:bg-gradient-to-br hover:from-blue-500 hover:to-blue-600 hover:text-white hover:shadow-blue-200/50',
+    action: shareToFacebook,
   },
   {
     name: 'LinkedIn',
     icon: 'simple-icons:linkedin',
-    color: 'hover:bg-gradient-to-br hover:from-blue-600 hover:to-blue-700 hover:text-white hover:shadow-blue-200/50',
-    action: shareToLinkedIn
+    color:
+      'hover:bg-gradient-to-br hover:from-blue-600 hover:to-blue-700 hover:text-white hover:shadow-blue-200/50',
+    action: shareToLinkedIn,
   },
   {
     name: 'はてなブックマーク',
     icon: 'simple-icons:hatenabookmark',
-    color: 'hover:bg-gradient-to-br hover:from-blue-400 hover:to-blue-500 hover:text-white hover:shadow-blue-200/50',
-    action: shareToHatena
+    color:
+      'hover:bg-gradient-to-br hover:from-blue-400 hover:to-blue-500 hover:text-white hover:shadow-blue-200/50',
+    action: shareToHatena,
   },
   {
     name: 'URLコピー',
     icon: 'material-symbols:content-copy',
-    color: 'hover:bg-gradient-to-br hover:from-primary/70 hover:to-primary hover:text-white hover:shadow-primary/50',
-    action: copyToClipboard
-  }
+    color:
+      'hover:bg-gradient-to-br hover:from-primary/70 hover:to-primary hover:text-white hover:shadow-primary/50',
+    action: copyToClipboard,
+  },
 ];
 </script>
 
 <template>
   <div class="share-buttons">
-    <div 
-        class="flex gap-3 rounded-xl py-4"
-        :class="orientation === 'vertical' ? 'flex-col items-center px-2' : 'flex-col px-5'"
+    <div
+      class="flex gap-3 rounded-xl py-4"
+      :class="
+        orientation === 'vertical'
+          ? 'flex-col items-center px-2'
+          : 'flex-col px-5'
+      "
     >
       <div v-if="orientation === 'horizontal'" class="flex items-center gap-2">
-        <div class="flex h-8 w-8 items-center justify-center rounded-full bg-primary">
+        <div
+          class="flex h-8 w-8 items-center justify-center rounded-full bg-primary"
+        >
           <Icon name="material-symbols:share" class="h-4 w-4 text-white" />
         </div>
         <h3 class="text-lg text-primary">この記事を共有</h3>
       </div>
-      <div 
+      <div
         class="flex gap-2"
         :class="orientation === 'vertical' ? 'flex-col w-full' : 'flex-wrap'"
       >
@@ -129,12 +145,21 @@ const shareButtons = [
           :class="[
             'group relative flex items-center justify-center gap-2 text-sm font-medium text-fg-muted bg-surface-elevated/70 backdrop-blur-sm border border-border-subtle rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:ring-offset-2',
             button.color,
-            orientation === 'vertical' ? 'w-10 h-10 p-0 rounded-full mx-auto' : 'px-4 py-2.5'
+            orientation === 'vertical'
+              ? 'w-10 h-10 p-0 rounded-full mx-auto'
+              : 'px-4 py-2.5',
           ]"
           :title="`${button.name}で共有`"
         >
-          <Icon :name="button.icon" class="w-4 h-4 flex-shrink-0 transition-transform group-hover:scale-110" />
-          <span v-if="orientation === 'horizontal'" class="hidden sm:inline whitespace-nowrap font-medium">{{ button.name }}</span>
+          <Icon
+            :name="button.icon"
+            class="w-4 h-4 flex-shrink-0 transition-transform group-hover:scale-110"
+          />
+          <span
+            v-if="orientation === 'horizontal'"
+            class="hidden sm:inline whitespace-nowrap font-medium"
+            >{{ button.name }}</span
+          >
         </button>
       </div>
     </div>
@@ -156,7 +181,12 @@ const shareButtons = [
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
   transition: left 0.5s;
 }
 

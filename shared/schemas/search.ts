@@ -1,5 +1,5 @@
-import * as v from "valibot";
-import { parseableDate } from "./common";
+import * as v from 'valibot';
+import { parseableDate } from './common';
 
 export const searchQuerySchema = v.object({
   q: v.optional(v.pipe(v.string(), v.trim(), v.maxLength(200))),
@@ -7,7 +7,7 @@ export const searchQuerySchema = v.object({
   tags: v.optional(
     v.pipe(
       v.string(),
-      v.transform((value) => value.split(",").filter(Boolean)),
+      v.transform((value) => value.split(',').filter(Boolean)),
       v.maxLength(10),
     ),
   ),

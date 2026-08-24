@@ -1,15 +1,15 @@
-import * as oauth from "oauth4webapi";
+import * as oauth from 'oauth4webapi';
 import {
   getAuthorizationServer,
   getOidcClient,
   getRedirectUri,
-} from "~~/server/utils/oidc";
-import { useAdminSession } from "~~/server/utils/session";
+} from '~~/server/utils/oidc';
+import { useAdminSession } from '~~/server/utils/session';
 
 // openリダイレクト防止のためサイト内パスのみ許可
 const sanitizeReturnTo = (value: unknown) => {
-  if (typeof value !== "string") return "/admin";
-  if (!value.startsWith("/") || value.startsWith("//")) return "/admin";
+  if (typeof value !== 'string') return '/admin';
+  if (!value.startsWith('/') || value.startsWith('//')) return '/admin';
   return value;
 };
 
@@ -29,13 +29,13 @@ export default defineEventHandler(async (event) => {
   });
 
   const authorizationUrl = new URL(authorizationServer.authorization_endpoint!);
-  authorizationUrl.searchParams.set("client_id", client.client_id);
-  authorizationUrl.searchParams.set("response_type", "code");
-  authorizationUrl.searchParams.set("redirect_uri", getRedirectUri(event));
-  authorizationUrl.searchParams.set("scope", "openid profile email");
-  authorizationUrl.searchParams.set("code_challenge", codeChallenge);
-  authorizationUrl.searchParams.set("code_challenge_method", "S256");
-  authorizationUrl.searchParams.set("state", state);
+  authorizationUrl.searchParams.set('client_id', client.client_id);
+  authorizationUrl.searchParams.set('response_type', 'code');
+  authorizationUrl.searchParams.set('redirect_uri', getRedirectUri(event));
+  authorizationUrl.searchParams.set('scope', 'openid profile email');
+  authorizationUrl.searchParams.set('code_challenge', codeChallenge);
+  authorizationUrl.searchParams.set('code_challenge_method', 'S256');
+  authorizationUrl.searchParams.set('state', state);
 
   return sendRedirect(event, authorizationUrl.href, 302);
 });

@@ -1,5 +1,5 @@
-import { queryPublishedArticles } from "~~/server/utils/article";
-import { articleListQuerySchema } from "#shared/schemas/article";
+import { queryPublishedArticles } from '~~/server/utils/article';
+import { articleListQuerySchema } from '#shared/schemas/article';
 
 export default defineEventHandler(async (event) => {
   const query = validateQuery(event, articleListQuerySchema);

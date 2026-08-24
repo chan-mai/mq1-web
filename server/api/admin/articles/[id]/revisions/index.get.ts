@@ -1,7 +1,7 @@
-import { desc, eq } from "drizzle-orm";
-import { articleRevisions } from "~~/server/db/schema";
-import { getD1Drizzle } from "~~/server/utils/d1";
-import { articleIdParamsSchema } from "#shared/schemas/article";
+import { desc, eq } from 'drizzle-orm';
+import { articleRevisions } from '~~/server/db/schema';
+import { getD1Drizzle } from '~~/server/utils/d1';
+import { articleIdParamsSchema } from '#shared/schemas/article';
 
 export default defineEventHandler(async (event) => {
   const { id } = validateParams(event, articleIdParamsSchema);

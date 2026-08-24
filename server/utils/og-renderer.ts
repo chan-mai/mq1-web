@@ -1,9 +1,9 @@
-import { container, image, text } from "@takumi-rs/helpers";
-import initTakumi, { Renderer } from "@takumi-rs/wasm";
-import wasmModule from "../assets/takumi.wasm?module";
-import type { OgAssets } from "./og-assets";
+import { container, image, text } from '@takumi-rs/helpers';
+import initTakumi, { Renderer } from '@takumi-rs/wasm';
+import wasmModule from '../assets/takumi.wasm?module';
+import type { OgAssets } from './og-assets';
 
-const CACHE_CONTROL = "public, max-age=31536000, immutable";
+const CACHE_CONTROL = 'public, max-age=31536000, immutable';
 const IMAGE_HEIGHT = 630;
 const IMAGE_WIDTH = 1200;
 const TITLE_HEIGHT = 350;
@@ -31,45 +31,45 @@ export const renderOgImage = async (
 ): Promise<Response> => {
   const node = container({
     style: {
-      display: "flex",
+      display: 'flex',
       height: IMAGE_HEIGHT,
-      overflow: "hidden",
-      position: "relative",
+      overflow: 'hidden',
+      position: 'relative',
       width: IMAGE_WIDTH,
     },
     children: [
       image({
-        src: "background",
+        src: 'background',
         width: IMAGE_WIDTH,
         height: IMAGE_HEIGHT,
         style: {
           height: IMAGE_HEIGHT,
           left: 0,
-          objectFit: "fill",
-          position: "absolute",
+          objectFit: 'fill',
+          position: 'absolute',
           top: 0,
           width: IMAGE_WIDTH,
         },
       }),
       container({
-        lang: "ja",
+        lang: 'ja',
         style: {
-          display: "flex",
+          display: 'flex',
           height: TITLE_HEIGHT,
           left: TITLE_LEFT,
-          overflow: "hidden",
-          position: "absolute",
+          overflow: 'hidden',
+          position: 'absolute',
           top: TITLE_TOP,
           width: TITLE_WIDTH,
         },
         children: [
-          text(title.normalize("NFC"), {
-            color: "#f57aa5",
-            fontFamily: "Noto Sans JP",
+          text(title.normalize('NFC'), {
+            color: '#f57aa5',
+            fontFamily: 'Noto Sans JP',
             fontSize: 60,
             fontWeight: 400,
             lineHeight: 1.2,
-            textAlign: "left",
+            textAlign: 'left',
           }),
         ],
       }),
@@ -80,15 +80,15 @@ export const renderOgImage = async (
     fonts: [
       {
         data: assets.font,
-        name: "Noto Sans JP",
+        name: 'Noto Sans JP',
         weight: 400,
       },
     ],
-    format: "png",
+    format: 'png',
     images: [
       {
         data: assets.background,
-        src: "background",
+        src: 'background',
       },
     ],
     height: IMAGE_HEIGHT,
@@ -97,8 +97,8 @@ export const renderOgImage = async (
 
   return new Response(output, {
     headers: {
-      "Cache-Control": CACHE_CONTROL,
-      "Content-Type": "image/png",
+      'Cache-Control': CACHE_CONTROL,
+      'Content-Type': 'image/png',
     },
   });
 };

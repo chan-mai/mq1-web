@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { NodeViewWrapper, nodeViewProps } from "@tiptap/vue-3";
+import { NodeViewWrapper, nodeViewProps } from '@tiptap/vue-3';
 
 const props = defineProps(nodeViewProps);
 
 const caption = computed({
-  get: () => (props.node.attrs.caption as string | null) ?? "",
+  get: () => (props.node.attrs.caption as string | null) ?? '',
   set: (value: string) => props.updateAttributes({ caption: value || null }),
 });
 </script>

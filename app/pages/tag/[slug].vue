@@ -1,6 +1,6 @@
 <script setup lang="ts">
 definePageMeta({
-  middleware: ["tag-compatibility-redirect"],
+  middleware: ['tag-compatibility-redirect'],
 });
 
 const route = useRoute();
@@ -32,7 +32,7 @@ if (tagError.value || !tagResponse.value) {
 const currentTag = tagResponse.value;
 const tag: Ref<Tag | null> = ref(currentTag);
 
-const { data: articlesResponse, status } = await useFetch("/api/articles", {
+const { data: articlesResponse, status } = await useFetch('/api/articles', {
   key: () => `tag-${slug}-articles-${page.value}`,
   query: computed(() => ({
     limit,
@@ -45,7 +45,7 @@ const articles = computed(() => articlesResponse.value?.contents ?? []);
 const totalCount = computed(() => articlesResponse.value?.totalCount ?? 0);
 
 const onPageChange = (newPage: number) => {
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
   router.push({ query: { ...route.query, page: newPage } });
 };
 
@@ -58,35 +58,35 @@ const pageUrl = `${config.value.siteUrl}tag/${currentTag.slug}`;
 useHead({
   title: pageTitle,
   meta: [
-    { property: "og:title", content: pageTitle },
-    { property: "og:description", content: pageDescription },
-    { property: "og:image", content: ogImageUrl },
-    { property: "og:type", content: "website" },
-    { property: "og:url", content: pageUrl },
-    { property: "og:site_name", content: config.value.siteName },
-    { name: "twitter:card", content: "summary_large_image" },
-    { name: "twitter:title", content: pageTitle },
-    { name: "twitter:description", content: pageDescription },
-    { name: "twitter:image", content: ogImageUrl },
-    { name: "description", content: pageDescription },
+    { property: 'og:title', content: pageTitle },
+    { property: 'og:description', content: pageDescription },
+    { property: 'og:image', content: ogImageUrl },
+    { property: 'og:type', content: 'website' },
+    { property: 'og:url', content: pageUrl },
+    { property: 'og:site_name', content: config.value.siteName },
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: pageTitle },
+    { name: 'twitter:description', content: pageDescription },
+    { name: 'twitter:image', content: ogImageUrl },
+    { name: 'description', content: pageDescription },
   ],
 });
 
 // 構造化データ (JSON-LD)
 useJsonld({
-  "@context": "https://schema.org",
-  "@type": "Blog",
+  '@context': 'https://schema.org',
+  '@type': 'Blog',
   name: config.value.siteName,
   description: pageDescription,
   url: pageUrl,
   author: {
-    "@type": "Person",
+    '@type': 'Person',
     name: config.value.author.name,
     url: pageUrl,
   },
   blogPost:
     articles.value?.map((article: Article) => ({
-      "@type": "BlogPosting",
+      '@type': 'BlogPosting',
       headline: article.title,
       url: `${config.value.siteUrl}entry/${article.id}`,
       datePublished: article.publishedAt
@@ -94,7 +94,7 @@ useJsonld({
         : undefined,
       image: article.eyecatch?.url || config.value.baseOgpUrl,
       author: {
-        "@type": "Person",
+        '@type': 'Person',
         name: config.value.author.name,
         url: pageUrl,
       },

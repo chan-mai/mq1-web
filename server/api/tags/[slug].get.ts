@@ -1,5 +1,5 @@
-import { fetchTagBySlug } from "~~/server/utils/tag";
-import { tagSlugParamsSchema } from "#shared/schemas/tag";
+import { fetchTagBySlug } from '~~/server/utils/tag';
+import { tagSlugParamsSchema } from '#shared/schemas/tag';
 
 export default defineEventHandler(async (event) => {
   const { slug } = validateParams(event, tagSlugParamsSchema);

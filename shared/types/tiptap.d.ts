@@ -12,6 +12,6 @@ interface TiptapNode {
 }
 
 interface TiptapDoc {
-  type: "doc";
+  type: 'doc';
   content?: TiptapNode[];
 }

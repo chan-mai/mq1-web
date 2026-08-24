@@ -11,7 +11,8 @@ export default {
         accent: '#f57aa5',
         back: '#f5f3f3',
         surface: 'rgb(var(--color-surface) / <alpha-value>)',
-        'surface-elevated': 'rgb(var(--color-surface-elevated) / <alpha-value>)',
+        'surface-elevated':
+          'rgb(var(--color-surface-elevated) / <alpha-value>)',
         'surface-muted': 'rgb(var(--color-surface-muted) / <alpha-value>)',
         fg: 'rgb(var(--color-fg) / <alpha-value>)',
         'fg-muted': 'rgb(var(--color-fg-muted) / <alpha-value>)',
@@ -19,4 +20,4 @@ export default {
       },
     },
   },
-}
+};

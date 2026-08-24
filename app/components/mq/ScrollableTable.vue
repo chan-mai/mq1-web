@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const wrapper = useTemplateRef<HTMLElement>("wrapper");
+const wrapper = useTemplateRef<HTMLElement>('wrapper');
 const showIndicator = ref(false);
 const dismissed = ref(false);
 
@@ -10,7 +10,7 @@ const onScroll = () => {
 };
 
 const check = () => {
-  tableElement = wrapper.value?.querySelector("table") ?? null;
+  tableElement = wrapper.value?.querySelector('table') ?? null;
   showIndicator.value = Boolean(
     tableElement && tableElement.scrollWidth > tableElement.clientWidth + 1,
   );
@@ -18,11 +18,11 @@ const check = () => {
 
 onMounted(() => {
   check();
-  tableElement?.addEventListener("scroll", onScroll, { passive: true });
+  tableElement?.addEventListener('scroll', onScroll, { passive: true });
 });
 
 onBeforeUnmount(() => {
-  tableElement?.removeEventListener("scroll", onScroll);
+  tableElement?.removeEventListener('scroll', onScroll);
 });
 
 useResizeObserver(wrapper, check);

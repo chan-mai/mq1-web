@@ -1,8 +1,8 @@
-import { eq, or } from "drizzle-orm";
-import { nanoid } from "nanoid";
-import { tags } from "~~/server/db/schema";
-import { getD1Drizzle } from "~~/server/utils/d1";
-import { tagUpsertBodySchema } from "#shared/schemas/tag";
+import { eq, or } from 'drizzle-orm';
+import { nanoid } from 'nanoid';
+import { tags } from '~~/server/db/schema';
+import { getD1Drizzle } from '~~/server/utils/d1';
+import { tagUpsertBodySchema } from '#shared/schemas/tag';
 
 export default defineEventHandler(async (event) => {
   const { name, slug } = await validateBody(event, tagUpsertBodySchema);
@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
   if (existing.length > 0) {
     throw createError({
       statusCode: 409,
-      statusMessage: "Tag already exists",
+      statusMessage: 'Tag already exists',
     });
   }
 

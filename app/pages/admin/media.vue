@@ -1,6 +1,6 @@
 <script setup lang="ts">
-definePageMeta({ layout: "admin" });
-useHead({ title: "画像の管理" });
+definePageMeta({ layout: 'admin' });
+useHead({ title: '画像の管理' });
 
 const toast = useToast();
 const { upload: uploadImage } = useImageUpload();
@@ -25,11 +25,11 @@ const loadAll = async () => {
   loading.value = true;
   try {
     const response = await $fetch<{ images: MediaImage[] }>(
-      "/api/admin/images",
+      '/api/admin/images',
     );
     images.value = response.images;
   } catch {
-    toast.error({ title: "画像の取得に失敗しました" });
+    toast.error({ title: '画像の取得に失敗しました' });
   } finally {
     loading.value = false;
   }
@@ -38,16 +38,16 @@ const loadAll = async () => {
 onMounted(loadAll);
 
 // 検索・並び替え・期間
-const search = ref("");
-const sortKey = ref<"uploaded-desc" | "uploaded-asc" | "size-desc">(
-  "uploaded-desc",
+const search = ref('');
+const sortKey = ref<'uploaded-desc' | 'uploaded-asc' | 'size-desc'>(
+  'uploaded-desc',
 );
-const dateFrom = ref("");
-const dateTo = ref("");
+const dateFrom = ref('');
+const dateTo = ref('');
 
 const clearPeriod = () => {
-  dateFrom.value = "";
-  dateTo.value = "";
+  dateFrom.value = '';
+  dateTo.value = '';
 };
 
 const filteredImages = computed(() => {
@@ -70,11 +70,11 @@ const filteredImages = computed(() => {
   }
 
   switch (sortKey.value) {
-    case "uploaded-asc":
+    case 'uploaded-asc':
       return filtered.sort(
         (a, b) => Date.parse(a.uploaded) - Date.parse(b.uploaded),
       );
-    case "size-desc":
+    case 'size-desc':
       return filtered.sort((a, b) => b.size - a.size);
     default:
       return filtered.sort(
@@ -85,8 +85,8 @@ const filteredImages = computed(() => {
 
 // 月ごとのセクション(サイズ順は区切りなし)
 const groupedImages = computed(() => {
-  if (sortKey.value === "size-desc") {
-    return [{ label: "", images: filteredImages.value }];
+  if (sortKey.value === 'size-desc') {
+    return [{ label: '', images: filteredImages.value }];
   }
   const groups: { label: string; images: MediaImage[] }[] = [];
   for (const image of filteredImages.value) {
@@ -123,7 +123,7 @@ const select = async (image: MediaImage) => {
     if (selectedKey.value !== image.key) return;
     detail.value = result;
   } catch {
-    toast.error({ title: "詳細の取得に失敗しました" });
+    toast.error({ title: '詳細の取得に失敗しました' });
   } finally {
     if (selectedKey.value === image.key) loadingDetail.value = false;
   }
@@ -144,16 +144,16 @@ const onPreviewLoad = (event: Event) => {
 
 const copyUrl = async (image: MediaImage) => {
   await navigator.clipboard.writeText(`${window.location.origin}${image.url}`);
-  toast.success({ title: "URLをコピーしました" });
+  toast.success({ title: 'URLをコピーしました' });
 };
 
 // アップロード
-const fileInput = useTemplateRef<HTMLInputElement>("fileInput");
+const fileInput = useTemplateRef<HTMLInputElement>('fileInput');
 const uploadingCount = ref(0);
 const dragging = ref(false);
 
 const uploadFiles = async (files: File[]) => {
-  const targets = files.filter((file) => file.type.startsWith("image/"));
+  const targets = files.filter((file) => file.type.startsWith('image/'));
   for (const file of targets) {
     uploadingCount.value += 1;
     try {
@@ -167,7 +167,7 @@ const uploadFiles = async (files: File[]) => {
       images.value = [item, ...images.value];
       select(item);
     } catch {
-      toast.error({ title: "アップロードに失敗しました" });
+      toast.error({ title: 'アップロードに失敗しました' });
     } finally {
       uploadingCount.value -= 1;
     }
@@ -177,7 +177,7 @@ const uploadFiles = async (files: File[]) => {
 const onFileSelected = (event: Event) => {
   const input = event.target as HTMLInputElement;
   uploadFiles(Array.from(input.files ?? []));
-  input.value = "";
+  input.value = '';
 };
 
 const onDrop = (event: DragEvent) => {
@@ -192,17 +192,17 @@ const deleteImage = async () => {
   if (!target) return;
   try {
     await $fetch(`/api/admin/images/${target.key}` as string, {
-      method: "DELETE",
+      method: 'DELETE',
     });
     images.value = images.value.filter((image) => image.key !== target.key);
     closeDetail();
-    toast.success({ title: "画像を削除しました" });
+    toast.success({ title: '画像を削除しました' });
   } catch (error: unknown) {
     const status = (error as { statusCode?: number })?.statusCode;
     if (status === 409) {
-      toast.error({ title: "記事で使用中のため削除できません" });
+      toast.error({ title: '記事で使用中のため削除できません' });
     } else {
-      toast.error({ title: "削除に失敗しました" });
+      toast.error({ title: '削除に失敗しました' });
     }
   }
 };
@@ -214,12 +214,12 @@ const formatSize = (bytes: number) => {
 };
 
 const formatDateTime = (value: string) =>
-  new Date(value).toLocaleString("ja-JP", {
-    year: "numeric",
-    month: "numeric",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
+  new Date(value).toLocaleString('ja-JP', {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
   });
 </script>
 
@@ -241,7 +241,7 @@ const formatDateTime = (value: string) =>
           :disabled="uploadingCount > 0"
           @click="fileInput?.click()"
         >
-          {{ uploadingCount > 0 ? "アップロード中…" : "アップロード" }}
+          {{ uploadingCount > 0 ? 'アップロード中…' : 'アップロード' }}
         </AdminUiButton>
       </header>
 
@@ -311,8 +311,8 @@ const formatDateTime = (value: string) =>
         >
           {{
             search || dateFrom || dateTo
-              ? "一致する画像がありません"
-              : "画像をドラッグ&ドロップで追加できます"
+              ? '一致する画像がありません'
+              : '画像をドラッグ&ドロップで追加できます'
           }}
         </p>
         <div v-else class="space-y-8">
@@ -406,7 +406,7 @@ const formatDateTime = (value: string) =>
             </div>
             <div class="flex justify-between gap-3">
               <dt class="text-fg-muted">形式</dt>
-              <dd class="font-mono">{{ detail.contentType ?? "不明" }}</dd>
+              <dd class="font-mono">{{ detail.contentType ?? '不明' }}</dd>
             </div>
             <div class="flex justify-between gap-3">
               <dt class="text-fg-muted">サイズ</dt>
@@ -433,12 +433,12 @@ const formatDateTime = (value: string) =>
                   :to="`/admin/edit/${article.id}`"
                   class="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs text-fg transition-colors hover:bg-surface-muted"
                 >
-                  <span class="truncate">{{ article.title || "無題" }}</span>
+                  <span class="truncate">{{ article.title || '無題' }}</span>
                   <span
                     v-if="article.status !== 'published'"
                     class="shrink-0 rounded bg-surface-muted px-1 py-0.5 text-[10px] text-fg-muted"
                   >
-                    {{ article.status === "draft" ? "下書き" : "非公開" }}
+                    {{ article.status === 'draft' ? '下書き' : '非公開' }}
                   </span>
                 </NuxtLink>
               </li>
@@ -465,7 +465,7 @@ const formatDateTime = (value: string) =>
               @click="deleteDialogOpen = true"
             >
               {{
-                detail.usedBy.length > 0 ? "使用中のため削除不可" : "画像を削除"
+                detail.usedBy.length > 0 ? '使用中のため削除不可' : '画像を削除'
               }}
             </button>
           </div>

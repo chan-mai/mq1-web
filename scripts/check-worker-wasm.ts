@@ -1,9 +1,9 @@
-import { readdir, readFile } from "node:fs/promises";
-import { join } from "node:path";
+import { readdir, readFile } from 'node:fs/promises';
+import { join } from 'node:path';
 
 // workerdはバイト列からのwasmコンパイルを禁止
 const FORBIDDEN_PATTERN = /new\s+WebAssembly\.Module\s*\(/;
-const TARGET_EXTENSIONS = [".mjs", ".js"];
+const TARGET_EXTENSIONS = ['.mjs', '.js'];
 
 const collectFiles = async (dir: string): Promise<string[]> => {
   const entries = await readdir(dir, { withFileTypes: true });
@@ -19,13 +19,13 @@ const collectFiles = async (dir: string): Promise<string[]> => {
   return files.flat();
 };
 
-const targetDir = process.argv[2] ?? ".output/server";
+const targetDir = process.argv[2] ?? '.output/server';
 const files = await collectFiles(targetDir);
 const violations: string[] = [];
 
 for (const file of files) {
-  const content = await readFile(file, "utf8");
-  content.split("\n").forEach((line, index) => {
+  const content = await readFile(file, 'utf8');
+  content.split('\n').forEach((line, index) => {
     if (FORBIDDEN_PATTERN.test(line)) {
       violations.push(`${file}:${index + 1}: ${line.trim().slice(0, 120)}`);
     }

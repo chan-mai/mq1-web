@@ -1,4 +1,4 @@
-import { queryPublishedArticles } from "~~/server/utils/article";
+import { queryPublishedArticles } from '~~/server/utils/article';
 
 export default defineEventHandler(async (event) => {
   const { contents } = await queryPublishedArticles(event);

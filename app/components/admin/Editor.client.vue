@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { Placeholder } from "@tiptap/extensions";
-import { DOMParser as ProseMirrorDOMParser } from "@tiptap/pm/model";
-import { EditorContent, VueNodeViewRenderer, useEditor } from "@tiptap/vue-3";
-import { BubbleMenu } from "@tiptap/vue-3/menus";
-import { diffChars } from "diff";
-import { marked } from "marked";
+import type { Editor } from '@tiptap/core';
+import { Placeholder } from '@tiptap/extensions';
+import { DOMParser as ProseMirrorDOMParser } from '@tiptap/pm/model';
+import type { EditorState } from '@tiptap/pm/state';
+import { EditorContent, VueNodeViewRenderer, useEditor } from '@tiptap/vue-3';
+import { BubbleMenu } from '@tiptap/vue-3/menus';
+import { diffChars } from 'diff';
+import { marked } from 'marked';
 import {
   CmsCodeBlock,
   CmsHeading,
@@ -13,18 +15,18 @@ import {
   Dpgk,
   cmsStarterKit,
   cmsTableKit,
-} from "~~/shared/tiptap/extensions";
-import CodeBlockView from "./editor/CodeBlockView.vue";
-import ImageView from "./editor/ImageView.vue";
-import LinkCardView from "./editor/LinkCardView.vue";
-import { LinkCardPaste } from "~/utils/linkCardPaste";
+} from '~~/shared/tiptap/extensions';
+import CodeBlockView from './editor/CodeBlockView.vue';
+import ImageView from './editor/ImageView.vue';
+import LinkCardView from './editor/LinkCardView.vue';
+import { LinkCardPaste } from '~/utils/linkCardPaste';
 
 const props = defineProps<{
   modelValue: TiptapDoc;
 }>();
 
 const emit = defineEmits<{
-  "update:modelValue": [doc: TiptapDoc];
+  'update:modelValue': [doc: TiptapDoc];
 }>();
 
 const toast = useToast();
@@ -45,12 +47,12 @@ const editor = useEditor({
     }),
     Dpgk,
     cmsTableKit,
-    Placeholder.configure({ placeholder: "本文を書く…" }),
+    Placeholder.configure({ placeholder: '本文を書く…' }),
     LinkCardPaste,
   ],
   editorProps: {
     attributes: {
-      class: "cms-editor-content focus:outline-none",
+      class: 'cms-editor-content focus:outline-none',
     },
     handlePaste: (_view, event) => {
       const files = collectImageFiles(event.clipboardData?.files);
@@ -67,7 +69,7 @@ const editor = useEditor({
       }) as string;
       const dom = new window.DOMParser().parseFromString(
         `<body>${html}</body>`,
-        "text/html",
+        'text/html',
       );
       return ProseMirrorDOMParser.fromSchema(view.state.schema).parseSlice(
         dom.body,
@@ -99,8 +101,8 @@ const editor = useEditor({
             clearTimeout(longPressTimer);
             longPressTimer = null;
           }
-          window.removeEventListener("touchmove", onMove);
-          window.removeEventListener("touchend", cancel);
+          window.removeEventListener('touchmove', onMove);
+          window.removeEventListener('touchend', cancel);
         };
         const onMove = (moveEvent: TouchEvent) => {
           const current = moveEvent.touches[0];
@@ -115,26 +117,32 @@ const editor = useEditor({
           cancel();
           openContextMenu(startX, startY);
         }, 550);
-        window.addEventListener("touchmove", onMove, { passive: true });
-        window.addEventListener("touchend", cancel, { passive: true });
+        window.addEventListener('touchmove', onMove, { passive: true });
+        window.addEventListener('touchend', cancel, { passive: true });
         return false;
       },
     },
   },
   onUpdate: ({ editor: instance }) => {
-    emit("update:modelValue", instance.getJSON() as TiptapDoc);
+    emit('update:modelValue', instance.getJSON() as TiptapDoc);
   },
   onSelectionUpdate: () => {
-    if (aiState.value !== "loading") resetAi();
+    if (aiState.value !== 'loading') resetAi();
   },
 });
 
-const shouldShowBubble = ({ editor: instance, state }: any) => {
+const shouldShowBubble = ({
+  editor: instance,
+  state,
+}: {
+  editor: Editor;
+  state: EditorState;
+}) => {
   if (state.selection.empty) return false;
   if (
-    instance.isActive("codeBlock") ||
-    instance.isActive("image") ||
-    instance.isActive("linkCard")
+    instance.isActive('codeBlock') ||
+    instance.isActive('image') ||
+    instance.isActive('linkCard')
   ) {
     return false;
   }
@@ -143,27 +151,27 @@ const shouldShowBubble = ({ editor: instance, state }: any) => {
 
 // リンク入力
 const linkInputOpen = ref(false);
-const linkUrl = ref("");
+const linkUrl = ref('');
 const linkNofollow = ref(false);
 const openLinkInput = () => {
-  const attrs = editor.value?.getAttributes("link") ?? {};
-  linkUrl.value = attrs.href ?? "";
-  linkNofollow.value = /\bnofollow\b/.test(String(attrs.rel ?? ""));
+  const attrs = editor.value?.getAttributes('link') ?? {};
+  linkUrl.value = attrs.href ?? '';
+  linkNofollow.value = /\bnofollow\b/.test(String(attrs.rel ?? ''));
   linkInputOpen.value = true;
 };
 const applyLink = () => {
   const url = linkUrl.value.trim();
   if (!editor.value) return;
   if (!url) {
-    editor.value.chain().focus().extendMarkRange("link").unsetLink().run();
+    editor.value.chain().focus().extendMarkRange('link').unsetLink().run();
   } else {
     editor.value
       .chain()
       .focus()
-      .extendMarkRange("link")
+      .extendMarkRange('link')
       .setLink({
         href: url,
-        rel: linkNofollow.value ? "noopener noreferrer nofollow" : null,
+        rel: linkNofollow.value ? 'noopener noreferrer nofollow' : null,
       })
       .run();
   }
@@ -174,8 +182,8 @@ const applyLink = () => {
 const contextMenuOpen = ref(false);
 const contextMenuPos = ref({ x: 0, y: 0 });
 const contextLinkCardInput = ref(false);
-const contextLinkCardUrl = ref("");
-const contextMenu = useTemplateRef<HTMLElement>("contextMenu");
+const contextLinkCardUrl = ref('');
+const contextMenu = useTemplateRef<HTMLElement>('contextMenu');
 let longPressTimer: number | null = null;
 
 const openContextMenu = (x: number, y: number) => {
@@ -184,7 +192,7 @@ const openContextMenu = (x: number, y: number) => {
     y: Math.min(y, window.innerHeight - 240),
   };
   contextLinkCardInput.value = false;
-  contextLinkCardUrl.value = "";
+  contextLinkCardUrl.value = '';
   contextTablePicker.value = false;
   tablePickerHover.value = null;
   contextMenuOpen.value = true;
@@ -201,8 +209,8 @@ const closeContextMenu = () => {
 };
 
 onClickOutside(contextMenu, closeContextMenu);
-useEventListener("keydown", (event: KeyboardEvent) => {
-  if (event.key === "Escape") closeContextMenu();
+useEventListener('keydown', (event: KeyboardEvent) => {
+  if (event.key === 'Escape') closeContextMenu();
 });
 
 const runContextInsert = (action: () => void) => {
@@ -245,47 +253,47 @@ const insertLinkCardFromMenu = () => {
   editor.value
     ?.chain()
     .focus()
-    .insertContent({ type: "linkCard", attrs: { url } })
+    .insertContent({ type: 'linkCard', attrs: { url } })
     .run();
   closeContextMenu();
 };
 
 // AI校正
-const aiState = ref<"idle" | "loading" | "done">("idle");
-const aiOriginal = ref("");
-const aiResult = ref("");
+const aiState = ref<'idle' | 'loading' | 'done'>('idle');
+const aiOriginal = ref('');
+const aiResult = ref('');
 const aiRange = ref<{ from: number; to: number } | null>(null);
 
 // 修正箇所の文字単位diff
 const aiDiffParts = computed(() =>
-  aiState.value === "done" ? diffChars(aiOriginal.value, aiResult.value) : [],
+  aiState.value === 'done' ? diffChars(aiOriginal.value, aiResult.value) : [],
 );
 
 const resetAi = () => {
-  aiState.value = "idle";
-  aiOriginal.value = "";
-  aiResult.value = "";
+  aiState.value = 'idle';
+  aiOriginal.value = '';
+  aiResult.value = '';
   aiRange.value = null;
 };
 
 const runProofread = async () => {
-  if (!editor.value || aiState.value === "loading") return;
+  if (!editor.value || aiState.value === 'loading') return;
   const { from, to } = editor.value.state.selection;
-  const text = editor.value.state.doc.textBetween(from, to, "\n");
+  const text = editor.value.state.doc.textBetween(from, to, '\n');
   if (!text.trim()) return;
 
-  aiState.value = "loading";
+  aiState.value = 'loading';
   aiOriginal.value = text;
   aiRange.value = { from, to };
   try {
-    const response = await $fetch("/api/admin/llm/proofread", {
-      method: "POST",
+    const response = await $fetch('/api/admin/llm/proofread', {
+      method: 'POST',
       body: { text },
     });
     aiResult.value = response.corrected;
-    aiState.value = "done";
+    aiState.value = 'done';
   } catch {
-    toast.error({ title: "校正に失敗しました" });
+    toast.error({ title: '校正に失敗しました' });
     resetAi();
   }
 };
@@ -301,12 +309,12 @@ const applyProofread = () => {
 };
 
 // 画像アップロード
-const fileInput = useTemplateRef<HTMLInputElement>("fileInput");
+const fileInput = useTemplateRef<HTMLInputElement>('fileInput');
 const uploadingCount = ref(0);
 const { upload: uploadImage } = useImageUpload();
 
 const collectImageFiles = (list?: FileList | null) =>
-  Array.from(list ?? []).filter((file) => file.type.startsWith("image/"));
+  Array.from(list ?? []).filter((file) => file.type.startsWith('image/'));
 
 const uploadAndInsert = async (file: File) => {
   uploadingCount.value += 1;
@@ -316,7 +324,7 @@ const uploadAndInsert = async (file: File) => {
       ?.chain()
       .focus()
       .insertContent({
-        type: "image",
+        type: 'image',
         attrs: {
           src: uploaded.url,
           width: uploaded.width,
@@ -325,7 +333,7 @@ const uploadAndInsert = async (file: File) => {
       })
       .run();
   } catch {
-    toast.error({ title: "画像のアップロードに失敗しました" });
+    toast.error({ title: '画像のアップロードに失敗しました' });
   } finally {
     uploadingCount.value -= 1;
   }
@@ -334,7 +342,7 @@ const uploadAndInsert = async (file: File) => {
 const onFileSelected = (event: Event) => {
   const input = event.target as HTMLInputElement;
   collectImageFiles(input.files).forEach((file) => uploadAndInsert(file));
-  input.value = "";
+  input.value = '';
 };
 
 defineExpose({
@@ -356,84 +364,144 @@ onBeforeUnmount(() => {
 <template>
   <div class="cms-editor relative">
     <template v-if="editor">
-      <BubbleMenu :editor="editor" :should-show="shouldShowBubble" :options="{ placement: 'top', offset: 8 }">
+      <BubbleMenu
+        :editor="editor"
+        :should-show="shouldShowBubble"
+        :options="{ placement: 'top', offset: 8 }"
+      >
         <div
           class="flex items-center gap-0.5 border border-solid border-border-subtle bg-surface-elevated px-1.5 py-1 shadow-lg"
-          :class="aiState !== 'idle' ? 'rounded-xl' : 'rounded-full'">
+          :class="aiState !== 'idle' ? 'rounded-xl' : 'rounded-full'"
+        >
           <!-- 校正の結果表示 -->
           <div v-if="aiState !== 'idle'" class="max-w-md px-2 py-1.5">
             <p v-if="aiState === 'loading'" class="text-xs text-fg-muted">
               校正中…
             </p>
             <template v-else>
-              <p class="max-h-40 overflow-y-auto whitespace-pre-wrap text-xs leading-relaxed text-fg">
-                <span v-for="(part, index) in aiDiffParts" :key="index" :class="part.added
-                    ? 'rounded bg-green-500/15 text-green-800'
-                    : part.removed
-                      ? 'rounded bg-red-500/15 text-red-600 line-through'
-                      : ''
-                  ">{{ part.value }}</span>
+              <p
+                class="max-h-40 overflow-y-auto whitespace-pre-wrap text-xs leading-relaxed text-fg"
+              >
+                <span
+                  v-for="(part, index) in aiDiffParts"
+                  :key="index"
+                  :class="
+                    part.added
+                      ? 'rounded bg-green-500/15 text-green-800'
+                      : part.removed
+                        ? 'rounded bg-red-500/15 text-red-600 line-through'
+                        : ''
+                  "
+                  >{{ part.value }}</span
+                >
               </p>
               <div class="mt-1.5 flex justify-end gap-1">
-                <button type="button"
+                <button
+                  type="button"
                   class="cursor-pointer rounded-full border-none bg-fg px-3 py-1 text-xs font-bold text-surface transition-opacity hover:opacity-80"
-                  @click="applyProofread">
+                  @click="applyProofread"
+                >
                   置き換える
                 </button>
-                <button type="button"
+                <button
+                  type="button"
                   class="cursor-pointer rounded-full border-none bg-transparent px-3 py-1 text-xs text-fg-muted transition-colors hover:text-fg"
-                  @click="resetAi">
+                  @click="resetAi"
+                >
                   閉じる
                 </button>
               </div>
             </template>
           </div>
           <template v-else-if="!linkInputOpen">
-            <button type="button" class="cursor-pointer rounded border-none bg-transparent p-1.5 hover:bg-surface-muted"
-              title="AI校正" @click="runProofread">
+            <button
+              type="button"
+              class="cursor-pointer rounded border-none bg-transparent p-1.5 hover:bg-surface-muted"
+              title="AI校正"
+              @click="runProofread"
+            >
               <Icon name="lucide:wand-sparkles" class="size-4" />
             </button>
-            <button type="button" class="cursor-pointer rounded border-none bg-transparent p-1.5 hover:bg-surface-muted"
-              :class="{ 'text-primary': editor.isActive('bold') }" @click="editor.chain().focus().toggleBold().run()">
+            <button
+              type="button"
+              class="cursor-pointer rounded border-none bg-transparent p-1.5 hover:bg-surface-muted"
+              :class="{ 'text-primary': editor.isActive('bold') }"
+              @click="editor.chain().focus().toggleBold().run()"
+            >
               <Icon name="lucide:bold" class="size-4" />
             </button>
-            <button type="button" class="cursor-pointer rounded border-none bg-transparent p-1.5 hover:bg-surface-muted"
+            <button
+              type="button"
+              class="cursor-pointer rounded border-none bg-transparent p-1.5 hover:bg-surface-muted"
               :class="{ 'text-primary': editor.isActive('italic') }"
-              @click="editor.chain().focus().toggleItalic().run()">
+              @click="editor.chain().focus().toggleItalic().run()"
+            >
               <Icon name="lucide:italic" class="size-4" />
             </button>
-            <button type="button" class="cursor-pointer rounded border-none bg-transparent p-1.5 hover:bg-surface-muted"
+            <button
+              type="button"
+              class="cursor-pointer rounded border-none bg-transparent p-1.5 hover:bg-surface-muted"
               :class="{ 'text-primary': editor.isActive('strike') }"
-              @click="editor.chain().focus().toggleStrike().run()">
+              @click="editor.chain().focus().toggleStrike().run()"
+            >
               <Icon name="lucide:strikethrough" class="size-4" />
             </button>
-            <button type="button" class="cursor-pointer rounded border-none bg-transparent p-1.5 hover:bg-surface-muted"
+            <button
+              type="button"
+              class="cursor-pointer rounded border-none bg-transparent p-1.5 hover:bg-surface-muted"
               :class="{ 'text-primary': editor.isActive('dpgk') }"
-              @click="editor.chain().focus().toggleMark('dpgk').run()">
+              @click="editor.chain().focus().toggleMark('dpgk').run()"
+            >
               <Icon name="lucide:pill" class="size-4" />
             </button>
-            <button type="button" class="cursor-pointer rounded border-none bg-transparent p-1.5 hover:bg-surface-muted"
-              :class="{ 'text-primary': editor.isActive('code') }" @click="editor.chain().focus().toggleCode().run()">
+            <button
+              type="button"
+              class="cursor-pointer rounded border-none bg-transparent p-1.5 hover:bg-surface-muted"
+              :class="{ 'text-primary': editor.isActive('code') }"
+              @click="editor.chain().focus().toggleCode().run()"
+            >
               <Icon name="lucide:code" class="size-4" />
             </button>
-            <button type="button" class="cursor-pointer rounded border-none bg-transparent p-1.5 hover:bg-surface-muted"
-              :class="{ 'text-primary': editor.isActive('link') }" @click="openLinkInput">
+            <button
+              type="button"
+              class="cursor-pointer rounded border-none bg-transparent p-1.5 hover:bg-surface-muted"
+              :class="{ 'text-primary': editor.isActive('link') }"
+              @click="openLinkInput"
+            >
               <Icon name="lucide:link" class="size-4" />
             </button>
           </template>
-          <form v-else class="flex items-center gap-1" @submit.prevent="applyLink">
-            <input v-model="linkUrl" placeholder="https://"
-              class="w-52 border-none bg-transparent px-2 py-1 text-sm outline-none" />
-            <label class="flex shrink-0 cursor-pointer select-none items-center gap-1 px-1 text-xs text-fg-muted">
-              <input v-model="linkNofollow" type="checkbox" class="cursor-pointer accent-current" />
+          <form
+            v-else
+            class="flex items-center gap-1"
+            @submit.prevent="applyLink"
+          >
+            <input
+              v-model="linkUrl"
+              placeholder="https://"
+              class="w-52 border-none bg-transparent px-2 py-1 text-sm outline-none"
+            />
+            <label
+              class="flex shrink-0 cursor-pointer select-none items-center gap-1 px-1 text-xs text-fg-muted"
+            >
+              <input
+                v-model="linkNofollow"
+                type="checkbox"
+                class="cursor-pointer accent-current"
+              />
               nofollow
             </label>
-            <button type="submit"
-              class="cursor-pointer rounded border-none bg-transparent p-1.5 hover:bg-surface-muted">
+            <button
+              type="submit"
+              class="cursor-pointer rounded border-none bg-transparent p-1.5 hover:bg-surface-muted"
+            >
               <Icon name="lucide:check" class="size-4" />
             </button>
-            <button type="button" class="cursor-pointer rounded border-none bg-transparent p-1.5 hover:bg-surface-muted"
-              @click="linkInputOpen = false">
+            <button
+              type="button"
+              class="cursor-pointer rounded border-none bg-transparent p-1.5 hover:bg-surface-muted"
+              @click="linkInputOpen = false"
+            >
               <Icon name="lucide:x" class="size-4" />
             </button>
           </form>
@@ -444,82 +512,130 @@ onBeforeUnmount(() => {
     <EditorContent :editor="editor" />
 
     <!-- 挿入contextmenu -->
-    <div v-if="contextMenuOpen" ref="contextMenu"
+    <div
+      v-if="contextMenuOpen"
+      ref="contextMenu"
       class="fixed z-50 w-48 overflow-hidden rounded-xl border border-solid border-border-subtle bg-surface-elevated py-1 shadow-lg"
-      :style="{ left: `${contextMenuPos.x}px`, top: `${contextMenuPos.y}px` }" @contextmenu.prevent>
+      :style="{ left: `${contextMenuPos.x}px`, top: `${contextMenuPos.y}px` }"
+      @contextmenu.prevent
+    >
       <template v-if="!contextLinkCardInput && !contextTablePicker">
-        <button type="button"
+        <button
+          type="button"
           class="flex w-full cursor-pointer items-center gap-2.5 border-none bg-transparent px-3.5 py-2 text-left text-sm text-fg transition-colors hover:bg-surface-muted"
-          @click="runContextInsert(() => fileInput?.click())">
+          @click="runContextInsert(() => fileInput?.click())"
+        >
           <Icon name="lucide:image" class="size-4 text-fg-muted" />
           画像
         </button>
-        <button type="button"
+        <button
+          type="button"
           class="flex w-full cursor-pointer items-center gap-2.5 border-none bg-transparent px-3.5 py-2 text-left text-sm text-fg transition-colors hover:bg-surface-muted"
-          @click="contextTablePicker = true">
+          @click="contextTablePicker = true"
+        >
           <Icon name="lucide:table" class="size-4 text-fg-muted" />
           表
         </button>
-        <button type="button"
+        <button
+          type="button"
           class="flex w-full cursor-pointer items-center gap-2.5 border-none bg-transparent px-3.5 py-2 text-left text-sm text-fg transition-colors hover:bg-surface-muted"
           @click="
             runContextInsert(() =>
               editor!.chain().focus().toggleCodeBlock().run(),
             )
-            ">
+          "
+        >
           <Icon name="lucide:code-xml" class="size-4 text-fg-muted" />
           コードブロック
         </button>
-        <button type="button"
+        <button
+          type="button"
           class="flex w-full cursor-pointer items-center gap-2.5 border-none bg-transparent px-3.5 py-2 text-left text-sm text-fg transition-colors hover:bg-surface-muted"
           @click="
             runContextInsert(() =>
               editor!.chain().focus().setHorizontalRule().run(),
             )
-            ">
+          "
+        >
           <Icon name="lucide:minus" class="size-4 text-fg-muted" />
           区切り線
         </button>
-        <button type="button"
+        <button
+          type="button"
           class="flex w-full cursor-pointer items-center gap-2.5 border-none bg-transparent px-3.5 py-2 text-left text-sm text-fg transition-colors hover:bg-surface-muted"
-          @click="contextLinkCardInput = true">
+          @click="contextLinkCardInput = true"
+        >
           <Icon name="lucide:panel-top" class="size-4 text-fg-muted" />
           リンクカード
         </button>
       </template>
-      <div v-else-if="contextTablePicker" class="px-3 py-2" @mouseleave="tablePickerHover = null">
-        <div class="grid gap-1" :style="{
-          gridTemplateColumns: `repeat(${TABLE_PICKER_MAX}, 1fr)`,
-        }">
-          <button v-for="index in TABLE_PICKER_MAX * TABLE_PICKER_MAX" :key="index" type="button"
-            class="aspect-square w-full cursor-pointer rounded-sm border border-solid p-0 transition-colors" :class="isTablePickerCellActive(index)
+      <div
+        v-else-if="contextTablePicker"
+        class="px-3 py-2"
+        @mouseleave="tablePickerHover = null"
+      >
+        <div
+          class="grid gap-1"
+          :style="{
+            gridTemplateColumns: `repeat(${TABLE_PICKER_MAX}, 1fr)`,
+          }"
+        >
+          <button
+            v-for="index in TABLE_PICKER_MAX * TABLE_PICKER_MAX"
+            :key="index"
+            type="button"
+            class="aspect-square w-full cursor-pointer rounded-sm border border-solid p-0 transition-colors"
+            :class="
+              isTablePickerCellActive(index)
                 ? 'border-primary bg-primary/20'
                 : 'border-border-subtle bg-surface-muted'
-              " @mouseenter="tablePickerHover = tablePickerCellFor(index)" @click="insertTableFromMenu(index)" />
+            "
+            @mouseenter="tablePickerHover = tablePickerCellFor(index)"
+            @click="insertTableFromMenu(index)"
+          />
         </div>
         <p class="mb-0 mt-2 text-center text-xs text-fg-muted">
           {{
             tablePickerHover
               ? `${tablePickerHover.rows}行×${tablePickerHover.cols}列`
-              : "サイズを選択"
+              : 'サイズを選択'
           }}
         </p>
       </div>
-      <form v-else class="flex items-center gap-1 px-2 py-1.5" @submit.prevent="insertLinkCardFromMenu">
-        <input v-model="contextLinkCardUrl" placeholder="https://"
-          class="w-0 flex-1 border-none bg-transparent px-1 py-1 text-sm outline-none" />
-        <button type="submit" class="cursor-pointer rounded border-none bg-transparent p-1.5 hover:bg-surface-muted">
+      <form
+        v-else
+        class="flex items-center gap-1 px-2 py-1.5"
+        @submit.prevent="insertLinkCardFromMenu"
+      >
+        <input
+          v-model="contextLinkCardUrl"
+          placeholder="https://"
+          class="w-0 flex-1 border-none bg-transparent px-1 py-1 text-sm outline-none"
+        />
+        <button
+          type="submit"
+          class="cursor-pointer rounded border-none bg-transparent p-1.5 hover:bg-surface-muted"
+        >
           <Icon name="lucide:check" class="size-4" />
         </button>
       </form>
     </div>
 
-    <p v-if="uploadingCount > 0" class="fixed bottom-4 right-4 rounded-md bg-fg px-3 py-1.5 text-xs text-surface">
+    <p
+      v-if="uploadingCount > 0"
+      class="fixed bottom-4 right-4 rounded-md bg-fg px-3 py-1.5 text-xs text-surface"
+    >
       画像をアップロード中…
     </p>
 
-    <input ref="fileInput" type="file" accept="image/jpeg,image/png,image/gif,image/webp,image/avif" multiple
-      class="hidden" @change="onFileSelected" />
+    <input
+      ref="fileInput"
+      type="file"
+      accept="image/jpeg,image/png,image/gif,image/webp,image/avif"
+      multiple
+      class="hidden"
+      @change="onFileSelected"
+    />
   </div>
 </template>
 
@@ -538,7 +654,7 @@ onBeforeUnmount(() => {
   color: rgb(var(--color-fg-muted) / 0.5);
 }
 
-.cms-editor .cms-editor-content>*+* {
+.cms-editor .cms-editor-content > * + * {
   margin-top: 0.75em;
 }
 

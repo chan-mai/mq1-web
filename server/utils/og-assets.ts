@@ -7,8 +7,8 @@ export type OgAssets = {
   readonly font: Uint8Array;
 };
 
-const BACKGROUND_PATH = "/images/ogp/mq1-web-ogp.png";
-const FONT_PATH = "/fonts/noto-sans-jp/NotoSansJP-Variable.ttf";
+const BACKGROUND_PATH = '/images/ogp/mq1-web-ogp.png';
+const FONT_PATH = '/fonts/noto-sans-jp/NotoSansJP-Variable.ttf';
 
 export class OgAssetLoadError extends Error {
   constructor(
@@ -20,7 +20,7 @@ export class OgAssetLoadError extends Error {
         ? `OG asset request failed with ${status}: ${path}`
         : `OG asset is empty: ${path}`,
     );
-    this.name = "OgAssetLoadError";
+    this.name = 'OgAssetLoadError';
   }
 }
 

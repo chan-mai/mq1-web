@@ -1,4 +1,4 @@
-import { listTagsWithCount } from "~~/server/utils/tag";
+import { listTagsWithCount } from '~~/server/utils/tag';
 
 export default defineEventHandler(async (event) => {
   const tags = await listTagsWithCount(event);

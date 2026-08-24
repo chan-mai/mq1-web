@@ -1,17 +1,16 @@
-import { verifySecret } from "~~/server/utils/hashing";
-import { and, eq } from "drizzle-orm";
-import { articleLikes } from "~~/server/db/schema";
-import { getD1Drizzle } from "~~/server/utils/d1";
-import { likeDeleteBodySchema, likeParamsSchema } from "#shared/schemas/like";
+import { verifySecret } from '~~/server/utils/hashing';
+import { and, eq } from 'drizzle-orm';
+import { articleLikes } from '~~/server/db/schema';
+import { getD1Drizzle } from '~~/server/utils/d1';
+import { likeDeleteBodySchema, likeParamsSchema } from '#shared/schemas/like';
 
 export default defineEventHandler(async (event) => {
   const { contentId } = validateParams(event, likeParamsSchema);
-  const userIp = getHeader(event, "x-forwarded-for");
+  const userIp = getHeader(event, 'x-forwarded-for');
 
   // NOTE: Nitro(v2.13)のrequestHasBodyはPOST/PUT/PATCHのみ真を返すため、Workers上ではDELETEのBodyがh3のreadBodyまで届かず、`await readBody(event)`が解決されないPromiseのまま死ぬ
-  const cfRequest = (event.context as any)?.cloudflare?.request as
-    | Request
-    | undefined;
+  const cfRequest = (event.context as { cloudflare?: { request?: Request } })
+    .cloudflare?.request;
   const rawBody = cfRequest
     ? await cfRequest
         .clone()
@@ -35,7 +34,7 @@ export default defineEventHandler(async (event) => {
   const existingLike = existingLikeRows[0];
 
   if (!existingLike) {
-    throw createError({ statusCode: 404, statusMessage: "Like not found" });
+    throw createError({ statusCode: 404, statusMessage: 'Like not found' });
   }
 
   // シークレットを検証
@@ -43,7 +42,7 @@ export default defineEventHandler(async (event) => {
     !existingLike.secret ||
     !(await verifySecret(secret, existingLike.secret))
   ) {
-    throw createError({ statusCode: 403, statusMessage: "Invalid secret" });
+    throw createError({ statusCode: 403, statusMessage: 'Invalid secret' });
   }
 
   // いいねを削除
@@ -52,7 +51,7 @@ export default defineEventHandler(async (event) => {
     .where(and(eq(articleLikes.id, id), eq(articleLikes.contentId, contentId)));
 
   return {
-    status: "success",
+    status: 'success',
     id,
     userIp,
   };

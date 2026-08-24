@@ -1,11 +1,11 @@
-import { loadOgAssets, type AssetFetcher, type OgAssets } from "./og-assets";
-import { renderOgImage } from "./og-renderer";
+import { loadOgAssets, type AssetFetcher, type OgAssets } from './og-assets';
+import { renderOgImage } from './og-renderer';
 
 type OgEvent = {
   readonly context: object;
 };
 
-const LOCAL_ASSET_DIRECTORIES = ["public", ".output/public"];
+const LOCAL_ASSET_DIRECTORIES = ['public', '.output/public'];
 
 let ogAssets: Promise<OgAssets> | undefined;
 
@@ -17,9 +17,9 @@ const inputPathname = (input: Request | URL | string): string => {
 
 const localAssetFetcher: AssetFetcher = {
   fetch: async (input) => {
-    const { readFile } = await import("node:fs/promises");
-    const { join } = await import("node:path");
-    const path = inputPathname(input).replace(/^\//, "");
+    const { readFile } = await import('node:fs/promises');
+    const { join } = await import('node:path');
+    const path = inputPathname(input).replace(/^\//, '');
 
     for (const directory of LOCAL_ASSET_DIRECTORIES) {
       const bytes = await readFile(join(process.cwd(), directory, path)).catch(
@@ -33,19 +33,19 @@ const localAssetFetcher: AssetFetcher = {
 };
 
 const isObject = (value: unknown): value is object =>
-  typeof value === "object" && value !== null;
+  typeof value === 'object' && value !== null;
 
 const isAssetFetcher = (value: unknown): value is AssetFetcher =>
-  isObject(value) && typeof Reflect.get(value, "fetch") === "function";
+  isObject(value) && typeof Reflect.get(value, 'fetch') === 'function';
 
 const getAssetFetcher = (event: OgEvent): AssetFetcher => {
-  const cloudflare = Reflect.get(event.context, "cloudflare");
+  const cloudflare = Reflect.get(event.context, 'cloudflare');
   if (!isObject(cloudflare)) return localAssetFetcher;
 
-  const env = Reflect.get(cloudflare, "env");
+  const env = Reflect.get(cloudflare, 'env');
   if (!isObject(env)) return localAssetFetcher;
 
-  const assets = Reflect.get(env, "ASSETS");
+  const assets = Reflect.get(env, 'ASSETS');
   return isAssetFetcher(assets) ? assets : localAssetFetcher;
 };
 

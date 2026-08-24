@@ -1,7 +1,7 @@
-import { and, eq, ne } from "drizzle-orm";
-import { tags } from "~~/server/db/schema";
-import { getD1Drizzle } from "~~/server/utils/d1";
-import { tagIdParamsSchema, tagUpsertBodySchema } from "#shared/schemas/tag";
+import { and, eq, ne } from 'drizzle-orm';
+import { tags } from '~~/server/db/schema';
+import { getD1Drizzle } from '~~/server/utils/d1';
+import { tagIdParamsSchema, tagUpsertBodySchema } from '#shared/schemas/tag';
 
 export default defineEventHandler(async (event) => {
   const { id } = validateParams(event, tagIdParamsSchema);
@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
   const db = getD1Drizzle(event);
   const rows = await db.select().from(tags).where(eq(tags.id, id)).limit(1);
   if (rows.length === 0) {
-    throw createError({ statusCode: 404, statusMessage: "Tag not found" });
+    throw createError({ statusCode: 404, statusMessage: 'Tag not found' });
   }
 
   const duplicated = await db
@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
   if (duplicated.length > 0) {
     throw createError({
       statusCode: 409,
-      statusMessage: "Tag slug already exists",
+      statusMessage: 'Tag slug already exists',
     });
   }
 

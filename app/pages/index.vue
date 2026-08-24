@@ -1,17 +1,17 @@
 <script setup lang="ts">
 // 固定記事を取得
-const { data: siteResponse } = await useFetch("/api/site", { key: "site" });
+const { data: siteResponse } = await useFetch('/api/site', { key: 'site' });
 const pinnedArticles = computed(() => siteResponse.value?.pinnedArticles ?? []);
 
 // タグを取得
-const { data: tagsResponse } = await useFetch("/api/tags", {
-  key: "index-tags",
+const { data: tagsResponse } = await useFetch('/api/tags', {
+  key: 'index-tags',
 });
 const tags = computed(() => tagsResponse.value?.contents ?? []);
 
 // 直近15件の記事を取得
-const { data: articlesResponse } = await useFetch("/api/articles", {
-  key: "index-articles",
+const { data: articlesResponse } = await useFetch('/api/articles', {
+  key: 'index-articles',
   query: { limit: 15 },
 });
 const articles = computed(() => articlesResponse.value?.contents ?? []);
@@ -29,48 +29,48 @@ const pageUrl = config.value.siteUrl;
 useHead({
   title: pageTitle,
   meta: [
-    { property: "og:title", content: pageTitle },
-    { property: "og:description", content: pageDescription },
-    { property: "og:image", content: `${config.value.baseOgpUrl}` },
-    { property: "og:type", content: "website" },
-    { property: "og:url", content: pageUrl },
-    { property: "og:site_name", content: config.value.siteName },
-    { name: "twitter:card", content: "summary_large_image" },
-    { name: "twitter:title", content: pageTitle },
-    { name: "twitter:description", content: pageDescription },
-    { name: "twitter:image", content: `${config.value.baseOgpUrl}` },
-    { name: "description", content: pageDescription },
+    { property: 'og:title', content: pageTitle },
+    { property: 'og:description', content: pageDescription },
+    { property: 'og:image', content: `${config.value.baseOgpUrl}` },
+    { property: 'og:type', content: 'website' },
+    { property: 'og:url', content: pageUrl },
+    { property: 'og:site_name', content: config.value.siteName },
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: pageTitle },
+    { name: 'twitter:description', content: pageDescription },
+    { name: 'twitter:image', content: `${config.value.baseOgpUrl}` },
+    { name: 'description', content: pageDescription },
   ],
 });
 
 useJsonld([
   {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
     name: config.value.siteName,
     description: pageDescription,
     url: pageUrl,
-    inLanguage: "ja",
+    inLanguage: 'ja',
     publisher: {
-      "@type": "Person",
+      '@type': 'Person',
       name: config.value.author.name,
       url: pageUrl,
     },
   },
   {
-    "@context": "https://schema.org",
-    "@type": "Blog",
+    '@context': 'https://schema.org',
+    '@type': 'Blog',
     name: config.value.siteName,
     description: pageDescription,
     url: pageUrl,
     author: {
-      "@type": "Person",
+      '@type': 'Person',
       name: config.value.author.name,
       url: pageUrl,
     },
     blogPost:
       articles.value?.map((article: Article) => ({
-        "@type": "BlogPosting",
+        '@type': 'BlogPosting',
         headline: article.title,
         url: `${config.value.siteUrl}entry/${article.id}`,
         datePublished: article.publishedAt
@@ -78,7 +78,7 @@ useJsonld([
           : undefined,
         image: article.eyecatch?.url || config.value.baseOgpUrl,
         author: {
-          "@type": "Person",
+          '@type': 'Person',
           name: config.value.author.name,
           url: pageUrl,
         },
@@ -86,21 +86,29 @@ useJsonld([
   },
 ]);
 
-const interestTags = ["engineering", "creative", "cats", "pastel"];
+const interestTags = ['engineering', 'creative', 'cats', 'pastel'];
 </script>
 <template>
-  <main class="max-w-none text-[0.925rem] leading-loose tracking-wide text-inherit [&>div>*:first-child]:mt-0">
+  <main
+    class="max-w-none text-[0.925rem] leading-loose tracking-wide text-inherit [&>div>*:first-child]:mt-0"
+  >
     <MqHero />
 
     <!-- ─── メインコンテンツ ─── -->
     <div class="mx-auto max-w-7xl px-6 pb-20 mt-10 md:mt-14">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
+      <div
+        class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start"
+      >
         <!-- Main Content -->
         <div class="lg:col-span-9 order-2 lg:order-1 space-y-16">
           <section class="flex flex-col gap-8">
             <!-- セクションヘッダー -->
-            <div class="flex items-center justify-between border-b border-border-subtle pb-4">
-              <h2 class="font-accent text-3xl font-bold text-fg md:text-4xl lg:text-5xl">
+            <div
+              class="flex items-center justify-between border-b border-border-subtle pb-4"
+            >
+              <h2
+                class="font-accent text-3xl font-bold text-fg md:text-4xl lg:text-5xl"
+              >
                 Articles
               </h2>
               <MqAppLink to="/articles/">
@@ -115,28 +123,46 @@ const interestTags = ["engineering", "creative", "cats", "pastel"];
 
               <!-- 固定記事エリア -->
               <div v-if="pinnedArticles.length" class="w-full">
-                <p class="mb-4 flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-fg-muted">
+                <p
+                  class="mb-4 flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-fg-muted"
+                >
                   <Icon name="lucide:pin" class="h-3.5 w-3.5" />
                   Pinned
                 </p>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <ArticlesCard v-for="article in pinnedArticles" :key="article.id" :article="article" variant="pinned"
-                    :transition="true" :tag-transition="false" />
+                  <ArticlesCard
+                    v-for="article in pinnedArticles"
+                    :key="article.id"
+                    :article="article"
+                    variant="pinned"
+                    :transition="true"
+                    :tag-transition="false"
+                  />
                 </div>
               </div>
 
               <!-- 通常記事エリア -->
               <div v-if="regularArticles.length" class="w-full">
-                <p class="mb-4 flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-fg-muted">
+                <p
+                  class="mb-4 flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-fg-muted"
+                >
                   <Icon name="lucide:notebook-pen" class="h-3.5 w-3.5" />
                   Archives
                 </p>
                 <div class="-mx-4 md:mx-0">
-                  <Articles limit="5" :articles="regularArticles" :loading="false" :transition="true"
-                    :tag-transition="false" />
+                  <Articles
+                    limit="5"
+                    :articles="regularArticles"
+                    :loading="false"
+                    :transition="true"
+                    :tag-transition="false"
+                  />
                 </div>
               </div>
-              <div v-else class="flex flex-col items-center justify-center gap-4 py-10 bg-surface-muted rounded-lg">
+              <div
+                v-else
+                class="flex flex-col items-center justify-center gap-4 py-10 bg-surface-muted rounded-lg"
+              >
                 <p class="text-lg font-bold text-accent">
                   記事が見つかりませんでした。
                 </p>
@@ -149,11 +175,15 @@ const interestTags = ["engineering", "creative", "cats", "pastel"];
         </div>
 
         <!-- Sidebar -->
-        <aside class="lg:col-span-3 order-1 lg:order-2 space-y-10 lg:sticky lg:top-36">
+        <aside
+          class="lg:col-span-3 order-1 lg:order-2 space-y-10 lg:sticky lg:top-36"
+        >
           <!-- プロフィールカード -->
           <section>
             <div class="flex items-center justify-between mb-3">
-              <p class="text-xs font-semibold tracking-widest uppercase text-fg-muted">
+              <p
+                class="text-xs font-semibold tracking-widest uppercase text-fg-muted"
+              >
                 Profile
               </p>
               <MqAppLink to="/about">
@@ -161,13 +191,19 @@ const interestTags = ["engineering", "creative", "cats", "pastel"];
               </MqAppLink>
             </div>
 
-            <div class="rounded-xl border border-border-subtle bg-surface-elevated overflow-hidden">
-
+            <div
+              class="rounded-xl border border-border-subtle bg-surface-elevated overflow-hidden"
+            >
               <div class="p-4 space-y-3">
                 <!-- アバター + 名前 -->
                 <div class="flex items-center gap-3">
-                  <div class="size-12 rounded-lg bg-primary flex items-center justify-center flex-shrink-0">
-                    <span class="text-white text-xl font-bold font-accent select-none">ま</span>
+                  <div
+                    class="size-12 rounded-lg bg-primary flex items-center justify-center flex-shrink-0"
+                  >
+                    <span
+                      class="text-white text-xl font-bold font-accent select-none"
+                      >ま</span
+                    >
                   </div>
                   <div>
                     <h3 class="text-sm font-bold text-fg leading-snug">
@@ -190,8 +226,11 @@ const interestTags = ["engineering", "creative", "cats", "pastel"];
 
                 <!-- インタレストタグ -->
                 <div class="flex flex-wrap gap-1.5">
-                  <span v-for="tag in interestTags" :key="tag"
-                    class="rounded-full border border-border-subtle text-fg-muted px-2.5 py-0.5 text-[10px]">
+                  <span
+                    v-for="tag in interestTags"
+                    :key="tag"
+                    class="rounded-full border border-border-subtle text-fg-muted px-2.5 py-0.5 text-[10px]"
+                  >
                     {{ tag }}
                   </span>
                 </div>
@@ -201,7 +240,9 @@ const interestTags = ["engineering", "creative", "cats", "pastel"];
 
           <!-- Tags -->
           <section class="flex flex-col gap-4">
-            <p class="text-xs font-semibold tracking-widest uppercase text-fg-muted">
+            <p
+              class="text-xs font-semibold tracking-widest uppercase text-fg-muted"
+            >
               Tags
             </p>
             <div v-if="tags && tags.length > 0" class="flex flex-wrap gap-2">

@@ -1,10 +1,10 @@
-import { eq, or, sql } from "drizzle-orm";
-import { articles, images } from "~~/server/db/schema";
-import { getD1Drizzle } from "~~/server/utils/d1";
-import { getR2Bucket } from "~~/server/utils/r2";
-import { imageKeyParamsSchema } from "#shared/schemas/image";
+import { eq, or, sql } from 'drizzle-orm';
+import { articles, images } from '~~/server/db/schema';
+import { getD1Drizzle } from '~~/server/utils/d1';
+import { getR2Bucket } from '~~/server/utils/r2';
+import { imageKeyParamsSchema } from '#shared/schemas/image';
 
-const escapeLike = (value: string) => value.replace(/[\\%_]/g, "\\$&");
+const escapeLike = (value: string) => value.replace(/[\\%_]/g, '\\$&');
 
 export default defineEventHandler(async (event) => {
   const { key } = validateParams(event, imageKeyParamsSchema);
@@ -26,12 +26,12 @@ export default defineEventHandler(async (event) => {
   if (used.length > 0) {
     throw createError({
       statusCode: 409,
-      statusMessage: "Image is in use",
+      statusMessage: 'Image is in use',
       data: { articles: used },
     });
   }
 
   await getR2Bucket(event).delete(key);
   await db.delete(images).where(eq(images.key, key));
-  return { status: "success" };
+  return { status: 'success' };
 });

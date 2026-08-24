@@ -1,5 +1,5 @@
 export const useToast = () => {
-  const toasts = useState<ToastMessage[]>("toasts", () => []);
+  const toasts = useState<ToastMessage[]>('toasts', () => []);
 
   const addToast = (type: ToastType, options: ToastOptions) => {
     const id = `toast-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -30,19 +30,19 @@ export const useToast = () => {
   };
 
   const success = (options: ToastOptions) => {
-    return addToast("success", options);
+    return addToast('success', options);
   };
 
   const error = (options: ToastOptions) => {
-    return addToast("error", options);
+    return addToast('error', options);
   };
 
   const info = (options: ToastOptions) => {
-    return addToast("info", options);
+    return addToast('info', options);
   };
 
   const warning = (options: ToastOptions) => {
-    return addToast("warning", options);
+    return addToast('warning', options);
   };
 
   const clear = () => {

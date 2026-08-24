@@ -1,15 +1,15 @@
-import { and, desc, eq, gt, inArray, lt, or, sql, type SQL } from "drizzle-orm";
-import { articleTags, articles, tags } from "~~/server/db/schema";
-import { serializePublicArticle } from "~~/server/utils/article";
-import { fetchTagsForArticles } from "~~/server/utils/admin-article";
-import { getD1Drizzle } from "~~/server/utils/d1";
-import { searchQuerySchema } from "#shared/schemas/search";
+import { and, desc, eq, gt, inArray, lt, or, sql, type SQL } from 'drizzle-orm';
+import { articleTags, articles, tags } from '~~/server/db/schema';
+import { serializePublicArticle } from '~~/server/utils/article';
+import { fetchTagsForArticles } from '~~/server/utils/admin-article';
+import { getD1Drizzle } from '~~/server/utils/d1';
+import { searchQuerySchema } from '#shared/schemas/search';
 
-const escapeLike = (value: string) => value.replace(/[\\%_]/g, "\\$&");
+const escapeLike = (value: string) => value.replace(/[\\%_]/g, '\\$&');
 
 export default defineEventHandler(async (event) => {
   const query = validateQuery(event, searchQuerySchema);
-  const q = query.q ?? "";
+  const q = query.q ?? '';
   const tagSlugs = query.tags ?? [];
   const { since, until } = query;
 
@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const db = getD1Drizzle(event);
-  const conditions: SQL[] = [eq(articles.status, "published")];
+  const conditions: SQL[] = [eq(articles.status, 'published')];
 
   // タグはAND条件
   for (const slug of tagSlugs) {

@@ -1,6 +1,8 @@
 <template>
   <Teleport to="body">
-    <div class="fixed bottom-8 right-8 z-[9999] max-w-xs pointer-events-none max-sm:bottom-4 max-sm:right-4 max-sm:left-4 max-sm:max-w-none">
+    <div
+      class="fixed bottom-8 right-8 z-[9999] max-w-xs pointer-events-none max-sm:bottom-4 max-sm:right-4 max-sm:left-4 max-sm:max-w-none"
+    >
       <TransitionGroup name="toast" tag="div" class="flex flex-col gap-3">
         <div
           v-for="toast in toasts"
@@ -12,11 +14,11 @@
               'border-l-4 border-l-red-500': toast.type === 'error',
               'border-l-4 border-l-amber-500': toast.type === 'warning',
               'border-l-4 border-l-blue-500': toast.type === 'info',
-            }
+            },
           ]"
           @click="removeToast(toast.id)"
         >
-          <div 
+          <div
             :class="[
               'flex-shrink-0 w-6 h-6 flex items-center justify-center text-[24px]',
               {
@@ -24,7 +26,7 @@
                 'text-red-500': toast.type === 'error',
                 'text-amber-500': toast.type === 'warning',
                 'text-blue-500': toast.type === 'info',
-              }
+              },
             ]"
           >
             <Icon v-if="toast.type === 'success'" name="mdi:check-circle" />
@@ -33,11 +35,20 @@
             <Icon v-else name="mdi:information" />
           </div>
           <div class="flex-1 min-w-0 overflow-hidden">
-            <div class="font-semibold text-[0.9375rem] leading-[1.4] text-fg mb-0.5 break-words">{{ toast.title }}</div>
-            <div v-if="toast.message" class="text-sm leading-[1.4] text-fg-muted mt-1 break-words">{{ toast.message }}</div>
+            <div
+              class="font-semibold text-[0.9375rem] leading-[1.4] text-fg mb-0.5 break-words"
+            >
+              {{ toast.title }}
+            </div>
+            <div
+              v-if="toast.message"
+              class="text-sm leading-[1.4] text-fg-muted mt-1 break-words"
+            >
+              {{ toast.message }}
+            </div>
           </div>
-          <button 
-            class="flex-shrink-0 w-5 h-5 flex items-center justify-center border-none bg-transparent text-fg-muted cursor-pointer transition-colors duration-200 p-0 text-[20px] hover:text-fg" 
+          <button
+            class="flex-shrink-0 w-5 h-5 flex items-center justify-center border-none bg-transparent text-fg-muted cursor-pointer transition-colors duration-200 p-0 text-[20px] hover:text-fg"
             @click.stop="removeToast(toast.id)"
           >
             <Icon name="mdi:close" />
@@ -52,7 +63,7 @@
 const toasts = useState<ToastMessage[]>('toasts', () => []);
 
 const removeToast = (id: string) => {
-  toasts.value = toasts.value.filter(t => t.id !== id);
+  toasts.value = toasts.value.filter((t) => t.id !== id);
 };
 </script>
 
@@ -80,4 +91,3 @@ const removeToast = (id: string) => {
   transition: transform 0.3s ease;
 }
 </style>
-

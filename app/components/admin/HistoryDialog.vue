@@ -3,7 +3,7 @@ const props = defineProps<{
   articleId: string;
 }>();
 
-const open = defineModel<boolean>("open", { required: true });
+const open = defineModel<boolean>('open', { required: true });
 
 const emit = defineEmits<{
   restore: [payload: { title: string; content: TiptapDoc }];
@@ -31,7 +31,7 @@ const preview = ref<RevisionDetail | null>(null);
 // 1つ前(古い方)のリビジョン
 const previous = ref<RevisionDetail | null>(null);
 const loadingPreview = ref(false);
-const viewMode = ref<"diff" | "preview">("diff");
+const viewMode = ref<'diff' | 'preview'>('diff');
 
 const revisionCache = new Map<string, RevisionDetail>();
 
@@ -50,7 +50,7 @@ watch(open, async (value) => {
   selectedId.value = null;
   preview.value = null;
   previous.value = null;
-  viewMode.value = "diff";
+  viewMode.value = 'diff';
   loadingList.value = true;
   try {
     const response = await $fetch<{ revisions: RevisionSummary[] }>(
@@ -59,7 +59,7 @@ watch(open, async (value) => {
     revisions.value = response.revisions;
     if (response.revisions[0]) selectRevision(response.revisions[0].id);
   } catch {
-    toast.error({ title: "履歴の取得に失敗しました" });
+    toast.error({ title: '履歴の取得に失敗しました' });
   } finally {
     loadingList.value = false;
   }
@@ -81,7 +81,7 @@ const selectRevision = async (revisionId: string) => {
     preview.value = detail;
     previous.value = previousDetail;
   } catch {
-    toast.error({ title: "履歴の取得に失敗しました" });
+    toast.error({ title: '履歴の取得に失敗しました' });
   } finally {
     if (selectedId.value === revisionId) loadingPreview.value = false;
   }
@@ -93,7 +93,7 @@ const titleChanged = computed(
 
 // 文字+装飾単位の差分をレンダリング済みの見た目で表示
 const diffHtml = computed(() => {
-  if (!preview.value) return "";
+  if (!preview.value) return '';
   return renderArticleDiffHtml(
     previous.value?.content ?? null,
     preview.value.content,
@@ -102,7 +102,7 @@ const diffHtml = computed(() => {
 
 const restore = () => {
   if (!preview.value) return;
-  emit("restore", {
+  emit('restore', {
     title: preview.value.title,
     content: preview.value.content,
   });
@@ -110,12 +110,12 @@ const restore = () => {
 };
 
 const formatDateTime = (value: string) =>
-  new Date(value).toLocaleString("ja-JP", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
+  new Date(value).toLocaleString('ja-JP', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
   });
 </script>
 
@@ -173,7 +173,7 @@ const formatDateTime = (value: string) =>
                 formatDateTime(revision.createdAt)
               }}</span>
               <span class="mt-0.5 block truncate text-xs text-fg-muted">{{
-                revision.title || "無題"
+                revision.title || '無題'
               }}</span>
             </button>
           </div>
@@ -215,11 +215,11 @@ const formatDateTime = (value: string) =>
                 <p v-if="titleChanged" class="mb-4 text-sm">
                   <span
                     class="mr-2 rounded bg-red-500/15 px-1.5 py-0.5 text-red-600 line-through"
-                    >{{ previous?.title || "無題" }}</span
+                    >{{ previous?.title || '無題' }}</span
                   >
                   <span
                     class="rounded bg-green-500/15 px-1.5 py-0.5 text-green-800"
-                    >{{ preview.title || "無題" }}</span
+                    >{{ preview.title || '無題' }}</span
                   >
                 </p>
                 <!-- 自身の記事のレンダリング結果のみを描画 -->
@@ -232,7 +232,7 @@ const formatDateTime = (value: string) =>
               <!-- プレビュー -->
               <template v-else-if="preview">
                 <h2 class="mb-6 text-xl font-medium">
-                  {{ preview.title || "無題" }}
+                  {{ preview.title || '無題' }}
                 </h2>
                 <MqArticleBody :doc="preview.content" />
               </template>

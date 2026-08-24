@@ -1,9 +1,9 @@
-import { eq, or, sql } from "drizzle-orm";
-import { articles, images } from "~~/server/db/schema";
-import { getD1Drizzle } from "~~/server/utils/d1";
-import { imageKeyParamsSchema } from "#shared/schemas/image";
+import { eq, or, sql } from 'drizzle-orm';
+import { articles, images } from '~~/server/db/schema';
+import { getD1Drizzle } from '~~/server/utils/d1';
+import { imageKeyParamsSchema } from '#shared/schemas/image';
 
-const escapeLike = (value: string) => value.replace(/[\\%_]/g, "\\$&");
+const escapeLike = (value: string) => value.replace(/[\\%_]/g, '\\$&');
 
 export default defineEventHandler(async (event) => {
   const { key } = validateParams(event, imageKeyParamsSchema);
@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
     .limit(1);
   const image = rows[0];
   if (!image) {
-    throw createError({ statusCode: 404, statusMessage: "Image not found" });
+    throw createError({ statusCode: 404, statusMessage: 'Image not found' });
   }
 
   // 参照している記事

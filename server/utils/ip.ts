@@ -1,8 +1,10 @@
+import type { H3Event } from 'h3';
+
 function parseIPv4(ip: string): number[] | null {
   const parts = ip.split('.');
   if (parts.length !== 4) return null;
   const nums = parts.map(Number);
-  if (nums.some(n => !Number.isInteger(n) || n < 0 || n > 255)) return null;
+  if (nums.some((n) => !Number.isInteger(n) || n < 0 || n > 255)) return null;
   return nums;
 }
 
@@ -13,28 +15,41 @@ function parseIPv6(ip: string): bigint | null {
     if (v4mapped) {
       const v4 = parseIPv4(v4mapped[1]!);
       if (!v4) return null;
-      return (BigInt(0xffff) << 32n) | BigInt((v4[0]! << 24) | (v4[1]! << 16) | (v4[2]! << 8) | v4[3]!);
+      return (
+        (BigInt(0xffff) << 32n) |
+        BigInt((v4[0]! << 24) | (v4[1]! << 16) | (v4[2]! << 8) | v4[3]!)
+      );
     }
     const halves = ip.split('::');
     if (halves.length > 2) return null;
-    const expand = (s: string) => s ? s.split(':') : [];
+    const expand = (s: string) => (s ? s.split(':') : []);
     const left = expand(halves[0] ?? '');
     const right = expand(halves[1] ?? '');
     const missing = 8 - left.length - right.length;
     if (missing < 0) return null;
     const groups = [...left, ...Array(missing).fill('0'), ...right];
     if (groups.length !== 8) return null;
-    return groups.reduce((acc, g) => (acc << 16n) | BigInt(parseInt(g, 16)), 0n);
+    return groups.reduce(
+      (acc, g) => (acc << 16n) | BigInt(parseInt(g, 16)),
+      0n,
+    );
   } catch {
     return null;
   }
 }
 
-function inRange4(ip: number[], a: number, b: number, c: number, d: number, prefix: number): boolean {
+function inRange4(
+  ip: number[],
+  a: number,
+  b: number,
+  c: number,
+  d: number,
+  prefix: number,
+): boolean {
   const ipNum = (ip[0]! << 24) | (ip[1]! << 16) | (ip[2]! << 8) | ip[3]!;
   const netNum = (a << 24) | (b << 16) | (c << 8) | d;
   const mask = prefix === 0 ? 0 : (~0 << (32 - prefix)) >>> 0;
-  return (ipNum >>> 0 & mask) === (netNum >>> 0 & mask);
+  return ((ipNum >>> 0) & mask) === ((netNum >>> 0) & mask);
 }
 
 export function isValidPublicIp(ip: string): boolean {
@@ -76,11 +91,11 @@ export function isValidPublicIp(ip: string): boolean {
     // loopback ::1
     if (v6 === 1n) return false;
     // link-local fe80::/10
-    if ((v6 >> 118n) === 0x3f2n) return false;
+    if (v6 >> 118n === 0x3f2n) return false;
     // unique local fc00::/7
-    if ((v6 >> 121n) === 0x7en) return false;
+    if (v6 >> 121n === 0x7en) return false;
     // multicast ff00::/8
-    if ((v6 >> 120n) === 0xffn) return false;
+    if (v6 >> 120n === 0xffn) return false;
     return true;
   }
 
@@ -90,26 +105,26 @@ export function isValidPublicIp(ip: string): boolean {
 /**
  * IPアドレスを取得する（プロキシ考慮）
  */
-export function getClientIP(event: any): string {
+export function getClientIP(event: H3Event): string {
   const headers = getHeaders(event);
 
   // プロキシヘッダーをチェック
-  const forwardedFor = headers["x-forwarded-for"];
+  const forwardedFor = headers['x-forwarded-for'];
   if (forwardedFor) {
-    const ips = forwardedFor.split(",");
-    return ips[0]?.trim() || "unknown";
+    const ips = forwardedFor.split(',');
+    return ips[0]?.trim() || 'unknown';
   }
 
-  const realIP = headers["x-real-ip"];
+  const realIP = headers['x-real-ip'];
   if (realIP) {
     return realIP;
   }
 
-  const cfConnectingIP = headers["cf-connecting-ip"];
+  const cfConnectingIP = headers['cf-connecting-ip'];
   if (cfConnectingIP) {
     return cfConnectingIP;
   }
 
   // フォールバック
-  return event.node?.req?.socket?.remoteAddress || "unknown";
+  return event.node?.req?.socket?.remoteAddress || 'unknown';
 }

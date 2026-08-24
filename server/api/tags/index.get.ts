@@ -1,6 +1,6 @@
-import { desc } from "drizzle-orm";
-import { tags } from "~~/server/db/schema";
-import { getD1Drizzle } from "~~/server/utils/d1";
+import { desc } from 'drizzle-orm';
+import { tags } from '~~/server/db/schema';
+import { getD1Drizzle } from '~~/server/utils/d1';
 
 export default defineEventHandler(async (event) => {
   const db = getD1Drizzle(event);

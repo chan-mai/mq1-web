@@ -1,7 +1,7 @@
-import { and, asc, count, eq } from "drizzle-orm";
-import type { H3Event } from "h3";
-import { articleTags, articles, tags } from "~~/server/db/schema";
-import { getD1Drizzle } from "~~/server/utils/d1";
+import { and, asc, count, eq } from 'drizzle-orm';
+import type { H3Event } from 'h3';
+import { articleTags, articles, tags } from '~~/server/db/schema';
+import { getD1Drizzle } from '~~/server/utils/d1';
 
 export const fetchTagById = async (
   event: H3Event,
@@ -61,7 +61,7 @@ export const listTagsWithCount = async (event: H3Event): Promise<Tag[]> => {
       articles,
       and(
         eq(articles.id, articleTags.articleId),
-        eq(articles.status, "published"),
+        eq(articles.status, 'published'),
       ),
     )
     .groupBy(tags.id)

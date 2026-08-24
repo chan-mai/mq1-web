@@ -1,4 +1,4 @@
-type ArticleStatus = "draft" | "published" | "private";
+type ArticleStatus = 'draft' | 'published' | 'private';
 
 interface ArticleEyecatch {
   url: string;

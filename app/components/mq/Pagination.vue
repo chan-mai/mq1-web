@@ -33,7 +33,7 @@ const pages = computed(() => {
   }
   range.push(total);
 
-  for (let i of range) {
+  for (const i of range) {
     if (l) {
       if (i - l === 2) {
         rangeWithDots.push(l + 1);
@@ -68,7 +68,11 @@ const onNextClick = () => {
 </script>
 
 <template>
-  <nav v-if="totalPages > 1" class="flex justify-center items-center gap-2 mt-12" aria-label="Pagination">
+  <nav
+    v-if="totalPages > 1"
+    class="flex justify-center items-center gap-2 mt-12"
+    aria-label="Pagination"
+  >
     <!-- まえ -->
     <button
       @click="onPrevClick"
@@ -76,7 +80,10 @@ const onNextClick = () => {
       class="p-2 flex items-center justify-center border-none rounded-lg hover:bg-surface-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       aria-label="Previous page"
     >
-      <Icon name="material-symbols:chevron-left" class="w-6 h-6 text-fg-muted" />
+      <Icon
+        name="material-symbols:chevron-left"
+        class="w-6 h-6 text-fg-muted"
+      />
     </button>
 
     <!-- ページ番号 -->
@@ -89,7 +96,7 @@ const onNextClick = () => {
             'flex items-center justify-center border-none w-10 h-10 rounded-lg text-sm font-medium transition-colors',
             currentPage === page
               ? 'bg-primary text-white'
-              : 'text-fg-muted hover:bg-surface-muted'
+              : 'text-fg-muted hover:bg-surface-muted',
           ]"
           :aria-current="currentPage === page ? 'page' : undefined"
         >
@@ -111,7 +118,10 @@ const onNextClick = () => {
       class="p-2 flex items-center justify-center border-none rounded-lg hover:bg-surface-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       aria-label="Next page"
     >
-      <Icon name="material-symbols:chevron-right" class="w-6 h-6 text-fg-muted" />
+      <Icon
+        name="material-symbols:chevron-right"
+        class="w-6 h-6 text-fg-muted"
+      />
     </button>
   </nav>
 </template>

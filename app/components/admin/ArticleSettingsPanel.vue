@@ -10,20 +10,20 @@ const emit = defineEmits<{
   close: [];
 }>();
 
-const tagIds = defineModel<string[]>("tagIds", { required: true });
+const tagIds = defineModel<string[]>('tagIds', { required: true });
 const eyecatch = defineModel<{
   key: string;
   url: string | null;
   width: number | null;
   height: number | null;
-} | null>("eyecatch", { required: true });
-const isNoIndex = defineModel<boolean>("isNoIndex", { required: true });
-const publishedAt = defineModel<string | null>("publishedAt", {
+} | null>('eyecatch', { required: true });
+const isNoIndex = defineModel<boolean>('isNoIndex', { required: true });
+const publishedAt = defineModel<string | null>('publishedAt', {
   required: true,
 });
 
 const toast = useToast();
-const { data: tagData, refresh: refreshTags } = useFetch("/api/admin/tags");
+const { data: tagData, refresh: refreshTags } = useFetch('/api/admin/tags');
 
 const toggleTag = (id: string) => {
   tagIds.value = tagIds.value.includes(id)
@@ -31,39 +31,39 @@ const toggleTag = (id: string) => {
     : [...tagIds.value, id];
 };
 
-const newTagName = ref("");
-const newTagSlug = ref("");
+const newTagName = ref('');
+const newTagSlug = ref('');
 const createTag = async () => {
   try {
-    const tag = await $fetch("/api/admin/tags", {
-      method: "POST",
+    const tag = await $fetch('/api/admin/tags', {
+      method: 'POST',
       body: { name: newTagName.value, slug: newTagSlug.value },
     });
-    newTagName.value = "";
-    newTagSlug.value = "";
+    newTagName.value = '';
+    newTagSlug.value = '';
     await refreshTags();
     tagIds.value = [...tagIds.value, tag.id];
   } catch {
-    toast.error({ title: "タグの作成に失敗しました" });
+    toast.error({ title: 'タグの作成に失敗しました' });
   }
 };
 
 // アイキャッチ
-const eyecatchInput = useTemplateRef<HTMLInputElement>("eyecatchInput");
+const eyecatchInput = useTemplateRef<HTMLInputElement>('eyecatchInput');
 const uploadingEyecatch = ref(false);
 const draggingEyecatch = ref(false);
 
 const onEyecatchSelected = (event: Event) => {
   const input = event.target as HTMLInputElement;
   const file = input.files?.[0];
-  input.value = "";
+  input.value = '';
   if (file) uploadEyecatch(file);
 };
 
 const onEyecatchDrop = (event: DragEvent) => {
   draggingEyecatch.value = false;
   const file = Array.from(event.dataTransfer?.files ?? []).find((item) =>
-    item.type.startsWith("image/"),
+    item.type.startsWith('image/'),
   );
   if (file) uploadEyecatch(file);
 };
@@ -81,7 +81,7 @@ const uploadEyecatch = async (file: File) => {
       height: uploaded.height,
     };
   } catch {
-    toast.error({ title: "画像のアップロードに失敗しました" });
+    toast.error({ title: '画像のアップロードに失敗しました' });
   } finally {
     uploadingEyecatch.value = false;
   }
@@ -90,9 +90,9 @@ const uploadEyecatch = async (file: File) => {
 // publishedAtはdatetime-local(ローカル時刻)とISOを相互変換
 const publishedAtLocal = computed({
   get: () => {
-    if (!publishedAt.value) return "";
+    if (!publishedAt.value) return '';
     const date = new Date(publishedAt.value);
-    const pad = (value: number) => String(value).padStart(2, "0");
+    const pad = (value: number) => String(value).padStart(2, '0');
     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
   },
   set: (value: string) => {
@@ -108,7 +108,7 @@ const deleteDialogOpen = ref(false);
 
 const copyArticleId = async () => {
   await navigator.clipboard.writeText(props.articleId);
-  toast.success({ title: "記事IDをコピーしました" });
+  toast.success({ title: '記事IDをコピーしました' });
 };
 </script>
 
@@ -169,7 +169,7 @@ const copyArticleId = async () => {
         :disabled="uploadingEyecatch"
         @click="eyecatchInput?.click()"
       >
-        {{ uploadingEyecatch ? "アップロード中…" : "画像を選択" }}
+        {{ uploadingEyecatch ? 'アップロード中…' : '画像を選択' }}
       </button>
       <input
         ref="eyecatchInput"

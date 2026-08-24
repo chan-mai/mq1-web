@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const open = defineModel<boolean>("open", { required: true });
+const open = defineModel<boolean>('open', { required: true });
 
 defineProps<{
   title: string;
@@ -13,7 +13,7 @@ const emit = defineEmits<{
 
 const confirm = () => {
   open.value = false;
-  emit("confirm");
+  emit('confirm');
 };
 </script>
 
@@ -42,7 +42,7 @@ const confirm = () => {
             class="h-9 cursor-pointer rounded-full border-none bg-red-500 px-4 text-sm font-bold text-white transition-opacity hover:opacity-80"
             @click="confirm"
           >
-            {{ confirmLabel ?? "削除する" }}
+            {{ confirmLabel ?? '削除する' }}
           </button>
         </div>
       </div>

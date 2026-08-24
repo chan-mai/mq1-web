@@ -1,11 +1,11 @@
-import { eq } from "drizzle-orm";
-import { articles } from "~~/server/db/schema";
+import { eq } from 'drizzle-orm';
+import { articles } from '~~/server/db/schema';
 import {
   fetchTagsForArticles,
   serializeAdminArticle,
-} from "~~/server/utils/admin-article";
-import { getD1Drizzle } from "~~/server/utils/d1";
-import { articleIdParamsSchema } from "#shared/schemas/article";
+} from '~~/server/utils/admin-article';
+import { getD1Drizzle } from '~~/server/utils/d1';
+import { articleIdParamsSchema } from '#shared/schemas/article';
 
 export default defineEventHandler(async (event) => {
   const { id } = validateParams(event, articleIdParamsSchema);
@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
     .limit(1);
   const row = rows[0];
   if (!row) {
-    throw createError({ statusCode: 404, statusMessage: "Article not found" });
+    throw createError({ statusCode: 404, statusMessage: 'Article not found' });
   }
 
   const tagMap = await fetchTagsForArticles(db, [row.id]);

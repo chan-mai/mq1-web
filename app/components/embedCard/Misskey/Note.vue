@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const props = defineProps<{
-    /** Note の URL（例: https://misskey.example/notes/xxxxxxxx） */
-    url: string;
+  /** Note の URL（例: https://misskey.example/notes/xxxxxxxx） */
+  url: string;
 }>();
 
 /** embed.js が識別に使うユニーク ID */
@@ -10,22 +10,23 @@ const embedId = `v1_${Math.random().toString(36).slice(2)}_${Date.now()}`;
 const urlObj = computed(() => new URL(props.url));
 
 const embedUrl = computed(() => {
-    const noteId = urlObj.value.pathname.split('/').pop() ?? '';
-    return `https://${urlObj.value.hostname}/embed/notes/${noteId}?border=true&rounded=true`;
+  const noteId = urlObj.value.pathname.split('/').pop() ?? '';
+  return `https://${urlObj.value.hostname}/embed/notes/${noteId}?border=true&rounded=true`;
 });
 
 const scriptUrl = computed(() => `https://${urlObj.value.hostname}/embed.js`);
 
-const iframeStyle = 'border: none; width: 100%; max-width: 500px; height: 300px; color-scheme: light dark;';
+const iframeStyle =
+  'border: none; width: 100%; max-width: 500px; height: 300px; color-scheme: light dark;';
 </script>
 
 <template>
-    <iframe
-        :src="embedUrl"
-        :style="iframeStyle"
-        :data-misskey-embed-id="embedId"
-        loading="eager"
-        class="w-full"
-    />
-    <component :is="'script'" :src="scriptUrl" defer />
+  <iframe
+    :src="embedUrl"
+    :style="iframeStyle"
+    :data-misskey-embed-id="embedId"
+    loading="eager"
+    class="w-full"
+  />
+  <component :is="'script'" :src="scriptUrl" defer />
 </template>

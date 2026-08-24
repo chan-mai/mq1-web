@@ -1,13 +1,13 @@
-import { and, count, desc, eq, gt, inArray, lt, sql } from "drizzle-orm";
-import type { H3Event } from "h3";
-import { articleTags, articles } from "~~/server/db/schema";
+import { and, count, desc, eq, gt, inArray, lt, sql } from 'drizzle-orm';
+import type { H3Event } from 'h3';
+import { articleTags, articles } from '~~/server/db/schema';
 import {
   eyecatchUrlFromKey,
   fetchTagsForArticles,
   type ArticleRow,
   type TagRow,
-} from "~~/server/utils/admin-article";
-import { getD1Drizzle } from "~~/server/utils/d1";
+} from '~~/server/utils/admin-article';
+import { getD1Drizzle } from '~~/server/utils/d1';
 
 export const serializePublicArticle = (
   row: ArticleRow,
@@ -16,7 +16,7 @@ export const serializePublicArticle = (
   id: row.id,
   title: row.title,
   content: parseTiptapDoc(row.content) ?? emptyTiptapDoc(),
-  summary: row.summary ?? "",
+  summary: row.summary ?? '',
   charCount: row.charCount,
   eyecatch: row.eyecatchKey
     ? {
@@ -57,7 +57,7 @@ export const queryPublishedArticles = async (
   options: ArticleQueryOptions = {},
 ) => {
   const db = getD1Drizzle(event);
-  const conditions = [eq(articles.status, "published")];
+  const conditions = [eq(articles.status, 'published')];
 
   if (options.tagId) {
     conditions.push(
@@ -106,7 +106,7 @@ export const fetchArticleByContentId = async (
   const db = getD1Drizzle(event);
   const conditions = [eq(articles.id, contentId)];
   if (!options.includeDraft) {
-    conditions.push(eq(articles.status, "published"));
+    conditions.push(eq(articles.status, 'published'));
   }
 
   const rows = await db
@@ -154,7 +154,7 @@ export const fetchAdjacentArticles = async (
     .from(articles)
     .where(
       and(
-        eq(articles.status, "published"),
+        eq(articles.status, 'published'),
         lt(articles.publishedAt, publishedAt),
       ),
     )
@@ -165,7 +165,7 @@ export const fetchAdjacentArticles = async (
     .from(articles)
     .where(
       and(
-        eq(articles.status, "published"),
+        eq(articles.status, 'published'),
         gt(articles.publishedAt, publishedAt),
       ),
     )

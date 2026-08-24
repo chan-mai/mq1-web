@@ -1,14 +1,14 @@
-import * as v from "valibot";
-import { imageKey } from "./common";
+import * as v from 'valibot';
+import { imageKey } from './common';
 
 export const imageKeyParamsSchema = v.object({ key: imageKey });
 
 export const imageMimeSchema = v.picklist([
-  "image/jpeg",
-  "image/png",
-  "image/gif",
-  "image/webp",
-  "image/avif",
+  'image/jpeg',
+  'image/png',
+  'image/gif',
+  'image/webp',
+  'image/avif',
 ]);
 export type ImageMime = v.InferOutput<typeof imageMimeSchema>;
 

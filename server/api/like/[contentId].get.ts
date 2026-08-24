@@ -1,11 +1,11 @@
-import { count, eq } from "drizzle-orm";
-import { articleLikes } from "~~/server/db/schema";
-import { getD1Drizzle } from "~~/server/utils/d1";
-import { likeParamsSchema } from "#shared/schemas/like";
+import { count, eq } from 'drizzle-orm';
+import { articleLikes } from '~~/server/db/schema';
+import { getD1Drizzle } from '~~/server/utils/d1';
+import { likeParamsSchema } from '#shared/schemas/like';
 
 export default defineEventHandler(async (event) => {
   const { contentId } = validateParams(event, likeParamsSchema);
-  const userIp = getHeader(event, "x-forwarded-for");
+  const userIp = getHeader(event, 'x-forwarded-for');
 
   const db = getD1Drizzle(event);
 
@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
   const likeCount = Number(rows[0]?.count ?? 0);
 
   return {
-    status: "success",
+    status: 'success',
     count: likeCount,
     userIp,
   };

@@ -2,7 +2,7 @@
 import {
   ArticleBodyNodes,
   type ArticleRenderContext,
-} from "~/utils/articleBodyRenderer";
+} from '~/utils/articleBodyRenderer';
 
 const props = defineProps<{
   doc: TiptapDoc | null;
@@ -18,7 +18,7 @@ const headingIdMap = computed(() => {
   if (!props.doc) return map;
   let index = 0;
   const walk = (node: TiptapNode) => {
-    if (node.type === "heading") {
+    if (node.type === 'heading') {
       const level = Number(node.attrs?.level ?? 1);
       if (level >= 1 && level <= 4) {
         map.set(node, resolveHeadingId(node, index));
@@ -32,30 +32,30 @@ const headingIdMap = computed(() => {
 });
 
 const copyHeadingPermalink = (headingId: string) => {
-  const baseUrl = `${config.value.siteUrl.endsWith("/") ? config.value.siteUrl.slice(0, -1) : config.value.siteUrl}${route.path}`;
+  const baseUrl = `${config.value.siteUrl.endsWith('/') ? config.value.siteUrl.slice(0, -1) : config.value.siteUrl}${route.path}`;
   const url = `${baseUrl}#${headingId}`;
 
   try {
     navigator.clipboard.writeText(url);
-    toast.success({ title: "パーマリンクをコピーしました！" });
+    toast.success({ title: 'パーマリンクをコピーしました！' });
   } catch (error) {
-    console.error("Failed to copy permalink:", error);
-    toast.error({ title: "コピーに失敗しました" });
+    console.error('Failed to copy permalink:', error);
+    toast.error({ title: 'コピーに失敗しました' });
   }
 };
 
 const renderContext = computed<ArticleRenderContext>(() => ({
-  headingIdFor: (node) => headingIdMap.value.get(node) ?? "",
+  headingIdFor: (node) => headingIdMap.value.get(node) ?? '',
   onHeadingClick: copyHeadingPermalink,
   // dev時もCanonical Hostnameを自サイト扱い
-  siteHosts: [...new Set([new URL(config.value.siteUrl).host, "mq1.dev"])],
+  siteHosts: [...new Set([new URL(config.value.siteUrl).host, 'mq1.dev'])],
 }));
 
 // コードブロックとリンクカードは.article-bodyの外側に配置
-const COMPONENT_NODE_TYPES = new Set(["codeBlock", "linkCard"]);
+const COMPONENT_NODE_TYPES = new Set(['codeBlock', 'linkCard']);
 
 interface ArticleSegment {
-  type: "html" | "component";
+  type: 'html' | 'component';
   nodes: TiptapNode[];
 }
 
@@ -63,14 +63,14 @@ const segments = computed<ArticleSegment[]>(() => {
   const result: ArticleSegment[] = [];
   for (const node of props.doc?.content ?? []) {
     if (COMPONENT_NODE_TYPES.has(node.type)) {
-      result.push({ type: "component", nodes: [node] });
+      result.push({ type: 'component', nodes: [node] });
       continue;
     }
     const last = result[result.length - 1];
-    if (last?.type === "html") {
+    if (last?.type === 'html') {
       last.nodes.push(node);
     } else {
-      result.push({ type: "html", nodes: [node] });
+      result.push({ type: 'html', nodes: [node] });
     }
   }
   return result;
@@ -170,7 +170,7 @@ const segments = computed<ArticleSegment[]>(() => {
   transition: opacity 0.2s;
 }
 
-.article-body a[href^="http"] .link-icon {
+.article-body a[href^='http'] .link-icon {
   @apply inline-block;
 }
 
@@ -226,7 +226,7 @@ const segments = computed<ArticleSegment[]>(() => {
 
 .article-body p code {
   @apply rounded-lg px-1 mx-1 py-0.5 bg-surface-muted text-fg text-sm border border-border-subtle;
-  font-family: "fira-code", monospace;
+  font-family: 'fira-code', monospace;
   font-weight: 400;
   font-style: normal;
 }

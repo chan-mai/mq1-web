@@ -1,97 +1,97 @@
-import { unwasm } from "unwasm/plugin";
+import { unwasm } from 'unwasm/plugin';
 
-const isProductionBuild = process.env.NODE_ENV === "production";
+const isProductionBuild = process.env.NODE_ENV === 'production';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: "2024-11-01",
+  compatibilityDate: '2024-11-01',
   ssr: true,
   devtools: {
     enabled: true,
   },
   css: [
-    "kiso.css",
-    "~/assets/css/theme.css",
-    "~/assets/css/fonts.css",
-    "~/assets/css/view-transitions.css",
-    "~/assets/css/hljs-theme.css",
-    "~/assets/css/scrollbar.css",
+    'kiso.css',
+    '~/assets/css/theme.css',
+    '~/assets/css/fonts.css',
+    '~/assets/css/view-transitions.css',
+    '~/assets/css/hljs-theme.css',
+    '~/assets/css/scrollbar.css',
   ],
   app: {
     head: {
-      viewport: "width=device-width",
+      viewport: 'width=device-width',
       link: [
-        { rel: "canonical", href: "https://mq1.dev/" },
-        { rel: "stylesheet", href: "https://use.typekit.net/knf0bwf.css" },
-        { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
-        { rel: "preconnect", href: "https://www.googletagmanager.com" },
+        { rel: 'canonical', href: 'https://mq1.dev/' },
+        { rel: 'stylesheet', href: 'https://use.typekit.net/knf0bwf.css' },
+        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+        { rel: 'preconnect', href: 'https://www.googletagmanager.com' },
       ],
       htmlAttrs: {
-        lang: "ja",
-        prefix: "og: https://ogp.me/ns#",
+        lang: 'ja',
+        prefix: 'og: https://ogp.me/ns#',
       },
     },
   },
   modules: [
-    "@nuxtjs/tailwindcss",
-    "@nuxtjs/color-mode",
-    "@vueuse/nuxt",
-    "@nuxt/icon",
-    "@nuxtjs/sitemap",
-    "@nuxt/image",
-    "nuxt-jsonld",
-    "@nuxtjs/critters",
-    "@vite-pwa/nuxt",
-    "@nuxtjs/robots",
-    "@nuxt/scripts",
-    "nitro-cloudflare-dev",
+    '@nuxtjs/tailwindcss',
+    '@nuxtjs/color-mode',
+    '@vueuse/nuxt',
+    '@nuxt/icon',
+    '@nuxtjs/sitemap',
+    '@nuxt/image',
+    'nuxt-jsonld',
+    '@nuxtjs/critters',
+    '@vite-pwa/nuxt',
+    '@nuxtjs/robots',
+    '@nuxt/scripts',
+    'nitro-cloudflare-dev',
   ],
   colorMode: {
-    classSuffix: "",
-    preference: "system",
-    fallback: "light",
-    storageKey: "mq1-color-mode",
+    classSuffix: '',
+    preference: 'system',
+    fallback: 'light',
+    storageKey: 'mq1-color-mode',
   },
   $production: {
     scripts: {
       registry: {
-        clarity: { id: "wgvzak7jwb" },
-        googleAnalytics: { id: "G-ZHPDFE19FX" },
+        clarity: { id: 'wgvzak7jwb' },
+        googleAnalytics: { id: 'G-ZHPDFE19FX' },
       },
     },
   },
   runtimeConfig: {
-    sessionPassword: "",
+    sessionPassword: '',
     zitadel: {
-      issuer: "",
-      clientId: "",
+      issuer: '',
+      clientId: '',
     },
-    openaiApiKey: "",
-    openaiModel: "gpt-4o-mini",
+    openaiApiKey: '',
+    openaiModel: 'gpt-4o-mini',
     public: {
-      siteName: "まいの雑記帳",
-      siteDescription: "ちっちゃなうぇぶさいと",
+      siteName: 'まいの雑記帳',
+      siteDescription: 'ちっちゃなうぇぶさいと',
       siteUrl:
-        process.env.NODE_ENV === "production"
-          ? "https://mq1.dev/"
-          : "http://localhost:3000/",
+        process.env.NODE_ENV === 'production'
+          ? 'https://mq1.dev/'
+          : 'http://localhost:3000/',
       siteOgpUrl:
-        process.env.NODE_ENV === "production"
-          ? "https://mq1.dev/images/ogp/ogp.png"
-          : "http://localhost:3000/images/ogp/ogp.png",
+        process.env.NODE_ENV === 'production'
+          ? 'https://mq1.dev/images/ogp/ogp.png'
+          : 'http://localhost:3000/images/ogp/ogp.png',
     },
   },
   routeRules: {
-    "/about": { prerender: true },
-    "/privacy": { prerender: true },
-    "/admin/**": { ssr: false },
+    '/about': { prerender: true },
+    '/privacy': { prerender: true },
+    '/admin/**': { ssr: false },
   },
   nitro: {
     preset:
       process.env.NITRO_PRESET ??
-      (isProductionBuild ? "cloudflare-module" : undefined),
+      (isProductionBuild ? 'cloudflare-module' : undefined),
     cloudflareDev: {
-      configPath: "wrangler.dev.jsonc",
+      configPath: 'wrangler.dev.jsonc',
     },
     rollupConfig: {
       plugins: [unwasm({ esmImport: isProductionBuild, silent: true })],
@@ -104,12 +104,12 @@ export default defineNuxtConfig({
       failOnError: false,
     },
     routeRules: {
-      "/**": {
+      '/**': {
         headers: {
-          "X-Content-Type-Options": "nosniff",
-          "X-Frame-Options": "DENY",
-          "X-XSS-Protection": "1; mode=block",
-          "Referrer-Policy": "strict-origin-when-cross-origin",
+          'X-Content-Type-Options': 'nosniff',
+          'X-Frame-Options': 'DENY',
+          'X-XSS-Protection': '1; mode=block',
+          'Referrer-Policy': 'strict-origin-when-cross-origin',
         },
       },
     },
@@ -121,31 +121,31 @@ export default defineNuxtConfig({
     componentIslands: true,
   },
   site: {
-    url: "https://mq1.dev/",
-    name: "まいの雑記帳",
-    defaultLocale: "ja",
+    url: 'https://mq1.dev/',
+    name: 'まいの雑記帳',
+    defaultLocale: 'ja',
   },
   sitemap: {
-    exclude: ["/admin", "/admin/**"],
+    exclude: ['/admin', '/admin/**'],
     sitemaps: {
       pages: {
         includeAppSources: true,
       },
       articles: {
-        sources: ["/api/__sitemap__/articles"],
+        sources: ['/api/__sitemap__/articles'],
       },
       tags: {
-        sources: ["/api/__sitemap__/tags"],
+        sources: ['/api/__sitemap__/tags'],
       },
     },
   },
   image: {
     // Workers上でipx(sharp)が動作しないため本番は変換なし配信
-    provider: isProductionBuild ? "none" : "ipx",
+    provider: isProductionBuild ? 'none' : 'ipx',
     ipx: {
       maxAge: 31536000,
     },
-    format: ["webp", "avif", "jpeg", "jpg", "png"],
+    format: ['webp', 'avif', 'jpeg', 'jpg', 'png'],
     quality: 80,
     screens: {
       xs: 320,
@@ -158,7 +158,7 @@ export default defineNuxtConfig({
     presets: {
       hero: {
         modifiers: {
-          format: "webp",
+          format: 'webp',
           quality: 80,
           width: 1200,
           height: 600,
@@ -166,7 +166,7 @@ export default defineNuxtConfig({
       },
       thumbnail: {
         modifiers: {
-          format: "webp",
+          format: 'webp',
           quality: 70,
           width: 400,
           height: 300,
@@ -175,25 +175,25 @@ export default defineNuxtConfig({
     },
   },
   pwa: {
-    registerType: "autoUpdate",
+    registerType: 'autoUpdate',
     manifest: {
-      name: "まいの雑記帳",
-      short_name: "まいの雑記帳",
-      description: "ちっちゃなうぇぶさいと",
-      theme_color: "#fc9fa8",
+      name: 'まいの雑記帳',
+      short_name: 'まいの雑記帳',
+      description: 'ちっちゃなうぇぶさいと',
+      theme_color: '#fc9fa8',
     },
     workbox: {
-      navigateFallback: "/",
+      navigateFallback: '/',
       navigateFallbackDenylist: [/^\/admin/, /^\/api\//, /^\/images\/r2\//],
     },
     devOptions: {
       enabled: true,
-      type: "module",
+      type: 'module',
     },
   },
   vite: {
     esbuild: {
-      drop: ["console", "debugger"],
+      drop: ['console', 'debugger'],
     },
     build: {
       chunkSizeWarningLimit: 1000,
@@ -201,23 +201,23 @@ export default defineNuxtConfig({
         output: {
           manualChunks(id) {
             if (
-              id.includes("/node_modules/vue/") ||
-              id.includes("/node_modules/vue-router/")
+              id.includes('/node_modules/vue/') ||
+              id.includes('/node_modules/vue-router/')
             ) {
-              return "vendor";
+              return 'vendor';
             }
-            if (id.includes("/node_modules/cheerio/")) {
-              return "cheerio";
+            if (id.includes('/node_modules/cheerio/')) {
+              return 'cheerio';
             }
-            if (id.includes("/node_modules/highlight.js/")) {
-              return "hljs";
+            if (id.includes('/node_modules/highlight.js/')) {
+              return 'hljs';
             }
           },
         },
       },
     },
     optimizeDeps: {
-      include: ["cheerio"],
+      include: ['cheerio'],
     },
   },
   webpack: {
@@ -227,20 +227,20 @@ export default defineNuxtConfig({
     optimizeCSS: true,
   },
   robots: {
-    sitemap: "https://mq1.dev/sitemap.xml",
+    sitemap: 'https://mq1.dev/sitemap.xml',
     groups: [
       {
-        userAgent: ["*"],
-        allow: ["/"],
+        userAgent: ['*'],
+        allow: ['/'],
         disallow: [
-          "/admin/",
-          "/api/admin/",
-          "/api/comment/",
-          "/api/entry/",
-          "/api/like/",
-          "/api/link-preview",
-          "/api/popular-articles",
-          "/_nuxt/",
+          '/admin/',
+          '/api/admin/',
+          '/api/comment/',
+          '/api/entry/',
+          '/api/like/',
+          '/api/link-preview',
+          '/api/popular-articles',
+          '/_nuxt/',
         ],
       },
     ],

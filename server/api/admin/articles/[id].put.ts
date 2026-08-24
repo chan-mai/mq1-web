@@ -1,15 +1,15 @@
-import { eq, inArray, sql } from "drizzle-orm";
-import { articleRevisions, articles, tags } from "~~/server/db/schema";
+import { eq, inArray, sql } from 'drizzle-orm';
+import { articleRevisions, articles, tags } from '~~/server/db/schema';
 import {
   fetchTagsForArticles,
   replaceArticleTags,
   serializeAdminArticle,
-} from "~~/server/utils/admin-article";
-import { getD1Drizzle } from "~~/server/utils/d1";
+} from '~~/server/utils/admin-article';
+import { getD1Drizzle } from '~~/server/utils/d1';
 import {
   articleIdParamsSchema,
   updateArticleBodySchema,
-} from "#shared/schemas/article";
+} from '#shared/schemas/article';
 
 export default defineEventHandler(async (event) => {
   const { id } = validateParams(event, articleIdParamsSchema);
@@ -23,7 +23,7 @@ export default defineEventHandler(async (event) => {
     .limit(1);
   const current = rows[0];
   if (!current) {
-    throw createError({ statusCode: 404, statusMessage: "Article not found" });
+    throw createError({ statusCode: 404, statusMessage: 'Article not found' });
   }
 
   const update: Partial<typeof current> = {
@@ -59,7 +59,7 @@ export default defineEventHandler(async (event) => {
     update.isNoIndex = body.isNoIndex;
   }
 
-  if (typeof body.publishedAt === "string") {
+  if (typeof body.publishedAt === 'string') {
     update.publishedAt = new Date(body.publishedAt).toISOString();
   }
 
@@ -71,7 +71,7 @@ export default defineEventHandler(async (event) => {
         .from(tags)
         .where(inArray(tags.id, uniqueTagIds));
       if (found.length !== uniqueTagIds.length) {
-        throw createError({ statusCode: 400, statusMessage: "Unknown tag" });
+        throw createError({ statusCode: 400, statusMessage: 'Unknown tag' });
       }
     }
     await replaceArticleTags(db, id, uniqueTagIds);

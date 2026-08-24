@@ -1,7 +1,7 @@
-import { inArray } from "drizzle-orm";
-import { articles, siteSettings } from "~~/server/db/schema";
-import { getD1Drizzle } from "~~/server/utils/d1";
-import { settingsPutBodySchema } from "#shared/schemas/settings";
+import { inArray } from 'drizzle-orm';
+import { articles, siteSettings } from '~~/server/db/schema';
+import { getD1Drizzle } from '~~/server/utils/d1';
+import { settingsPutBodySchema } from '#shared/schemas/settings';
 
 export default defineEventHandler(async (event) => {
   const { pinnedArticleIds } = await validateBody(event, settingsPutBodySchema);
@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
     if (found.length !== uniqueIds.length) {
       throw createError({
         statusCode: 400,
-        statusMessage: "Unknown article id",
+        statusMessage: 'Unknown article id',
       });
     }
   }
@@ -25,7 +25,7 @@ export default defineEventHandler(async (event) => {
   const value = JSON.stringify(uniqueIds);
   await db
     .insert(siteSettings)
-    .values({ key: "pinned_article_ids", value })
+    .values({ key: 'pinned_article_ids', value })
     .onConflictDoUpdate({
       target: siteSettings.key,
       set: { value },

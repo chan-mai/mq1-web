@@ -1,5 +1,5 @@
-import * as oauth from "oauth4webapi";
-import type { H3Event } from "h3";
+import * as oauth from 'oauth4webapi';
+import type { H3Event } from 'h3';
 
 // discovery結果のisolate内キャッシュ
 let cachedAuthorizationServer: oauth.AuthorizationServer | null = null;
@@ -11,7 +11,7 @@ const getZitadelConfig = (event: H3Event) => {
   if (!issuer || !clientId) {
     throw createError({
       statusCode: 500,
-      statusMessage: "ZITADEL configuration is missing",
+      statusMessage: 'ZITADEL configuration is missing',
     });
   }
 
@@ -24,7 +24,7 @@ export const getAuthorizationServer = async (event: H3Event) => {
   const { issuer } = getZitadelConfig(event);
   const issuerUrl = new URL(issuer);
   const response = await oauth.discoveryRequest(issuerUrl, {
-    algorithm: "oidc",
+    algorithm: 'oidc',
   });
   cachedAuthorizationServer = await oauth.processDiscoveryResponse(
     issuerUrl,
@@ -40,5 +40,5 @@ export const getOidcClient = (event: H3Event): oauth.Client => {
 
 export const getRedirectUri = (event: H3Event) => {
   const origin = getRequestURL(event).origin;
-  return new URL("/api/auth/callback", origin).href;
+  return new URL('/api/auth/callback', origin).href;
 };

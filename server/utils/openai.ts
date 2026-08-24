@@ -1,4 +1,4 @@
-import type { H3Event } from "h3";
+import type { H3Event } from 'h3';
 
 interface ChatCompleteOptions {
   system: string;
@@ -13,30 +13,30 @@ export const chatComplete = async (
   if (!config.openaiApiKey) {
     throw createError({
       statusCode: 500,
-      statusMessage: "OpenAI API key is not configured",
+      statusMessage: 'OpenAI API key is not configured',
     });
   }
 
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
+  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
       Authorization: `Bearer ${config.openaiApiKey}`,
     },
     body: JSON.stringify({
-      model: config.openaiModel || "gpt-4o-mini",
+      model: config.openaiModel || 'gpt-4o-mini',
       messages: [
-        { role: "system", content: system },
-        { role: "user", content: user },
+        { role: 'system', content: system },
+        { role: 'user', content: user },
       ],
     }),
   });
 
   if (!response.ok) {
-    console.error("OpenAI API error:", response.status, await response.text());
+    console.error('OpenAI API error:', response.status, await response.text());
     throw createError({
       statusCode: 502,
-      statusMessage: "OpenAI API request failed",
+      statusMessage: 'OpenAI API request failed',
     });
   }
 
@@ -47,7 +47,7 @@ export const chatComplete = async (
   if (!content) {
     throw createError({
       statusCode: 502,
-      statusMessage: "OpenAI API returned an empty response",
+      statusMessage: 'OpenAI API returned an empty response',
     });
   }
   return content;

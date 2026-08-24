@@ -14,34 +14,34 @@ const props = defineProps({
   },
   variant: {
     type: String,
-    default: "default",
+    default: 'default',
     validator: (value: string) =>
-      ["default", "compact", "pinned"].includes(value),
+      ['default', 'compact', 'pinned'].includes(value),
   },
 });
 
 const formattedDate = computed(() => {
   const dateStr = props.article.publishedAt ?? props.article.createdAt;
-  if (!dateStr) return "";
+  if (!dateStr) return '';
   const date = new Date(dateStr);
   const jstDate = new Date(date.getTime() + 9 * 60 * 60 * 1000);
   const year = jstDate.getUTCFullYear();
-  const month = String(jstDate.getUTCMonth() + 1).padStart(2, "0");
-  const day = String(jstDate.getUTCDate()).padStart(2, "0");
+  const month = String(jstDate.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(jstDate.getUTCDate()).padStart(2, '0');
   return `${year}.${month}.${day}`;
 });
 
 // カード用にサマリーを50文字へ制限
 const summary = computed(() => {
-  const fullSummary = props.article.summary ?? "";
+  const fullSummary = props.article.summary ?? '';
   return fullSummary.length > 50
-    ? fullSummary.slice(0, 50) + "..."
+    ? fullSummary.slice(0, 50) + '...'
     : fullSummary;
 });
 
 // タグをクリックした時の処理
 const router = useRouter();
-function navigateToTag(tag: any) {
+function navigateToTag(tag: Tag) {
   router.push(`/tag/${tag.slug}`);
 }
 </script>

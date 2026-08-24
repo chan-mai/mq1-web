@@ -1,20 +1,20 @@
-import "dotenv/config";
-import { existsSync, readFileSync, statSync, writeFileSync } from "node:fs";
-import { resolve } from "node:path";
-import { generateJSON } from "@tiptap/html";
-import * as cheerio from "cheerio";
-import { createCmsExtensions } from "../shared/tiptap/extensions";
+import 'dotenv/config';
+import { existsSync, readFileSync, statSync, writeFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { generateJSON } from '@tiptap/html';
+import * as cheerio from 'cheerio';
+import { createCmsExtensions } from '../shared/tiptap/extensions';
 import {
   countContentCharacters,
   extractPlainText,
   generateSummary,
-} from "../shared/utils/tiptap-text";
+} from '../shared/utils/tiptap-text';
 
 // microCMSエクスポート(JSON) + image-map.json → cms_seed.sql生成
 // 事前にscripts/migrate-microcms-images.tsを実行
 
-const DATA_DIR = resolve(process.cwd(), "scripts/migration-data");
-const OUTPUT = resolve(DATA_DIR, "cms_seed.sql");
+const DATA_DIR = resolve(process.cwd(), 'scripts/migration-data');
+const OUTPUT = resolve(DATA_DIR, 'cms_seed.sql');
 
 interface MicroCMSTag {
   id: string;
@@ -37,14 +37,14 @@ interface MicroCMSArticle {
 }
 
 const readJson = <T>(name: string): T =>
-  JSON.parse(readFileSync(resolve(DATA_DIR, name), "utf8"));
+  JSON.parse(readFileSync(resolve(DATA_DIR, name), 'utf8'));
 
-const articles = readJson<MicroCMSArticle[]>("microcms-articles.json");
-const tags = readJson<MicroCMSTag[]>("microcms-tags.json");
+const articles = readJson<MicroCMSArticle[]>('microcms-articles.json');
+const tags = readJson<MicroCMSTag[]>('microcms-tags.json');
 const global = readJson<{ pinned_articles?: { id: string }[] }>(
-  "microcms-global.json",
+  'microcms-global.json',
 );
-const imageMap = readJson<Record<string, string>>("image-map.json");
+const imageMap = readJson<Record<string, string>>('image-map.json');
 
 const extensions = createCmsExtensions();
 
@@ -58,61 +58,61 @@ const normalizeHtml = (html: string) => {
   const $ = cheerio.load(html, null, false);
 
   // div[data-filename]ラッパをpreの属性へ移動
-  $("div[data-filename]").each((_, element) => {
+  $('div[data-filename]').each((_, element) => {
     const $div = $(element);
-    const filename = $div.attr("data-filename");
-    const $pre = $div.find("pre").first();
+    const filename = $div.attr('data-filename');
+    const $pre = $div.find('pre').first();
     if (filename && $pre.length > 0) {
-      $pre.attr("data-filename", filename);
+      $pre.attr('data-filename', filename);
     }
-    $div.replaceWith($div.html() ?? "");
+    $div.replaceWith($div.html() ?? '');
   });
 
   // text==hrefのリンクをリンクカードへ
   const isCardAnchor = (node: cheerio.Element): boolean => {
-    if (node.type !== "tag" || node.tagName !== "a") return false;
+    if (node.type !== 'tag' || node.tagName !== 'a') return false;
     const $a = $(node);
-    const href = ($a.attr("href") ?? "").trim();
-    return href !== "" && $a.text().trim() === href;
+    const href = ($a.attr('href') ?? '').trim();
+    return href !== '' && $a.text().trim() === href;
   };
 
-  $("p").each((_, element) => {
+  $('p').each((_, element) => {
     const $p = $(element);
-    if ($p.find("a").toArray().filter(isCardAnchor).length === 0) return;
+    if ($p.find('a').toArray().filter(isCardAnchor).length === 0) return;
 
     const parts: string[] = [];
-    let buffer = "";
+    let buffer = '';
     const flush = () => {
       const trimmed = buffer
-        .replace(/^(?:\s|<br\s*\/?>)+/, "")
-        .replace(/(?:\s|<br\s*\/?>)+$/, "");
+        .replace(/^(?:\s|<br\s*\/?>)+/, '')
+        .replace(/(?:\s|<br\s*\/?>)+$/, '');
       const hasContent =
-        cheerio.load(trimmed, null, false).text().trim() !== "" ||
+        cheerio.load(trimmed, null, false).text().trim() !== '' ||
         /<img/.test(trimmed);
       if (hasContent) parts.push(`<p>${trimmed}</p>`);
-      buffer = "";
+      buffer = '';
     };
 
     $p.contents().each((_, node) => {
       if (isCardAnchor(node as cheerio.Element)) {
-        const href = ($(node).attr("href") ?? "").trim();
+        const href = ($(node).attr('href') ?? '').trim();
         flush();
         parts.push(
-          `<div data-link-card data-url="${href.replace(/"/g, "&quot;")}"></div>`,
+          `<div data-link-card data-url="${href.replace(/"/g, '&quot;')}"></div>`,
         );
         return;
       }
       buffer += $.html($(node));
     });
     flush();
-    $p.replaceWith(parts.join(""));
+    $p.replaceWith(parts.join(''));
   });
 
   // 画像URLをR2へ書き換え
-  $("img").each((_, element) => {
+  $('img').each((_, element) => {
     const $img = $(element);
-    const src = $img.attr("src");
-    if (src) $img.attr("src", rewriteImageUrl(src));
+    const src = $img.attr('src');
+    if (src) $img.attr('src', rewriteImageUrl(src));
   });
 
   return $.html();
@@ -140,15 +140,15 @@ const chunkString = (text: string, maxUnits: number): string[] => {
 const LARGE_TEXT_THRESHOLD = 20000;
 const CHUNK_UNITS = 20000;
 const sqlValue = (value: string | number | null) => {
-  if (value === null) return "NULL";
-  if (typeof value === "number") return String(value);
+  if (value === null) return 'NULL';
+  if (typeof value === 'number') return String(value);
   return sqlQuote(value);
 };
 
 const out: string[] = [
-  "-- Auto-generated by scripts/migrate-microcms-to-d1.ts",
+  '-- Auto-generated by scripts/migrate-microcms-to-d1.ts',
   `-- Source articles: ${articles.length}, tags: ${tags.length}`,
-  "",
+  '',
 ];
 
 interface ReportRow {
@@ -172,7 +172,7 @@ const emitLargeText = (id: string, column: string, text: string) => {
 
 // articles(1記事1ステートメント + 大列は分割UPDATE)
 for (const article of articles) {
-  const normalized = normalizeHtml(article.content ?? "");
+  const normalized = normalizeHtml(article.content ?? '');
   const doc = generateJSON(normalized, extensions) as TiptapDoc;
 
   const plainText = extractPlainText(doc);
@@ -180,7 +180,7 @@ for (const article of articles) {
   const charCount = countContentCharacters(doc);
   const summary = generateSummary(doc);
 
-  const $source = cheerio.load(article.content ?? "", null, false);
+  const $source = cheerio.load(article.content ?? '', null, false);
   const sourceTextLength = $source.text().trim().length;
   report.push({
     id: article.id,
@@ -199,7 +199,7 @@ for (const article of articles) {
 
   const row = [
     sqlValue(article.id),
-    sqlValue(article.title ?? ""),
+    sqlValue(article.title ?? ''),
     contentInline ? sqlValue(contentJson) : "''",
     plainTextInline ? sqlValue(plainText) : "''",
     sqlValue(summary),
@@ -208,25 +208,25 @@ for (const article of articles) {
     sqlValue(article.eyecatch?.width ?? null),
     sqlValue(article.eyecatch?.height ?? null),
     sqlValue(article.is_no_index ? 1 : 0),
-    sqlValue("published"),
+    sqlValue('published'),
     sqlValue(article.publishedAt ?? article.createdAt),
     sqlValue(article.createdAt),
     sqlValue(article.updatedAt),
   ];
 
   out.push(
-    "INSERT OR REPLACE INTO articles (id, title, content, plain_text, summary, char_count, eyecatch_key, eyecatch_width, eyecatch_height, is_no_index, status, published_at, created_at, updated_at) VALUES",
+    'INSERT OR REPLACE INTO articles (id, title, content, plain_text, summary, char_count, eyecatch_key, eyecatch_width, eyecatch_height, is_no_index, status, published_at, created_at, updated_at) VALUES',
   );
-  out.push(`  (${row.join(", ")});`);
-  if (!contentInline) emitLargeText(article.id, "content", contentJson);
-  if (!plainTextInline) emitLargeText(article.id, "plain_text", plainText);
-  out.push("");
+  out.push(`  (${row.join(', ')});`);
+  if (!contentInline) emitLargeText(article.id, 'content', contentJson);
+  if (!plainTextInline) emitLargeText(article.id, 'plain_text', plainText);
+  out.push('');
 }
 
 // tags
 if (tags.length > 0) {
   out.push(
-    "INSERT OR REPLACE INTO tags (id, name, slug, created_at, updated_at) VALUES",
+    'INSERT OR REPLACE INTO tags (id, name, slug, created_at, updated_at) VALUES',
   );
   out.push(
     tags
@@ -234,9 +234,9 @@ if (tags.length > 0) {
         (tag) =>
           `  (${sqlQuote(tag.id)}, ${sqlQuote(tag.name)}, ${sqlQuote(tag.slug)}, ${sqlQuote(tag.createdAt)}, ${sqlQuote(tag.updatedAt)})`,
       )
-      .join(",\n") + ";",
+      .join(',\n') + ';',
   );
-  out.push("");
+  out.push('');
 }
 
 // article_tags
@@ -247,7 +247,7 @@ for (const article of articles) {
   const articleTags = article.tags ?? [];
   if (articleTags.length > 0) {
     out.push(
-      "INSERT OR REPLACE INTO article_tags (article_id, tag_id, position) VALUES",
+      'INSERT OR REPLACE INTO article_tags (article_id, tag_id, position) VALUES',
     );
     out.push(
       articleTags
@@ -255,20 +255,20 @@ for (const article of articles) {
           (tag, position) =>
             `  (${sqlQuote(article.id)}, ${sqlQuote(tag.id)}, ${position})`,
         )
-        .join(",\n") + ";",
+        .join(',\n') + ';',
     );
   }
 }
-out.push("");
+out.push('');
 
 // images(uploaded_atは参照記事の最古日付)
 const CONTENT_TYPE_BY_EXTENSION: Record<string, string> = {
-  jpg: "image/jpeg",
-  jpeg: "image/jpeg",
-  png: "image/png",
-  gif: "image/gif",
-  webp: "image/webp",
-  avif: "image/avif",
+  jpg: 'image/jpeg',
+  jpeg: 'image/jpeg',
+  png: 'image/png',
+  gif: 'image/gif',
+  webp: 'image/webp',
+  avif: 'image/avif',
 };
 
 interface ImageMeta {
@@ -296,7 +296,7 @@ const addImageMeta = (
 
 for (const article of articles) {
   const date = article.publishedAt ?? article.createdAt;
-  for (const match of (article.content ?? "").matchAll(/<img[^>]*>/g)) {
+  for (const match of (article.content ?? '').matchAll(/<img[^>]*>/g)) {
     const tag = match[0];
     const src = /src="([^"]+)"/.exec(tag)?.[1];
     if (!src || !imageMap[src]) continue;
@@ -320,17 +320,17 @@ for (const article of articles) {
 
 const imageRows = [...imageMeta].map(([url, meta]) => {
   const key = imageMap[url]!;
-  const extension = key.split(".").pop() ?? "";
-  const filePath = resolve(DATA_DIR, "images", key);
+  const extension = key.split('.').pop() ?? '';
+  const filePath = resolve(DATA_DIR, 'images', key);
   const size = existsSync(filePath) ? statSync(filePath).size : 0;
   return `  (${sqlQuote(key)}, ${size}, ${sqlValue(meta.width)}, ${sqlValue(meta.height)}, ${sqlValue(CONTENT_TYPE_BY_EXTENSION[extension] ?? null)}, ${sqlQuote(meta.uploadedAt)})`;
 });
 if (imageRows.length > 0) {
   out.push(
-    "INSERT OR REPLACE INTO images (key, size, width, height, content_type, uploaded_at) VALUES",
+    'INSERT OR REPLACE INTO images (key, size, width, height, content_type, uploaded_at) VALUES',
   );
-  out.push(imageRows.join(",\n") + ";");
-  out.push("");
+  out.push(imageRows.join(',\n') + ';');
+  out.push('');
 }
 
 // pinned
@@ -338,13 +338,13 @@ const pinnedIds = (global.pinned_articles ?? []).map((article) => article.id);
 out.push(
   `INSERT OR REPLACE INTO site_settings (key, value) VALUES ('pinned_article_ids', ${sqlQuote(JSON.stringify(pinnedIds))});`,
 );
-out.push("");
+out.push('');
 
-writeFileSync(OUTPUT, out.join("\n"), "utf8");
+writeFileSync(OUTPUT, out.join('\n'), 'utf8');
 console.log(`Wrote ${OUTPUT}`);
 
 // 検証レポート
-console.log("\n=== Validation report ===");
+console.log('\n=== Validation report ===');
 console.log(`Articles: ${articles.length}`);
 console.log(`Tags: ${tags.length}`);
 console.log(`Pinned articles: ${JSON.stringify(pinnedIds)}`);
@@ -355,9 +355,9 @@ const suspicious = report.filter(
     (row.sourceTextLength > 0 && row.drift / row.sourceTextLength > 0.05),
 );
 if (suspicious.length === 0) {
-  console.log("Articles with large text length drift: none");
+  console.log('Articles with large text length drift: none');
 } else {
-  console.log("Articles with large text length drift (manual check required):");
+  console.log('Articles with large text length drift (manual check required):');
   for (const row of suspicious) {
     console.log(
       `  ${row.id} "${row.title}" source=${row.sourceTextLength} converted=${row.charCount}`,
@@ -367,7 +367,7 @@ if (suspicious.length === 0) {
 
 const unresolvedImages = new Set<string>();
 for (const article of articles) {
-  for (const match of (article.content ?? "").matchAll(
+  for (const match of (article.content ?? '').matchAll(
     /<img[^>]*src="(https:\/\/images\.microcms-assets\.io[^"]+)"/g,
   )) {
     if (!imageMap[match[1]!]) unresolvedImages.add(match[1]!);

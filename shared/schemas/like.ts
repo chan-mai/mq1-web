@@ -1,5 +1,5 @@
-import * as v from "valibot";
-import { nonEmptyId } from "./common";
+import * as v from 'valibot';
+import { nonEmptyId } from './common';
 
 export const likeParamsSchema = v.object({ contentId: nonEmptyId });
 

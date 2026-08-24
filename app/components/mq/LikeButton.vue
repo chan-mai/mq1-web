@@ -2,10 +2,10 @@
 const props = withDefaults(
   defineProps<{
     contentId: string;
-    variant?: "default" | "icon-only";
+    variant?: 'default' | 'icon-only';
   }>(),
   {
-    variant: "default",
+    variant: 'default',
   },
 );
 
@@ -29,7 +29,7 @@ const isLoading = useState<boolean>(
 
 // 猫preload関連
 const catApiUrl =
-  "https://cataas.com/cat/says/Thnak%20You?fontSize=100&fontColor=white";
+  'https://cataas.com/cat/says/Thnak%20You?fontSize=100&fontColor=white';
 // 事前取得URL
 const preloadedCatUrl = useState<string | null>(
   `like:${props.contentId}:preloadedCat`,
@@ -45,12 +45,12 @@ const preloadCatImage = async () => {
   if (isPreloadingCat.value) return;
   isPreloadingCat.value = true;
   try {
-    const res = await fetch(catApiUrl, { cache: "no-store" });
+    const res = await fetch(catApiUrl, { cache: 'no-store' });
     const blob = await res.blob();
     const objUrl = URL.createObjectURL(blob);
     preloadedCatUrl.value = objUrl;
   } catch (e) {
-    console.error("Failed to preload cat image:", e);
+    console.error('Failed to preload cat image:', e);
   } finally {
     isPreloadingCat.value = false;
   }
@@ -78,7 +78,7 @@ const fetchLikeCount = async () => {
     );
     likeCount.value = response.count;
   } catch (err) {
-    console.error("Failed to fetch like count:", err);
+    console.error('Failed to fetch like count:', err);
   } finally {
     isInitialLoading.value = false;
   }
@@ -94,11 +94,11 @@ const addLike = async () => {
     const response = await $fetch<{ like: ArticleLike }>(
       `/api/like/${props.contentId}`,
       {
-        method: "PUT",
+        method: 'PUT',
       },
     );
 
-    proxy.gtag("event", "like_added", { contentId: props.contentId });
+    proxy.gtag('event', 'like_added', { contentId: props.contentId });
     // 成功
     isLiked.value = true;
     likeId.value = response.like.id;
@@ -117,14 +117,14 @@ const addLike = async () => {
     preloadedCatUrl.value = null; // 使い切り
     showLikeCard.value = true;
     toast.success({
-      title: "いいね！しました",
+      title: 'いいね！しました',
     });
     setTimeout(() => {
       showLikeCard.value = false;
       // 表示に使った blob URL をクリーンアップ
       if (
         currentCatImageUrl.value &&
-        currentCatImageUrl.value.startsWith("blob:")
+        currentCatImageUrl.value.startsWith('blob:')
       ) {
         URL.revokeObjectURL(currentCatImageUrl.value);
       }
@@ -132,11 +132,11 @@ const addLike = async () => {
     }, 5000);
     // 次回用に再プリロード
     preloadCatImage();
-  } catch (err: any) {
-    console.error("Failed to add like:", err);
+  } catch (err) {
+    console.error('Failed to add like:', err);
     toast.error({
-      title: "いいねの追加に失敗しました",
-      message: err?.data?.message,
+      title: 'いいねの追加に失敗しました',
+      message: (err as { data?: { message?: string } })?.data?.message,
     });
   } finally {
     isLoading.value = false;
@@ -155,21 +155,21 @@ const removeLike = async () => {
 
     if (!secretData) {
       toast.error({
-        title: "いいねの解除に失敗しました",
-        message: "認証情報が見つかりません。",
+        title: 'いいねの解除に失敗しました',
+        message: '認証情報が見つかりません。',
       });
       return;
     }
 
     await $fetch(`/api/like/${props.contentId}`, {
-      method: "DELETE",
+      method: 'DELETE',
       body: {
         id: likeId.value,
         secret: secretData?.secret,
       },
     });
 
-    proxy.gtag("event", "like_removed", { contentId: props.contentId });
+    proxy.gtag('event', 'like_removed', { contentId: props.contentId });
     // 成功
     isLiked.value = false;
     likeId.value = null;
@@ -179,22 +179,22 @@ const removeLike = async () => {
     await removeArticleLikeSecret(props.contentId);
 
     toast.success({
-      title: "いいね！を解除しました",
+      title: 'いいね！を解除しました',
     });
-  } catch (err: any) {
-    console.error("Failed to remove like:", err);
-    if (err?.statusCode === 404) {
+  } catch (err) {
+    console.error('Failed to remove like:', err);
+    if ((err as { statusCode?: number })?.statusCode === 404) {
       // 404はローカル状態を同期
       isLiked.value = false;
       likeId.value = null;
       await removeArticleLikeSecret(props.contentId);
       toast.error({
-        title: "いいねが見つかりませんでした",
+        title: 'いいねが見つかりませんでした',
       });
     } else {
       toast.error({
-        title: "いいねの解除に失敗しました",
-        message: err?.data?.message,
+        title: 'いいねの解除に失敗しました',
+        message: (err as { data?: { message?: string } })?.data?.message,
       });
     }
   } finally {
@@ -295,12 +295,12 @@ onMounted(async () => {
         >
           {{
             isInitialLoading
-              ? "取得中"
+              ? '取得中'
               : isLoading
-                ? "処理中..."
+                ? '処理中...'
                 : isLiked
-                  ? "いいね！済み"
-                  : "いいね！する"
+                  ? 'いいね！済み'
+                  : 'いいね！する'
           }}
         </span>
         <span

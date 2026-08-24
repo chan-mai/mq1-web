@@ -1,5 +1,5 @@
-import type { H3Event } from "h3";
-import * as v from "valibot";
+import type { H3Event } from 'h3';
+import * as v from 'valibot';
 
 // バリデーション失敗を統一形式でthrow
 export const parseOrThrow = <TSchema extends v.GenericSchema>(
@@ -11,12 +11,12 @@ export const parseOrThrow = <TSchema extends v.GenericSchema>(
   if (!result.success) {
     throw createError({
       statusCode,
-      statusMessage: statusCode === 404 ? "Not Found" : "Validation Error",
-      message: "Invalid request",
+      statusMessage: statusCode === 404 ? 'Not Found' : 'Validation Error',
+      message: 'Invalid request',
       // 秘匿値反射防止: pathとmessageのみ返却
       data: {
         issues: result.issues.map((issue) => ({
-          path: v.getDotPath(issue) ?? "",
+          path: v.getDotPath(issue) ?? '',
           message: issue.message,
         })),
       },
@@ -35,8 +35,8 @@ export const validateBody = async <TSchema extends v.GenericSchema>(
   } catch {
     throw createError({
       statusCode: 400,
-      statusMessage: "Validation Error",
-      message: "Invalid JSON body",
+      statusMessage: 'Validation Error',
+      message: 'Invalid JSON body',
     });
   }
   return parseOrThrow(schema, raw);

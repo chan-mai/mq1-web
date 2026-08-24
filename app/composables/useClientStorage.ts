@@ -21,13 +21,18 @@ export const useClientStorage = () => {
     });
   };
 
-  const saveArticleLikeSecret = async (contentId: string, data: ArticleLikeSecretData) => {
+  const saveArticleLikeSecret = async (
+    contentId: string,
+    data: ArticleLikeSecretData,
+  ) => {
     const db = await getDB();
     if (!db) return;
     await db.put(ARTICLE_LIKE_STORE_NAME, data, contentId);
   };
 
-  const getArticleLikeSecret = async (contentId: string): Promise<ArticleLikeSecretData | undefined> => {
+  const getArticleLikeSecret = async (
+    contentId: string,
+  ): Promise<ArticleLikeSecretData | undefined> => {
     const db = await getDB();
     if (!db) return undefined;
     return db.get(ARTICLE_LIKE_STORE_NAME, contentId);

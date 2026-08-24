@@ -1,7 +1,7 @@
-import { eq } from "drizzle-orm";
-import { articles } from "~~/server/db/schema";
-import { getD1Drizzle } from "~~/server/utils/d1";
-import { articleIdParamsSchema } from "#shared/schemas/article";
+import { eq } from 'drizzle-orm';
+import { articles } from '~~/server/db/schema';
+import { getD1Drizzle } from '~~/server/utils/d1';
+import { articleIdParamsSchema } from '#shared/schemas/article';
 
 export default defineEventHandler(async (event) => {
   const { id } = validateParams(event, articleIdParamsSchema);
@@ -14,19 +14,19 @@ export default defineEventHandler(async (event) => {
     .limit(1);
   const article = rows[0];
   if (!article) {
-    throw createError({ statusCode: 404, statusMessage: "Article not found" });
+    throw createError({ statusCode: 404, statusMessage: 'Article not found' });
   }
 
   const now = new Date().toISOString();
   await db
     .update(articles)
     .set({
-      status: "published",
+      status: 'published',
       // 初回公開時のみ設定
       publishedAt: article.publishedAt ?? now,
       updatedAt: now,
     })
     .where(eq(articles.id, id));
 
-  return { status: "success", publishedAt: article.publishedAt ?? now };
+  return { status: 'success', publishedAt: article.publishedAt ?? now };
 });

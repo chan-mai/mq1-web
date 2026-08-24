@@ -67,7 +67,7 @@ export const renderOgImage = async (
             color: '#f57aa5',
             fontFamily: 'Noto Sans JP',
             fontSize: 60,
-            fontWeight: 400,
+            fontWeight: 700,
             lineHeight: 1.2,
             textAlign: 'left',
           }),

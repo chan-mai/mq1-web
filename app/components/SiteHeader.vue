@@ -2,7 +2,6 @@
 const config = useWebConfig();
 const route = useRoute();
 const colorMode = useColorMode();
-const nuxtApp = useNuxtApp();
 
 const isActivePage = (url: string) => {
   // 末尾の/を除去して比較
@@ -21,7 +20,15 @@ const toggleMenu = (val?: boolean) => {
 const searchPopup = ref<{ open: () => void } | null>(null);
 
 // ヘッダーの動的テーマ変更
-const headerTheme = ref<'light' | 'dark'>('light');
+const headerTheme = ref<'light' | 'dark'>(
+  route.meta.headerInverse ? 'dark' : 'light',
+);
+
+// meta宣言とカラーモードからページ先頭時点のテーマを導出
+const resolveRouteTheme = (): 'light' | 'dark' => {
+  if (route.meta.headerInverse) return 'dark';
+  return colorMode.value === 'dark' ? 'dark' : 'light';
+};
 
 const updateHeaderTheme = () => {
   if (!import.meta.client) return;
@@ -108,24 +115,13 @@ if (import.meta.client) {
     },
   );
 
-  // ページ遷移完了
-  const unhookPageFinish = nuxtApp.hook('page:finish', async () => {
-    await nextTick();
-    updateHeaderTheme();
-  });
-
-  // View Transition完了後に再判定
-  const unhookViewTransition = nuxtApp.hook(
-    'page:view-transition:start',
-    (transition) => {
-      transition.finished.catch(() => {}).finally(updateHeaderTheme);
+  // ページ遷移時は宣言値で即時確定
+  watch(
+    () => route.path,
+    () => {
+      headerTheme.value = resolveRouteTheme();
     },
   );
-
-  onUnmounted(() => {
-    unhookPageFinish();
-    unhookViewTransition();
-  });
 
   onMounted(() => {
     updateHeaderTheme();
@@ -139,65 +135,40 @@ if (import.meta.client) {
 <template>
   <header :class="[headerTheme === 'dark' ? 'text-white' : '']">
     <h1
-      class="fixed z-40 top-[20px] left-[20px] min-[801px]:top-[60px] min-[801px]:left-[60px] max-[1260px]:left-[30px]"
-    >
+      class="fixed z-40 top-[20px] left-[20px] min-[801px]:top-[60px] min-[801px]:left-[60px] max-[1260px]:left-[30px]">
       <NuxtLink to="/" class="cursor-react">
-        <NuxtImg
-          :alt="config.siteName"
-          src="/images/web-logo.png"
-          height="200"
-          format="webp"
+        <NuxtImg :alt="config.siteName" src="/images/web-logo.png" height="200" format="webp"
           class="max-h-[80px] w-auto max-[800px]:w-[180px] transition-[filter] duration-300"
-          :class="{ 'brightness-0 invert': headerTheme === 'dark' }"
-        />
+          :class="{ 'brightness-0 invert': headerTheme === 'dark' }" />
       </NuxtLink>
     </h1>
     <nav
-      class="fixed z-10 top-[25px] right-[80px] flex justify-start items-center min-[801px]:top-[67px] min-[801px]:right-[132px]"
-    >
-      <ul
-        class="flex justify-end items-start list-none p-0 m-0 max-[1110px]:hidden"
-      >
-        <li
-          v-for="(item, index) in config.headerMenu"
-          :key="item.url"
-          class="min-[801px]:ml-[46px] max-[1260px]:ml-[30px] first:ml-0 relative"
-          :class="{ group: true }"
-        >
-          <NuxtLink
-            :to="item.url"
-            :target="
-              item.url.startsWith('/') || item.url.startsWith('#')
-                ? '_self'
-                : '_blank'
+      class="fixed z-10 top-[25px] right-[80px] flex justify-start items-center min-[801px]:top-[67px] min-[801px]:right-[132px]">
+      <ul class="flex justify-end items-start list-none p-0 m-0 max-[1110px]:hidden">
+        <li v-for="(item, index) in config.headerMenu" :key="item.url"
+          class="min-[801px]:ml-[46px] max-[1260px]:ml-[30px] first:ml-0 relative" :class="{ group: true }">
+          <NuxtLink :to="item.url" :target="item.url.startsWith('/') || item.url.startsWith('#')
+            ? '_self'
+            : '_blank'
             "
             class="text-[14px] font-semibold tracking-[0.05em] no-underline transition-colors duration-300 ease-out cursor-react uppercase"
-            :class="[isActivePage(item.url) ? 'text-primary' : 'text-current']"
-          >
+            :class="[isActivePage(item.url) ? 'text-primary' : 'text-current']">
             {{ item.title }}
           </NuxtLink>
-          <span
-            v-if="isActivePage(item.url)"
-            class="absolute top-[32px] left-0 block w-full h-[3px] bg-primary"
-          ></span>
+          <span v-if="isActivePage(item.url)" class="absolute top-[32px] left-0 block w-full h-[3px] bg-primary"></span>
         </li>
       </ul>
       <!-- ショップリンク（検索、RSS） -->
-      <ul
-        class="flex justify-start items-center list-none p-0 min-[801px]:ml-[40px] max-[800px]:ml-0"
-      >
+      <ul class="flex justify-start items-center list-none p-0 min-[801px]:ml-[40px] max-[800px]:ml-0">
         <!-- カラーモードトグル -->
         <li class="ml-[1rem]">
           <MqColorModeToggle variant="header" />
         </li>
         <!-- 検索ボタン -->
         <li class="ml-[1rem]">
-          <button
-            type="button"
-            aria-label="検索を開く"
+          <button type="button" aria-label="検索を開く"
             class="relative flex size-8 border-none items-center justify-center rounded before:absolute before:-z-10 before:size-full before:rounded before:bg-slate-200/50 before:opacity-0 before:transition-opacity hover:before:opacity-100"
-            @click="searchPopup?.open()"
-          >
+            @click="searchPopup?.open()">
             <Icon name="material-symbols:search" class="size-5" />
           </button>
         </li>
@@ -209,31 +180,22 @@ if (import.meta.client) {
     </nav>
     <div
       class="fixed z-[10001] top-[16px] right-[20px] w-[50px] h-[50px] pt-[17px] max-[1260px]:right-[30px] min-[801px]:top-[58px] min-[801px]:right-[50px] cursor-pointer cursor-react group/menu"
-      @click="() => toggleMenu()"
-    >
-      <button
-        type="button"
+      @click="() => toggleMenu()">
+      <button type="button"
         class="block relative z-100 w-[30px] h-[15px] mx-auto bg-transparent border-none p-0 menu-trigger"
-        :class="{ 'is-active': isVisibleMenu }"
-        aria-label="メニューを開く"
-        :aria-expanded="isVisibleMenu"
-        aria-controls="global-menu"
-        @click.stop="toggleMenu()"
-      >
+        :class="{ 'is-active': isVisibleMenu }" aria-label="メニューを開く" :aria-expanded="isVisibleMenu"
+        aria-controls="global-menu" @click.stop="toggleMenu()">
         <span
           class="inline-block absolute z-[3] right-0 w-full top-0 h-[1px] bg-current rounded-[8px] transition-all duration-200 ease-out origin-center group-hover/menu:w-full"
-          :class="{ 'translate-y-[7px] rotate-[30deg]': isVisibleMenu }"
-        ></span>
+          :class="{ 'translate-y-[7px] rotate-[30deg]': isVisibleMenu }"></span>
         <span
           class="inline-block absolute z-[3] right-0 top-[7px] w-[calc(100%-5px)] h-[1px] bg-current rounded-[8px] transition-all duration-200 ease-out group-hover/menu:w-full"
-          :class="{ 'opacity-0': isVisibleMenu }"
-        ></span>
+          :class="{ 'opacity-0': isVisibleMenu }"></span>
         <span
           class="inline-block absolute z-[3] right-0 bottom-0 w-[calc(100%-10px)] h-[1px] bg-current rounded-[8px] transition-all duration-200 ease-out origin-center group-hover/menu:w-full"
           :class="{
             'translate-y-[-7px] rotate-[-30deg] w-full': isVisibleMenu,
-          }"
-        ></span>
+          }"></span>
       </button>
     </div>
 

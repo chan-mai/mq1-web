@@ -95,6 +95,11 @@ export default defineEventHandler(async (event) => {
     );
   }
 
+  // 公開記事のみ反映対象
+  if (current.status === 'published') {
+    await purgeContentCache();
+  }
+
   const updatedRows = await db
     .select()
     .from(articles)

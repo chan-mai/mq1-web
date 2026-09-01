@@ -28,5 +28,7 @@ export default defineEventHandler(async (event) => {
     })
     .where(eq(articles.id, id));
 
+  await purgeContentCache();
+
   return { status: 'success', publishedAt: article.publishedAt ?? now };
 });

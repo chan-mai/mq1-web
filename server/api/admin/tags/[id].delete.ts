@@ -17,5 +17,8 @@ export default defineEventHandler(async (event) => {
   }
 
   await db.delete(tags).where(eq(tags.id, id));
+
+  await purgeContentCache();
+
   return { status: 'success' };
 });

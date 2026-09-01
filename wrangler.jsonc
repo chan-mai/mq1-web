@@ -11,6 +11,12 @@
       "bucket_name": "mq1-web-prod",
     },
   ],
+  "kv_namespaces": [
+    {
+      "binding": "CACHE",
+      "id": "11074e79692147878419d93b52e7af75",
+    },
+  ],
   "d1_databases": [
     {
       "binding": "DB",

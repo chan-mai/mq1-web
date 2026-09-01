@@ -27,5 +27,7 @@ export default defineEventHandler(async (event) => {
     .set({ status: target, updatedAt: new Date().toISOString() })
     .where(eq(articles.id, id));
 
+  await purgeContentCache();
+
   return { status: 'success' };
 });

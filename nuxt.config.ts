@@ -88,6 +88,7 @@ export default defineNuxtConfig({
     '/about': { prerender: true },
     '/privacy': { prerender: true },
     '/admin/**': { ssr: false },
+    '/entry/**': { swr: 3600 },
   },
   nitro: {
     preset:
@@ -95,6 +96,19 @@ export default defineNuxtConfig({
       (isProductionBuild ? 'cloudflare-module' : undefined),
     cloudflareDev: {
       configPath: 'wrangler.dev.jsonc',
+    },
+    // swrキャッシュ
+    storage: {
+      cache: {
+        driver: 'cloudflare-kv-binding',
+        binding: 'CACHE',
+      },
+    },
+    devStorage: {
+      cache: {
+        driver: 'fs',
+        base: '.data/cache',
+      },
     },
     rollupConfig: {
       plugins: [unwasm({ esmImport: isProductionBuild, silent: true })],

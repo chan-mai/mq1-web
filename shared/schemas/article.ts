@@ -61,10 +61,6 @@ export const articleListQuerySchema = v.object({
   tag: v.optional(v.pipe(v.string(), v.nonEmpty())),
 });
 
-export const articleDetailQuerySchema = v.object({
-  preview: v.optional(v.string()),
-});
-
 export const unpublishBodySchema = v.nullish(
   v.object({ status: v.optional(v.picklist(['draft', 'private'])) }),
 );

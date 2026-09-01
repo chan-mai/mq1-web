@@ -5,16 +5,19 @@ const { contentId } = route.params as { contentId: string };
 const isPreview = route.query.preview === '1';
 
 // 記事を取得
-const { data: articleResponse, error: articleError } = await useFetch(
-  `/api/articles/${contentId}`,
+// NOTE: previewはクライアント取得(下書きのswrキャッシュ混入防止)
+const { data: articleResponse, error: articleError } = await useFetch<Article>(
+  isPreview
+    ? `/api/admin/articles/${contentId}/preview`
+    : `/api/articles/${contentId}`,
   {
-    key: `article-${contentId}`,
-    query: isPreview ? { preview: '1' } : undefined,
+    key: `article-${contentId}${isPreview ? '-preview' : ''}`,
+    server: !isPreview,
   },
 );
 
 // 記事が存在しない場合は404エラーを投げる
-if (articleError.value || !articleResponse.value) {
+if (!isPreview && (articleError.value || !articleResponse.value)) {
   throw createError({
     statusCode: 404,
     statusMessage: `Article not found: ${contentId}`,
@@ -22,7 +25,21 @@ if (articleError.value || !articleResponse.value) {
   });
 }
 
-const article: Ref<Article | null> = ref(articleResponse.value);
+const article = computed<Article | null>(() => articleResponse.value ?? null);
+
+if (isPreview) {
+  watchEffect(() => {
+    if (articleError.value) {
+      showError(
+        createError({
+          statusCode: 404,
+          statusMessage: `Article not found: ${contentId}`,
+          fatal: true,
+        }),
+      );
+    }
+  });
+}
 
 // --- OGP Setup ---
 const config = useWebConfig();
@@ -140,59 +157,36 @@ const readingTime = computed(() => {
   };
 });
 
-const tableOfContents: Ref<{ id: string; text: string; level: number }[]> = ref(
+const tableOfContents = computed(() =>
   article.value ? extractToc(article.value.content) : [],
 );
 </script>
 <template>
-  <div
-    v-if="isPreview"
-    class="fixed top-0 left-0 z-50 bg-sky-200 text-black px-4 py-2 shadow-md flex items-center m-2 rounded-md opacity-70"
-  >
+  <div v-if="isPreview"
+    class="fixed top-0 left-0 z-50 bg-sky-200 text-black px-4 py-2 shadow-md flex items-center m-2 rounded-md opacity-70">
     <Icon name="iconoir:warning-window" class="size-5 mr-2" />
     <span class="font-bold">下書きを表示しています</span>
   </div>
   <ScrollProgressBar />
   <main class="min-h-screen pt-[120px] md:pt-[160px] px-4 sm:px-6">
-    <div
-      class="mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start mb-10"
-    >
+    <div class="mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start mb-10">
       <!-- Left Sidebar (Social Actions) -->
-      <aside
-        class="hidden lg:flex lg:col-span-1 sticky top-32 flex-col gap-6 items-center z-20 pt-8"
-      >
+      <aside class="hidden lg:flex lg:col-span-1 sticky top-32 flex-col gap-6 items-center z-20 pt-8">
         <MqLikeButton :content-id="contentId" variant="icon-only" />
         <div class="h-px w-10 bg-border-subtle"></div>
-        <MqShareButtons
-          :title="article?.title || ''"
-          :url="`/entry/${contentId}`"
-          orientation="vertical"
-        />
+        <MqShareButtons :title="article?.title || ''" :url="`/entry/${contentId}`" orientation="vertical" />
       </aside>
 
       <!-- Main Content -->
       <article class="lg:col-span-8 w-full min-w-0">
-        <ArticlePageHead
-          :title="article?.title"
-          :published="article?.publishedAt ?? article?.createdAt"
-          :updated="article?.updatedAt"
-          :tags="article?.tags"
-          :readingTime
-          :contentId
-        />
+        <ArticlePageHead :title="article?.title" :published="article?.publishedAt ?? article?.createdAt"
+          :updated="article?.updatedAt" :tags="article?.tags" :readingTime :contentId />
 
         <!-- Mobile目次 -->
-        <MqCollapsibleToc
-          :items="tableOfContents"
-          :title="article?.title"
-          class="mt-8 lg:hidden"
-        />
+        <MqCollapsibleToc :items="tableOfContents" :title="article?.title" class="mt-8 lg:hidden" />
 
         <div class="content prose max-w-none">
-          <MqArticleBody
-            :doc="article?.content ?? null"
-            class="mt-8 md:mt-12"
-          />
+          <MqArticleBody :doc="article?.content ?? null" class="mt-8 md:mt-12" />
         </div>
 
         <!-- いいねボタン -->
@@ -202,10 +196,7 @@ const tableOfContents: Ref<{ id: string; text: string; level: number }[]> = ref(
 
         <!-- 共有ボタン -->
         <div class="mt-6 mb-8 w-full">
-          <MqShareButtons
-            :title="article?.title || ''"
-            :url="`/entry/${contentId}`"
-          />
+          <MqShareButtons :title="article?.title || ''" :url="`/entry/${contentId}`" />
         </div>
 
         <!-- 人気の記事 -->
@@ -216,13 +207,10 @@ const tableOfContents: Ref<{ id: string; text: string; level: number }[]> = ref(
 
       <!-- PC, サイド目次 -->
       <aside class="hidden lg:block lg:col-span-3 sticky top-32 pt-8">
-        <MqCollapsibleToc
-          class="max-h-[calc(100vh-9rem)] overflow-y-auto"
-          :items="tableOfContents"
-          :title="article?.title"
-        />
+        <MqCollapsibleToc class="max-h-[calc(100vh-9rem)] overflow-y-auto" :items="tableOfContents"
+          :title="article?.title" />
       </aside>
     </div>
   </main>
-  <ArticlePageFooter :current-article="article!" />
+  <ArticlePageFooter v-if="article" :current-article="article" />
 </template>

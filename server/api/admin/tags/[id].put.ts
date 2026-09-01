@@ -31,5 +31,7 @@ export default defineEventHandler(async (event) => {
     .set({ name, slug, updatedAt: now })
     .where(eq(tags.id, id));
 
+  await purgeContentCache();
+
   return { ...rows[0]!, name, slug, updatedAt: now };
 });

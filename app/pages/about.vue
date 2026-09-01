@@ -130,142 +130,163 @@ useJsonld([
         </div>
       </div>
 
-      <!-- 以下下部セクション -->
-      <div class="relative w-full overflow-hidden pb-20">
-        <!-- ヘッダーセクション 左 -->
-        <!-- コンテンツの重なりを防ぐためにpb-[120px]を追加 -->
-        <div class="relative z-10 pt-[130px] pb-[120px] mb-[40px]">
-          <h2
-            class="md:absolute px-4 md:px-0 mt-4 md:mt-0 left-0 text-4xl md:text-5xl font-bold tracking-tighter text-accent/80 uppercase md:[writing-mode:vertical-rl] select-none whitespace-nowrap">
-            Introduction
-          </h2>
-          <!-- 背景要素 -->
-          <!-- 下に拡張するためにbottom-0をbottom-[-180px]に変更 -->
-          <div
-            class="absolute top-[130px] bottom-[-180px] left-0 w-full md:w-[calc(50%+600px)] bg-[#f2e6e7] dark:bg-primary/5 -z-10">
-          </div>
+      <!-- Introductionバンド 立ち絵足元の受け -->
+      <div class="relative w-full overflow-hidden bg-[#f2e6e7] dark:bg-primary/5">
+        <!-- ドットパターン -->
+        <div
+          class="absolute inset-0 bg-[radial-gradient(rgba(245,122,165,0.22)_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"
+          aria-hidden="true"></div>
 
-          <div class="max-w-[1200px] mx-auto px-4 relative">
-            <!-- ヘッダーコンテンツwrapper -->
-            <div class="w-full md:w-[50%]">
-              <div class="md:bg-transparent rounded-lg relative z-20">
-                <div class="flex flex-col gap-6 my-4 md:my-8">
-                  <div class="flex items-center gap-8">
-                    <div>
-                      <p class="text-xs tracking-widest font-light text-fg-muted">
-                        ROLE
-                      </p>
-                      <p class="text-xl">Engineer?</p>
-                    </div>
-                    <div>
-                      <p class="text-xs tracking-widest font-light text-fg-muted">
-                        CHARACTER DESIGN
-                      </p>
-                      <NuxtLink to="https://x.com/CSea2073" target="_blank"
-                        class="text-xl hover:text-primary transition-all">しなもん</NuxtLink>
-                    </div>
-                  </div>
-                  <div class="flex flex-col gap-2 mt-2">
-                    <p class="text-xs tracking-widest font-light text-fg-muted">
-                      SOCIALS
-                    </p>
-                    <div class="flex flex-wrap gap-2">
-                      <div v-for="social in socials" :key="social.name">
-                        <MqAppLink class="text-xs" :to="social.url" rel="me noopener noreferrer">
-                          {{ social.name }}
-                          <template #icon>
-                            <Icon :name="social.icon" class="size-3" />
-                          </template>
-                        </MqAppLink>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+        <!-- エッジ装飾 対角線入り四角の縦列 -->
+        <div
+          class="hidden md:flex absolute right-6 top-1/2 -translate-y-1/2 flex-col items-center gap-2 pointer-events-none"
+          aria-hidden="true">
+          <svg v-for="(tone, i) in [
+            'text-accent/60',
+            'text-accent/45',
+            'text-accent/30',
+            'text-accent/20',
+          ]" :key="i" :class="tone" class="size-4" viewBox="0 0 12 12" fill="none" stroke="currentColor"
+            stroke-width="1">
+            <rect x="0.5" y="0.5" width="11" height="11" />
+            <line x1="0.5" y1="11.5" x2="11.5" y2="0.5" />
+          </svg>
         </div>
 
-        <!-- ボディセクション 右/中央 -->
-        <!-- 上に引き上げるために-mt-[100px]を追加 -->
-        <div class="relative z-10 -mt-[100px]">
-          <!-- 背景要素 -->
-          <div
-            class="absolute top-0 left-0 md:left-[calc(50%-680px)] w-full md:w-[calc(50%+680px)] h-full bg-surface-elevated md:shadow-[0_16px_38px_10px_rgba(0,0,0,0.05)] -z-10">
-          </div>
+        <!-- スパークル -->
+        <Icon name="ph:star-four-fill" class="absolute left-[10%] top-[24%] size-4 text-primary/50 pointer-events-none"
+          aria-hidden="true" />
+        <Icon name="ph:star-four-fill"
+          class="absolute left-[42%] bottom-[20%] size-3 text-accent/40 pointer-events-none" aria-hidden="true" />
+        <Icon name="ph:star-four-fill"
+          class="hidden md:block absolute right-[8%] top-[32%] size-6 text-primary/40 pointer-events-none"
+          aria-hidden="true" />
 
-          <div class="max-w-[1200px] mx-auto px-4 py-12 md:py-20">
-            <div class="w-full">
-              <!-- Snapshots -->
-              <div class="mb-12">
-                <p class="text-sm text-fg-muted tracking-widest mb-3 font-light">
-                  SNAPSHOTS
-                </p>
-                <div class="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-                  <div v-for="i in 5" :key="i"
-                    class="w-[200px] h-[112px] bg-surface-muted border border-border-subtle rounded-xl overflow-hidden relative flex-shrink-0 group cursor-pointer transition-transform hover:scale-[1.02]">
-                    <div class="absolute inset-0 bg-surface-muted">
-                      <div
-                        class="w-full h-full bg-[radial-gradient(rgb(var(--color-fg)/0.15)_1px,transparent_1px)] [background-size:16px_16px]">
-                      </div>
-                    </div>
-                    <div class="absolute inset-0 flex flex-col items-center justify-center gap-2">
-                      <div class="w-10 h-10 rounded-full bg-surface-elevated/80 flex items-center justify-center">
-                        <Icon name="ph:play-fill" class="w-4 h-4 text-primary/80 ml-0.5" />
-                      </div>
-                      <span class="text-xs font-semibold tracking-tighter text-primary">COMING SOON...</span>
-                    </div>
-                  </div>
-                </div>
+        <div class="relative mx-auto flex max-w-7xl items-end px-6 py-8 md:min-h-[260px] md:py-0">
+          <div class="w-fit md:pb-8">
+            <div class="mb-1 md:mb-2 flex items-center justify-between">
+              <p class="text-xs font-semibold tracking-widest uppercase text-accent/70">
+                私について
+              </p>
+              <!-- 対角線入り四角 -->
+              <div class="flex items-center gap-1.5" aria-hidden="true">
+                <svg v-for="(tone, i) in [
+                  'text-accent/70',
+                  'text-accent/50',
+                  'text-accent/30',
+                ]" :key="i" :class="tone" class="size-3" viewBox="0 0 12 12" fill="none" stroke="currentColor"
+                  stroke-width="1">
+                  <rect x="0.5" y="0.5" width="11" height="11" />
+                  <line x1="0.5" y1="11.5" x2="11.5" y2="0.5" />
+                </svg>
               </div>
+            </div>
+            <h2
+              class="font-accent text-4xl font-bold tracking-tighter text-accent/80 uppercase select-none lg:text-6xl">
+              Introduction
+            </h2>
+          </div>
+        </div>
+      </div>
 
-              <p class="mb-4 max-w-2xl text-2xl leading-none md:text-3xl xl:text-4xl text-primary font-semibold">
+      <!-- 以下下部セクション -->
+      <div class="relative w-full overflow-hidden">
+
+        <div class="relative mx-auto max-w-7xl px-6 py-14 md:py-20 space-y-16 md:space-y-20">
+          <!-- 挨拶 + メタ情報 -->
+          <section class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
+            <div class="lg:col-span-7">
+              <p class="mb-6 text-2xl leading-none md:text-3xl xl:text-4xl text-primary font-semibold">
                 Hello, I'm
                 <span class="bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-indigo-400">chan-mai</span>
                 <span class="waving-hand">👋🏻</span>
               </p>
-
-              <p
-                class="text-base md:text-[16px] leading-[2.2] mb-12 text-fg-muted font-light tracking-wide text-justify">
-                九州を根城に生息している、ひとのふりをした自称フルスタックエンジニア。<br />
-                たまにクリエイティブなことにも手を出します。
-                普段はMisskeyで鯖缶をしています。<br />
+              <p class="text-base leading-[2.2] text-fg-muted font-light tracking-wide text-justify">
+                九州を根城に生息している、ひとのふりをしたITなんでも屋さん。<br />
+                たまにクリエイティブなことにも手を出します。<br />
                 以後お見知りおきを。
               </p>
+            </div>
 
-              <!-- Profile -->
-              <div class="profile mt-12 w-full">
-                <p class="text-sm text-fg-muted tracking-widest mb-3 font-light">
-                  PROFILE
+            <aside class="lg:col-span-5 rounded-xl border border-border-subtle bg-surface-elevated p-6 space-y-5">
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <p class="text-xs font-semibold tracking-widest uppercase text-fg-muted mb-1">
+                    Role
+                  </p>
+                  <p class="text-lg">Engineer?</p>
+                </div>
+                <div>
+                  <p class="text-xs font-semibold tracking-widest uppercase text-fg-muted mb-1">
+                    Character Design
+                  </p>
+                  <NuxtLink to="https://x.com/CSea2073" target="_blank"
+                    class="text-lg hover:text-primary transition-colors">Aya Fukanaki</NuxtLink>
+                </div>
+              </div>
+
+              <div class="border-t border-border-subtle" />
+
+              <div>
+                <p class="text-xs font-semibold tracking-widest uppercase text-fg-muted mb-3">
+                  Socials
                 </p>
-                <div class="flex flex-wrap justify-between mt-3">
-                  <dl v-for="(item, index) in [
-                    { label: '誕生日', value: '2006/04/04' },
-                    { label: '好きなもの', value: 'インターネット' },
-                    { label: '星 座', value: 'おひつじ座' },
-                    { label: '言語', value: 'Go / Dart' },
-                    { label: '生息地', value: '九州' },
-                  ]" :key="item.label"
-                    class="w-[48%] flex py-4 border-b border-dotted border-border-subtle items-baseline"
-                    :class="{ 'border-t': index < 2 }">
-                    <dt class="w-[36%] md:w-[110px] text-fg-muted text-base font-light tracking-wide">
-                      {{ item.label }}
-                    </dt>
-                    <dd class="flex-1 text-base font-medium">
-                      <span>{{ item.value }}</span>
-                    </dd>
-                  </dl>
+                <div class="flex flex-wrap gap-2">
+                  <div v-for="social in socials" :key="social.name">
+                    <MqAppLink class="text-xs" :to="social.url" rel="me noopener noreferrer">
+                      {{ social.name }}
+                      <template #icon>
+                        <Icon :name="social.icon" class="size-3" />
+                      </template>
+                    </MqAppLink>
+                  </div>
+                </div>
+              </div>
+            </aside>
+          </section>
+
+          <!-- Profile -->
+          <section>
+            <p class="mb-4 flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-fg-muted">
+              <Icon name="lucide:user-round" class="h-3.5 w-3.5" />
+              Profile
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-12 border-t border-dotted border-border-subtle">
+              <dl v-for="item in [
+                { label: '誕生日', value: '2006/04/04' },
+                { label: '星 座', value: 'おひつじ座' },
+                { label: '生息地', value: '九州' },
+                { label: '好きなもの', value: 'インターネット' },
+                { label: '言語', value: 'Go / Dart' },
+              ]" :key="item.label" class="flex items-baseline py-4 border-b border-dotted border-border-subtle">
+                <dt class="w-[110px] shrink-0 text-base text-fg-muted font-light tracking-wide">
+                  {{ item.label }}
+                </dt>
+                <dd class="flex-1 text-base font-medium">
+                  {{ item.value }}
+                </dd>
+              </dl>
+            </div>
+          </section>
+
+          <!-- Snapshots -->
+          <section>
+            <p class="mb-4 flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-fg-muted">
+              <Icon name="lucide:camera" class="h-3.5 w-3.5" />
+              Snapshots
+            </p>
+            <div class="snapshot-scroll flex gap-4 overflow-x-auto pb-2">
+              <div v-for="i in 5" :key="i"
+                class="w-[200px] h-[112px] bg-surface-muted border border-border-subtle rounded-xl overflow-hidden relative flex-shrink-0 group cursor-pointer transition-transform hover:scale-[1.02]">
+                <div class="absolute inset-0 flex flex-col items-center justify-center gap-2">
+                  <div class="w-10 h-10 rounded-full bg-surface-elevated/80 flex items-center justify-center">
+                    <Icon name="ph:play-fill" class="w-4 h-4 text-primary/80 ml-0.5" />
+                  </div>
+                  <span class="text-xs font-semibold tracking-tighter text-primary">COMING SOON...</span>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-
-        <!-- background pattern -->
-        <div class="absolute top-0 left-0 w-full h-full">
-          <div
-            class="absolute inset-0 bg-[radial-gradient(rgb(var(--color-fg)/0.12)_1px,transparent_1px)] [background-size:16px_16px]">
-          </div>
+          </section>
         </div>
       </div>
     </div>
@@ -275,6 +296,14 @@ useJsonld([
 <style scoped>
 .animate-marquee {
   animation: marquee 30s linear infinite;
+}
+
+.snapshot-scroll {
+  scrollbar-width: none;
+}
+
+.snapshot-scroll::-webkit-scrollbar {
+  display: none;
 }
 
 @keyframes marquee {

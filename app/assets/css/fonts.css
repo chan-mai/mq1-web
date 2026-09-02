@@ -1,5 +1,31 @@
 * {
-  font-family: "futura-pt", "Hiragino Kaku Gothic Pro", "ヒラギノ角ゴ Pro W3", "ヒラギノ角ゴ ProN W3", "Noto Sans JP", "Yu Gothic Medium", 游ゴシック体, 游ゴシック, "Yu Gothic", メイリオ, Meiryo, "ＭＳ Ｐゴシック", sans-serif;
+  font-family:
+    'helvetica-neue-lt-pro', Arial, 'hiragino-kaku-gothic-pron', sans-serif;
   font-optical-sizing: auto;
   font-style: normal;
+}
+
+.font-futura {
+  font-family:
+    'futura-pt', 'helvetica-neue-lt-pro', Arial, 'hiragino-kaku-gothic-pron',
+    sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+h1 *,
+h2 *,
+h3 *,
+h4 *,
+h5 *,
+h6 *,
+header,
+header * {
+  font-family:
+    'futura-pt', 'helvetica-neue-lt-pro', Arial, 'hiragino-kaku-gothic-pron',
+    sans-serif;
 }

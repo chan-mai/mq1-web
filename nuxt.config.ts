@@ -22,7 +22,6 @@ export default defineNuxtConfig({
       viewport: 'width=device-width',
       link: [
         { rel: 'canonical', href: 'https://mq1.dev/' },
-        { rel: 'stylesheet', href: 'https://use.typekit.net/knf0bwf.css' },
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
         { rel: 'preconnect', href: 'https://www.googletagmanager.com' },
       ],

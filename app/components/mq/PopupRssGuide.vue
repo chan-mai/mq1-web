@@ -12,6 +12,9 @@ const config = useWebConfig();
 const { proxy } = useScriptGoogleAnalytics();
 const rss = config.value.rss;
 
+// NOTE: body teleportのhydration不整合回避
+const isMounted = useMounted();
+
 const isOpen = ref(false);
 
 const rssFeedCopy = () => {
@@ -46,64 +49,38 @@ onUnmounted(() => document.removeEventListener('keydown', onKeyDown));
 <template>
   <div>
     <!-- トリガー -->
-    <button
-      v-if="type === 'button'"
-      @click="isOpen = true"
-      title="RSSで購読する"
-      aria-label="RSSで購読する"
-      class="inline-flex items-center gap-2 rounded-md border border-border-subtle bg-surface-elevated px-3 py-1.5 text-sm text-fg transition-colors hover:border-primary hover:text-primary"
-    >
+    <button v-if="type === 'button'" @click="isOpen = true" title="RSSで購読する" aria-label="RSSで購読する"
+      class="inline-flex items-center gap-2 rounded-md border border-border-subtle bg-surface-elevated px-3 py-1.5 text-sm text-fg transition-colors hover:border-primary hover:text-primary">
       <Icon :name="rss.icon" class="size-4" />
       RSSで購読
     </button>
 
-    <button
-      v-if="type === 'header'"
-      title="RSSで購読する"
-      aria-label="RSSで購読する"
+    <button v-if="type === 'header'" title="RSSで購読する" aria-label="RSSで購読する"
       class="relative flex size-8 border-none items-center justify-center rounded before:absolute before:-z-10 before:size-full before:rounded before:bg-slate-200/50 before:opacity-0 before:transition-opacity hover:before:opacity-100"
-      @click="isOpen = true"
-    >
+      @click="isOpen = true">
       <Icon :name="config.rss.icon" class="size-5" />
     </button>
 
-    <button
-      v-if="type === 'footer'"
-      title="RSSで購読する"
-      aria-label="RSSで購読する"
+    <button v-if="type === 'footer'" title="RSSで購読する" aria-label="RSSで購読する"
       class="relative flex size-8 border-none items-center justify-center rounded before:absolute before:size-full before:rounded before:bg-current before:opacity-0 before:transition-opacity hover:before:opacity-20 hover:text-primary"
-      @click="isOpen = true"
-    >
+      @click="isOpen = true">
       <Icon :name="rss.icon" class="size-5" />
     </button>
 
-    <teleport to="body">
+    <teleport v-if="isMounted" to="body">
       <!-- バックドロップ -->
       <transition name="fade">
-        <div
-          v-if="isOpen"
-          class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"
-          @click="close"
-        />
+        <div v-if="isOpen" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm" @click="close" />
       </transition>
 
       <!-- モーダル -->
       <transition name="modal">
-        <div
-          v-if="isOpen"
-          class="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
-        >
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="rss-popup-title"
-            class="pointer-events-auto relative w-full max-w-sm rounded-xl bg-surface-elevated shadow-2xl ring-1 ring-black/5"
-          >
+        <div v-if="isOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
+          <div role="dialog" aria-modal="true" aria-labelledby="rss-popup-title"
+            class="pointer-events-auto relative w-full max-w-sm rounded-xl bg-surface-elevated shadow-2xl ring-1 ring-black/5">
             <!-- ヘッダー -->
             <div class="px-8 pt-8 pb-6">
-              <p
-                class="mb-3 text-[11px] tracking-[0.2em] uppercase text-primary"
-              >
+              <p class="mb-3 text-[11px] tracking-[0.2em] uppercase text-primary">
                 RSS
               </p>
               <h2 id="rss-popup-title" class="text-2xl font-semibold text-fg">
@@ -118,10 +95,7 @@ onUnmounted(() => document.removeEventListener('keydown', onKeyDown));
             <div class="border-t border-border-subtle px-8">
               <ul class="divide-y divide-border-subtle">
                 <li class="flex items-start gap-4 py-4">
-                  <Icon
-                    name="akar-icons:bell"
-                    class="mt-0.5 size-5 shrink-0 text-primary"
-                  />
+                  <Icon name="akar-icons:bell" class="mt-0.5 size-5 shrink-0 text-primary" />
                   <div>
                     <p class="text-sm font-medium text-fg">更新をお知らせ</p>
                     <p class="mt-1 text-sm leading-relaxed text-fg-muted">
@@ -130,10 +104,7 @@ onUnmounted(() => document.removeEventListener('keydown', onKeyDown));
                   </div>
                 </li>
                 <li class="flex items-start gap-4 py-4">
-                  <Icon
-                    name="iconamoon:clock"
-                    class="mt-0.5 size-5 shrink-0 text-primary"
-                  />
+                  <Icon name="iconamoon:clock" class="mt-0.5 size-5 shrink-0 text-primary" />
                   <div>
                     <p class="text-sm font-medium text-fg">時間を節約</p>
                     <p class="mt-1 text-sm leading-relaxed text-fg-muted">
@@ -142,10 +113,7 @@ onUnmounted(() => document.removeEventListener('keydown', onKeyDown));
                   </div>
                 </li>
                 <li class="flex items-start gap-4 py-4">
-                  <Icon
-                    name="stash:smartphone"
-                    class="mt-0.5 size-5 shrink-0 text-primary"
-                  />
+                  <Icon name="stash:smartphone" class="mt-0.5 size-5 shrink-0 text-primary" />
                   <div>
                     <p class="text-sm font-medium text-fg">どこでも読める</p>
                     <p class="mt-1 text-sm leading-relaxed text-fg-muted">
@@ -157,19 +125,13 @@ onUnmounted(() => document.removeEventListener('keydown', onKeyDown));
             </div>
 
             <!-- アクション -->
-            <div
-              class="flex items-center justify-end gap-2 border-t border-border-subtle px-8 py-5"
-            >
-              <button
-                @click="close"
-                class="border-none bg-transparent px-3 py-2 text-sm text-fg-muted transition-colors hover:text-fg"
-              >
+            <div class="flex items-center justify-end gap-2 border-t border-border-subtle px-8 py-5">
+              <button @click="close"
+                class="border-none bg-transparent px-3 py-2 text-sm text-fg-muted transition-colors hover:text-fg">
                 閉じる
               </button>
-              <button
-                @click="rssFeedCopy()"
-                class="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm text-white transition-colors hover:bg-primary/90 border-none"
-              >
+              <button @click="rssFeedCopy()"
+                class="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm text-white transition-colors hover:bg-primary/90 border-none">
                 <Icon :name="rss.icon" class="size-4" />
                 RSSで購読する
               </button>

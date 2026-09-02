@@ -23,6 +23,10 @@ const regularArticles = computed(() => {
   return articles.value.filter((a) => !pinnedIds.has(a.id));
 });
 
+// スクロール出現演出
+const pageRoot = ref<HTMLElement | null>(null);
+useRevealAnimations(pageRoot);
+
 const config = useWebConfig();
 const pageTitle = config.value.siteName;
 const pageDescription = config.value.siteDescription;
@@ -91,7 +95,8 @@ useJsonld([
 const interestTags = ['engineering', 'creative', 'cats', 'pastel'];
 </script>
 <template>
-  <main class="max-w-none text-[0.925rem] leading-loose tracking-wide text-inherit [&>div>*:first-child]:mt-0">
+  <main ref="pageRoot"
+    class="max-w-none text-[0.925rem] leading-loose tracking-wide text-inherit [&>div>*:first-child]:mt-0">
     <MqHero />
 
     <!-- ─── メインコンテンツ ─── -->
@@ -102,36 +107,39 @@ const interestTags = ['engineering', 'creative', 'cats', 'pastel'];
           <section class="flex flex-col gap-8">
             <!-- セクションヘッダー -->
             <div class="flex items-center justify-between border-b border-border-subtle pb-4">
-              <h2 class="font-accent text-3xl font-bold text-fg md:text-4xl lg:text-5xl">
-                Articles
+              <h2 data-fill-in class="font-accent w-fit text-3xl font-bold text-fg md:text-4xl lg:text-5xl">
+                <span>Articles</span>
               </h2>
-              <MqAppLink to="/articles/">
+              <MqAppLink to="/articles/" data-fade-in>
                 <span class="text-xs">すべての記事をみる</span>
               </MqAppLink>
             </div>
 
             <div class="flex flex-col gap-10">
-              <p class="text-sm leading-relaxed text-fg-muted">
+              <p data-fade-in class="text-sm leading-relaxed text-fg-muted">
                 日常から非日常まで、書きたいことを自由に書いていく雑記帳です。
               </p>
 
               <!-- 固定記事エリア -->
               <div v-if="pinnedArticles.length" class="w-full">
-                <p class="mb-4 flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-fg-muted">
+                <p data-fill-in
+                  class="mb-4 flex w-fit items-center gap-2 text-xs font-semibold tracking-widest uppercase text-fg-muted">
                   <Icon name="lucide:pin" class="h-3.5 w-3.5" />
-                  Pinned
+                  <span>Pinned</span>
                 </p>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <ArticlesCard v-for="article in pinnedArticles" :key="article.id" :article="article" variant="pinned"
-                    :transition="true" :tag-transition="false" />
+                  <ArticlesCard v-for="(article, i) in pinnedArticles" :key="article.id" :article="article"
+                    variant="pinned" :transition="true" :tag-transition="false" data-fade-in
+                    :data-fade-delay="(i % 2) * 0.08" />
                 </div>
               </div>
 
               <!-- 通常記事エリア -->
               <div v-if="regularArticles.length" class="w-full">
-                <p class="mb-4 flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-fg-muted">
+                <p data-fill-in
+                  class="mb-4 flex w-fit items-center gap-2 text-xs font-semibold tracking-widest uppercase text-fg-muted">
                   <Icon name="lucide:notebook-pen" class="h-3.5 w-3.5" />
-                  Archives
+                  <span>Archives</span>
                 </p>
                 <div class="-mx-4 md:mx-0">
                   <Articles limit="5" :articles="regularArticles" :loading="false" :transition="true"
@@ -155,15 +163,15 @@ const interestTags = ['engineering', 'creative', 'cats', 'pastel'];
           <!-- プロフィールカード -->
           <section>
             <div class="flex items-center justify-between mb-3">
-              <p class="text-xs font-semibold tracking-widest uppercase text-fg-muted">
-                Profile
+              <p data-fill-in class="font-futura w-fit text-xs font-semibold tracking-widest uppercase text-fg-muted">
+                <span>Profile</span>
               </p>
               <MqAppLink to="/about">
                 <span class="text-xs">詳細</span>
               </MqAppLink>
             </div>
 
-            <div class="rounded-xl border border-border-subtle bg-surface-elevated overflow-hidden">
+            <div data-fade-in class="rounded-xl bg-surface-elevated overflow-hidden">
               <div class="p-4 space-y-3">
                 <!-- アバター + 名前 -->
                 <div class="flex items-center gap-3">
@@ -175,7 +183,7 @@ const interestTags = ['engineering', 'creative', 'cats', 'pastel'];
                       月出里 まい
                       <span class="waving-hand ml-0.5">👋🏻</span>
                     </h3>
-                    <p class="text-[11px] text-fg-muted mt-0.5">
+                    <p class="font-futura text-[11px] text-fg-muted mt-0.5">
                       chan-mai · SUDACHI MAI
                     </p>
                   </div>
@@ -184,7 +192,6 @@ const interestTags = ['engineering', 'creative', 'cats', 'pastel'];
                 <!-- 区切り線 -->
                 <div class="border-t border-border-subtle" />
 
-                <!-- 略歴 -->
                 <p class="text-xs leading-6 text-fg-muted">
                   コードを書いたり、絵を描いたり、映像をつくったりしている多趣味なエンジニア。猫とパステルとかわいいものがすき🐈
                 </p>
@@ -192,7 +199,7 @@ const interestTags = ['engineering', 'creative', 'cats', 'pastel'];
                 <!-- インタレストタグ -->
                 <div class="flex flex-wrap gap-1.5">
                   <span v-for="tag in interestTags" :key="tag"
-                    class="rounded-full border border-border-subtle text-fg-muted px-2.5 py-0.5 text-[10px]">
+                    class="font-futura rounded-full border border-border-subtle text-fg-muted px-2.5 py-0.5 text-[10px]">
                     {{ tag }}
                   </span>
                 </div>
@@ -202,10 +209,10 @@ const interestTags = ['engineering', 'creative', 'cats', 'pastel'];
 
           <!-- Tags -->
           <section class="flex flex-col gap-4">
-            <p class="text-xs font-semibold tracking-widest uppercase text-fg-muted">
-              Tags
+            <p data-fill-in class="font-futura w-fit text-xs font-semibold tracking-widest uppercase text-fg-muted">
+              <span>Tags</span>
             </p>
-            <div v-if="tags && tags.length > 0" class="flex flex-wrap gap-2">
+            <div v-if="tags && tags.length > 0" data-fade-in class="flex flex-wrap gap-2">
               <MqTag v-for="tag in tags" :key="tag.id" :tag="tag" transition />
             </div>
             <div v-else class="text-center text-fg-muted text-sm">

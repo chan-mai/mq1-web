@@ -54,68 +54,59 @@ useJsonld([
     },
   },
 ]);
+
+// Heroのカーソル追従レンズ
+const heroEl = ref<HTMLElement | null>(null);
+const heroLens = ref<HTMLElement | null>(null);
+const lensEnabled = ref(false);
+let lensRaf = 0;
+const lensState = { x: 0, y: 0, r: 0 };
+const applyLens = () => {
+  lensRaf = 0;
+  if (heroLens.value)
+    heroLens.value.style.clipPath = `circle(${lensState.r}px at ${lensState.x}px ${lensState.y}px)`;
+};
+const onHeroMove = (e: MouseEvent) => {
+  if (!lensEnabled.value || !heroEl.value) return;
+  // リンク上レンズ退避
+  if ((e.target as HTMLElement).closest('a')) {
+    onHeroLeave();
+    return;
+  }
+  const rect = heroEl.value.getBoundingClientRect();
+  lensState.x = e.clientX - rect.left;
+  lensState.y = e.clientY - rect.top;
+  lensState.r = 120;
+  if (!lensRaf) lensRaf = requestAnimationFrame(applyLens);
+};
+const onHeroLeave = () => {
+  lensState.r = 0;
+  if (!lensRaf) lensRaf = requestAnimationFrame(applyLens);
+};
+onMounted(() => {
+  lensEnabled.value = window.matchMedia('(pointer: fine)').matches;
+});
+onUnmounted(() => {
+  if (lensRaf) cancelAnimationFrame(lensRaf);
+});
+
+// スクロール出現演出
+const aboutRoot = ref<HTMLElement | null>(null);
+useRevealAnimations(aboutRoot);
 </script>
 
 <template>
-  <main class="max-w-none h-full text-[0.925rem] leading-loose tracking-wide text-inherit [&>div>*:first-child]:mt-0">
-    <div class="min-h-screen overflow-hidden">
-      <div class="bg-primary text-white relative w-full max-w-none overflow-hidden md:overflow-visible dot-overlay">
-        <div
-          class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none bg-[url(/images/about/bg.png)] bg-cover opacity-90 contrast-110" />
-        <AboutHeadBackground />
+  <main ref="aboutRoot"
+    class="max-w-none h-full text-[0.925rem] leading-loose tracking-wide text-inherit [&>div>*:first-child]:mt-0">
+    <div class="min-h-screen overflow-x-clip">
+      <div ref="heroEl" class="bg-primary text-white relative w-full max-w-none overflow-hidden md:overflow-visible"
+        @mousemove="onHeroMove" @mouseleave="onHeroLeave">
+        <AboutHeroVisual />
 
-        <!-- 右側のエッジ文字 -->
-        <div class="absolute bottom-0 z-20 w-full h-2/3 pointer-events-none">
-          <NuxtImg src="/images/about/mai-bg-text.png" format="webp" alt="Mai Sudachi" fetchpriority="high"
-            class="w-full h-full object-contain object-right" loading="eager" />
-        </div>
-
-        <div class="w-full px-8 pt-[180px] md:pt-[200px] pb-8 max-w-6xl mx-auto relative z-30">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <!-- ヘッダ 情報 -->
-            <div class="z-30 relative">
-              <div class="mb-32">
-                <p class="mobile-text-outline text-sm md:text-base font-light mb-2">
-                  応用睡眠技術者
-                </p>
-                <div class="w-16 h-0.5 bg-white mb-4"></div>
-                <h1 class="mobile-text-outline text-5xl md:text-6xl font-bold mb-2">
-                  月出里 まい
-                </h1>
-                <p class="mobile-text-outline text-sm tracking-widest mb-16">
-                  SUDACHI MAI
-                </p>
-
-                <!-- Socials -->
-                <div class="grid grid-cols-1 space-y-2 mb-8 relative z-30">
-                  <NuxtLink v-for="social in socials.filter((s) => s.isFixed)" :key="social.name" :to="social.url"
-                    target="_blank" rel="me"
-                    class="w-1/3 bg-white/80 text-accent rounded-full px-3 py-2 hover:bg-primary/90 hover:text-white transition-all flex items-center">
-                    <Icon :name="social.icon" class="mr-2 size-5" />
-                    <span class="text-sm">{{ social.name }}</span>
-                  </NuxtLink>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="absolute w-full h-full left-0 pointer-events-none">
-          <!-- 背景画像 -->
-          <div class="absolute top-0 z-20 w-full h-full opacity-30 -translate-y-full contrast-120 overflow-hidden">
-            <NuxtImg src="/images/about/mai-bg.png" format="webp" alt="doted mai" fetchpriority="high"
-              class="w-full h-full object-cover object-center pointer-events-none" loading="eager" />
-          </div>
-
-          <!-- 立ち絵 -->
-          <div
-            class="absolute w-full top-0 z-20 -translate-y-[75%] md:-translate-y-2/3 scale-80 md:scale-100 -right-0 md:right-[15%]">
-            <div
-              class="character-glow absolute w-full h-full top-0 right-0 z-40 bg-white/10 blur-3xl rounded-full transform scale-150">
-            </div>
-            <NuxtImg src="/images/about/mai.png" format="webp" alt="Mai Sudachi" fetchpriority="high"
-              class="object-contain max-h-[800px] relative z-[60] ml-auto character-shadow" loading="eager"
-              decoding="async" />
+        <!-- カーソル追従の拡大レンズ -->
+        <div v-if="lensEnabled" ref="heroLens" class="hero-lens" aria-hidden="true" inert>
+          <div class="hero-lens-view">
+            <AboutHeroVisual lens />
           </div>
         </div>
       </div>
@@ -124,7 +115,7 @@ useJsonld([
       <div class="w-full bg-surface-elevated border-t-2 border-b-2 border-accent overflow-hidden py-1">
         <div class="flex whitespace-nowrap">
           <div v-for="i in 30" :key="i" class="animate-marquee flex gap-12 items-center pr-12 select-none shrink-0">
-            <span class="text-xs font-semibold tracking-tighter text-accent">SUDACHI MAI</span>
+            <span class="font-futura text-xs font-semibold tracking-tighter text-accent">SUDACHI MAI</span>
             <Icon name="ph:star-four-fill" class="size-3 text-primary" />
           </div>
         </div>
@@ -165,8 +156,8 @@ useJsonld([
         <div class="relative mx-auto flex max-w-7xl items-end px-6 py-8 md:min-h-[260px] md:py-0">
           <div class="w-fit md:pb-8">
             <div class="mb-1 md:mb-2 flex items-center justify-between">
-              <p class="text-xs font-semibold tracking-widest uppercase text-accent/70">
-                私について
+              <p data-fill-in class="w-fit text-xs font-semibold tracking-widest uppercase text-accent/70">
+                <span>私について</span>
               </p>
               <!-- 対角線入り四角 -->
               <div class="flex items-center gap-1.5" aria-hidden="true">
@@ -181,43 +172,42 @@ useJsonld([
                 </svg>
               </div>
             </div>
-            <h2
-              class="font-accent text-4xl font-bold tracking-tighter text-accent/80 uppercase select-none lg:text-6xl">
-              Introduction
+            <h2 data-fill-in
+              class="w-fit text-4xl font-bold tracking-tighter text-accent/80 uppercase select-none lg:text-6xl">
+              <span>Introduction</span>
             </h2>
           </div>
         </div>
       </div>
 
       <!-- 以下下部セクション -->
-      <div class="relative w-full overflow-hidden">
-
+      <div class="relative w-full overflow-x-clip">
         <div class="relative mx-auto max-w-7xl px-6 py-14 md:py-20 space-y-16 md:space-y-20">
           <!-- 挨拶 + メタ情報 -->
           <section class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
             <div class="lg:col-span-7">
-              <p class="mb-6 text-2xl leading-none md:text-3xl xl:text-4xl text-primary font-semibold">
-                Hello, I'm
-                <span class="bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-indigo-400">chan-mai</span>
-                <span class="waving-hand">👋🏻</span>
+              <p data-fade-in class="font-futura mb-6 text-2xl leading-none md:text-3xl xl:text-4xl font-semibold">
+                <span>Hello, I'm
+                  <span class="highlight-with-image">chan-mai</span>
+                  <span class="waving-hand">👋🏻</span></span>
               </p>
               <p class="text-base leading-[2.2] text-fg-muted font-light tracking-wide text-justify">
-                九州を根城に生息している、ひとのふりをしたITなんでも屋さん。<br />
-                たまにクリエイティブなことにも手を出します。<br />
-                以後お見知りおきを。
+                <span data-fade-in class="block">九州を根城に生息している、ひとのふりをしたITなんでも屋さん。</span>
+                <span data-fade-in data-fade-delay="0.1" class="block">たまにクリエイティブなことにも手を出します。</span>
+                <span data-fade-in data-fade-delay="0.2" class="block">以後お見知りおきを。</span>
               </p>
             </div>
 
-            <aside class="lg:col-span-5 rounded-xl border border-border-subtle bg-surface-elevated p-6 space-y-5">
+            <aside data-fade-in class="lg:col-span-5 rounded-xl bg-surface-elevated p-6 space-y-5">
               <div class="grid grid-cols-2 gap-4">
                 <div>
-                  <p class="text-xs font-semibold tracking-widest uppercase text-fg-muted mb-1">
+                  <p class="font-futura text-xs font-semibold tracking-widest uppercase text-fg-muted mb-1">
                     Role
                   </p>
                   <p class="text-lg">Engineer?</p>
                 </div>
                 <div>
-                  <p class="text-xs font-semibold tracking-widest uppercase text-fg-muted mb-1">
+                  <p class="font-futura text-xs font-semibold tracking-widest uppercase text-fg-muted mb-1">
                     Character Design
                   </p>
                   <NuxtLink to="https://x.com/CSea2073" target="_blank"
@@ -228,12 +218,12 @@ useJsonld([
               <div class="border-t border-border-subtle" />
 
               <div>
-                <p class="text-xs font-semibold tracking-widest uppercase text-fg-muted mb-3">
+                <p class="font-futura text-xs font-semibold tracking-widest uppercase text-fg-muted mb-3">
                   Socials
                 </p>
                 <div class="flex flex-wrap gap-2">
                   <div v-for="social in socials" :key="social.name">
-                    <MqAppLink class="text-xs" :to="social.url" rel="me noopener noreferrer">
+                    <MqAppLink class="text-xs" :to="social.url" :fill="social.color" rel="me noopener noreferrer">
                       {{ social.name }}
                       <template #icon>
                         <Icon :name="social.icon" class="size-3" />
@@ -245,20 +235,26 @@ useJsonld([
             </aside>
           </section>
 
+          <AboutInterlude />
+
+          <AboutThingsIMake class="!mt-0" />
+
           <!-- Profile -->
           <section>
-            <p class="mb-4 flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-fg-muted">
+            <p data-fill-in
+              class="font-futura mb-4 flex w-fit items-center gap-2 text-xs font-semibold tracking-widest uppercase text-fg-muted">
               <Icon name="lucide:user-round" class="h-3.5 w-3.5" />
-              Profile
+              <span>Profile</span>
             </p>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-12 border-t border-dotted border-border-subtle">
-              <dl v-for="item in [
+              <dl v-for="(item, i) in [
                 { label: '誕生日', value: '2006/04/04' },
                 { label: '星 座', value: 'おひつじ座' },
                 { label: '生息地', value: '九州' },
                 { label: '好きなもの', value: 'インターネット' },
                 { label: '言語', value: 'Go / Dart' },
-              ]" :key="item.label" class="flex items-baseline py-4 border-b border-dotted border-border-subtle">
+              ]" :key="item.label" data-fade-in :data-fade-delay="i * 0.08"
+                class="flex items-baseline py-4 border-b border-dotted border-border-subtle">
                 <dt class="w-[110px] shrink-0 text-base text-fg-muted font-light tracking-wide">
                   {{ item.label }}
                 </dt>
@@ -271,18 +267,19 @@ useJsonld([
 
           <!-- Snapshots -->
           <section>
-            <p class="mb-4 flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-fg-muted">
+            <p data-fill-in
+              class="font-futura mb-4 flex w-fit items-center gap-2 text-xs font-semibold tracking-widest uppercase text-fg-muted">
               <Icon name="lucide:camera" class="h-3.5 w-3.5" />
-              Snapshots
+              <span>Snapshots</span>
             </p>
-            <div class="snapshot-scroll flex gap-4 overflow-x-auto pb-2">
+            <div data-fade-in class="snapshot-scroll flex gap-4 overflow-x-auto pb-2">
               <div v-for="i in 5" :key="i"
-                class="w-[200px] h-[112px] bg-surface-muted border border-border-subtle rounded-xl overflow-hidden relative flex-shrink-0 group cursor-pointer transition-transform hover:scale-[1.02]">
+                class="w-[200px] h-[112px] bg-surface-muted rounded-xl overflow-hidden relative flex-shrink-0 group cursor-pointer transition-transform hover:scale-[1.02]">
                 <div class="absolute inset-0 flex flex-col items-center justify-center gap-2">
                   <div class="w-10 h-10 rounded-full bg-surface-elevated/80 flex items-center justify-center">
                     <Icon name="ph:play-fill" class="w-4 h-4 text-primary/80 ml-0.5" />
                   </div>
-                  <span class="text-xs font-semibold tracking-tighter text-primary">COMING SOON...</span>
+                  <span class="font-futura text-xs font-semibold tracking-tighter text-primary">COMING SOON...</span>
                 </div>
               </div>
             </div>
@@ -316,36 +313,20 @@ useJsonld([
   }
 }
 
-.dot-overlay::after {
-  content: '';
+/* カーソル追従レンズ */
+.hero-lens {
   position: absolute;
-  z-index: 10;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAEElEQVR4nGP4//9/GgNlAADe/gNkBNkWTgAAAABJRU5ErkJggg==) repeat;
-  background-color: rgba(0, 0, 0, 0.1);
-  background-color: rgba(0, 0, 0, 0.1);
+  inset: 0;
+  z-index: 70;
+  overflow: hidden;
   pointer-events: none;
+  clip-path: circle(0px at 50% 50%);
+  transition: clip-path 0.18s ease-out;
 }
 
-/* 立ち絵の影: 近い順に濃いピンク → 遠いほど薄くなる */
-.character-shadow {
-  filter: drop-shadow(5px -3px 0 #ff8fb0) drop-shadow(10px -5px 0 #ffcada) drop-shadow(17px -9px 0 #ffe3ed);
-}
-
-.mobile-text-outline {
-  color: #fff;
-  -webkit-text-stroke: 2px #ff759c;
-  text-stroke: 2px #ff759c;
-  paint-order: stroke fill;
-}
-
-@media (min-width: 768px) {
-  .mobile-text-outline {
-    -webkit-text-stroke: 0;
-    text-stroke: 0;
-  }
+.hero-lens-view {
+  height: 100%;
+  transform: scale(1.25);
+  transform-origin: 50% 50%;
 }
 </style>

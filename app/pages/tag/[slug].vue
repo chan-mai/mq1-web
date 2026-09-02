@@ -49,6 +49,10 @@ const onPageChange = (newPage: number) => {
   router.push({ query: { ...route.query, page: newPage } });
 };
 
+// スクロール出現演出
+const pageRoot = ref<HTMLElement | null>(null);
+useRevealAnimations(pageRoot);
+
 const config = useWebConfig();
 const pageTitle = `#${currentTag.name} - ${config.value.siteName}`;
 const pageDescription = `#${currentTag.name}の記事一覧`;
@@ -102,59 +106,41 @@ useJsonld({
 });
 </script>
 <template>
-  <main class="min-h-screen pt-[120px] md:pt-[160px] px-6">
+  <main ref="pageRoot" class="min-h-screen pt-[120px] md:pt-[160px] px-6">
     <!-- 直近記事 -->
     <section class="mx-auto flex w-full max-w-6xl flex-col gap-10 px-2 md:px-6">
       <div class="flex items-center justify-between">
         <div class="w-full">
           <MqPageBack class="mb-3" />
           <div class="flex items-center justify-between">
-            <h2
-              class="font-accent text-3xl text-fg md:text-4xl"
-              :style="`view-transition-name: tag-${slug};`"
-            >
-              <span
-                class="bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-indigo-400"
-              >
-                #{{ tag?.name }}
+            <h2 data-fill-in class="font-accent w-fit text-3xl text-fg md:text-4xl"
+              :style="`view-transition-name: tag-${slug};`">
+              <span>
+                <span class="highlight-with-image-2">#{{ tag?.name }}</span>
+                の記事一覧
               </span>
-              の記事一覧
             </h2>
 
-            <span class="text-fg-muted text-sm">全{{ totalCount }}記事</span>
+            <span data-fade-in class="text-fg-muted text-sm">全{{ totalCount }}記事</span>
           </div>
         </div>
       </div>
       <div class="flex flex-col gap-8">
         <MqLoading v-if="status === 'pending'" />
         <template v-else>
-          <div
-            v-if="articles?.length"
-            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          >
-            <ArticlesCard
-              v-for="article in articles"
-              :key="article.id"
-              :article="article"
-            />
+          <div v-if="articles?.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10">
+            <ArticlesCard v-for="(article, i) in articles" :key="article.id" :article="article" data-fade-in
+              :data-fade-delay="(i % 3) * 0.08" />
           </div>
-          <div
-            v-else
-            class="flex flex-col items-center justify-center gap-4 py-16"
-          >
+          <div v-else class="flex flex-col items-center justify-center gap-4 py-16">
             <p class="text-lg font-bold text-accent">
               記事が見つかりませんでした。
             </p>
             <p class="text-sm text-fg-muted">他のタグを試してみてください。</p>
           </div>
 
-          <MqPagination
-            v-if="totalCount > limit"
-            :total-count="totalCount"
-            :current-page="page"
-            :limit="limit"
-            @change="onPageChange"
-          />
+          <MqPagination v-if="totalCount > limit" :total-count="totalCount" :current-page="page" :limit="limit"
+            @change="onPageChange" />
         </template>
       </div>
     </section>

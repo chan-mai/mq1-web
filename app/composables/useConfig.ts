@@ -99,6 +99,12 @@ export const useWebConfig = (): ComputedRef<WebConfig> => {
         icon: 'simple-icons:qiita',
         color: 'green-500',
       },
+      zenn: {
+        name: 'Zenn',
+        url: 'https://zenn.dev/mai_llj',
+        icon: 'simple-icons:zenn',
+        color: 'blue-500',
+      },
     },
     rss: {
       name: 'RSS',

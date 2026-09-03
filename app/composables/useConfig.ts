@@ -165,6 +165,13 @@ export const useWebConfig = (): ComputedRef<WebConfig> => {
         ],
       },
       {
+        title: 'SwayMate',
+        description:
+          'After Effects用の風揺れスクリプト。既存の揺れ系スクリプトとは異なり、シーンと位置関係を考慮した風を吹かせて揺らすことができます',
+        url: 'https://mq1.booth.pm/items/8603133',
+        tags: ['After Effects', 'TypeScript'],
+      },
+      {
         title: 'h0taru.me',
         description: 'VTuber月影ほたるの公式サイト',
         url: 'https://h0taru.me/',

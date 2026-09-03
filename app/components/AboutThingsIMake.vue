@@ -21,7 +21,7 @@ const { data: timOgp } = await useAsyncData('tim-ogp', async () => {
 });
 const timImage = (work: TimWork) => work.image ?? timOgp.value?.[work.url];
 
-const timSoonCount = 3;
+const timSoonCount = 2;
 const timItems = [
   ...works.map((work, index) => ({ type: 'work' as const, work, index })),
   ...Array.from({ length: timSoonCount }, (_, offset) => ({

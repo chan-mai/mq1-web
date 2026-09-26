@@ -67,6 +67,7 @@ onMounted(async () => {
   });
 
   let itlSmooth = 0;
+  let itlVel = 0;
   const itlTick = () => {
     if (!itlPin.value || !itlCanvas.value) return;
     const rect = itlPin.value.getBoundingClientRect();
@@ -100,7 +101,15 @@ onMounted(async () => {
       itlCam.aspect = w / h;
       itlCam.updateProjectionMatrix();
     }
-    itlSmooth += (progress - itlSmooth) * 0.06;
+    itlVel += (progress - itlSmooth) * 0.012;
+    itlVel *= 0.78;
+    const itlNext = itlSmooth + itlVel;
+    if ((progress - itlSmooth) * (progress - itlNext) < 0) {
+      itlSmooth = progress;
+      itlVel = 0;
+    } else {
+      itlSmooth = itlNext;
+    }
     // 終端で最終傘を通過して抜ける移動量
     itlCam.position.z = 24 - itlSmooth * 72;
     itlCam.rotation.z = reduced ? 0 : itlSmooth * 2;

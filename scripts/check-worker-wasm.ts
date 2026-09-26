@@ -19,6 +19,21 @@ const collectFiles = async (dir: string): Promise<string[]> => {
   return files.flat();
 };
 
+// JSグルーとwasm本体のバージョン一致確認
+const VENDORED_WASM = 'server/assets/takumi.wasm';
+const PACKAGE_WASM = 'node_modules/@takumi-rs/wasm/pkg/takumi_wasm_bg.wasm';
+const [vendoredWasm, packageWasm] = await Promise.all([
+  readFile(VENDORED_WASM),
+  readFile(PACKAGE_WASM),
+]);
+if (!vendoredWasm.equals(packageWasm)) {
+  console.error(
+    `[check-worker-wasm] ${VENDORED_WASM} differs from ${PACKAGE_WASM}`,
+  );
+  console.error(`run: cp ${PACKAGE_WASM} ${VENDORED_WASM}`);
+  process.exit(1);
+}
+
 const targetDir = process.argv[2] ?? '.output/server';
 const files = await collectFiles(targetDir);
 const violations: string[] = [];

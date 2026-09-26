@@ -219,10 +219,18 @@ export const useWebConfig = (): ComputedRef<WebConfig> => {
         tags: ['Go'],
       },
       {
-        title: 'cloudnative-misskey',
-        description: 'MisskeyのKubernetes Operator',
-        url: 'https://github.com/chan-mai/cloudnative-misskey',
-        tags: ['Go', 'Kubernetes', 'Operator'],
+        title: 'monoicon',
+        description: '単色アイコン画像ジェネレータ',
+        url: 'https://monoicon.mq1.dev/',
+        tags: [
+          'Nuxt',
+          'GSAP',
+          'Three.js',
+          'Lenis',
+          'Headless UI',
+          'Tailwind CSS',
+          'Cloudflare',
+        ],
       },
       {
         title: 'bucchi.work',

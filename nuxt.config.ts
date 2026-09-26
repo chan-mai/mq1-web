@@ -112,6 +112,12 @@ export default defineNuxtConfig({
     rollupConfig: {
       plugins: [unwasm({ esmImport: isProductionBuild, silent: true })],
     },
+    // BigIntリテラル利用
+    esbuild: {
+      options: {
+        target: 'es2022',
+      },
+    },
     compressPublicAssets: {
       gzip: true,
       brotli: true,
@@ -208,8 +214,31 @@ export default defineNuxtConfig({
     },
   },
   vite: {
-    esbuild: {
-      drop: ['console', 'debugger'],
+    $client: {
+      build: {
+        rollupOptions: {
+          output: {
+            minify: {
+              compress: { dropConsole: true, dropDebugger: true },
+              mangle: true,
+              codegen: true,
+            },
+          },
+        },
+      },
+    },
+    $server: {
+      build: {
+        rollupOptions: {
+          output: {
+            minify: {
+              compress: { dropConsole: true, dropDebugger: true },
+              mangle: false,
+              codegen: { removeWhitespace: false },
+            },
+          },
+        },
+      },
     },
     build: {
       chunkSizeWarningLimit: 1000,

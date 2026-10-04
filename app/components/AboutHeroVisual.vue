@@ -57,12 +57,12 @@ const socials = Object.values(config.value.socials);
 
       <!-- 立ち絵 -->
       <div
-        class="absolute w-full top-0 z-20 -translate-y-[75%] md:-translate-y-2/3 scale-80 md:scale-100 -right-0 md:right-[15%]">
+        class="absolute w-full top-0 z-20 -translate-y-[88%] translate-x-[22%] md:-translate-y-2/3 md:translate-x-0 scale-80 md:scale-100 -right-0 xl:right-[15%]">
         <div
           class="character-glow absolute w-full h-full top-0 right-0 z-40 bg-white/10 blur-3xl rounded-full transform scale-150">
         </div>
         <NuxtImg src="/images/about/mai.png" format="webp" alt="Mai Sudachi" fetchpriority="high"
-          class="object-contain max-h-[800px] relative z-[60] ml-auto character-shadow" loading="eager"
+          class="object-contain max-h-[800px] md:w-[min(70vw,800px)] relative z-[60] ml-auto character-shadow" loading="eager"
           decoding="async" />
       </div>
     </div>

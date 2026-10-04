@@ -137,6 +137,20 @@ export const useWebConfig = (): ComputedRef<WebConfig> => {
         ],
       },
       {
+        title: 'Sonora',
+        description: 'Fediverse向け音声ルーム(通話)サービス',
+        url: 'https://sonora.social/',
+        tags: [
+          'Nuxt',
+          'GSAP',
+          'Three.js',
+          'Tailwind CSS',
+          'TypeScript',
+          'Cloudflare',
+          'WebRTC',
+        ],
+      },
+      {
         title: 'Mewk',
         description: 'Misskeyユーザーのための匿名質問箱',
         url: 'https://mewk.app/',

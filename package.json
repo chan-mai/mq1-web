@@ -61,7 +61,7 @@
     "microcms-js-sdk": "^3.5.1",
     "nanoid": "^6.0.1",
     "nuxt": "^4.5.2",
-    "nuxt-jsonld": "^2.3.0",
+    "nuxt-jsonld": "^3.0.0",
     "oauth4webapi": "^3.8.8",
     "pg": "^8.23.1",
     "three": "^0.186.1",

@@ -232,7 +232,7 @@ export default defineNuxtConfig({
         rollupOptions: {
           output: {
             minify: {
-              compress: { dropConsole: true, dropDebugger: true },
+              compress: false,
               mangle: false,
               codegen: { removeWhitespace: false },
             },

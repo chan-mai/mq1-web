@@ -148,6 +148,7 @@ export const useWebConfig = (): ComputedRef<WebConfig> => {
           'TypeScript',
           'Cloudflare',
           'WebRTC',
+          'Blender',
         ],
       },
       {
@@ -197,6 +198,8 @@ export const useWebConfig = (): ComputedRef<WebConfig> => {
           'Tailwind CSS',
           'TypeScript',
           'Cloudflare',
+          'Blender',
+          'AfterEffects',
         ],
       },
       {
@@ -250,7 +253,6 @@ export const useWebConfig = (): ComputedRef<WebConfig> => {
         title: 'bucchi.work',
         description: 'MIXED MEDIA ARTIST bucchiのWebサイト',
         url: 'https://bucchi.work/',
-        image: '/images/works/bucchi.jpg',
         tags: [
           'Nuxt',
           'GSAP',
@@ -259,6 +261,8 @@ export const useWebConfig = (): ComputedRef<WebConfig> => {
           'Tailwind CSS',
           'TypeScript',
           'Cloudflare',
+          'Blender',
+          'AfterEffects',
         ],
       },
     ],

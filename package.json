@@ -3,8 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "nuxt build",
-    "build:workers": "cross-env NITRO_PRESET=cloudflare-module nuxt build --preset=cloudflare-module",
+    "build": "pnpm sync:takumi-wasm && nuxt build",
+    "build:workers": "pnpm sync:takumi-wasm && cross-env NITRO_PRESET=cloudflare-module nuxt build --preset=cloudflare-module",
+    "sync:takumi-wasm": "node -e \"require('node:fs').copyFileSync('node_modules/@takumi-rs/wasm/pkg/takumi_wasm_bg.wasm', 'server/assets/takumi.wasm')\"",
     "check:worker-wasm": "tsx scripts/check-worker-wasm.ts",
     "dev": "cross-env NUXT_HOST=0.0.0.0 NUXT_PORT=3000 nuxt dev",
     "d1:migrate:local": "pnpm exec wrangler d1 migrations apply mq1-web-prod --local",

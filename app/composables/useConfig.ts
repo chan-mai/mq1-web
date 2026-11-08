@@ -180,6 +180,22 @@ export const useWebConfig = (): ComputedRef<WebConfig> => {
         ],
       },
       {
+        title: 'srmike.blue',
+        description: 'イラストレーター宙風みけのWebサイト',
+        url: 'https://srmike.blue/',
+        tags: [
+          'Nuxt',
+          'GSAP',
+          'Three.js',
+          'Lenis',
+          'microCMS',
+          'Tailwind CSS',
+          'Cloudflare',
+          'AfterEffects',
+          'Blender',
+        ],
+      },
+      {
         title: 'SwayMate',
         description:
           'After Effects用の風揺れスクリプト。既存の揺れ系スクリプトとは異なり、シーンと位置関係を考慮した風を吹かせて揺らすことができます',

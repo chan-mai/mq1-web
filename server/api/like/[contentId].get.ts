@@ -1,25 +1,25 @@
 import { count, eq } from 'drizzle-orm';
+import { likeParamsSchema } from '#shared/schemas/like';
 import { articleLikes } from '~~/server/db/schema';
 import { getD1Drizzle } from '~~/server/utils/d1';
-import { likeParamsSchema } from '#shared/schemas/like';
 
-export default defineEventHandler(async (event) => {
-  const { contentId } = validateParams(event, likeParamsSchema);
-  const userIp = getHeader(event, 'x-forwarded-for');
+export default defineEventHandler(async event => {
+	const { contentId } = validateParams(event, likeParamsSchema);
+	const userIp = getHeader(event, 'x-forwarded-for');
 
-  const db = getD1Drizzle(event);
+	const db = getD1Drizzle(event);
 
-  // likeからcontentIdが一致するものの件数を取得
-  const rows = await db
-    .select({ count: count(articleLikes.id) })
-    .from(articleLikes)
-    .where(eq(articleLikes.contentId, contentId))
-    .limit(1);
-  const likeCount = Number(rows[0]?.count ?? 0);
+	// likeからcontentIdが一致するものの件数を取得
+	const rows = await db
+		.select({ count: count(articleLikes.id) })
+		.from(articleLikes)
+		.where(eq(articleLikes.contentId, contentId))
+		.limit(1);
+	const likeCount = Number(rows[0]?.count ?? 0);
 
-  return {
-    status: 'success',
-    count: likeCount,
-    userIp,
-  };
+	return {
+		status: 'success',
+		count: likeCount,
+		userIp,
+	};
 });

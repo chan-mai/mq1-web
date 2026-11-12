@@ -15,136 +15,118 @@ const BUCKET = 'mq1-web-prod';
 
 const mode = process.argv[2] ?? '--skip-upload';
 if (!['--local', '--remote', '--skip-upload'].includes(mode)) {
-  console.error(`Unknown mode: ${mode}`);
-  process.exit(1);
+	console.error(`Unknown mode: ${mode}`);
+	process.exit(1);
 }
 
 const serviceDomain = process.env.MICROCMS_SERVICE_DOMAIN;
 const apiKey = process.env.MICROCMS_API_KEY;
 if (!serviceDomain || !apiKey) {
-  console.error('MICROCMS_SERVICE_DOMAIN / MICROCMS_API_KEY is not set');
-  process.exit(1);
+	console.error('MICROCMS_SERVICE_DOMAIN / MICROCMS_API_KEY is not set');
+	process.exit(1);
 }
 
 const client = createClient({ serviceDomain, apiKey });
 
 const exportContents = async () => {
-  const [articles, tags, global] = await Promise.all([
-    client.getAllContents<Record<string, unknown>>({ endpoint: 'articles' }),
-    client.getAllContents<Record<string, unknown>>({ endpoint: 'tags' }),
-    client.get<Record<string, unknown>>({
-      endpoint: 'global',
-      queries: { depth: 2 },
-    }),
-  ]);
+	const [articles, tags, global] = await Promise.all([
+		client.getAllContents<Record<string, unknown>>({ endpoint: 'articles' }),
+		client.getAllContents<Record<string, unknown>>({ endpoint: 'tags' }),
+		client.get<Record<string, unknown>>({
+			endpoint: 'global',
+			queries: { depth: 2 },
+		}),
+	]);
 
-  mkdirSync(DATA_DIR, { recursive: true });
-  writeFileSync(
-    resolve(DATA_DIR, 'microcms-articles.json'),
-    JSON.stringify(articles, null, 2),
-  );
-  writeFileSync(
-    resolve(DATA_DIR, 'microcms-tags.json'),
-    JSON.stringify(tags, null, 2),
-  );
-  writeFileSync(
-    resolve(DATA_DIR, 'microcms-global.json'),
-    JSON.stringify(global, null, 2),
-  );
-  console.log(
-    `Exported: articles=${articles.length}, tags=${tags.length}, global=ok`,
-  );
-  return { articles };
+	mkdirSync(DATA_DIR, { recursive: true });
+	writeFileSync(resolve(DATA_DIR, 'microcms-articles.json'), JSON.stringify(articles, null, 2));
+	writeFileSync(resolve(DATA_DIR, 'microcms-tags.json'), JSON.stringify(tags, null, 2));
+	writeFileSync(resolve(DATA_DIR, 'microcms-global.json'), JSON.stringify(global, null, 2));
+	console.log(`Exported: articles=${articles.length}, tags=${tags.length}, global=ok`);
+	return { articles };
 };
 
 const collectImageUrls = (articles: Record<string, unknown>[]) => {
-  const urls = new Set<string>();
-  for (const article of articles) {
-    const html = String(article.content ?? '');
-    for (const match of html.matchAll(/<img[^>]*src="([^"]+)"/g)) {
-      urls.add(match[1]!);
-    }
-    const eyecatch = article.eyecatch as { url?: string } | undefined;
-    if (eyecatch?.url) urls.add(eyecatch.url);
-  }
-  return [...urls].filter((url) =>
-    url.startsWith('https://images.microcms-assets.io/'),
-  );
+	const urls = new Set<string>();
+	for (const article of articles) {
+		const html = String(article.content ?? '');
+		for (const match of html.matchAll(/<img[^>]*src="([^"]+)"/g)) {
+			urls.add(match[1]!);
+		}
+		const eyecatch = article.eyecatch as { url?: string } | undefined;
+		if (eyecatch?.url) urls.add(eyecatch.url);
+	}
+	return [...urls].filter(url => url.startsWith('https://images.microcms-assets.io/'));
 };
 
 const keyForUrl = (url: string) => {
-  const hash = createHash('md5').update(url).digest('hex');
-  const extension =
-    new URL(url).pathname.split('.').pop()?.toLowerCase() ?? 'bin';
-  return `${hash}.${extension}`;
+	const hash = createHash('md5').update(url).digest('hex');
+	const extension = new URL(url).pathname.split('.').pop()?.toLowerCase() ?? 'bin';
+	return `${hash}.${extension}`;
 };
 
 const contentTypeForExtension = (extension: string) =>
-  ({
-    jpg: 'image/jpeg',
-    jpeg: 'image/jpeg',
-    png: 'image/png',
-    gif: 'image/gif',
-    webp: 'image/webp',
-    avif: 'image/avif',
-  })[extension] ?? 'application/octet-stream';
+	({
+		jpg: 'image/jpeg',
+		jpeg: 'image/jpeg',
+		png: 'image/png',
+		gif: 'image/gif',
+		webp: 'image/webp',
+		avif: 'image/avif',
+	})[extension] ?? 'application/octet-stream';
 
 const main = async () => {
-  const { articles } = await exportContents();
-  const urls = collectImageUrls(articles);
-  console.log(`Found ${urls.length} image urls`);
+	const { articles } = await exportContents();
+	const urls = collectImageUrls(articles);
+	console.log(`Found ${urls.length} image urls`);
 
-  mkdirSync(IMAGE_DIR, { recursive: true });
-  const imageMap: Record<string, string> = existsSync(IMAGE_MAP_PATH)
-    ? JSON.parse(readFileSync(IMAGE_MAP_PATH, 'utf8'))
-    : {};
+	mkdirSync(IMAGE_DIR, { recursive: true });
+	const imageMap: Record<string, string> = existsSync(IMAGE_MAP_PATH) ? JSON.parse(readFileSync(IMAGE_MAP_PATH, 'utf8')) : {};
 
-  for (const url of urls) {
-    const key = keyForUrl(url);
-    imageMap[url] = key;
-    const filePath = resolve(IMAGE_DIR, key);
+	for (const url of urls) {
+		const key = keyForUrl(url);
+		imageMap[url] = key;
+		const filePath = resolve(IMAGE_DIR, key);
 
-    if (!existsSync(filePath)) {
-      const response = await fetch(url);
-      if (!response.ok) {
-        console.error(`Download failed (${response.status}): ${url}`);
-        process.exitCode = 1;
-        continue;
-      }
-      writeFileSync(filePath, Buffer.from(await response.arrayBuffer()));
-      console.log(`Downloaded: ${key}`);
-    }
+		if (!existsSync(filePath)) {
+			const response = await fetch(url);
+			if (!response.ok) {
+				console.error(`Download failed (${response.status}): ${url}`);
+				process.exitCode = 1;
+				continue;
+			}
+			writeFileSync(filePath, Buffer.from(await response.arrayBuffer()));
+			console.log(`Downloaded: ${key}`);
+		}
 
-    if (mode !== '--skip-upload') {
-      const extension = key.split('.').pop()!;
-      execFileSync(
-        'pnpm',
-        [
-          'exec',
-          'wrangler',
-          'r2',
-          'object',
-          'put',
-          `${BUCKET}/${key}`,
-          '--file',
-          filePath,
-          '--content-type',
-          contentTypeForExtension(extension),
-          mode === '--local' ? '--local' : '--remote',
-        ],
-        { stdio: 'pipe' },
-      );
-      console.log(`Uploaded (${mode}): ${key}`);
-    }
-  }
+		if (mode !== '--skip-upload') {
+			const extension = key.split('.').pop()!;
+			execFileSync(
+				'pnpm',
+				[
+					'exec',
+					'wrangler',
+					'r2',
+					'object',
+					'put',
+					`${BUCKET}/${key}`,
+					'--file',
+					filePath,
+					'--content-type',
+					contentTypeForExtension(extension),
+					mode === '--local' ? '--local' : '--remote',
+				],
+				{ stdio: 'pipe' },
+			);
+			console.log(`Uploaded (${mode}): ${key}`);
+		}
+	}
 
-  writeFileSync(IMAGE_MAP_PATH, JSON.stringify(imageMap, null, 2));
-  console.log(
-    `Wrote ${IMAGE_MAP_PATH} (${Object.keys(imageMap).length} entries)`,
-  );
+	writeFileSync(IMAGE_MAP_PATH, JSON.stringify(imageMap, null, 2));
+	console.log(`Wrote ${IMAGE_MAP_PATH} (${Object.keys(imageMap).length} entries)`);
 };
 
-main().catch((error) => {
-  console.error(error);
-  process.exit(1);
+main().catch(error => {
+	console.error(error);
+	process.exit(1);
 });

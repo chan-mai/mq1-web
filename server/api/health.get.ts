@@ -1,6 +1,6 @@
 export default defineEventHandler(async () => {
-  return {
-    status: 'ok',
-    time: new Date().toISOString(),
-  };
+	return {
+		status: 'ok',
+		time: new Date().toISOString(),
+	};
 });

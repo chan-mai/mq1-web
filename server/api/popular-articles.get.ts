@@ -1,72 +1,69 @@
 import { desc, sql } from 'drizzle-orm';
+import { popularArticlesQuerySchema } from '#shared/schemas/search';
 import { articleLikes } from '~~/server/db/schema';
 import { queryPublishedArticles } from '~~/server/utils/article';
 import { getD1Drizzle } from '~~/server/utils/d1';
-import { popularArticlesQuerySchema } from '#shared/schemas/search';
 
-export default defineEventHandler(async (event) => {
-  const { excludeId } = validateQuery(event, popularArticlesQuerySchema);
+export default defineEventHandler(async event => {
+	const { excludeId } = validateQuery(event, popularArticlesQuerySchema);
 
-  const limit = 5;
-  // 人気記事ID取得
-  const db = getD1Drizzle(event);
-  const likeCountExpr = sql<number>`count(*)`;
-  const topArticles = await db
-    .select({
-      contentId: articleLikes.contentId,
-      likeCount: likeCountExpr,
-    })
-    .from(articleLikes)
-    .where(sql`${articleLikes.createdAt} >= datetime('now', '-30 days')`)
-    .groupBy(articleLikes.contentId)
-    .orderBy(desc(likeCountExpr))
-    .limit(limit);
+	const limit = 5;
+	// 人気記事ID取得
+	const db = getD1Drizzle(event);
+	const likeCountExpr = sql<number>`count(*)`;
+	const topArticles = await db
+		.select({
+			contentId: articleLikes.contentId,
+			likeCount: likeCountExpr,
+		})
+		.from(articleLikes)
+		.where(sql`${articleLikes.createdAt} >= datetime('now', '-30 days')`)
+		.groupBy(articleLikes.contentId)
+		.orderBy(desc(likeCountExpr))
+		.limit(limit);
 
-  let articles: (Article & { likeCount: number })[] = [];
+	let articles: (Article & { likeCount: number })[] = [];
 
-  // 記事取得
-  if (topArticles.length > 0) {
-    const ids = topArticles.map((t) => t.contentId);
-    const response = await queryPublishedArticles(event, { ids });
+	// 記事取得
+	if (topArticles.length > 0) {
+		const ids = topArticles.map(t => t.contentId);
+		const response = await queryPublishedArticles(event, { ids });
 
-    // ID順(人気順)に並べ替え & いいね数結合
-    articles = ids
-      .map((id) => {
-        const article = response.contents.find((c) => c.id === id);
-        if (!article) return null;
-        const meta = topArticles.find((p) => p.contentId === id);
-        return {
-          ...article,
-          likeCount: Number(meta?.likeCount || 0),
-        };
-      })
-      .filter((item): item is Article & { likeCount: number } => item !== null);
-  }
+		// ID順(人気順)に並べ替え & いいね数結合
+		articles = ids
+			.map(id => {
+				const article = response.contents.find(c => c.id === id);
+				if (!article) return null;
+				const meta = topArticles.find(p => p.contentId === id);
+				return {
+					...article,
+					likeCount: Number(meta?.likeCount || 0),
+				};
+			})
+			.filter((item): item is Article & { likeCount: number } => item !== null);
+	}
 
-  // 不足分を最新記事で埋める (ターゲット数: 3 + 除外分余裕)
-  // 実際に返すのは3件だが、除外IDが上位に含まれる可能性があるため多めに確保
-  const targetCount = 3;
-  if (articles.length < targetCount + 1) {
-    const currentIds = articles.map((a) => a.id);
-    if (excludeId && !currentIds.includes(excludeId))
-      currentIds.push(excludeId);
+	// 不足分を最新記事で埋める (ターゲット数: 3 + 除外分余裕)
+	// 実際に返すのは3件だが、除外IDが上位に含まれる可能性があるため多めに確保
+	const targetCount = 3;
+	if (articles.length < targetCount + 1) {
+		const currentIds = articles.map(a => a.id);
+		if (excludeId && !currentIds.includes(excludeId)) currentIds.push(excludeId);
 
-    const fallback = await queryPublishedArticles(event, { limit: 5 });
+		const fallback = await queryPublishedArticles(event, { limit: 5 });
 
-    const fillers = fallback.contents
-      .filter((a) => !currentIds.includes(a.id))
-      .map((a) => ({ ...a, likeCount: 0 }));
+		const fillers = fallback.contents.filter(a => !currentIds.includes(a.id)).map(a => ({ ...a, likeCount: 0 }));
 
-    articles = [...articles, ...fillers];
-  }
+		articles = [...articles, ...fillers];
+	}
 
-  // 除外IDをフィルタリング
-  if (excludeId) {
-    articles = articles.filter((a) => a.id !== excludeId);
-  }
+	// 除外IDをフィルタリング
+	if (excludeId) {
+		articles = articles.filter(a => a.id !== excludeId);
+	}
 
-  return {
-    status: 'success',
-    articles: articles.slice(0, 3),
-  };
+	return {
+		status: 'success',
+		articles: articles.slice(0, 3),
+	};
 });

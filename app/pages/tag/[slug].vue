@@ -1,6 +1,6 @@
 <script setup lang="ts">
 definePageMeta({
-  middleware: ['tag-compatibility-redirect'],
+	middleware: ['tag-compatibility-redirect'],
 });
 
 const route = useRoute();
@@ -10,43 +10,40 @@ const limit = 12;
 // APIのoffset上限(100000)内へクランプ
 const maxPage = Math.floor(100000 / limit) + 1;
 const page = computed(() => {
-  const parsed = Math.floor(Number(route.query.page) || 1);
-  return Math.min(Math.max(parsed, 1), maxPage);
+	const parsed = Math.floor(Number(route.query.page) || 1);
+	return Math.min(Math.max(parsed, 1), maxPage);
 });
 
 // slugからtagを取得
-const { data: tagResponse, error: tagError } = await useFetch(
-  `/api/tags/${slug}`,
-  { key: `tag-${slug}` },
-);
+const { data: tagResponse, error: tagError } = await useFetch(`/api/tags/${slug}`, { key: `tag-${slug}` });
 
 // タグが存在しない場合は404エラーを投げる
 if (tagError.value || !tagResponse.value) {
-  throw createError({
-    statusCode: 404,
-    statusMessage: `Tag not found: ${slug}`,
-    fatal: true,
-  });
+	throw createError({
+		statusCode: 404,
+		statusMessage: `Tag not found: ${slug}`,
+		fatal: true,
+	});
 }
 
 const currentTag = tagResponse.value;
 const tag: Ref<Tag | null> = ref(currentTag);
 
 const { data: articlesResponse, status } = await useFetch('/api/articles', {
-  key: () => `tag-${slug}-articles-${page.value}`,
-  query: computed(() => ({
-    limit,
-    offset: (page.value - 1) * limit,
-    tag: currentTag.id,
-  })),
+	key: () => `tag-${slug}-articles-${page.value}`,
+	query: computed(() => ({
+		limit,
+		offset: (page.value - 1) * limit,
+		tag: currentTag.id,
+	})),
 });
 
 const articles = computed(() => articlesResponse.value?.contents ?? []);
 const totalCount = computed(() => articlesResponse.value?.totalCount ?? 0);
 
 const onPageChange = (newPage: number) => {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-  router.push({ query: { ...route.query, page: newPage } });
+	window.scrollTo({ top: 0, behavior: 'smooth' });
+	router.push({ query: { ...route.query, page: newPage } });
 };
 
 // スクロール出現演出
@@ -60,89 +57,88 @@ const ogImageUrl = useTagOgGenerator(currentTag.id);
 const pageUrl = `${config.value.siteUrl}tag/${currentTag.slug}`;
 
 useHead({
-  title: pageTitle,
-  meta: [
-    { property: 'og:title', content: pageTitle },
-    { property: 'og:description', content: pageDescription },
-    { property: 'og:image', content: ogImageUrl },
-    { property: 'og:type', content: 'website' },
-    { property: 'og:url', content: pageUrl },
-    { property: 'og:site_name', content: config.value.siteName },
-    { name: 'twitter:card', content: 'summary_large_image' },
-    { name: 'twitter:title', content: pageTitle },
-    { name: 'twitter:description', content: pageDescription },
-    { name: 'twitter:image', content: ogImageUrl },
-    { name: 'description', content: pageDescription },
-  ],
+	title: pageTitle,
+	meta: [
+		{ property: 'og:title', content: pageTitle },
+		{ property: 'og:description', content: pageDescription },
+		{ property: 'og:image', content: ogImageUrl },
+		{ property: 'og:type', content: 'website' },
+		{ property: 'og:url', content: pageUrl },
+		{ property: 'og:site_name', content: config.value.siteName },
+		{ name: 'twitter:card', content: 'summary_large_image' },
+		{ name: 'twitter:title', content: pageTitle },
+		{ name: 'twitter:description', content: pageDescription },
+		{ name: 'twitter:image', content: ogImageUrl },
+		{ name: 'description', content: pageDescription },
+	],
 });
 
 // 構造化データ (JSON-LD)
 useJsonld({
-  '@context': 'https://schema.org',
-  '@type': 'Blog',
-  name: config.value.siteName,
-  description: pageDescription,
-  url: pageUrl,
-  author: {
-    '@type': 'Person',
-    name: config.value.author.name,
-    url: pageUrl,
-  },
-  blogPost:
-    articles.value?.map((article: Article) => ({
-      '@type': 'BlogPosting',
-      headline: article.title,
-      url: `${config.value.siteUrl}entry/${article.id}`,
-      datePublished: article.publishedAt
-        ? new Date(article.publishedAt).toISOString()
-        : undefined,
-      image: article.eyecatch?.url || config.value.baseOgpUrl,
-      author: {
-        '@type': 'Person',
-        name: config.value.author.name,
-        url: pageUrl,
-      },
-    })) || [],
+	'@context': 'https://schema.org',
+	'@type': 'Blog',
+	name: config.value.siteName,
+	description: pageDescription,
+	url: pageUrl,
+	author: {
+		'@type': 'Person',
+		name: config.value.author.name,
+		url: pageUrl,
+	},
+	blogPost:
+		articles.value?.map((article: Article) => ({
+			'@type': 'BlogPosting',
+			headline: article.title,
+			url: `${config.value.siteUrl}entry/${article.id}`,
+			datePublished: article.publishedAt ? new Date(article.publishedAt).toISOString() : undefined,
+			image: article.eyecatch?.url || config.value.baseOgpUrl,
+			author: {
+				'@type': 'Person',
+				name: config.value.author.name,
+				url: pageUrl,
+			},
+		})) || [],
 });
 </script>
 <template>
-  <main ref="pageRoot" class="min-h-screen pt-[120px] md:pt-[160px] px-6">
-    <!-- 直近記事 -->
-    <section class="mx-auto flex w-full max-w-6xl flex-col gap-10 px-2 md:px-6">
-      <div class="flex items-center justify-between">
-        <div class="w-full">
-          <MqPageBack class="mb-3" />
-          <div class="flex items-center justify-between">
-            <h2 data-fill-in class="font-accent w-fit text-3xl text-fg md:text-4xl"
-              :style="`view-transition-name: tag-${slug};`">
-              <span>
-                <span class="highlight-with-image-2">#{{ tag?.name }}</span>
-                の記事一覧
-              </span>
-            </h2>
+	<main ref="pageRoot" class="min-h-screen pt-[120px] md:pt-[160px] px-6">
+		<!-- 直近記事 -->
+		<section class="mx-auto flex w-full max-w-6xl flex-col gap-10 px-2 md:px-6">
+			<div class="flex items-center justify-between">
+				<div class="w-full">
+					<MqPageBack class="mb-3" />
+					<div class="flex items-center justify-between">
+						<h2 data-fill-in class="font-accent w-fit text-3xl text-fg md:text-4xl" :style="`view-transition-name: tag-${slug};`">
+							<span>
+								<span class="highlight-with-image-2">#{{ tag?.name }}</span>
+								の記事一覧
+							</span>
+						</h2>
 
-            <span data-fade-in class="text-fg-muted text-sm">全{{ totalCount }}記事</span>
-          </div>
-        </div>
-      </div>
-      <div class="flex flex-col gap-8">
-        <MqLoading v-if="status === 'pending'" />
-        <template v-else>
-          <div v-if="articles?.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10">
-            <ArticlesCard v-for="(article, i) in articles" :key="article.id" :article="article" data-fade-in
-              :data-fade-delay="(i % 3) * 0.08" />
-          </div>
-          <div v-else class="flex flex-col items-center justify-center gap-4 py-16">
-            <p class="text-lg font-bold text-accent">
-              記事が見つかりませんでした。
-            </p>
-            <p class="text-sm text-fg-muted">他のタグを試してみてください。</p>
-          </div>
+						<span data-fade-in class="text-fg-muted text-sm">全{{ totalCount }}記事</span>
+					</div>
+				</div>
+			</div>
+			<div class="flex flex-col gap-8">
+				<MqLoading v-if="status === 'pending'" />
+				<template v-else>
+					<div v-if="articles?.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10">
+						<ArticlesCard
+							v-for="(article, i) in articles"
+							:key="article.id"
+							:article="article"
+							data-fade-in
+							:data-fade-delay="(i % 3) * 0.08"
+						/>
+					</div>
+					<div v-else class="flex flex-col items-center justify-center gap-4 py-16">
+						<p class="text-lg font-bold text-accent">記事が見つかりませんでした。</p>
+						<p class="text-sm text-fg-muted">他のタグを試してみてください。</p>
+					</div>
 
-          <MqPagination v-if="totalCount > limit" :total-count="totalCount" :current-page="page" :limit="limit"
-            @change="onPageChange" />
-        </template>
-      </div>
-    </section>
-  </main>
+					<MqPagination v-if="totalCount > limit" :total-count="totalCount" :current-page="page" :limit="limit" @change="onPageChange" />
+				</template>
+			</div>
+		</section>
+	</main>
 </template>

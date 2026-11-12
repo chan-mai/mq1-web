@@ -6,32 +6,25 @@ const FORBIDDEN_PATTERN = /new\s+WebAssembly\.Module\s*\(/;
 const TARGET_EXTENSIONS = ['.mjs', '.js'];
 
 const collectFiles = async (dir: string): Promise<string[]> => {
-  const entries = await readdir(dir, { withFileTypes: true });
-  const files = await Promise.all(
-    entries.map((entry) => {
-      const path = join(dir, entry.name);
-      if (entry.isDirectory()) return collectFiles(path);
-      return Promise.resolve(
-        TARGET_EXTENSIONS.some((ext) => entry.name.endsWith(ext)) ? [path] : [],
-      );
-    }),
-  );
-  return files.flat();
+	const entries = await readdir(dir, { withFileTypes: true });
+	const files = await Promise.all(
+		entries.map(entry => {
+			const path = join(dir, entry.name);
+			if (entry.isDirectory()) return collectFiles(path);
+			return Promise.resolve(TARGET_EXTENSIONS.some(ext => entry.name.endsWith(ext)) ? [path] : []);
+		}),
+	);
+	return files.flat();
 };
 
 // JSグルーとwasm本体のバージョン一致確認
 const VENDORED_WASM = 'server/assets/takumi.wasm';
 const PACKAGE_WASM = 'node_modules/@takumi-rs/wasm/pkg/takumi_wasm_bg.wasm';
-const [vendoredWasm, packageWasm] = await Promise.all([
-  readFile(VENDORED_WASM),
-  readFile(PACKAGE_WASM),
-]);
+const [vendoredWasm, packageWasm] = await Promise.all([readFile(VENDORED_WASM), readFile(PACKAGE_WASM)]);
 if (!vendoredWasm.equals(packageWasm)) {
-  console.error(
-    `[check-worker-wasm] ${VENDORED_WASM} differs from ${PACKAGE_WASM}`,
-  );
-  console.error(`run: cp ${PACKAGE_WASM} ${VENDORED_WASM}`);
-  process.exit(1);
+	console.error(`[check-worker-wasm] ${VENDORED_WASM} differs from ${PACKAGE_WASM}`);
+	console.error(`run: cp ${PACKAGE_WASM} ${VENDORED_WASM}`);
+	process.exit(1);
 }
 
 const targetDir = process.argv[2] ?? '.output/server';
@@ -39,22 +32,20 @@ const files = await collectFiles(targetDir);
 const violations: string[] = [];
 
 for (const file of files) {
-  const content = await readFile(file, 'utf8');
-  content.split('\n').forEach((line, index) => {
-    if (FORBIDDEN_PATTERN.test(line)) {
-      violations.push(`${file}:${index + 1}: ${line.trim().slice(0, 120)}`);
-    }
-  });
+	const content = await readFile(file, 'utf8');
+	content.split('\n').forEach((line, index) => {
+		if (FORBIDDEN_PATTERN.test(line)) {
+			violations.push(`${file}:${index + 1}: ${line.trim().slice(0, 120)}`);
+		}
+	});
 }
 
 if (violations.length > 0) {
-  console.error(
-    `[check-worker-wasm] forbidden wasm compile detected (${violations.length})`,
-  );
-  for (const violation of violations) {
-    console.error(violation);
-  }
-  process.exit(1);
+	console.error(`[check-worker-wasm] forbidden wasm compile detected (${violations.length})`);
+	for (const violation of violations) {
+		console.error(violation);
+	}
+	process.exit(1);
 }
 
 console.log(`[check-worker-wasm] ok (${files.length} files scanned)`);

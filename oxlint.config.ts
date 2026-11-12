@@ -6,6 +6,14 @@ export default defineOxlintConfig({
 		vitest: true,
 	},
 	overrides: {
-		ignorePatterns: ['**/dist/**', '.nuxt/**', '.output/**', '**/generated/**', '.wrangler/**', '.pnpm-store/**', 'scripts/migration-data/**'],
+		ignorePatterns: [
+			'**/dist/**',
+			'.nuxt/**',
+			'.output/**',
+			'**/generated/**',
+			'.wrangler/**',
+			'.pnpm-store/**',
+			'scripts/migration-data/**',
+		],
 	},
 });

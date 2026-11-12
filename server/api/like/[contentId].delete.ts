@@ -15,7 +15,7 @@ export default defineEventHandler(async event => {
 				.clone()
 				.json()
 				.catch(() => ({}))
-		: (await readBody(event)) || {};
+		: ((await readBody(event)) ?? {});
 	const { id, secret } = parseOrThrow(likeDeleteBodySchema, rawBody);
 
 	const db = getD1Drizzle(event);

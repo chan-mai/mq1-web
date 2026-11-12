@@ -14,7 +14,7 @@ export const LinkCardPaste = Extension.create({
 				key: new PluginKey('linkCardPaste'),
 				props: {
 					handlePaste: (view, event) => {
-						const text = event.clipboardData?.getData('text/plain')?.trim();
+						const text = event.clipboardData?.getData('text/plain').trim();
 						if (!text || !URL_ONLY_PATTERN.test(text)) return false;
 
 						const { state } = view;

@@ -8,7 +8,7 @@ import { getD1Drizzle } from '~~/server/utils/d1';
 export default defineEventHandler(async event => {
 	const body = await validateBody(event, createArticleBodySchema);
 
-	const id = body?.id || nanoid(12);
+	const id = body?.id?.length ? body.id : nanoid(12);
 
 	const db = getD1Drizzle(event);
 

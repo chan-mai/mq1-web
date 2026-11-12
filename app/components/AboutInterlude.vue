@@ -7,7 +7,8 @@ const itlTypo = ref<HTMLElement | null>(null);
 let itlCleanup: (() => void) | undefined;
 
 onMounted(async () => {
-	if (!itlPin.value || !itlCanvas.value) return;
+	const canvas = itlCanvas.value;
+	if (!itlPin.value || !canvas) return;
 	const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 	let rafId = 0;
 
@@ -15,7 +16,7 @@ onMounted(async () => {
 	const THREE = await import('three');
 	const { GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js');
 	const itlRenderer = new THREE.WebGLRenderer({
-		canvas: itlCanvas.value!,
+		canvas,
 		alpha: true,
 		antialias: true,
 	});

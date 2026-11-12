@@ -5,7 +5,7 @@ import type { D1Database } from '@cloudflare/workers-types';
 import type { H3Event } from 'h3';
 
 export const getD1Database = (event: H3Event) => {
-	const db = event?.context?.cloudflare?.env?.DB as D1Database | undefined;
+	const db = (event.context as { cloudflare?: { env?: Record<string, unknown> } }).cloudflare?.env?.DB as D1Database | undefined;
 	if (!db) {
 		throw createError({
 			statusCode: 500,

@@ -37,7 +37,7 @@ export default defineEventHandler(async event => {
 				const meta = topArticles.find(p => p.contentId === id);
 				return {
 					...article,
-					likeCount: Number(meta?.likeCount || 0),
+					likeCount: Number(meta?.likeCount ?? 0),
 				};
 			})
 			.filter((item): item is Article & { likeCount: number } => item !== null);

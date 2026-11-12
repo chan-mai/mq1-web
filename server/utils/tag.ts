@@ -60,6 +60,6 @@ export const listTagsWithCount = async (event: H3Event): Promise<Tag[]> => {
 		id: row.id,
 		name: row.name,
 		slug: row.slug,
-		count: Number(row.count ?? 0),
+		count: Number(row.count),
 	}));
 };

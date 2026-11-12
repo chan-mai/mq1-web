@@ -6,25 +6,28 @@ import { getD1Drizzle } from '~~/server/utils/d1';
 import type { H3Event } from 'h3';
 import type { ArticleRow, TagRow } from '~~/server/utils/admin-article';
 
-export const serializePublicArticle = (row: ArticleRow, tagRows: TagRow[]): Article => ({
-	id: row.id,
-	title: row.title,
-	content: parseTiptapDoc(row.content) ?? emptyTiptapDoc(),
-	summary: row.summary ?? '',
-	charCount: row.charCount,
-	eyecatch: row.eyecatchKey
-		? {
-				url: eyecatchUrlFromKey(row.eyecatchKey)!,
-				width: row.eyecatchWidth,
-				height: row.eyecatchHeight,
-			}
-		: null,
-	tags: tagRows.map(tag => ({ id: tag.id, name: tag.name, slug: tag.slug })),
-	is_no_index: row.isNoIndex,
-	publishedAt: row.publishedAt ?? row.createdAt,
-	createdAt: row.createdAt,
-	updatedAt: row.updatedAt,
-});
+export const serializePublicArticle = (row: ArticleRow, tagRows: TagRow[]): Article => {
+	const eyecatchUrl = eyecatchUrlFromKey(row.eyecatchKey);
+	return {
+		id: row.id,
+		title: row.title,
+		content: parseTiptapDoc(row.content) ?? emptyTiptapDoc(),
+		summary: row.summary ?? '',
+		charCount: row.charCount,
+		eyecatch: eyecatchUrl
+			? {
+					url: eyecatchUrl,
+					width: row.eyecatchWidth,
+					height: row.eyecatchHeight,
+				}
+			: null,
+		tags: tagRows.map(tag => ({ id: tag.id, name: tag.name, slug: tag.slug })),
+		is_no_index: row.isNoIndex,
+		publishedAt: row.publishedAt ?? row.createdAt,
+		createdAt: row.createdAt,
+		updatedAt: row.updatedAt,
+	};
+};
 
 const withTags = async (db: ReturnType<typeof getD1Drizzle>, rows: ArticleRow[]) => {
 	const tagMap = await fetchTagsForArticles(

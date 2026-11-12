@@ -7,7 +7,8 @@ export function useRevealAnimations(scope: Ref<HTMLElement | null>) {
 	let removeBands: (() => void) | undefined;
 
 	onMounted(async () => {
-		if (!scope.value) return;
+		const root = scope.value;
+		if (!root) return;
 		if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 		const { gsap } = await import('gsap');
 		const { ScrollTrigger } = await import('gsap/ScrollTrigger');
@@ -16,7 +17,6 @@ export function useRevealAnimations(scope: Ref<HTMLElement | null>) {
 		CustomEase.create('sweep', 'M0,0 C0.77,0 0.18,1 1,1');
 		const bands: HTMLElement[] = [];
 		ctx = gsap.context(() => {
-			const root = scope.value!;
 			// 初期表示範囲内は文書位置順の時差で発火
 			const orderDelay = (target: HTMLElement) => {
 				const top = target.getBoundingClientRect().top;
@@ -61,7 +61,7 @@ export function useRevealAnimations(scope: Ref<HTMLElement | null>) {
 					scrollTrigger: { trigger: target, start: 'top 90%', once: true },
 				});
 			});
-		}, scope.value);
+		}, root);
 		removeBands = () => bands.forEach(band => band.remove());
 	});
 

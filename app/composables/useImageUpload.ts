@@ -21,7 +21,9 @@ const reencodeJpeg = async (file: File) => {
 	const canvas = document.createElement('canvas');
 	canvas.width = bitmap.width;
 	canvas.height = bitmap.height;
-	canvas.getContext('2d')!.drawImage(bitmap, 0, 0);
+	const context = canvas.getContext('2d');
+	if (!context) throw new Error('Canvas 2D context unavailable');
+	context.drawImage(bitmap, 0, 0);
 	bitmap.close();
 
 	const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.92));

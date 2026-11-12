@@ -24,7 +24,10 @@ export default defineEventHandler(async event => {
 		returnTo: sanitizeReturnTo(getQuery(event).returnTo),
 	});
 
-	const authorizationUrl = new URL(authorizationServer.authorization_endpoint!);
+	if (!authorizationServer.authorization_endpoint) {
+		throw createError({ statusCode: 500, statusMessage: 'Authorization endpoint missing' });
+	}
+	const authorizationUrl = new URL(authorizationServer.authorization_endpoint);
 	authorizationUrl.searchParams.set('client_id', client.client_id);
 	authorizationUrl.searchParams.set('response_type', 'code');
 	authorizationUrl.searchParams.set('redirect_uri', getRedirectUri(event));

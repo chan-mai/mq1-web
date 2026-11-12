@@ -124,7 +124,8 @@ const extractSearchOptions = (text: string): { remainingText: string; extractedP
 	const regex = /(tag|since|until):([^\s]+)/g;
 
 	// 破壊的にマッチしたものを収集
-	remaining = remaining.replace(regex, (substring, type, value) => {
+	remaining = remaining.replace(regex, (substring, type, rawValue) => {
+		let value = rawValue;
 		if (type === 'since' || type === 'until') {
 			// 月日を2桁に揃える
 			value = value.replace(/\b\d{1}\b/g, (n: string) => {

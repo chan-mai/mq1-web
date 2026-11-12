@@ -264,7 +264,7 @@ export default defineEventHandler(async (event): Promise<LinkPreviewResponse> =>
 				if (target.hostname.includes('youtu.be')) {
 					embedId = pathname.slice(1);
 				} else {
-					embedId = target.searchParams.get('v') || undefined;
+					embedId = target.searchParams.get('v') ?? undefined;
 				}
 				if (embedId) {
 					type = 'YOUTUBE';

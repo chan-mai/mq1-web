@@ -15,14 +15,12 @@ const TITLE_WIDTH = 1100;
 let renderer: Promise<Renderer> | undefined;
 
 const getRenderer = (): Promise<Renderer> => {
-	if (!renderer) {
-		renderer = initTakumi({ module_or_path: wasmModule })
-			.then(() => new Renderer())
-			.catch((error: unknown) => {
-				renderer = undefined;
-				throw error;
-			});
-	}
+	renderer ??= initTakumi({ module_or_path: wasmModule })
+		.then(() => new Renderer())
+		.catch((error: unknown) => {
+			renderer = undefined;
+			throw error;
+		});
 	return renderer;
 };
 

@@ -1,4 +1,5 @@
 import { diffArrays } from 'diff';
+import { attrText } from '#shared/utils/tiptap-text';
 
 // 文字+装飾を単位とするリビジョン差分のHTML生成
 // トークン形式: C{marks}SEP{char} / B{tag}SEP{class}SEP{prefix} / A{html} / R(改行)
@@ -9,7 +10,7 @@ const escapeHtml = (value: string) =>
 
 const markSignature = (marks?: TiptapMark[]) =>
 	(marks ?? [])
-		.map(mark => (mark.type === 'link' ? `link:${String(mark.attrs?.href ?? '')}` : mark.type))
+		.map(mark => (mark.type === 'link' ? `link:${attrText(mark.attrs?.href)}` : mark.type))
 		.sort()
 		.join(',');
 
@@ -77,19 +78,20 @@ const tokenizeBlocks = (tokens: string[], nodes: TiptapNode[] | undefined, conte
 				tokenizeBlocks(tokens, node.content, { ...context, quote: true });
 				break;
 			case 'codeBlock': {
-				const filename = node.attrs?.filename ? `${String(node.attrs.filename)}\n` : '';
-				pushBlock(tokens, 'pre', '', filename);
+				const filename = attrText(node.attrs?.filename);
+				pushBlock(tokens, 'pre', '', filename ? `${filename}\n` : '');
 				pushChars(tokens, (node.content ?? []).map(child => child.text ?? '').join(''), 'cb');
 				break;
 			}
 			case 'image': {
-				const src = escapeHtml(String(node.attrs?.src ?? ''));
-				const caption = node.attrs?.caption ? `<span class="diff-caption">${escapeHtml(String(node.attrs.caption))}</span>` : '';
-				tokens.push(`A<img src="${src}" alt="" class="diff-img">${caption}`);
+				const src = escapeHtml(attrText(node.attrs?.src));
+				const caption = attrText(node.attrs?.caption);
+				const captionHtml = caption ? `<span class="diff-caption">${escapeHtml(caption)}</span>` : '';
+				tokens.push(`A<img src="${src}" alt="" class="diff-img">${captionHtml}`);
 				break;
 			}
 			case 'linkCard':
-				tokens.push(`A<div class="diff-card">${escapeHtml(String(node.attrs?.url ?? ''))}</div>`);
+				tokens.push(`A<div class="diff-card">${escapeHtml(attrText(node.attrs?.url))}</div>`);
 				break;
 			case 'horizontalRule':
 				tokens.push('A<hr>');

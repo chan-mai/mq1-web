@@ -61,3 +61,6 @@ export const emptyTiptapDoc = (): TiptapDoc => ({
 	type: 'doc',
 	content: [],
 });
+
+// 文字列以外は空文字扱い
+export const attrText = (value: unknown): string => (typeof value === 'string' ? value : '');

@@ -26,8 +26,8 @@ const diagramId = `${useId().replaceAll(':', '-')}-i${++instanceCounter}`;
 let renderVersion = 0;
 let mermaidPromise: Promise<(typeof import('mermaid'))['default']> | null = null;
 
-const getThemeVariables = () => {
-	const styles = getComputedStyle(diagram.value!);
+const getThemeVariables = (element: HTMLElement) => {
+	const styles = getComputedStyle(element);
 	const color = (name: string) => styles.getPropertyValue(`--mermaid-${name}`).trim();
 
 	return {
@@ -67,7 +67,8 @@ const getThemeVariables = () => {
 };
 
 const renderDiagram = async () => {
-	if (!import.meta.client || !diagram.value) return;
+	const element = diagram.value;
+	if (!import.meta.client || !element) return;
 
 	const currentVersion = ++renderVersion;
 	isRendering.value = true;
@@ -76,16 +77,17 @@ const renderDiagram = async () => {
 
 	try {
 		mermaidPromise ??= import('mermaid').then(({ default: mermaid }) => mermaid);
+		const loadMermaid = mermaidPromise;
 		const id = `mermaid-${diagramId}-${currentVersion}`;
 		const { svg, bindFunctions } = await enqueueRender(async () => {
-			const mermaid = await mermaidPromise!;
+			const mermaid = await loadMermaid;
 			mermaid.initialize({
 				startOnLoad: false,
 				securityLevel: 'strict',
 				secure: ['securityLevel', 'startOnLoad', 'maxTextSize'],
 				suppressErrorRendering: true,
 				theme: 'base',
-				themeVariables: getThemeVariables(),
+				themeVariables: getThemeVariables(element),
 			});
 			return mermaid.render(id, props.source);
 		});

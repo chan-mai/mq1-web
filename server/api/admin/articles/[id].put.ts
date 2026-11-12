@@ -15,8 +15,9 @@ export default defineEventHandler(async event => {
 		throw createError({ statusCode: 404, statusMessage: 'Article not found' });
 	}
 
+	const now = new Date().toISOString();
 	const update: Partial<typeof current> = {
-		updatedAt: new Date().toISOString(),
+		updatedAt: now,
 	};
 
 	if (body.title !== undefined) {
@@ -74,7 +75,7 @@ export default defineEventHandler(async event => {
 			articleId: id,
 			title: revisionTitle,
 			content: revisionContent,
-			createdAt: update.updatedAt!,
+			createdAt: now,
 		});
 		await db.run(
 			sql`DELETE FROM article_revisions WHERE article_id = ${id} AND id NOT IN (SELECT id FROM article_revisions WHERE article_id = ${id} ORDER BY created_at DESC LIMIT 50)`,
@@ -88,5 +89,9 @@ export default defineEventHandler(async event => {
 
 	const updatedRows = await db.select().from(articles).where(eq(articles.id, id)).limit(1);
 	const tagMap = await fetchTagsForArticles(db, [id]);
-	return serializeAdminArticle(updatedRows[0]!, tagMap.get(id) ?? []);
+	const updated = updatedRows[0];
+	if (!updated) {
+		throw createError({ statusCode: 404, statusMessage: 'Article not found' });
+	}
+	return serializeAdminArticle(updated, tagMap.get(id) ?? []);
 });

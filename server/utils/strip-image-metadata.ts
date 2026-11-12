@@ -14,7 +14,7 @@ const stripPngMetadata = (bytes: Uint8Array): Uint8Array => {
 
 	while (offset + 8 <= bytes.length) {
 		const length = view.getUint32(offset);
-		const type = String.fromCharCode(bytes[offset + 4]!, bytes[offset + 5]!, bytes[offset + 6]!, bytes[offset + 7]!);
+		const type = String.fromCharCode(...bytes.subarray(offset + 4, offset + 8));
 		const chunkEnd = offset + 8 + length + 4;
 		if (chunkEnd > bytes.length) return bytes;
 		if (!PNG_STRIP_CHUNKS.has(type)) {
@@ -38,7 +38,7 @@ const WEBP_STRIP_CHUNKS = new Set(['EXIF', 'XMP ']);
 
 const stripWebpMetadata = (bytes: Uint8Array): Uint8Array => {
 	if (bytes.length < 12) return bytes;
-	const fourcc = (start: number) => String.fromCharCode(bytes[start]!, bytes[start + 1]!, bytes[start + 2]!, bytes[start + 3]!);
+	const fourcc = (start: number) => String.fromCharCode(...bytes.subarray(start, start + 4));
 	if (fourcc(0) !== 'RIFF' || fourcc(8) !== 'WEBP') return bytes;
 
 	const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
@@ -55,7 +55,7 @@ const stripWebpMetadata = (bytes: Uint8Array): Uint8Array => {
 			const chunk = new Uint8Array(bytes.subarray(offset, chunkEnd));
 			if (type === 'VP8X' && chunk.length >= 9) {
 				// EXIF(0x08)/XMP(0x04)フラグを消去
-				chunk[8] = chunk[8]! & ~0x0c;
+				chunk[8] = (chunk[8] ?? 0) & ~0x0c;
 			}
 			chunks.push(chunk);
 		}

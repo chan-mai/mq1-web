@@ -22,7 +22,7 @@ const props = withDefaults(defineProps<PageHeaderProps>(), {
 
 const publishedDate = computed(() =>
 	props.published
-		? new Date(props.published!).toLocaleString('ja-JP', {
+		? new Date(props.published).toLocaleString('ja-JP', {
 				year: 'numeric',
 				month: '2-digit',
 				day: '2-digit',
@@ -32,7 +32,7 @@ const publishedDate = computed(() =>
 );
 const updatedDate = computed(() =>
 	props.updated && props.updated !== props.published
-		? new Date(props.updated!).toLocaleString('ja-JP', {
+		? new Date(props.updated).toLocaleString('ja-JP', {
 				year: 'numeric',
 				month: '2-digit',
 				day: '2-digit',

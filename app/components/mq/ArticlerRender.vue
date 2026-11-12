@@ -242,7 +242,8 @@ const initInteractiveElements = () => {
 	// スクロール可能な要素にインジケーターを追加
 	function addScrollIndicator(elements: NodeListOf<Element> | Element[]) {
 		elements.forEach((element: Element) => {
-			if (element.scrollWidth > element.clientWidth) {
+			const parent = element.parentNode;
+			if (parent && element.scrollWidth > element.clientWidth) {
 				// スクロール可能な場合、インジケーターを追加
 				const indicator = document.createElement('div');
 				indicator.className = 'scroll-indicator';
@@ -251,7 +252,7 @@ const initInteractiveElements = () => {
 				// 要素をラップする
 				const wrapper = document.createElement('div');
 				wrapper.className = 'scrollable-wrapper';
-				element.parentNode!.insertBefore(wrapper, element);
+				parent.insertBefore(wrapper, element);
 				wrapper.appendChild(element);
 				wrapper.appendChild(indicator);
 

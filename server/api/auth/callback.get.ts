@@ -31,7 +31,9 @@ export default defineEventHandler(async event => {
 
 		const result = await oauth.processAuthorizationCodeResponse(authorizationServer, client, tokenResponse, { requireIdToken: true });
 
-		claims = oauth.getValidatedIdTokenClaims(result)!;
+		const validatedClaims = oauth.getValidatedIdTokenClaims(result);
+		if (!validatedClaims) throw new Error('ID token claims missing');
+		claims = validatedClaims;
 	} catch (error) {
 		console.error('OIDC callback failed', error);
 		throw createError({
@@ -48,5 +50,5 @@ export default defineEventHandler(async event => {
 		loggedInAt: new Date().toISOString(),
 	});
 
-	return sendRedirect(event, returnTo || '/admin', 302);
+	return sendRedirect(event, returnTo ?? '/admin', 302);
 });

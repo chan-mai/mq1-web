@@ -27,7 +27,7 @@ export default defineEventHandler(async event => {
 	}
 
 	const filePart = parts.find(part => part.name === 'file');
-	if (!filePart || !filePart.data || filePart.data.length === 0) {
+	if (!filePart || filePart.data.length === 0) {
 		throw createError({ statusCode: 400, statusMessage: 'File is required' });
 	}
 
@@ -39,7 +39,7 @@ export default defineEventHandler(async event => {
 	}
 
 	const readDimension = (name: string) => {
-		const raw = parts.find(part => part.name === name)?.data?.toString();
+		const raw = parts.find(part => part.name === name)?.data.toString();
 		return parseOrThrow(imageDimensionSchema, raw) ?? null;
 	};
 

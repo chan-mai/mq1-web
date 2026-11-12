@@ -39,7 +39,8 @@ export const CmsCodeBlock = CodeBlock.extend({
 			language: {
 				default: null,
 				parseHTML: parseCodeLanguage,
-				renderHTML: (attributes: Record<string, unknown>) => (attributes.language ? { class: `language-${attributes.language}` } : {}),
+				renderHTML: (attributes: Record<string, unknown>) =>
+					typeof attributes.language === 'string' && attributes.language ? { class: `language-${attributes.language}` } : {},
 			},
 			filename: {
 				default: null,
@@ -73,10 +74,11 @@ export const CmsImage = Node.create({
 				getAttrs: (element: HTMLElement) => {
 					const img = element.querySelector('img');
 					if (!img?.getAttribute('src')) return false;
+					const caption = element.querySelector('figcaption')?.textContent.trim();
 					return {
 						src: img.getAttribute('src'),
 						alt: img.getAttribute('alt'),
-						caption: element.querySelector('figcaption')?.textContent?.trim() || null,
+						caption: caption?.length ? caption : null,
 						width: img.getAttribute('width'),
 						height: img.getAttribute('height'),
 					};

@@ -10,8 +10,8 @@ export default defineEventHandler(async event => {
 		console.error(e);
 		const err = e as { statusCode?: number; statusMessage?: string };
 		throw createError({
-			statusCode: err.statusCode || 500,
-			statusMessage: err.statusMessage || 'Internal Server Error',
+			statusCode: err.statusCode ?? 500,
+			statusMessage: err.statusMessage ?? 'Internal Server Error',
 		});
 	}
 });

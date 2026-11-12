@@ -48,12 +48,10 @@ const getAssetFetcher = (event: OgEvent): AssetFetcher => {
 };
 
 const getOgAssets = (fetcher: AssetFetcher): Promise<OgAssets> => {
-	if (!ogAssets) {
-		ogAssets = loadOgAssets(fetcher).catch((error: unknown) => {
-			ogAssets = undefined;
-			throw error;
-		});
-	}
+	ogAssets ??= loadOgAssets(fetcher).catch((error: unknown) => {
+		ogAssets = undefined;
+		throw error;
+	});
 	return ogAssets;
 };
 

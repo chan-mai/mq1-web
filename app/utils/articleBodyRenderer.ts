@@ -1,4 +1,5 @@
 import { defineComponent, h } from 'vue';
+import { attrText } from '#shared/utils/tiptap-text';
 import MqArticleImage from '~/components/mq/ArticleImage.vue';
 import MqCodeBlock from '~/components/mq/CodeBlock.vue';
 import MqLinkCard from '~/components/mq/LinkCard.vue';
@@ -61,17 +62,19 @@ const renderInlineNodes = (nodes: TiptapNode[], ctx: ArticleRenderContext): VNod
 	let index = 0;
 
 	while (index < nodes.length) {
-		const node = nodes[index]!;
+		const node = nodes[index];
+		if (!node) break;
 		const linkMark = node.type === 'text' ? findLinkMark(node) : undefined;
 
 		if (linkMark) {
-			const href = String(linkMark.attrs?.href ?? '');
+			const href = attrText(linkMark.attrs?.href);
 			// 同一リンクの連続テキストを単一aタグに統合
 			const group: TiptapNode[] = [];
 			while (index < nodes.length) {
-				const current = nodes[index]!;
+				const current = nodes[index];
+				if (!current) break;
 				const currentMark = current.type === 'text' ? findLinkMark(current) : undefined;
-				if (!currentMark || String(currentMark.attrs?.href ?? '') !== href) {
+				if (!currentMark || attrText(currentMark.attrs?.href) !== href) {
 					break;
 				}
 				group.push(current);
@@ -159,7 +162,7 @@ export const renderArticleNode = (node: TiptapNode, ctx: ArticleRenderContext): 
 		}
 		case 'image':
 			return h(MqArticleImage, {
-				src: String(node.attrs?.src ?? ''),
+				src: attrText(node.attrs?.src),
 				alt: (node.attrs?.alt as string | null) ?? undefined,
 				caption: (node.attrs?.caption as string | null) ?? undefined,
 				width: (node.attrs?.width as number | string | null) ?? undefined,
@@ -167,7 +170,7 @@ export const renderArticleNode = (node: TiptapNode, ctx: ArticleRenderContext): 
 			});
 		case 'linkCard':
 			return h(MqLinkCard, {
-				url: String(node.attrs?.url ?? ''),
+				url: attrText(node.attrs?.url),
 				class: 'px-3 my-5 md:px-8',
 			});
 		case 'table':

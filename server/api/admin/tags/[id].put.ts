@@ -9,7 +9,8 @@ export default defineEventHandler(async event => {
 
 	const db = getD1Drizzle(event);
 	const rows = await db.select().from(tags).where(eq(tags.id, id)).limit(1);
-	if (rows.length === 0) {
+	const current = rows[0];
+	if (!current) {
 		throw createError({ statusCode: 404, statusMessage: 'Tag not found' });
 	}
 
@@ -30,5 +31,5 @@ export default defineEventHandler(async event => {
 
 	await purgeContentCache();
 
-	return { ...rows[0]!, name, slug, updatedAt: now };
+	return { ...current, name, slug, updatedAt: now };
 });

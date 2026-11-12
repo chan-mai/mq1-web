@@ -4,7 +4,7 @@ import type { R2Bucket } from '@cloudflare/workers-types';
 import type { H3Event } from 'h3';
 
 export const getR2Bucket = (event: H3Event) => {
-	const bucket = event?.context?.cloudflare?.env?.IMAGES as R2Bucket | undefined;
+	const bucket = (event.context as { cloudflare?: { env?: Record<string, unknown> } }).cloudflare?.env?.IMAGES as R2Bucket | undefined;
 	if (!bucket) {
 		throw createError({
 			statusCode: 500,

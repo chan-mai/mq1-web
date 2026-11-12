@@ -18,8 +18,9 @@ watchEffect(async () => {
 
 	const urlObj = new URL(props.url);
 	const segments = urlObj.pathname.split('/').filter(Boolean);
-	if (segments.length >= 2 && segments[0] === 'users') {
-		resolvedInfo.value = { domain: urlObj.hostname, userId: segments[1]! };
+	const userId = segments[1];
+	if (segments[0] === 'users' && userId) {
+		resolvedInfo.value = { domain: urlObj.hostname, userId };
 		return;
 	}
 

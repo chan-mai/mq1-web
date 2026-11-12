@@ -1,21 +1,24 @@
 import type { H3Event } from 'h3';
 
-function parseIPv4(ip: string): number[] | null {
+type IPv4 = [number, number, number, number];
+
+function parseIPv4(ip: string): IPv4 | null {
 	const parts = ip.split('.');
 	if (parts.length !== 4) return null;
 	const nums = parts.map(Number);
 	if (nums.some(n => !Number.isInteger(n) || n < 0 || n > 255)) return null;
-	return nums;
+	return nums as IPv4;
 }
 
 function parseIPv6(ip: string): bigint | null {
 	try {
 		// ::ffff:x.x.x.x IPv4-mapped
 		const v4mapped = ip.match(/^::ffff:(\d+\.\d+\.\d+\.\d+)$/i);
-		if (v4mapped) {
-			const v4 = parseIPv4(v4mapped[1]!);
+		const mappedV4 = v4mapped?.[1];
+		if (mappedV4) {
+			const v4 = parseIPv4(mappedV4);
 			if (!v4) return null;
-			return (BigInt(0xffff) << 32n) | BigInt((v4[0]! << 24) | (v4[1]! << 16) | (v4[2]! << 8) | v4[3]!);
+			return (BigInt(0xffff) << 32n) | BigInt((v4[0] << 24) | (v4[1] << 16) | (v4[2] << 8) | v4[3]);
 		}
 		const halves = ip.split('::');
 		if (halves.length > 2) return null;
@@ -32,8 +35,8 @@ function parseIPv6(ip: string): bigint | null {
 	}
 }
 
-function inRange4(ip: number[], a: number, b: number, c: number, d: number, prefix: number): boolean {
-	const ipNum = (ip[0]! << 24) | (ip[1]! << 16) | (ip[2]! << 8) | ip[3]!;
+function inRange4(ip: IPv4, a: number, b: number, c: number, d: number, prefix: number): boolean {
+	const ipNum = (ip[0] << 24) | (ip[1] << 16) | (ip[2] << 8) | ip[3];
 	const netNum = (a << 24) | (b << 16) | (c << 8) | d;
 	const mask = prefix === 0 ? 0 : (~0 << (32 - prefix)) >>> 0;
 	return ((ipNum >>> 0) & mask) === ((netNum >>> 0) & mask);
@@ -42,7 +45,8 @@ function inRange4(ip: number[], a: number, b: number, c: number, d: number, pref
 export function isValidPublicIp(ip: string): boolean {
 	// IPv4-mapped IPv6 (::ffff:x.x.x.x)
 	const v4mapped = ip.match(/^::ffff:(\d+\.\d+\.\d+\.\d+)$/i);
-	if (v4mapped) return isValidPublicIp(v4mapped[1]!);
+	const mappedV4 = v4mapped?.[1];
+	if (mappedV4) return isValidPublicIp(mappedV4);
 
 	const v4 = parseIPv4(ip);
 	if (v4) {
@@ -99,7 +103,8 @@ export function getClientIP(event: H3Event): string {
 	const forwardedFor = headers['x-forwarded-for'];
 	if (forwardedFor) {
 		const ips = forwardedFor.split(',');
-		return ips[0]?.trim() || 'unknown';
+		const first = ips[0]?.trim();
+		return first?.length ? first : 'unknown';
 	}
 
 	const realIP = headers['x-real-ip'];
@@ -113,5 +118,6 @@ export function getClientIP(event: H3Event): string {
 	}
 
 	// フォールバック
-	return event.node?.req?.socket?.remoteAddress || 'unknown';
+	const remoteAddress = (event.node as { req?: { socket?: { remoteAddress?: string } } } | undefined)?.req?.socket?.remoteAddress;
+	return remoteAddress?.length ? remoteAddress : 'unknown';
 }

@@ -43,7 +43,8 @@ export default defineEventHandler(async event => {
 
 	if (q) {
 		const pattern = `%${escapeLike(q)}%`;
-		conditions.push(or(sql`${articles.title} LIKE ${pattern} ESCAPE '\\'`, sql`${articles.plainText} LIKE ${pattern} ESCAPE '\\'`)!);
+		const keywordCondition = or(sql`${articles.title} LIKE ${pattern} ESCAPE '\\'`, sql`${articles.plainText} LIKE ${pattern} ESCAPE '\\'`);
+		if (keywordCondition) conditions.push(keywordCondition);
 	}
 
 	const rows = await db

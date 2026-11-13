@@ -19,8 +19,7 @@ export default defineEventHandler(async event => {
 		.set({
 			status: 'published',
 			// 初回公開時のみ設定
-			publishedAt: article.publishedAt ?? now,
-			updatedAt: article.publishedAt ? article.updatedAt : now,
+			...(article.publishedAt ? {} : { publishedAt: now, updatedAt: now }),
 		})
 		.where(eq(articles.id, id));
 

@@ -1,81 +1,71 @@
 :root {
-  --color-surface: 245 243 243;
-  --color-surface-elevated: 255 255 255;
-  --color-surface-muted: 249 250 251;
-  --color-fg: 71 85 105;
-  --color-fg-muted: 107 114 128;
-  --color-border-subtle: 231 229 228;
+	--color-surface: 245 243 243;
+	--color-surface-elevated: 255 255 255;
+	--color-surface-muted: 249 250 251;
+	--color-fg: 71 85 105;
+	--color-fg-muted: 107 114 128;
+	--color-border-subtle: 231 229 228;
 }
 
 .dark {
-  --color-surface: 15 17 21;
-  --color-surface-elevated: 26 29 36;
-  --color-surface-muted: 34 37 46;
-  --color-fg: 226 232 240;
-  --color-fg-muted: 156 163 175;
-  --color-border-subtle: 51 65 85;
+	--color-surface: 15 17 21;
+	--color-surface-elevated: 26 29 36;
+	--color-surface-muted: 34 37 46;
+	--color-fg: 226 232 240;
+	--color-fg-muted: 156 163 175;
+	--color-border-subtle: 51 65 85;
 }
 
 /* 手書きハイライト 下線 */
 .highlight-with-image,
 .highlight-with-image-2 {
-  position: relative;
-  display: inline-block;
-  z-index: 1;
+	position: relative;
+	display: inline-block;
+	z-index: 1;
 }
 
 .highlight-with-image::before,
 .highlight-with-image-2::before {
-  content: '';
-  position: absolute;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 120%;
-  height: 150%;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  z-index: -1;
-  opacity: 0.8;
+	content: '';
+	position: absolute;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 120%;
+	height: 150%;
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+	z-index: -1;
+	opacity: 0.8;
 }
 
 .highlight-with-image::before {
-  top: calc(50% + 15px);
-  background-image: url('/images/decoration/handwrite-line.svg');
+	top: calc(50% + 15px);
+	background-image: url('/images/decoration/handwrite-line.svg');
 }
 
 /* 手書きハイライト 囲み */
 .highlight-with-image-2::before {
-  top: 50%;
-  background-image: url('/images/decoration/handwrite-circle.svg');
+	top: 50%;
+	background-image: url('/images/decoration/handwrite-circle.svg');
 }
 
 /* ドパガキグラデーション装飾 */
 .dpgk-text {
-  background-image: linear-gradient(
-    90deg,
-    #ff0000,
-    #ff9900,
-    #ffee00,
-    #33ff33,
-    #00ccff,
-    #6633ff,
-    #ff33cc,
-    #ff0000
-  );
-  background-size: 200% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: dpgk-flow 1.5s linear infinite;
+	background-image: linear-gradient(90deg, #ff0000, #ff9900, #ffee00, #33ff33, #00ccff, #6633ff, #ff33cc, #ff0000);
+	background-size: 200% 100%;
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+	animation: dpgk-flow 1.5s linear infinite;
 }
 
 @keyframes dpgk-flow {
-  0% {
-    background-position: 200% 50%;
-  }
+	0% {
+		background-position: 200% 50%;
+	}
 
-  100% {
-    background-position: 0% 50%;
-  }
+	100% {
+		background-position: 0% 50%;
+	}
 }

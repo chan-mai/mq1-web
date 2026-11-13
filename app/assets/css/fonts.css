@@ -1,14 +1,11 @@
 * {
-  font-family:
-    'helvetica-neue-lt-pro', Arial, 'hiragino-kaku-gothic-pron', sans-serif;
-  font-optical-sizing: auto;
-  font-style: normal;
+	font-family: 'helvetica-neue-lt-pro', Arial, 'hiragino-kaku-gothic-pron', sans-serif;
+	font-optical-sizing: auto;
+	font-style: normal;
 }
 
 .font-futura {
-  font-family:
-    'futura-pt', 'helvetica-neue-lt-pro', Arial, 'hiragino-kaku-gothic-pron',
-    sans-serif;
+	font-family: 'futura-pt', 'helvetica-neue-lt-pro', Arial, 'hiragino-kaku-gothic-pron', sans-serif;
 }
 
 h1,
@@ -25,7 +22,5 @@ h5 *,
 h6 *,
 header,
 header * {
-  font-family:
-    'futura-pt', 'helvetica-neue-lt-pro', Arial, 'hiragino-kaku-gothic-pron',
-    sans-serif;
+	font-family: 'futura-pt', 'helvetica-neue-lt-pro', Arial, 'hiragino-kaku-gothic-pron', sans-serif;
 }

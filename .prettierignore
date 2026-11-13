@@ -1,7 +1,0 @@
-dist
-.nuxt
-.output
-node_modules
-.wrangler
-.pnpm-store
-scripts/migration-data

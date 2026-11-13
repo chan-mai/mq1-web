@@ -15,7 +15,7 @@ export default defineEventHandler(async event => {
 		throw createError({ statusCode: 404, statusMessage: 'Article not found' });
 	}
 
-	await db.update(articles).set({ status: target, updatedAt: new Date().toISOString() }).where(eq(articles.id, id));
+	await db.update(articles).set({ status: target }).where(eq(articles.id, id));
 
 	await purgeContentCache();
 

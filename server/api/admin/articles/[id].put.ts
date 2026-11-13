@@ -15,10 +15,7 @@ export default defineEventHandler(async event => {
 		throw createError({ statusCode: 404, statusMessage: 'Article not found' });
 	}
 
-	const now = new Date().toISOString();
-	const update: Partial<typeof current> = {
-		updatedAt: now,
-	};
+	const update: Partial<typeof current> = {};
 
 	if (body.title !== undefined) {
 		update.title = body.title;
@@ -64,12 +61,20 @@ export default defineEventHandler(async event => {
 		await replaceArticleTags(db, id, uniqueTagIds);
 	}
 
-	await db.update(articles).set(update).where(eq(articles.id, id));
-
-	// タイトルか本文の変更時のみリビジョンを記録(最新50件を保持)
+	// タイトル・本文変更時のみ更新日時とリビジョン記録(最新50件保持)
+	const now = new Date().toISOString();
 	const revisionTitle = update.title ?? current.title;
 	const revisionContent = update.content ?? current.content;
-	if (revisionTitle !== current.title || revisionContent !== current.content) {
+	const isContentChanged = revisionTitle !== current.title || revisionContent !== current.content;
+	if (isContentChanged) {
+		update.updatedAt = now;
+	}
+
+	if (Object.keys(update).length > 0) {
+		await db.update(articles).set(update).where(eq(articles.id, id));
+	}
+
+	if (isContentChanged) {
 		await db.insert(articleRevisions).values({
 			id: crypto.randomUUID(),
 			articleId: id,

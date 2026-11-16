@@ -42,7 +42,7 @@
 		"@tiptap/pm": "^3.34.0",
 		"@tiptap/starter-kit": "^3.34.0",
 		"@tiptap/vue-3": "^3.34.0",
-		"@vite-pwa/nuxt": "^1.1.1",
+		"@vite-pwa/nuxt": "^2.0.1",
 		"@vueuse/core": "^15.0.0",
 		"@vueuse/nuxt": "15.0.0",
 		"bcryptjs": "^3.0.3",

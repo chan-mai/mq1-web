@@ -147,11 +147,26 @@ onClickOutside(publishMenu, () => {
 	publishMenuOpen.value = false;
 });
 
+const publishButton = useTemplateRef<HTMLButtonElement>('publishButton');
+const untaggedDialogOpen = ref(false);
+
+// 公開処理中のdisabled化によるフォーカス喪失対策
+const publishAndRefocus = async () => {
+	await publish();
+	await nextTick();
+	publishButton.value?.focus();
+};
+
 const setStatus = async (target: ArticleStatus) => {
 	publishMenuOpen.value = false;
+	publishButton.value?.focus();
 	if (target === status.value) return;
 	if (target === 'published') {
-		await publish();
+		if (tagIds.value.length === 0) {
+			untaggedDialogOpen.value = true;
+			return;
+		}
+		await publishAndRefocus();
 	} else {
 		await unpublish(target);
 	}
@@ -239,6 +254,7 @@ const onTitleEnter = (event: KeyboardEvent) => {
 					<!-- 公開範囲 -->
 					<div ref="publishMenu" class="relative">
 						<button
+							ref="publishButton"
 							type="button"
 							class="inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-full border-none px-3 text-xs font-medium transition-colors"
 							:class="
@@ -313,6 +329,16 @@ const onTitleEnter = (event: KeyboardEvent) => {
 				description="このまま移動すると変更内容は失われます。"
 				confirm-label="破棄して移動"
 				@confirm="confirmLeave"
+			/>
+
+			<AdminUiConfirmDialog
+				v-model:open="untaggedDialogOpen"
+				title="タグが設定されていません"
+				confirm-label="タグなしで公開"
+				cancel-label="タグを設定"
+				tone="primary"
+				@confirm="publishAndRefocus"
+				@cancel="settingsOpen = true"
 			/>
 		</div>
 

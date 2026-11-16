@@ -5,15 +5,23 @@ defineProps<{
 	title: string;
 	description?: string;
 	confirmLabel?: string;
+	cancelLabel?: string;
+	tone?: 'danger' | 'primary';
 }>();
 
 const emit = defineEmits<{
 	confirm: [];
+	cancel: [];
 }>();
 
 const confirm = () => {
 	open.value = false;
 	emit('confirm');
+};
+
+const cancel = () => {
+	open.value = false;
+	emit('cancel');
 };
 </script>
 
@@ -27,8 +35,14 @@ const confirm = () => {
 					{{ description }}
 				</p>
 				<div class="mt-6 flex justify-end gap-2">
-					<AdminUiButton variant="ghost" @click="open = false"> キャンセル </AdminUiButton>
+					<AdminUiButton variant="ghost" @click="cancel">
+						{{ cancelLabel ?? 'キャンセル' }}
+					</AdminUiButton>
+					<AdminUiButton v-if="tone === 'primary'" variant="primary" @click="confirm">
+						{{ confirmLabel }}
+					</AdminUiButton>
 					<button
+						v-else
 						type="button"
 						class="h-9 cursor-pointer rounded-full border-none bg-red-500 px-4 text-sm font-bold text-white transition-opacity hover:opacity-80"
 						@click="confirm"

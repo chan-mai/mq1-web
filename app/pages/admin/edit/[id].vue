@@ -147,10 +147,16 @@ onClickOutside(publishMenu, () => {
 	publishMenuOpen.value = false;
 });
 
+const untaggedDialogOpen = ref(false);
+
 const setStatus = async (target: ArticleStatus) => {
 	publishMenuOpen.value = false;
 	if (target === status.value) return;
 	if (target === 'published') {
+		if (tagIds.value.length === 0) {
+			untaggedDialogOpen.value = true;
+			return;
+		}
 		await publish();
 	} else {
 		await unpublish(target);
@@ -313,6 +319,16 @@ const onTitleEnter = (event: KeyboardEvent) => {
 				description="このまま移動すると変更内容は失われます。"
 				confirm-label="破棄して移動"
 				@confirm="confirmLeave"
+			/>
+
+			<AdminUiConfirmDialog
+				v-model:open="untaggedDialogOpen"
+				title="タグが設定されていません"
+				confirm-label="タグなしで公開"
+				cancel-label="タグを設定"
+				tone="primary"
+				@confirm="publish"
+				@cancel="settingsOpen = true"
 			/>
 		</div>
 
